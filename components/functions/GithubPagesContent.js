@@ -2,8 +2,8 @@ import { marked } from 'marked';
 
 async function getGithubSiteContent(page_url) {
     try {
-      const token = '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';
-      const url = 'https://api.github.com/repos/Shark-S2001/Pitch-Predictions-SeoContent/contents/'+page_url;
+      const token = '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';
+      const url = 'https://api.github.com/repos/SharkS2001New/Pitch-Predictions-SeoContent/contents/'+page_url;
       const headers = {
         'Authorization': `token ${token}`
       };
