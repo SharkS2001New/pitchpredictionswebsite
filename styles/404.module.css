@@ -1,0 +1,28 @@
+/* styles/404.module.css */
+.container {
+    /* width: 80vw; */
+    /* margin-top: 40px auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .searchBox {
+    width: 80%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+  }
+  .links {
+    margin-top: 0px;
+    color: black;
+    font-weight: bold;
+  }
+  .link {
+    margin: 10px;
+    color: blue;
+    text-decoration: underline;
+  }
+  .link:hover {
+    color: red;
+  }

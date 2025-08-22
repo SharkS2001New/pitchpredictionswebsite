@@ -1,0 +1,217 @@
+
+  
+  .profile-header {
+    position: relative;
+  }
+  
+  .cover-image .cover-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .profile-info {
+    display: flex;
+    align-items: center;
+    background: #121212;
+    color: white;
+  }
+  
+  .avatar {
+    width: 80px;
+    height: 80px;
+    background: purple;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .user-details h2 {
+    margin-bottom: 5px;
+  }
+  
+  .verified {
+    color: #4CAF50;
+    font-weight: bold;
+  }
+  
+  .card-auth {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 15px;
+    color: white;
+  }
+
+.vip-btn ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+.investment-btn ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.vip-btn ul li {
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    line-height: 40px;
+    background: #3b5998;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.investment-btn ul li {
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+  line-height: 40px;
+  background: #983b93;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.vip-btn ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.vip-btn ul li a i {
+    margin-right: 5px;
+}
+
+.vip-btn ul li a i {
+  margin-right: 5px;
+}
+
+.investment-btn ul li:hover {
+    background-color: #2d4373;
+}
+
+.inn-title h2 i {
+    width: 28px;
+    height: 28px;
+    text-align: center;
+    color: #000;
+    padding: 6px;
+    background: #f0c419;
+    font-size: 14px;
+    vertical-align: middle;
+    margin-top: -5px;
+}
+
+.plan-box {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+}
+
+.plan-title {
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.plan-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.plan-details {
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+.plan-details li {
+  margin-bottom: 5px;
+}
+
+.plan-duration {
+  font-size: 14px;
+  color: #dadd09;
+  margin-top: 10px;
+}
+
+
+.jackpot-box {
+  border: 1px solid #1e3a8a; /* Black border */
+  border-radius: 12px;
+  /* padding: 20px; */
+  text-align: center;
+  background: #1e3a8a; /* Deep blue */
+  color: #ffffff; /* White text */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* .jackpot-box:hover {
+  transform: scale(1.05);
+} */
+
+.jackpot-title {
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #ffffff;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.jackpot-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700; /* Gold */
+}
+
+.jackpot-button {
+  background: #10b981; /* Emerald green */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.jackpot-button:hover {
+  background: #059669; /* Darker green */
+}
+
+@media (max-width: 768px) {
+  .jackpot-box {
+    padding: 15px;
+  }
+
+  .jackpot-title {
+    font-size: 18px;
+  }
+
+  .jackpot-price {
+    font-size: 16px;
+  }
+}

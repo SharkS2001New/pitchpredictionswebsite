@@ -1,0 +1,87 @@
+name: Docker Publish
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - "master"
+  schedule:
+    - cron: '44 2 * * *'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: pitchpredictionswebsite
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write  # Required for OpenID Connect authentication to GHCR
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log into GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # Use PAT instead of GITHUB_TOKEN
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/shark-s2001/${{ env.IMAGE_NAME }}
+          tags: type=sha,format=short
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Check out the pitchpredk3ssetup repo
+        uses: actions/checkout@v3
+        with:
+          repository: Shark-S2001/pitchpredk3ssetup
+          path: pitchpredk3ssetup
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Update values.yaml with new image tag
+        run: |
+          SHORT_SHA_PART="${{ steps.meta.outputs.tags }}"
+          SHORT_SHA_PART="$(echo "$SHORT_SHA_PART" | awk -F':' '{print $2}' | cut -c1-11)"
+          # Update the tag in the values.yaml file
+          sed -i "s|tag:.*|tag: $SHORT_SHA_PART|" pitchpredk3ssetup/pitchpredictionswebsite/values.yaml
+          echo "Updated tag in values.yaml to $SHORT_SHA_PART"
+
+      - name: Commit and push changes to pitchpredk3ssetup repo
+        run: |
+          cd pitchpredk3ssetup
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add pitchpredictionswebsite/values.yaml
+          git commit -m "Update Docker image tag to sha-$SHORT_SHA_PART"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

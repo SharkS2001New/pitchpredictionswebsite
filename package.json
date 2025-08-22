@@ -1,0 +1,37 @@
+{
+  "name": "pitchpredictions",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "sitemap": "next-sitemap --config next-sitemap.config.js",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ctrl/react-adsense": "^1.7.0",
+    "@next/font": "13.1.1",
+    "axios": "^1.7.9",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.5",
+    "cookies-next": "^2.1.1",
+    "date-fns-tz": "^2.0.1",
+    "jquery": "^3.6.3",
+    "js-cookie": "^3.0.1",
+    "marked": "^4.2.12",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.1.2",
+    "next": "^13.2.3",
+    "next-i18next": "^13.1.5",
+    "next-sitemap": "^3.1.52",
+    "nookies": "^2.5.2",
+    "react-bootstrap": "^2.7.2",
+    "react-calendar": "^4.2.1"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^13.1.2",
+    "eslint": "^8.31.0",
+    "eslint-plugin-react": "^7.32.0"
+  }
+}

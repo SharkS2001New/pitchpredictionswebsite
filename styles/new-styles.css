@@ -1,0 +1,357 @@
+@charset "UTF-8";
+
+/* Index page */
+#wrapper {
+  overflow-x: hidden;
+}
+
+#page-content-wrapper {
+  min-width: 100%;
+}
+
+/* Tips Table */
+/* .navbar {
+  border-bottom: 3px solid #E22521;
+  min-height: 70px;
+} */
+
+.sidebar-toogle-navbar,
+.inner-navbar {
+  font-size: 12px !important;
+  font-weight: bold;
+}
+
+.inner-navbar {
+  margin-top: 5px;
+  padding-top: 10px;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Prediction number */
+.number-circle {
+  color: #fff;
+  text-align: center;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+/* league Image */
+.league-logo {
+  width: 20px;
+  height: 15px;
+}
+
+/*Scroll Menu big screen*/
+.o-hidden {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.o-hidden .nav {
+  transition: transform 0.4s;
+  transform: translateX(50%);
+  left: -50%;
+}
+
+.nav.justify-content-end {
+  transform: translateX(0);
+  left: 0;
+}
+/* End of scroll menu */
+/*back to top button */
+#btn-back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+}
+  
+  @media screen and (max-width: 991px) {
+    .number-circle {
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+  }
+  
+  @media screen and (max-width: 405px) {
+    .number-circle {
+      /* padding: 5px 4px!important; */
+      /* font-size: 12px; */
+      border-radius: 5px;
+    }
+  
+    .container-mob {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+  
+  @media screen and (max-width: 767px) {
+    .o-hidden {
+      overflow: scroll;
+      white-space: nowrap;
+      padding: 0!important;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+  
+    ::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+  
+    .container-mob {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+    .sideNavCustom, .sideNavCustom1 {
+      color: #000;
+      border: none;
+    }
+  }
+  
+  @media (max-width: 780px) {
+    .container-mob {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      padding-left: 0;
+    }
+  
+    .datePicker {
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+  
+    #datePickerId {
+      font-size: smaller;
+      color: #000;
+      border-color: #000;
+    }
+  
+    .titleNavbar {
+      font-size: 15px!important;
+    }
+
+    .sideNavCustom, .sideNavCustom1 {
+      color: white;
+      border: none;
+    }
+  }
+
+  
+  @media screen and (min-width: 992px) {
+    .sideNavCustom {
+      /* padding-left: 10px; */
+      color: #000;
+      border: none;
+    }
+
+    .sideNavCustom1 {
+      background-color: #212830;
+      color: white;
+      border: none;
+    }
+  
+    #leagueNavClick {
+      color: white;
+    }
+  
+    #leagueNavClick:hover {
+      background-color: #E22521;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    #page-content-wrapper {
+      min-width: 0;
+      width: 100%;
+    }
+  }
+  
+  @media (max-width:400px) {
+    /* .card {
+      padding-bottom: 40%!important;
+    } */
+  
+    .container-mob {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+  
+  @media (max-width:768px) {
+    .container-mob {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      padding-left: 0;
+    }  
+  }
+  
+  #titleNavBar:hover {
+    background-color: #E22521!important;
+  }
+  
+  
+  /*** Trends page Card ***/
+  .my-custom-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .my-custom-card .card-header {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .my-custom-card .card-body {
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 1rem;
+    flex: 1 0 auto;  
+  }
+  
+  .my-custom-card .card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    height: 40px;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+  }
+  
+
+/**My auth code is from here */
+
+.freePlanLink {
+  background-color: #444!important;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.freePlanLink:hover {
+  background-color: black!important;
+  color: #fff;
+}
+
+.basicPlanLink {
+  background-color: #002388!important;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.basicPlanLink:hover {
+  background-color: black!important;
+  color: #fff;
+} 
+
+.premiumPlanLink {
+  background-color: #000!important;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.premiumPlanLink:hover {
+  background-color: black!important;
+  color: #fff;
+}
+
+.investmentPlanLink {
+  background-color: #006e12!important;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.investmentPlanLink:hover {
+  background-color: black!important;
+  color: #fff;
+}
+
+
+.vipPages a {
+  text-decoration: none;
+  color: red; /* Optional: Customize the color as needed */
+}
+
+.vipPages:hover a {
+  text-decoration: underline;
+  color: black; /* Optional: Customize the color as needed */
+}
+
+.project-tab .nav-link {
+  border: none; /* Remove all default borders */
+  color: #b20; /* Tab text color */
+  font-size: 14px;
+  font-weight: 700;
+  width: 33.3%;
+  background-color: transparent; /* Transparent background for non-active tabs */
+  text-align: center;
+}
+
+.project-tab .nav-link.active {
+  color: #b20; /* Active tab text color */
+  border-bottom: 3px solid #b20; /* Red underline to indicate active tab */
+  background-color: transparent; /* No background for active tab */
+}
+
+.project-tab .nav-link:hover {
+  color: #b20; /* Keep hover text color consistent */
+  background-color: transparent; /* No background change on hover */
+  text-decoration: none; /* No underline */
+}
+
+.tab-content {
+  border-radius: 4px; /* Rounded corners for the tab-content area */
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background-color: var(--light); /* Background color for content area */
+  border: 1px solid #EEE; /* Light border around tab-content */
+  padding: 15px;
+  margin-top: -1px; /* Prevent overlapping gap with active tab */
+}
+
+.nav-tabs {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: none !important; /* Remove default tab container bottom border */
+}
+
+.match-tbs {
+  width: 100%;
+  margin-top: 20px;
+  border-right: 1px solid rgba(0, 0, 0, .2);
+  border-left: 1px solid rgba(0, 0, 0, .2);
+  border-top: 1px solid rgba(0, 0, 0, .2);
+}
+
+.project-tab thead {
+  background: #f3f3f3;
+  color: #333;
+}
+
+@media screen and (max-width: 992px) {
+  .match-tbs td, .match-tbs th {
+      margin: 2px;
+      height: 50px;
+      font-size: 12px;
+      width: 20px;
+      color: #000;
+      text-align: center;
+  }
+}

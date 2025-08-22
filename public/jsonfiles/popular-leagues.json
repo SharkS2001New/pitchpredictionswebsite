@@ -1,0 +1,114 @@
+{
+    "status": true,
+    "message": "success",
+    "data": [
+      {
+        "league_id": 78,
+        "league_short_name": "BUN",
+        "league_name": "Bundesliga",
+        "country_name": "Germany",
+        "logo": "https://media-3.api-sports.io/football/leagues/78.png",
+        "downloaded_country_flag": "/images/countries/Germany.svg",
+        "downloaded_league_logo": "/images/leagues/Bundesliga.jpg"
+      },
+      {
+        "league_id": 45,
+        "league_short_name": "FA",
+        "league_name": "FA Cup",
+        "country_name": "England",
+        "logo": "https://media-3.api-sports.io/football/leagues/45.png",
+        "downloaded_country_flag": "/images/countries/England.svg",
+        "downloaded_league_logo": "/images/leagues/FA Cup.jpg"
+      },
+      {
+        "league_id": 140,
+        "league_short_name": "LAL",
+        "league_name": "La Liga",
+        "country_name": "Spain",
+        "logo": "https://media-3.api-sports.io/football/leagues/140.png",
+        "downloaded_country_flag": "/images/countries/Spain.svg",
+        "downloaded_league_logo": "/images/leagues/La Liga.jpg"
+      },
+      {
+        "league_id": 61,
+        "league_short_name": "L1",
+        "league_name": "Ligue 1",
+        "country_name": "France",
+        "logo": "https://media-1.api-sports.io/football/leagues/61.png",
+        "downloaded_country_flag": "/images/countries/France.svg",
+        "downloaded_league_logo": "/images/leagues/Ligue 1.jpg"
+      },
+      {
+        "league_id": 88,
+        "league_short_name": "ERD",
+        "league_name": "Eredivisie",
+        "country_name": "Netherlands",
+        "logo": "/images/leagues/Eredivisie.jpg",
+        "downloaded_country_flag": "/images/countries/Netherlands.svg",
+        "downloaded_league_logo": "/images/leagues/Eredivisie.jpg"
+      },
+      {
+        "league_id": 39,
+        "league_short_name": "EPL",
+        "league_name": "Premier League",
+        "country_name": "England",
+        "logo": "https://media-1.api-sports.io/football/leagues/39.png",
+        "downloaded_country_flag": "/images/countries/England.svg",
+        "downloaded_league_logo": "/images/leagues/Premier League.jpg"
+      },
+      {
+        "league_id": 179,
+        "league_short_name": "PRE",
+        "league_name": "Premiership",
+        "country_name": "Scotland",
+        "logo": "https://media-3.api-sports.io/football/leagues/179.png",
+        "downloaded_country_flag": "/images/countries/Scotland.svg",
+        "downloaded_league_logo": "/images/leagues/Premiership.jpg"
+      },
+      {
+        "league_id": 94,
+        "league_short_name": "PRL",
+        "league_name": "Primeira Liga",
+        "country_name": "Portugal",
+        "logo": "https://media-3.api-sports.io/football/leagues/94.png",
+        "downloaded_country_flag": "/images/countries/Portugal.svg",
+        "downloaded_league_logo": "/images/leagues/Primeira Liga.jpg"
+      },
+      {
+        "league_id": 135,
+        "league_short_name": "SEA",
+        "league_name": "Serie A",
+        "country_name": "Italy",
+        "logo": "https://media-2.api-sports.io/football/leagues/135.png",
+        "downloaded_country_flag": "/images/countries/Italy.svg",
+        "downloaded_league_logo": "/images/leagues/Serie A.jpg"
+      },
+      {
+        "league_id": 3,
+        "league_short_name": "UEL",
+        "league_name": "UEFA Europa League",
+        "country_name": "Europe",
+        "logo": "https://media-3.api-sports.io/football/leagues/3.png",
+        "downloaded_country_flag": "/images/countries/Europe.jpg",
+        "downloaded_league_logo": "/images/leagues/UEFA Europa League.jpg"
+      },
+      {
+        "league_id": 12,
+        "league_short_name": "CAF",
+        "league_name": "CAF Champions League",
+        "country_name": "Africa",
+        "logo": "https://media-3.api-sports.io/football/leagues/5.png",
+        "downloaded_country_flag": "/images/countries/Europe.jpg",
+        "downloaded_league_logo": "/images/leagues/CAF%20Champions%20League.jpg"
+      },
+      {
+        "league_id": 848,
+        "league_short_name": "ECL",
+        "league_name": "UEFA Europa Conference League",
+        "country_name": "Europe",
+        "logo": "https://media-3.api-sports.io/football/leagues/4.png",
+        "downloaded_country_flag": "/images/countries/Europe.jpg",
+        "downloaded_league_logo": "/images/countries/Europe.jpg"
+      }
+    ]
+  }

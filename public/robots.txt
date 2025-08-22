@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.pitchpredictions.com
+
+# Sitemaps
+Sitemap: https://www.pitchpredictions.com/sitemap.xml
+Sitemap: https://www.pitchpredictions.com/country-sitemap.xml
+Sitemap: https://www.pitchpredictions.com/leagues-sitemap.xml
