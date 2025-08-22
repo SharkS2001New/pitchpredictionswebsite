@@ -46,7 +46,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/sharks2001new/${{ env.IMAGE_NAME }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           tags: type=sha,format=short
 
       - name: Build and push Docker image
@@ -63,7 +63,7 @@ jobs:
       - name: Check out the pitchpredk3ssetup repo
         uses: actions/checkout@v3
         with:
-          repository: SharkS2001New/pitchpredk3ssetup
+          repository: ${{ github.repository_owner }}/pitchpredk3ssetup
           path: pitchpredk3ssetup
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
