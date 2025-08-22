@@ -295,11 +295,10 @@ function SitemapsPage() {
         <li><a href="/tips/tips-spotika">Tips spotika</a></li>
         <li><a href="/tips/tips180">tips180</a></li>
         <li><a href="/tips/victor-predict">Victor predict</a></li>
-        <li><a href="/tips/10-teams-to-win-today">Victor predict</a></li>
-        <li><a href="/tips/100-percent-winning-tips">Victor predict</a></li>
-        <li><a href="/tips/feedinco">Victor predict</a></li>
-        <li><a href="/tips/one-million-prediction">Victor predict</a></li>
-
+        <li><a href="/tips/10-teams-to-win-today">10 teams to win today</a></li>
+        <li><a href="/tips/100-percent-winning-tips">100 percent winning tips</a></li>
+        <li><a href="/tips/feedinco">Feedinco</a></li>
+        <li><a href="/tips/one-million-prediction">One million prediction</a></li>
         <li><a href="/jackpot-predictions">Jackpots</a></li>
       </ul>
     </div>

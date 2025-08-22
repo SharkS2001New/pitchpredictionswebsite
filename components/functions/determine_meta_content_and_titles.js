@@ -1141,34 +1141,34 @@ function MetaContent(){
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-mega-jackpot-predictions") {
-        title = "Sportpesa Mega Jackpot Prediction – 17 Games Tips & Analysis";
+        title = "SportPesa Mega Jackpot Predictions: Expert 17 Games Analysis";
         meta_desc_content = "Accurate Sportpesa Mega Jackpot prediction for 17 games this weekend. Get expert tips, game analysis, and winning insights updated regularly. Trusted by thousands of jackpot players.";
         meta_keywords = "sportpesa mega jackpot prediction, 17 games sportpesa prediction, sportpesa mega jackpot tips, accurate sportpesa predictions, cheerplex sportpesa, pesaodds sportpesa, weekend sportpesa mega jackpot";
-        page_title = "Sportpesa Mega Jackpot Predictions – 17 Games This Weekend";
+        page_title = "SportPesa Mega Jackpot Predictions: 17 Games Analysis for This Weekend";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/forebet-mega-jackpot-prediction") {
-        title = "Forebet Mega Jackpot Prediction for All 17 Games This Weekend";
-        meta_desc_content = "Get Forebet Mega Jackpot predictions for all 17 games this weekend from Pitch Predictions. Explore expert football tips to guide your jackpot picks and boost your winning potential.";
+        title = "Forebet Mega Jackpot Predictions & Expert Tips - This Weekend's Games";
+        meta_desc_content = "Unlock winning potential with our Forebet Mega Jackpot predictions. We provide expert analysis and tips for all 17 games to help you make smarter picks and increase your chances of a payout.";
         meta_keywords = "Forebet Mega Jackpot Prediction, Forebet Sportpesa Mega Jackpot Prediction, Mega Jackpot tips today, Forebet football tips, Forebet Mega Jackpot this weekend";
-        page_title = "Forebet Sportpesa Mega Jackpot Prediction";
+        page_title = "Forebet Sportpesa Mega Jackpot Predictions";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-midweek-jackpot-predictions") {
-        title = "Sportpesa Midweek Jackpot Predictions and Free Betting Tips";
-        meta_desc_content = "Explore free Sportpesa Midweek Jackpot predictions with expert tips and match analysis. Make smarter bets using reliable insights and detailed game stats from Pitch Predictions.";
+        title = "Sportpesa Midweek Jackpot Predictions & Expert Betting Tips";
+        meta_desc_content = "Get today's SportPesa Midweek Jackpot predictions and detailed match analysis. Our expert tips and reliable game stats help you make smarter, winning bets.";
         meta_keywords = "Sportpesa Midweek Jackpot tips, Midweek Jackpot predictions, football betting insights, Sportpesa stats, accurate predictions";
-        page_title = "Free SportPesa Midweek Jackpot Tips and Predictions";
+        page_title = "SportPesa Midweek Jackpot Prediction";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/betika-midweek-jackpot-predictions") {
-        title = "15M Betika Midweek Jackpot Predictions and Expert Tips";
+        title = "Accurate Betika Midweek Jackpot Predictions - 15Million Cash Reward";
         meta_desc_content = "Get free 15M Betika Midweek Jackpot predictions with expert insights and detailed match analysis. Make informed betting decisions with accurate stats from Pitch Predictions.";
         meta_keywords = "Betika Midweek Jackpot tips, Betika predictions, Midweek Jackpot stats, accurate Betika tips, football analysis";
-        page_title = "Free Betika Midweek Jackpot Tips and Predictions";
+        page_title = "Free Betika Midweek Jackpot Tips and football analysis";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if(current_url ==="jackpot-predictions/[jackpot-predictions-by-name]"){
