@@ -67,6 +67,7 @@ function Footer(){
               <li className="nav-item mb-2"><a href="https://www.betrekatips.com" target="_blank" className="nav-a p-0 text-light">Betrekatips</a></li>
               <li className="nav-item mb-2"><a href="https://todayspredict.com" target="_blank" className="nav-a p-0 text-light">Today's Football Prediction</a></li>
               <li className="nav-item mb-2"><a href="https://tips100.com" target="_blank" className="nav-a p-0 text-light">100 Sure Straight Wins</a></li>
+              <li className="nav-item mb-2"><a href="https://tipsxtra.com" target="_blank" className="nav-a p-0 text-light">Tipsxtra</a></li>
             </ul>
           </div>
 
@@ -87,8 +88,8 @@ function Footer(){
             <div className="col-12 mb-0">
                 <h5 className="text-center mb-3">Sponsors</h5>
                 <ul className="sponsors-list">
-                    <li className="mb-0"><a target="_blank" href="https://assistedsuicide.org">Xoilac xem bong da</a></li>
-                    <li className="mb-0"><a target="_blank" href="https://shabafilm.org">Socolive truc tiep bong da</a></li>
+                    <li className="mb-0"><a target="_blank" href="https://homoclimbtastic.com/">Xoilac xem bong da</a></li>
+                    <li className="mb-0"><a target="_blank" href="https://www.iamchanelwestcoast.com/">Socolive truc tiep bong da</a></li>
                 </ul>
             </div>
         </div>
