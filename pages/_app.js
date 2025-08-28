@@ -18,7 +18,7 @@ import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
 import Starz888PopupBanner from '../components/shared/Starz888PopupBanner';
-import O1XBetClickUnderAds from '../components/shared/o1XBetClickUnderAds';
+import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
