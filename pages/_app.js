@@ -18,14 +18,28 @@ import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
 import Starz888PopupBanner from '../components/shared/Starz888PopupBanner';
+import O1XBetClickUnderAds from '../components/shared/o1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
  
   const router = useRouter(); //fetch page link data  
+  const path = router.pathname;
 
   // Check if the current page includes 'auth' in its route
   const isAuthPage = router.pathname.includes("auth");
+
+    // Excluded routes
+  const excludedRoutes = [
+    "/",
+    "/jackpot-predictions",
+    "/jackpot-predictions/sportpesa-mega-jackpot-predictions",
+    "/jackpot-predictions/sportpesa-midweek-jackpot-predictions",
+    "/top-football-tips-and-predictions/today",
+  ];
+
+  // Only render if NOT excluded
+  const shouldShowAd = !excludedRoutes.includes(path);
 
   return (
     <React.Fragment>
@@ -101,6 +115,10 @@ function App({ Component, pageProps }) {
 
                     <br/>
                     <Starz888PopupBanner/>
+
+                    {/**1xbet click under ads */}
+                    {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />}
+
                   </div>    
                   {!isAuthPage && 
                   <div className="col-lg-3 d-none d-lg-block">
