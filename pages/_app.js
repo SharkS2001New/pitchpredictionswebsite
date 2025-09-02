@@ -112,9 +112,7 @@ function App({ Component, pageProps }) {
                     <div style={{marginTop: "0px"}}>
                       <Component {...pageProps} />
                     </div>
-
-                    <br/>
-                    <Starz888PopupBanner/>
+                    {/* <Starz888PopupBanner/> */}
 
                     {/**1xbet click under ads */}
                     {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />}
