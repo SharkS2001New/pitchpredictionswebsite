@@ -89,6 +89,7 @@ function OurPartners() {
                     <li><a href="https://www.geekinco.com" target="blank">Geekinco Betting Tips</a></li>
                     <li><a href="https://todayspredict.com" target="blank">Today's Football Prediction</a></li>
                     <li><a href="https://tips100.com" target="blank">100 Sure Straight Wins</a></li>
+                    <li><a href="https://socapredict.com" target="blank">Football Prediction website</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>
