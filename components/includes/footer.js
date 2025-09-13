@@ -88,8 +88,8 @@ function Footer(){
             <div className="col-12 mb-0">
                 <h5 className="text-center mb-3">Sponsors</h5>
                 <ul className="sponsors-list">
-                    <li className="mb-0"><a target="_blank" href="https://homoclimbtastic.com/">Xoilac xem bong da</a></li>
-                    <li className="mb-0"><a target="_blank" href="https://www.iamchanelwestcoast.com/">Socolive truc tiep bong da</a></li>
+                    <li className="mb-0"><a target="_blank" href="https://urbanedleadership.org/">Xoilac xem bong da</a></li>
+                    <li className="mb-0"><a target="_blank" href="https://bsmsummit.com/">Socolive truc tiep bong da</a></li>
                 </ul>
             </div>
         </div>
