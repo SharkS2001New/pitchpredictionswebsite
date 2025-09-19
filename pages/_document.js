@@ -29,7 +29,8 @@ export default function Document() {
       <body>
         <div id='zone_1653336562'></div>
 
-        <div className="clever-core-ads"></div>
+        {/* <div className="clever-core-ads"></div> */}
+        <div id='zone_1334364742'></div>
 
         <Main />
         <NextScript />
@@ -54,7 +55,7 @@ export default function Document() {
             }}
           />
           {/* Clever Core Script  */}
-          <Script
+          {/* <Script
             id="clever-core"
             strategy="afterInteractive"
             dangerouslySetInnerHTML={{
@@ -79,6 +80,30 @@ export default function Document() {
                   a || (a = document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]);
                   a.parentNode.insertBefore(c, a);
                 })(document, window);
+              `,
+            }}
+          /> */}
+
+          <Script
+            id="ftd-agency-script-1334364742"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(w,d,o,g,r,a,m){
+                    var cid='zone_1334364742';
+                    w[r]=w[r]||function(){(w[r+'l']=w[r+'l']||[]).push(arguments)};
+                    function e(b,w,r){
+                        if((w[r+'h']=b.pop())&&!w.ABN){
+                            var a=d.createElement(o),p=d.getElementsByTagName(o)[0];
+                            a.async=1;
+                            a.src='https://cdn.'+w[r+'h']+'/libs/e.js';
+                            a.onerror=function(){e(g,w,r)};
+                            p.parentNode.insertBefore(a,p);
+                        }
+                    }
+                    e(g,w,r);
+                    w[r](cid,{id:1334364742,domain:w[r+'h']});
+                })(window,document,'script',['ftd.agency'],'ABNS');
               `,
             }}
           />
