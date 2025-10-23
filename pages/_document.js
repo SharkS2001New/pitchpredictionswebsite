@@ -31,7 +31,7 @@ export default function Document() {
 
         <div className="clever-core-ads"></div>
         
-        <div id='zone_1334364742'></div>
+        {/* <div id='zone_1334364742'></div> */}
 
         <Main />
         <NextScript />
@@ -85,7 +85,7 @@ export default function Document() {
             }}
           />
 
-          <Script
+          {/* <Script
             id="ftd-agency-script-1334364742"
             strategy="afterInteractive"
             dangerouslySetInnerHTML={{
@@ -107,7 +107,7 @@ export default function Document() {
                 })(window,document,'script',['ftd.agency'],'ABNS');
               `,
             }}
-          />
+          /> */}
       </body>
     </Html>
   )
