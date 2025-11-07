@@ -22,11 +22,11 @@ function OurPartners() {
                             Full Time Prediction
                         </a>
                     </li>  
-                    <li>
+                    {/* <li>
                         <a href="https://100percentsurewins.com/" target="_blank">
                             100 percent winning tips 
                         </a>
-                    </li>  
+                    </li>   */}
                     <li>
                         <a href="https://www.futebolscore.com/" target="_blank">
                             Futebolscore 
@@ -72,11 +72,11 @@ function OurPartners() {
                            Banker of the day
                         </a>
                     </li>  
-                    <li>
+                    {/* <li>
                         <a href="https://betandsured.com" target="_blank">
                            BetandSured Football Tips
                         </a>
-                    </li>
+                    </li> */}
                     <li>
                         <a href="https://betpredictiontoday.com" target="_blank">
                            Bet Prediction Today
