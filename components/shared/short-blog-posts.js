@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const WordpressBlogPosts = () => {
+const ShortBlogPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,4 +54,4 @@ const WordpressBlogPosts = () => {
   );
 };
 
-export default WordpressBlogPosts;
+export default ShortBlogPosts;

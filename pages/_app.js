@@ -18,7 +18,7 @@ import SideNavBar from '../components/includes/sidenav';
 import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
-import Starz888PopupBanner from '../components/shared/Starz888PopupBanner';
+// import Starz888PopupBanner from '../components/shared/Starz888PopupBanner';
 import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
@@ -28,7 +28,7 @@ function App({ Component, pageProps }) {
   const path = router.pathname;
 
   // Check if the current page includes 'auth' in its route
-  const isAuthPage = router.pathname.includes("auth");
+  const isAuthPage = router.pathname.includes("auth")  || router.pathname.includes("blog");
 
     // Excluded routes
   const excludedRoutes = [

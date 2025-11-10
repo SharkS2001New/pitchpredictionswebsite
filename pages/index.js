@@ -8,7 +8,7 @@ import RenderData from '../components/shared/render_fixtures_data';
 import SeoContentDisplay from '../components/shared/seo_content_display';
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
-import WordpressBlogPosts from "../components/shared/wordpress-blog-posts";
+import ShortBlogPosts from "../components/shared/short-blog-posts";
 
 export default function Home() {
   let todays_date = getFormattedCurrentDate();
@@ -57,7 +57,7 @@ export default function Home() {
                 format="auto"
             />
             
-            <WordpressBlogPosts/>
+            <ShortBlogPosts/>
             <br/>  
             <div className="">
                 <div className="container">
