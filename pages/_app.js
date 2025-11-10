@@ -28,7 +28,7 @@ function App({ Component, pageProps }) {
   const path = router.pathname;
 
   // Check if the current page includes 'auth' in its route
-  const isAuthPage = router.pathname.includes("auth")  || router.pathname.includes("blog");
+  const isAuthPage = router.pathname.includes("auth");
 
     // Excluded routes
   const excludedRoutes = [

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import PreLoader from "../components/includes/loader";
 
 export default function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -32,12 +33,7 @@ export default function Blogs() {
     <div className="blogs-page">
       <div className="container">
         {loading ? (
-          <div className="loading">
-            <div className="spinner-border text-danger" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-            <p>Loading blogs...</p>
-          </div>
+          <PreLoader/>
         ) : blogs.length === 0 ? (
           <div className="no-blogs">
             <p>No blogs available.</p>
