@@ -1,7 +1,7 @@
-async function fetchSupatipsGames(urlLink, matchDate, category) {
+async function fetchPitchPredictionsGames(urlLink, matchDate, category) {
   try {
       const response = await fetch(
-          `https://api.freewinningtips.com/api/${urlLink}?match_date=${matchDate}&category=${category}`, 
+          `https://api.pitchpredictions.com/api/${urlLink}?match_date=${matchDate}&category=${category}`, 
           {
               method: "GET",
               headers: {
@@ -24,4 +24,4 @@ async function fetchSupatipsGames(urlLink, matchDate, category) {
   }
 }
 
-export default fetchSupatipsGames;
+export default fetchPitchPredictionsGames;

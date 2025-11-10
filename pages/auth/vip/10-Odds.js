@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import withAuth from "../checkAuth";
 import UserNotSubcribed from '../includes/user-not-subcribed';
 import AuthPreloader from '../includes/auth_preLoader';
-import fetchSupatipsGames from '../../../components/auth/fetch_supatips_games';
+import fetchPitchPredictionsGames from '../../../components/auth/fetch_pitchpredictions_games';
 
 function Vip10OddsGames() {
   const [user, setUser] = useState(null);
@@ -45,9 +45,9 @@ function Vip10OddsGames() {
 
     // Fetch data using Promise.all for better control
     Promise.all([
-      fetchSupatipsGames("get_auth_10odds_matches_by_date",formatDate(yesterday), 13).then(response => setYesterdaysMatches(response.data)),
-      fetchSupatipsGames("get_auth_10odds_matches_by_date", formatDate(today), 13).then(response => setTodaysMatches(response.data)),
-      fetchSupatipsGames("get_auth_10odds_matches_by_date", formatDate(tomorrow), 13).then(response => setTomorrowsMatches(response.data))
+      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date",formatDate(yesterday), 13).then(response => setYesterdaysMatches(response.data)),
+      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date", formatDate(today), 13).then(response => setTodaysMatches(response.data)),
+      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date", formatDate(tomorrow), 13).then(response => setTomorrowsMatches(response.data))
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

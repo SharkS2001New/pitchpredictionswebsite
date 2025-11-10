@@ -29,9 +29,9 @@ function BothTeamsToScore() {
 
     // Fetch data using Promise.all for better control
     Promise.all([
-      fetchFreePlanGames("fetch_betarazi_both_teams_to_score_fixtures", formatDate(yesterday), 12).then(response => setYesterdaysMatches(response.data)),
-      fetchFreePlanGames("fetch_betarazi_both_teams_to_score_fixtures", formatDate(today), 12).then(response => setTodaysMatches(response.data)),
-      fetchFreePlanGames("fetch_betarazi_both_teams_to_score_fixtures", formatDate(tomorrow), 12).then(response => setTomorrowsMatches(response.data))
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(yesterday), 12).then(response => setYesterdaysMatches(response.data)),
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(today), 12).then(response => setTodaysMatches(response.data)),
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(tomorrow), 12).then(response => setTomorrowsMatches(response.data))
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false));

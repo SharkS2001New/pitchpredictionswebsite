@@ -6,6 +6,7 @@ import '../styles/new-styles.css';
 import '../styles/matchdetails.css';
 import "../styles/PopularTips.css";
 import "../styles/auth-css.css";
+import "../styles/blog.css"; 
 import Head from 'next/head';
 import MetaContent from  '../components/functions/determine_meta_content_and_titles'
 import Navbar from '../components/includes/navbar'
@@ -32,6 +33,7 @@ function App({ Component, pageProps }) {
     // Excluded routes
   const excludedRoutes = [
     "/",
+    "/blog",
     "/jackpot-predictions",
     "/jackpot-predictions/sportpesa-mega-jackpot-predictions",
     "/jackpot-predictions/sportpesa-midweek-jackpot-predictions",

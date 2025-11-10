@@ -111,7 +111,7 @@ function WeekendFootball() {
 
     // Fetch data using Promise.all for better control
     Promise.all([
-      fetchWeekendGames("fetch_betarazi_upcoming_matches", startDate, endDate).then(response => setWeekendMatches(response.data)),
+      fetchWeekendGames("fetch_auth_upcoming_matches", startDate, endDate).then(response => setWeekendMatches(response.data)),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

@@ -1,0 +1,130 @@
+.blogs-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+}
+
+.loading, .no-blogs {
+  text-align: center;
+  padding: 2rem 0;
+  color: #6c757d;
+}
+
+.blog-card {
+  background: #fff;
+  border-radius: 15px;
+  border: 2px solid #242835;
+  box-shadow: 8px 8px 0 #261e40;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* .blog-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 10px 10px 0 #bb2200; 
+} */
+
+.blog-category {
+  color: #bb2200;
+  font-weight: 700;
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.blog-title {
+  color: #261e40;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.blog-title:hover {
+  color: #bb2200; /* red hover color */
+}
+
+.blog-meta {
+  color: #2a87c5;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-excerpt {
+  color: #261e40;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.blog-footer {
+  border-top: 1px solid #261e40;
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.read-more-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #242835;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid #242835;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+  background: #242835;
+  color: #fff;
+  /* box-shadow: 0 4px 10px rgba(187, 34, 0, 0.4); */
+  box-shadow: 8px 8px 0 #bb2200
+}
+
+.kenta-button-icon {
+  margin-right: 8px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2rem;
+}
+
+.page-btn {
+  background: #fff;
+  border: 1px solid #242835;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+  background: #bb2200;
+  color: #fff;
+  border-color: #bb2200;
+}
+
+.page-btn.active {
+  background: #bb2200;
+  color: #fff;
+  border-color: #bb2200;
+}
