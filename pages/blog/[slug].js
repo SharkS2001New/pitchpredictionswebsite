@@ -32,39 +32,54 @@ export default function BlogPage() {
     fetchBlog();
   }, [slug]);
 
-  if (loading) return <p className="status-message">loading...</p>;
-  if (error) return <p className="status-message error">error: {error}</p>;
-  if (!blog) return <p className="status-message">blog not found</p>;
+  if (loading) return <p style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</p>;
+  if (error) return <p style={{ textAlign: "center", color: "red", marginTop: "2rem" }}>Error: {error}</p>;
+  if (!blog) return <p style={{ textAlign: "center", marginTop: "2rem" }}>Blog not found</p>;
 
   const category =
     blog.category?.blogs_category_title
       ? blog.category.blogs_category_title.charAt(0).toUpperCase() +
         blog.category.blogs_category_title.slice(1).toLowerCase()
-      : "articles";
+      : "Articles";
 
   return (
-    <div className="blogs-page">
-      <Link href="/blog" className="back-link">
-        ← back to blogs
-      </Link>
+    <div className="blogs-page" style={{ maxWidth: "850px", padding: "0 1rem", fontFamily: "Arial, sans-serif" }}>
+        <br/>
+        <Link className="btn btn-outline-primary btn-sm" href="/blog" style={{ display: "inline-block", marginBottom: "1rem", textDecoration: "none" }}>
+          ← Back to Blogs
+        </Link>
 
-      <h1 className="blog-title">{blog.title}</h1>
+        <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem", lineHeight: "1.3" }}>{blog.title}</h1>
 
-      <div className="blog-meta">
-        {blog.author || "admin"} /{" "}
-        {new Date(blog.created_at).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })}
-      </div>
+        <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              color: "#666",
+              fontSize: "0.9rem",
+              marginBottom: "2rem"
+          }}>
+              <div>
+                  {blog.author || "Admin"} / {new Date(blog.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric"
+                  })}
+              </div>
+              <div>
+                  <span style={{ color: "#bb2200", fontWeight: "bold", fontSize: "0.8rem" }}>
+                      Read Time:&nbsp; <i className="bi bi-clock"></i>&nbsp;{blog.read_time} Minutes
+                  </span>
+              </div>
+          </div>
 
-      <small className="blog-category">{category}</small>
 
-      <div
-        className="blog-content"
-        dangerouslySetInnerHTML={{ __html: blog.content }}
-      ></div>
+        <small className="blog-category" style={{ display: "block", marginBottom: "1rem", fontSize: "0.9rem", textTransform: "capitalize" }}>
+            {category}
+        </small>
+
+        <div style={{ lineHeight: "1.8", fontSize: "1rem", color: "#1a1a1a" }} dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+        <br/>
     </div>
   );
 }

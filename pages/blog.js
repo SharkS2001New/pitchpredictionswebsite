@@ -77,18 +77,24 @@ export default function Blogs() {
                       </p>
                     </div>
 
-                    <div className="blog-footer">
-                      <Link
-                        href={`/blog/${blog.slug}`}
-                        className="read-more-btn"
-                        rel="bookmark"
-                      >
-                        <span className="kenta-button-icon">
-                          <i className="fas fa-arrow-right"></i>
-                        </span>
-                        <span className="kenta-button-text">Read More <i className="bi bi-arrow-right" style={{fontWeight: "bold"}}></i></span>
-                      </Link>
+                   <div className="blog-footer">
+                    <Link
+                      href={`/blog/${blog.slug}`}
+                      className="read-more-btn"
+                      rel="bookmark">
+                      <span className="kenta-button-icon">
+                        <i className="fas fa-arrow-right"></i>
+                      </span>
+                      <span className="kenta-button-text">
+                        Read More <i className="bi bi-arrow-right"></i>
+                      </span>
+                    </Link>
+
+                    <div className="blog-social">
+                      <span><i className="bi bi-clock"></i> {blog.read_time} Minutes</span>
                     </div>
+                  </div>
+
                   </div>
                 </div>
               ))}
