@@ -906,39 +906,40 @@ function MetaContent(){
     
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);                  
     } else if(current_url.includes("tips/sokafans")){
-        title = "Sokafans Football Tips and Mega Jackpot Predictions";
-        meta_desc_content = "Get Soka fans prediction and free football tips for today’s matches. Access expert jackpot insights, mega jackpot predictions, and sure tips to improve your winning chances.";
+        title = "Sokafans Football Tips & Mega Jackpot Predictions";
+        meta_desc_content = "Discover today’s Sokafans football predictions, sure-win tips, and expert insights on mega and midweek jackpots to improve your chances of winning.";
         meta_keywords = "sokafans, sokafans prediction, sokafans mega jackpot prediction, sokafans prediction today, sokafans tips, sokafans tips today prediction, sokafans free tips today, sokafans jackpot prediction, sokafans 100% sure tips";
-        page_title = "Free Sokafans Predictions and Expert Football Tips";
+        page_title = "Soka fans Predictions Today: Football Tips & Jackpot Insights";
+
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
     } else if (current_url.includes("tips/betensured-predictions")) {
-        title = "Betensured Predictions and Football Jackpot Tips";
-        meta_desc_content = "Get Betensured predictions and expert football tips for today. Find reliable jackpot insights, betting analysis, and winning tips to boost your success.";
+        title = "Betensured Football Predictions & Jackpot Tips";
+        meta_desc_content = "Explore Betensured predictions and football tips for today, with reliable jackpot insights and strategies to increase your chances of success.";
         meta_keywords = "betensured, betensured predictions today, betensured football tips, betensured jackpot tips, betensured betting tips, betensured free tips";
-        page_title = "Free Betensured Football Predictions and Tips";
+        page_title = "Betensured Predictions Today: Football Tips & Jackpot Insights";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/cheerplex")) { 
-        title = "Cheerplex Predictions and Jackpot Football Tips";
-        meta_desc_content = "Get Cheerplex predictions for today’s matches, including SportPesa mega jackpot tips. Access free football advice and expert jackpot insights to raise your winning chances.";
+        title = "Cheerplex Football Predictions & Jackpot Tips | Pitch Predictions";
+        meta_desc_content = "Cheerplex predictions for today’s matches, including SportPesa mega and midweek jackpot tips, with expert football advice to help improve your chances of winning.";
         meta_keywords = "cheerplex, cheerplex prediction, cheerplex mega jackpot prediction, cheerplex sportpesa mega jackpot prediction, cheerplex jackpot prediction, cheerplex jackpot prediction today";
-        page_title = "Free Cheerplex Football Tips and Predictions";
+        page_title = "Cheerplex Predictions Today: Football Tips & Jackpot Insights";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/mwanasoka")) {
-        title = "Mwanasoka Football Predictions and Free Betting Tips";
-        meta_desc_content = "Get Mwanasoka football predictions and betting tips for today’s matches. Access daily insights, jackpot picks, GG tips, and expert analysis to make smarter betting choices.";
-        meta_keywords = "mwanasoka tips, mwanasoka football predictions, mwanasoka daily tips, mwanasoka free tips, mwanasoka jackpot predictions, mwanasoka mega jackpot tips, mwanasoka gg tips, mwanasoka predictions today";
-        page_title = "Mwanasoka Daily Predictions and Expert Football Tips";
+        title = "Mwanasoka Football Predictions & Betting Tips | Pitch Predictions";
+        meta_desc_content = "Looking for today’s Mwanasoka football tips? Explore expert predictions, jackpot picks, and GG tips to help you make smarter betting choices.";
+        meta_keywords = "mwanasoka tips, mwanasoka football predictions, mwanasoka daily tips, mwanasoka free tips, mwanasoka jackpot predictions, mwanasoka mega jackpot tips, mwanasoka gg tips, mwanasoka predictions today"; 
+        page_title = "Mwanasoka Daily Predictions: Football Tips & Jackpot Insights";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sunpel")) {
-        title = "Sunpel Prediction and Mega Jackpot Tips";
-        meta_desc_content = "Get Sunpel predictions for today’s matches with free jackpot tips, mega jackpot picks, and smart BTTS insights designed to help you play with confidence.";
+        title = "Sunpel Football Predictions & Mega Jackpot Tips | Pitch Predictions";
+        meta_desc_content = "Sunpel predictions for today’s matches, with free jackpot tips, mega jackpot picks, and smart BTTS insights to help improve your betting decisions.";
         meta_keywords = "sunpel, sunpel predictions today, sunpel football tips, sunpel jackpot tips, sunpel mega jackpot tips, sunpel btts tips";
-        page_title = "Free Sunpel Predictions Today";
-    
+        page_title = "Sunpel Predictions Today: Football Tips & Jackpot Insights";
+
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/1960tips")) { //New ones
         title = "1960Tips Football Predictions and Expert Betting Tips";  
@@ -994,10 +995,11 @@ function MetaContent(){
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/direct-win-prediction")) { 
-        title = "Direct Win Prediction and 180 Tips for Today";  
-        meta_desc_content = "Get reliable direct win prediction and 180 tips for today’s matches. At PitchPredictions, we use accurate, mathematically computed data to help you bet smarter.";  
+        title = "Direct Win Predictions & 180 Tips for Today | Pitch Predictions";
+        meta_desc_content = "Direct win predictions and 180 tips for today’s matches, using accurate, mathematically computed data to help you make smarter football betting choices.";
         meta_keywords = "Direct Win Prediction, 180 tips today, Best football prediction site, Sure bet tips, Football betting tips, Expert match predictions, Accurate football predictions, Today match prediction";  
-        page_title = "Direct Win Predictions and Sure Betting Tips";  
+        page_title = "Direct Win Predictions Today: Sure Betting Tips & 180 Tips";
+
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/free-vip-tips-today")) { 
@@ -1015,17 +1017,17 @@ function MetaContent(){
                 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/must-win-teams-today")) { 
-        title = "Must Win Teams & 100% Safe Draws for Today";
-        meta_desc_content = "Get today's must win football teams and safe draw predictions. Our tips are backed by stats and expert data analysis to help you bet smarter.";
+        title = "Must Win Teams & Safe Draw Predictions Today | Pitch Predictions";
+        meta_desc_content = "Must win football tips and safe draw predictions for today, based on data-driven analysis and trusted insights across Africa, the USA, and more.";
         meta_keywords = "must win teams, safe draw prediction, football tips, accurate predictions";
-        page_title = "Must Win Teams for Today & Tomorrow";
+        page_title = "100 Must Win Teams and Sure Football Predictions";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
-    } else if (current_url.includes("tips/betwinner360")) { 
-        title = "Betwinner360 Football Predictions and Jackpot Tips";  
-        meta_desc_content = "Get Betwinner 360 predictions for today’s football matches with expert tips and mega jackpot insights. Reliable advice to help you make smarter betting choices.";  
+    } else if (current_url.includes("tips/betwinner360")) {        
+        title = "Betwinner360 Predictions & Football Betting Tips | Pitch Predictions";
+        meta_desc_content = "Betwinner 360 predictions with expert football betting tips and mega jackpot insights, designed to support smart and informed betting decisions.";
         meta_keywords = "Betwinner360 predictions, Betwinner360 tips, Betwinner360 football tips, Betwinner360 jackpot predictions, football betting advice, betting tips today";  
-        page_title = "Daily Betwinner360 Predictions";  
+        page_title = "Betwinner 360 Football Predictions and Betting Tips";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);         
     } else if (current_url.includes("tips/passion-predict")) { 
@@ -1050,11 +1052,11 @@ function MetaContent(){
         page_title = "SoccerVista Sure Win Football Predictions & Betting Tips Today";  
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
-    } else if (current_url.includes("tips/sokapedia")) { 
-        title = "Sokapedia Predictions – Daily Jackpot & Football Tips";
-        meta_desc_content = "Explore Sokapedia’s expert football predictions and jackpot tips. Get reliable insights to improve your betting decisions today.";
+    } else if (current_url.includes("tips/sokapedia")) {         
+        title = "Sokapedia Predictions & Jackpot Football Tips | Pitch Predictions";
+        meta_desc_content = "Sokapedia football predictions with jackpot and mega jackpot insights, offering clear analysis to support smarter betting decisions.";
         meta_keywords = "Sokapedia, football predictions, jackpot tips, soccer betting, daily betting advice";
-        page_title = "Sokapedia Jackpot Predictions & Expert Betting Tips";      
+        page_title = "Sokapedia Football Predictions and Jackpot Tips";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/solo-prediction")) { 
@@ -1065,11 +1067,11 @@ function MetaContent(){
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sure-tips")) { 
-        title = "Supatips Prediction Today and Sure Win Tips";  
-        meta_desc_content = "Get sure tips today with 100% sure tips today from SupaTips predictions. Access sure win tips, accurate football predictions, and daily betting insights to improve your success.";  
+        title = "Sure Tips Today | 100% Sure Football Predictions";
+        meta_desc_content = "Get SupaTips predictions and sure win tips for today's football matches. Improve your betting strategy with expert analysis and accurate predictions.";
         meta_keywords = "sure tips today, 100% sure tips today, SupaTips predictions, sure win tips, accurate football predictions, daily betting insights";  
-        page_title = "Supatips Mega Jackpot Prediction";  
-
+        page_title = "Supatips Predictions and Mega Jackpot Tips";
+        
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/take-the-risk")) { 
         title = "Big Odds Predictions | High Risk Betting Tips for Big Wins";  
@@ -1086,10 +1088,10 @@ function MetaContent(){
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/tips180")) { 
-        title = "180 Tips Prediction – Sure Football Tips for Today";
-        meta_desc_content = "Get today’s 180 tips predictions with trusted football insights and betting advice from Pitch Predictions.";
+        title = "180 Tips Predictions & Football Insights | Pitch Predictions";
+        meta_desc_content = "Discover 180 Tips predictions and football strategies to help you analyze matches and improve your betting decisions.";
         meta_keywords = "180 tips prediction, sure football tips, football predictions today, betting advice";
-        page_title = "Today’s 180 Tips & Football Predictions";
+        page_title = "180 Tips Sure Football Predictions";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/victor-predict")) { 
@@ -1109,18 +1111,18 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url.includes("tips/100-percent-winning-tips")){
-        title = "100 Percent Winning Tips Today";
-        meta_desc_content = "Get today’s most trusted football predictions on Pitch Predictions. Our 100% winning tips include correct score insights, helping you make confident betting decisions.";
+        title = "100 Percent Winning Tips & Football Predictions | Pitch Predictions";
+        meta_desc_content = "Explore 100 percent winning tips and accurate football predictions from Pitch Predictions. Detailed match analysis helps you make informed betting choices.";
         meta_keywords = "100 percent winning tips, 100 percent winning tips today, 100 percent winning tips correct score, today 100 percent winning tips, Pitch Predictions football tips";
-        page_title = "Todays 100% Winning Tips";
+        page_title = "Accurate Football Predictions and Winning Tips";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url.includes("tips/feedinco")){
-        title = "Feedinco Football Tips and Jackpot Prediction";
-        meta_desc_content = "Get daily football tips and jackpot predictions inspired by Feedinco, including correct scores and winning insights — all free on Pitch Predictions.";
+        title = "Feedinco Football Predictions & Jackpot Tips | Pitch Predictions";
+        meta_desc_content = "Get Feedinco football predictions and jackpot tips, including match analysis and correct score insights to help you make smarter betting decisions.";
         meta_keywords = "feedinco, feedinco tips, feedinco predictions, feedinco jackpot, feedinco correct score, Pitch Predictions feedinco";
-        page_title = "Feedinco Football Tips and Free Jackpot Predictions";
+        page_title = "Feedinco Football Predictions and Jackpot Insights";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
@@ -1133,35 +1135,35 @@ function MetaContent(){
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if(current_url ==="jackpot-predictions"){
-        title = "Accurate Jackpot Prediction and Free Tips";
-        meta_desc_content = "Get free weekly jackpot predictions and expert tips for SportPesa, Betika, and more. Accurate insights to help boost your winning chances.";
-        meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips, SportPesa mega jackpot analysis";
-        page_title = "All Jackpot Predictions with Bonus Tips";
+        title = "All Jackpot Prediction & SportPesa Mega Tips";
+        meta_desc_content = "Access free Jackpot predictions, including SportPesa Mega 17 games and Betika Midweek tips. Our Games are mathematically analyzed for high winning confidence.";
+        meta_keywords = "jackpot predictions, Mega Jackpot predictions, SportPesa jackpot prediction, Betika jackpot prediction, free jackpot tips, midweek jackpot tips, accurate football tips";
+        page_title = "Pitch Jackpot Predictions, Tips and Weekly Bonuses";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-mega-jackpot-predictions") {
-        title = "Free SportPesa Mega Jackpot Predictions – 17 Games";
-        meta_desc_content = "Get this week’s SportPesa Mega Jackpot 17-game predictions for free. Expert analysis to improve your winning chances and bonuses.";
+        title = "Sportpesa Mega Jackpot Predictions for 17 Games this weekend";
+        meta_desc_content = "Get Sportpesa Mega Jackpot predictions for the weekend, covering all 17 games. Matches are analyzed mathematically to guide better jackpot choices.";
         meta_keywords = "SportPesa Mega Jackpot tips, SportPesa predictions, Mega Jackpot analysis, football jackpot tips, SportPesa betting advice";
-        page_title = "SportPesa Mega Jackpot Tips and Prediction";
+        page_title = "Accurate Sportpesa Mega Jackpot Predictions";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/forebet-mega-jackpot-prediction") {
-        title = "Forebet Mega Jackpot Predictions & Expert Tips - This Weekend's Games";
-        meta_desc_content = "Unlock winning potential with our Forebet Mega Jackpot predictions. We provide expert analysis and tips for all 17 games to help you make smarter picks and increase your chances of a payout.";
-        meta_keywords = "Forebet Mega Jackpot Prediction, Forebet Sportpesa Mega Jackpot Prediction, Mega Jackpot tips today, Forebet football tips, Forebet Mega Jackpot this weekend";
-        page_title = "Forebet Sportpesa Mega Jackpot Predictions";
+        title = "Forebet Mega Jackpot Predictions – 17 Weekend Matches";
+        meta_desc_content = "Forebet Mega Jackpot predictions for all 17 games this weekend. Each match is analyzed mathematically to guide informed jackpot selections.";
+        meta_keywords = "forebet mega jackpot predictions, forebet sportpesa mega jackpot predictions, forebet mega jackpot prediction, sportpesa mega jackpot forebet, forebet mega jackpot this weekend";
+        page_title = "Forebet Mega Jackpot Match Predictions";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-midweek-jackpot-predictions") {
-        title = "Free SportPesa Midweek Jackpot Predictions & Tips";
-        meta_desc_content = "Get SportPesa Midweek Jackpot predictions and free betting tips. Expert insights and match stats to boost your chances of winning this week.";
-        meta_keywords = "SportPesa Midweek Jackpot tips, Midweek Jackpot predictions, football betting insights, SportPesa stats, accurate predictions";
-        page_title = "SportPesa Midweek Jackpot Tips and Prediction";
-    
+        title = "Mathematical Sportpesa Midweek Jackpot predictions";
+        meta_desc_content = "SportPesa Midweek Jackpot predictions for this week. Matches are analyzed to provide clear insights and improve your jackpot selections.";
+        meta_keywords = "sportpesa midweek jackpot predictions, sportpesa midweek jackpot tips, midweek jackpot football predictions, sportpesa match analysis, accurate jackpot predictions";
+        page_title = "SportPesa Midweek Jackpot Predictions";
+
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/betika-midweek-jackpot-predictions") {
