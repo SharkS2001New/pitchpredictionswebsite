@@ -88,8 +88,11 @@ function Footer(){
             <div className="col-12 mb-0">
                 <h5 className="text-center mb-3">Sponsors</h5>
                 <ul className="sponsors-list">
-                    <li className="mb-0"><a target="_blank" href="https://www.authorandrewsmith.com">Xoilac xem bong da</a></li>
-                    <li className="mb-0"><a target="_blank" href="https://www.docandrewmurray.com">Socolive truc tiep bong da</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.authorandrewsmith.com">Xoilac xem bong da</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.docandrewmurray.com">Socolive truc tiep bong da</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://ok365.shop">trang chủ OK365</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://69vn.ph">trang chủ 69VN</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://79king.reisen">trang chủ 79King</a></li>
                 </ul>
             </div>
         </div>
