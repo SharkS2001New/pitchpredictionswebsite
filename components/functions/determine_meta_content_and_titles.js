@@ -1020,7 +1020,32 @@ function MetaContent(){
         meta_keywords = "must win teams, safe draw prediction, football tips, accurate predictions";
         page_title = "Must Win Teams for Today & Tomorrow";
         
-        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);  
+        
+    } else if (current_url.includes("tips/sure-win-prediction-today")) { 
+        title = "Sure Win Prediction Today";        
+        meta_desc_content = "Get sure win predictions today with simple football picks, clear odds, and match selections based on recent form and results.";
+        meta_keywords = "sure win prediction today, sure win tips today, football sure wins, free sure win predictions, accurate football tips";
+        page_title = "Free Sure Win Prediction Today";
+        
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if (current_url.includes("tips/everyday-winning-tips")) { 
+        title = "Everyday Winning Tips Today - Pitch Predictions";        
+        meta_desc_content = "Get free everyday winning tips today with smart football predictions, high-probability picks, and data-backed match insights to help you place better bets daily.";
+        meta_keywords = "everyday winning tips, everyday winning tips today, free everyday winning tips, football predictions, daily football tips, winning tips today";
+        page_title = "Free Winning Tips for Today & Tomorrow";
+        
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if (current_url.includes("tips/5-sure-odds-today")) { 
+        title = "Daily 5 Sure Odds Football Tips";        
+        meta_desc_content = "Get 5 sure odds today with carefully selected football matches, realistic odds, and simple picks built for daily betting confidence.";
+        meta_keywords = "5 sure odds today, sure odds today, 5 odds prediction, football odds tips, daily sure odds, free 5 odds tips";
+        page_title = "5 Sure Odds Today";
+        
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
     } else if (current_url.includes("tips/betwinner360")) { 
         title = "Betwinner360 Football Predictions and Jackpot Tips";  
         meta_desc_content = "Get Betwinner 360 predictions for today’s football matches with expert tips and mega jackpot insights. Reliable advice to help you make smarter betting choices.";  
