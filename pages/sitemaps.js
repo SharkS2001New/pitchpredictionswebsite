@@ -289,6 +289,18 @@ function SitemapsPage() {
         <li><a href="/tips/prediction-vitibet-adibet">Prediction Vitibet Adibet</a></li>
         <li><a href="/tips/soccervista-prediction">Soccervista Prediction</a></li>
         <li><a href="/tips/sokapedia">Sokapedia</a></li>
+        <li><a href="/1x2-betting-tips">1x2 betting tips</a></li>
+        <li><a href="/tips/24-prediction-today">24 prediction today</a></li>
+        <li><a href="/tips/55-sure-winning-tips-today">55 sure winning tips today</a></li>
+        <li><a href="/tips/90-accurate-football-predictions">90 accurate football predictions</a></li>
+        <li><a href="/tips/99-accurate-prediction-site">99 accurate prediction site</a></li>
+        <li><a href="/tips/100-sure-wins-only">100 sure wins only</a></li>
+        <li><a href="/tips/accumulator-tips">Accumulator tips</a></li>
+        <li><a href="/tips/banker-of-the-day">Banker of the day</a></li>
+        <li><a href="/tips/best-prediction-site">Best Prediction Site</a></li>
+        <li><a href="/tips/fizzley-tips">Fizzley tips</a></li>
+        <li><a href="/tips/king-prediction">King Prediction</a></li>
+        <li><a href="/tips/odd-4-sure-wins">Odd 4 sure wins</a></li>
         <li><a href="/tips/solo-prediction">Solo Prediction</a></li>
         <li><a href="/tips/sure-tips">Sure Tips</a></li>
         <li><a href="/tips/take-the-risk">Take the risk</a></li>
@@ -300,6 +312,7 @@ function SitemapsPage() {
         <li><a href="/tips/feedinco">Feedinco</a></li>
         <li><a href="/tips/one-million-prediction">One million prediction</a></li>
         <li><a href="/jackpot-predictions">Jackpots</a></li>
+        <li><a href="/jackpot-predictions/forebet-midweek-jackpot-predictions">Forebet midweek jackpot predictions</a></li>
       </ul>
     </div>
 

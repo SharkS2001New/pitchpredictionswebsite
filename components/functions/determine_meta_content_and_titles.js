@@ -1023,26 +1023,26 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);  
         
     } else if (current_url.includes("tips/sure-win-prediction-today")) { 
-        title = "Sure Win Prediction Today";        
-        meta_desc_content = "Get sure win predictions today with simple football picks, clear odds, and match selections based on recent form and results.";
-        meta_keywords = "sure win prediction today, sure win tips today, football sure wins, free sure win predictions, accurate football tips";
-        page_title = "Free Sure Win Prediction Today";
-        
+        title = "Sure win Prediction Today and Tomorrow";
+        meta_desc_content = "Get sure win prediction today with football tips and correct score picks. Follow match insights from Pitch Predictions to improve your betting choices.";
+        meta_keywords = "sure win prediction today, sure win prediction today correct score, football tips, match predictions, correct score picks";
+        page_title = "Sure Win Predictions Today – Correct Score Picks";
+
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url.includes("tips/everyday-winning-tips")) { 
-        title = "Everyday Winning Tips Today - Pitch Predictions";        
-        meta_desc_content = "Get free everyday winning tips today with smart football predictions, high-probability picks, and data-backed match insights to help you place better bets daily.";
-        meta_keywords = "everyday winning tips, everyday winning tips today, free everyday winning tips, football predictions, daily football tips, winning tips today";
-        page_title = "Free Winning Tips for Today & Tomorrow";
+        title = "Everyday Winning Tips Today";
+        meta_desc_content = "Get everyday winning tips today with 1X2 and accumulator picks from Pitch Predictions. Make smarter football bets with reliable match selections";
+        meta_keywords = "everyday winning tips, everyday winning tips today, free everyday winning tips, football predictions, daily football tips";
+        page_title = "Everyday Winning Tips";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url.includes("tips/5-sure-odds-today")) { 
-        title = "Daily 5 Sure Odds Football Tips";        
-        meta_desc_content = "Get 5 sure odds today with carefully selected football matches, realistic odds, and simple picks built for daily betting confidence.";
-        meta_keywords = "5 sure odds today, sure odds today, 5 odds prediction, football odds tips, daily sure odds, free 5 odds tips";
-        page_title = "5 Sure Odds Today";
+        title = "5 Sure Odds Today | Daily Football Tips";
+        meta_desc_content = "Get 5 sure odds today with selected football matches, realistic predictions, and simple picks to improve your daily betting.";
+        meta_keywords = "5 sure odds today, sure odds today, 5 odds prediction, football odds tips, daily sure odds";
+        page_title = "5 Sure Odds Today – Football Tips";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
@@ -1156,12 +1156,108 @@ function MetaContent(){
         page_title = "One Million Prediction Tips for Today and Tomorrow";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
+    // New pages
+    } else if(current_url.includes("1x2-betting-tips")){
+        title = "1X2 Betting Tips Today";
+        meta_desc_content = "Get reliable 1X2 betting tips today with well-analyzed match predictions. Explore home win, draw, and away win tips to support smarter betting decisions.";
+        meta_keywords = "1x2 betting tips, 1x2 betting tips today, 1x2 betting tips prediction, 1x2 match predictions, 1x2 tips today";
+        page_title = "1X2 Betting Tips and Match Predictions for Today";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/24-prediction-today")){
+        title = "24 Prediction Tips for Today";
+        meta_desc_content = "Get 24 prediction today with football match tips and correct score picks. View today’s 24 predictions for league and cup games with updated selections.";
+        meta_keywords = "24 prediction today, football 24 prediction today, 24 prediction today correct score, 24 match predictions today";
+        page_title = "24 Predictions Today and Correct Score Tips";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/55-sure-winning-tips-today")){
+        title = "55 Sure Winning Tips Today";
+        meta_desc_content = "Get 55 sure winning tips with football match predictions for today’s games. View selected tips for league and cup matches updated daily on Pitch Predictions";
+        meta_keywords = "55 sure winning tips today, 55 winning tips today, football 55 tips today, sure winning tips today";
+        page_title = "55 Sure Winning Tips Today";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/90-accurate-football-predictions")){
+        title = "90 Accurate Football Predictions";
+        meta_desc_content = "90 accurate football predictions with 1X2 picks and correct score tips. Get free football predictions for today’s league and cup matches on Pitch Predictions.";
+        meta_keywords = "90 accurate football predictions, 90 accurate football predictions 1x2, 90 accurate football predictions free, 90 accurate football predictions correct score";
+        page_title = "90 Accurate Football Predictions for Today";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/99-accurate-prediction-site")){
+        title = "99 Accurate Prediction, Tips and Match Picks";
+        meta_desc_content = "99 accurate prediction site for football tips, 1X2 predictions, and correct score picks. Get today’s top match predictions for leagues and cup games.";
+        meta_keywords = "99 accurate prediction site, 99 football tips, 99 accurate football predictions, 99 match predictions";
+        page_title = "99 Accurate Football Predictions and Tips";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/100-sure-wins-only")){
+        title = "100 Sure Wins Only";
+        meta_desc_content = "Get 100 sure wins only with top football tips. Access today’s 100 sure wins only correct score picks and increase your chances of winning.";
+        meta_keywords = "100 sure wins only, 100 sure wins only correct score, football 100 sure wins, match predictions, correct score tips";
+        page_title = "100 Sure Wins Only – Correct Score Tips";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/banker-of-the-day")){
+        title = "Banker of the day 1x2";
+        meta_desc_content = "Get the Banker of the Day with our top football pick. Check today’s match prediction and increase your chances of a winning bet.";
+        meta_keywords = "Banker of the Day, today’s football pick, football banker, match prediction, top football pick";
+        page_title = "Banker of the Day – Top Football Pick";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/best-prediction-site")){
+        title = "Best Prediction Site | 1X2, Double Chance & More";
+        meta_desc_content = "Pitch Predictions is the best prediction site in the world. Get 1X2 predictions, double chance, over/under tips, and both teams to score forecasts today.";
+        meta_keywords = "best prediction site, best prediction site in the world, 1X2 predictions, double chance tips, over/under predictions, both teams to score";
+        page_title = "Best Prediction Site – Football Predictions by Pitch Predictions";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/fizzley-tips")){
+        title = "Fizzley Tips | Pitch Predictions";
+        meta_desc_content = "Get Fizzley Tips with today’s sure wins and tomorrow’s football picks. Stay ahead with reliable match predictions and boost your chances of winning.";
+        meta_keywords = "fizzley tips, fizzley tips today sure wins, fizzley tips tomorrow, football tips, match predictions, sure wins today";
+        page_title = "Fizzley Tips – Today & Tomorrow Football Picks";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/king-prediction")){
+        title = "King Prediction Today";
+        meta_desc_content = "King Predictions brings you today’s football tips, including BTTS, win, and 1X2 picks. Simple match insights to help you choose better bets.";
+        meta_keywords = "king prediction, king prediction today, king prediction tips, king prediction 1x2, king prediction btts & win";
+        page_title = "King Prediction Tips 1x2";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/accumulator-tips")){
+        title = "Accumulator Tips for Today";
+        meta_desc_content = "Get football accumulator tips for today’s matches. These selections are designed to help you combine games with better balance and control.";
+        meta_keywords = "accumulator tips, accumulator tips today, sure accumulator tips, football accumulator tips";
+        page_title = "Football Accumulator Tips Today";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if(current_url.includes("tips/odd-4-sure-wins")){
+        title = "Odd 4 Sure Wins Today";
+        meta_desc_content = "Get Odds 4 sure wins for today with from pitch predictions. Carefully picked matches aimed at building a total odd of four with steady selections.";
+        meta_keywords = "odd 4 sure wins, odd 4 sure wins free, football odd 4 tips, odd 4 predictions";
+        page_title = "Odd 4 Sure Win Predictions";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url ==="jackpot-predictions"){
-        title = "Accurate Jackpot Prediction and Free Tips";
-        meta_desc_content = "Get free weekly jackpot predictions and expert tips for SportPesa, Betika, and more. Accurate insights to help boost your winning chances.";
-        meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips, SportPesa mega jackpot analysis";
-        page_title = "All Jackpot Predictions with Bonus Tips";
+        title = "Jackpot Prediction ▷ Free Tips and Bonuses for this week";
+        meta_desc_content = "Get all jackpot prediction and free tips for SportPesa, Betika, and more. Visit Pitch Predictions for daily and weekly picks to boost your winning chances.";
+        meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips";
+        page_title = "All Jackpot Predictions, Tips and Bonuses this Week";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
@@ -1187,9 +1283,17 @@ function MetaContent(){
         meta_keywords = "SportPesa Midweek Jackpot tips, Midweek Jackpot predictions, football betting insights, SportPesa stats, accurate predictions";
         page_title = "SportPesa Midweek Jackpot Tips and Prediction";
     
-        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title); 
 
-    } else if (current_url == "jackpot-predictions/betika-midweek-jackpot-predictions") {
+    } else if (current_url == "jackpot-predictions/forebet-midweek-jackpot-predictions") {
+        title = "Forebet Midweek Jackpot Prediction 13»X1212X1";
+        meta_desc_content = "Get Forebet midweek jackpot predictions for this week. Pitch Predictions shares match picks covering all 13 games in the current jackpot round.";
+        meta_keywords = "forebet midweek jackpot predictions, forebet jackpot predictions, forebet midweek jackpot predictions today";
+        page_title = "Forebet Midweek Jackpot Predictions Today";
+    
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title); 
+
+    } else if (current_url == "jackpot-predictions/betika-midweek-jackpot-predictions") { 
         title = "15M Betika Midweek Jackpot Predictions";
         meta_desc_content = "Get Betika Midweek Jackpot predictions with free expert tips and detailed match analysis. Improve your betting decisions with accurate stats from Pitch Predictions.";
         meta_keywords = "Betika Midweek Jackpot tips, Betika predictions, Midweek Jackpot stats, accurate Betika tips, football analysis";
