@@ -21,12 +21,7 @@ function OurPartners() {
                         <a href="https://fulltimeprediction.com/" target="_blank">
                             Full Time Prediction
                         </a>
-                    </li>  
-                    {/* <li>
-                        <a href="https://100percentsurewins.com/" target="_blank">
-                            100 percent winning tips 
-                        </a>
-                    </li>   */}
+                    </li>                  
                     <li>
                         <a href="https://www.futebolscore.com/" target="_blank">
                             Futebolscore 
@@ -86,10 +81,12 @@ function OurPartners() {
                     <li><a href="https://www.bettingtips.co.ke" target="blank">betting tips prediction</a></li>
                     <li><a href="https://acepredict.com" target="blank">Accurate football predictions</a></li>
                     <li><a href="https://www.feedinco.com" target="blank">Feedinco Betting Tips</a></li>
-                    <li><a href="https://www.geekinco.com" target="blank">Geekinco Betting Tips</a></li>
+                    <li><a href="https://www.geekinco.com" target="blank">Geekinco Betting Tips</a></li> 
                     <li><a href="https://todayspredict.com" target="blank">Today's Football Prediction</a></li>
                     <li><a href="https://tips100.com" target="blank">100 Sure Straight Wins</a></li>
                     <li><a href="https://socapredict.com" target="blank">Football Prediction website</a></li>
+                    <li><a href="https://100sure.com" target="blank">100 sure football predictions</a></li>
+                    <li><a href="https://100suretip.com/1x2-free-football-predictions" target="blank">1x2 free Football predictions</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>

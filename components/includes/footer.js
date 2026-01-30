@@ -70,6 +70,10 @@ function Footer(){
               <li className="nav-item mb-2"><a href="https://tipsxtra.com" target="_blank" className="nav-a p-0 text-light">Tipsxtra</a></li>
               <li className="nav-item mb-2"><a href="https://sportiya.com/raja-win678-com" target="_blank" className="nav-a p-0 text-light">Raja Win678.com</a></li>
               <li className="nav-item mb-2"><a href="https://forebetpredict.com" target="_blank" className="nav-a p-0 text-light">Forebet Predictions</a></li>
+              <li className="nav-item mb-2"><a href="https://sportiya.com/raja-win678-com" target="_blank" className="nav-a p-0 text-light">Raja Win678.com</a></li>
+              <li className="nav-item mb-2"><a href="https://forebetpredict.com/soccervista" target="_blank" className="nav-a p-0 text-light">Soccervista</a></li>
+              <li className="nav-item mb-2"><a href="https://thisweekpoolresult.com" target="_blank" className="nav-a p-0 text-light">This Week Pool Result</a></li>
+              <li className="nav-item mb-2"><a href="http://100percentwinnings.com" target="_blank" className="nav-a p-0 text-light">100 Percent Winning Tips</a></li>
             </ul>
           </div>
 
