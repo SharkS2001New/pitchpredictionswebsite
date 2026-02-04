@@ -87,6 +87,8 @@ function OurPartners() {
                     <li><a href="https://socapredict.com" target="blank">Football Prediction website</a></li>
                     <li><a href="https://100sure.com" target="blank">100 sure football predictions</a></li>
                     <li><a href="https://100suretip.com/1x2-free-football-predictions" target="blank">1x2 free Football predictions</a></li>
+                    <li><a href="https://www.mwanasoka.co.ke" target="blank">Check predictions on Mwanasoka</a></li>
+                    <li><a href="https://www.statarea.co.ke" target="blank">View today’s tips on Statarea</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>
