@@ -38,8 +38,11 @@ export default function Document() {
         <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" async crossOrigin="true"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" async crossOrigin="true"></script>
        {/**Taifa Bet */}
-       <Script src="https://tafatips.com/tafatips-popup-ads.js"/>
-       {/* 1XBet Script  */}
+      <Script
+        src="https://tafatips.com/tafatips-popup-ads.js"
+        strategy="afterInteractive"
+      />       
+      {/* 1XBet Script  */}
         {/* <Script
             id="ftd-agency-script"
             strategy="afterInteractive"
