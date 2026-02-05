@@ -18,8 +18,7 @@ import SideNavBar from '../components/includes/sidenav';
 import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
-// import Starz888PopupBanner from '../components/shared/Starz888PopupBanner';
-import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
+// import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -114,10 +113,9 @@ function App({ Component, pageProps }) {
                     <div style={{marginTop: "0px"}}>
                       <Component {...pageProps} />
                     </div>
-                    {/* <Starz888PopupBanner/> */}
 
                     {/**1xbet click under ads */}
-                    {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />}
+                    {/* {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />} */}
 
                   </div>    
                   {!isAuthPage && 
