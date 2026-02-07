@@ -8,22 +8,15 @@ import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
-import getGithubSiteContent from "../../components/functions/GithubPagesContent";
+import Over25GoalsContent from "../../components/seo-content/mainpages/predictions-under-over";
 
 function TodaysFixturesOverUnder25(){     
     let todays_date = getFormattedCurrentDate();
-    const[seo_content, setSeoContent] = useState([]);
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_todays_games?fixture_date="+todays_date);
 
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/predictions-under-over.md").then(data => {  
-            setSeoContent(data.page_content);
-        })    
-    },[])
     
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -68,7 +61,7 @@ function TodaysFixturesOverUnder25(){
                 <br/> 
                 <div className="">
                     <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
+                        <Over25GoalsContent/>
                     </div>
                 </div>
             </div>

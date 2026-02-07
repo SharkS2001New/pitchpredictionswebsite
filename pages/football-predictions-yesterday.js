@@ -5,24 +5,16 @@ import DataNotFoundPage from "../components/includes/datanotfound";
 import React, {useState, useEffect} from "react";
 import { useRouter } from 'next/router';
 import getFormattedYesterdayDate from "../components/functions/GetYesterdaysDate";
-import getGithubSiteContent from "../components/functions/GithubPagesContent";
-import SeoContentDisplay from "../components/shared/seo_content_display";
 import FilterYesterdayOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions-yesterday/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
+import YesterdayFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-yesterday";
 
 function YesterdayFixtures(){
     let yesterdays_date = getFormattedYesterdayDate();
-    const [seo_content, setSeoContent] = useState([]);
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_yesterday_games?fixture_date="+yesterdays_date);
-
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/football-predictions-yesterday.md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){ 
@@ -62,7 +54,7 @@ function YesterdayFixtures(){
                     <br/>   
                     <div className="">
                         <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
+                            <YesterdayFootballPredictionsContent/>
                         </div>
                     </div>
                 </div>

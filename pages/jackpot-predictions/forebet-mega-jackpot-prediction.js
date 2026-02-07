@@ -3,20 +3,11 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import React, { useEffect, useState } from "react";
-import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 import { useRouter } from 'next/router'
 import { Adsense } from "@ctrl/react-adsense";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
 
 function SportpesaMegaJackpotPredictions(){         
     const router = useRouter();
-    const [seo_content, setSeoContent] = useState([]);
-     
-    useEffect(()=>{
-        getGithubSiteContent(router.pathname.substring(1)+".md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Mega Jackpot");
@@ -38,12 +29,12 @@ function SportpesaMegaJackpotPredictions(){
                     layout="display"
                     format="auto"
                 />   
-                 <br/>   
+                 {/* <br/>   
                 <div className="">
                     <div className="container">
                         <SeoContentDisplay props={seo_content}/>
                     </div>
-                </div>         
+                </div>          */}
             </div>
             )
     }else{
@@ -63,12 +54,12 @@ function SportpesaMegaJackpotPredictions(){
                         layout="display"
                         format="auto"
                     /> 
-                    <br/>   
+                    {/* <br/>   
                     <div className="">
                         <div className="container">
                             <SeoContentDisplay props={seo_content}/>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             )
         }

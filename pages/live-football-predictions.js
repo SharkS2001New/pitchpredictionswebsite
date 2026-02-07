@@ -5,25 +5,17 @@ import React,{ useEffect, useState } from "react";
 import { useRouter } from 'next/router'
 import DataNotFoundPage from "../components/includes/datanotfound";
 import getFormattedCurrentDate from "../components/functions/GetTodaysDate";
-import SeoContentDisplay from "../components/shared/seo_content_display";
-import getGithubSiteContent from "../components/functions/GithubPagesContent";
 import FilterTodaysMatchesLiveUpcomingFinished from "../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterLiveOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/live-football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
+import LivescoresContent from "../components/seo-content/mainpages/live-football-predictions";
 
 function LiveFixtures(){
-    const [seo_content, setSeoContent] = useState([]);
     let todays_date = getFormattedCurrentDate(); 
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_live_games?fixture_date="+todays_date);
-      
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/live-football-predictions.md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -45,7 +37,7 @@ function LiveFixtures(){
                 <br/>   
                 <div className="">
                     <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
+                        <LivescoresContent/>
                     </div>
                 </div>
             </div>
@@ -82,7 +74,7 @@ function LiveFixtures(){
                     <br/>   
                     <div className="">
                         <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
+                            <LivescoresContent/>
                         </div>
                     </div>
                 </div>

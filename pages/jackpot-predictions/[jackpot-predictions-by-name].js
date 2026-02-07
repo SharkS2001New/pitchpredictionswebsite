@@ -2,7 +2,6 @@ import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-// import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 import React,{useEffect,useState} from "react";
 import { useRouter } from 'next/router';
 import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
@@ -10,14 +9,6 @@ import { Adsense } from "@ctrl/react-adsense";
 
 function JackpotByNamePredictions(){    
     const router = useRouter(); //fetch page link data
-
-    // const [seo_content, setSeoContent] = useState([]);
-     
-    // useEffect(()=>{
-    //     getGithubSiteContent(router.pathname.substring(1)+".md").then(data => {  
-    //         setSeoContent(data.page_content);
-    //     })   
-    // },[])
  
     const jackpot_name = ReturnJackpotNameSavedInDB(router.asPath.substring(1));
     
@@ -41,12 +32,6 @@ function JackpotByNamePredictions(){
                     layout="display"
                     format="auto"
                 /> 
-                <br/> 
-                {/* <br/>
-                {seo_content !== undefined ? 
-                    <SeoContentDisplay props={seo_content}/>
-                    : <></>
-                } */}
             </div>
             )
     }else{
@@ -68,10 +53,6 @@ function JackpotByNamePredictions(){
                         format="auto"
                         /> 
                     : <></> }
-                    {/* {seo_content !== undefined ? 
-                        <SeoContentDisplay props={seo_content}/>
-                        : <></>
-                    } */} 
                 </div>
             )
         }

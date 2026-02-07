@@ -5,10 +5,9 @@ import RenderData from "../components/shared/render_fixtures_data";
 import FormatedDate from "../components/functions/format_date_function";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../components/includes/datanotfound";
-import getGithubSiteContent from "../components/functions/GithubPagesContent";
-import SeoContentDisplay from "../components/shared/seo_content_display";
 import FilterTomorrowsOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions-tomorrow/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
+import TomorrowFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-tomorrow";
 
 function TommorrowFixtures(){
     const [seo_content, setSeoContent] = useState([]);
@@ -17,12 +16,6 @@ function TommorrowFixtures(){
 
     // Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_fixtures_by_date?fixture_date="+tommorrows_date);
-
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/football-predictions-tomorrow.md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -61,7 +54,7 @@ function TommorrowFixtures(){
                     <br/>   
                     <div className="">
                         <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
+                            <TomorrowFootballPredictionsContent/>
                         </div>
                     </div>
                 </div>

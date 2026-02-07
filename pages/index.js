@@ -1,27 +1,19 @@
 import React,{useState, useEffect} from "react";
 import getFormattedCurrentDate from '../components/functions/GetTodaysDate';
-import getGithubSiteContent from '../components/functions/GithubPagesContent';
 import DataNotFoundPage from '../components/includes/datanotfound';
 import PreLoader from '../components/includes/loader';
 import PagesMatchPredictionDetails from '../components/shared/pages_match_predictions_details';
 import RenderData from '../components/shared/render_fixtures_data';
-import SeoContentDisplay from '../components/shared/seo_content_display';
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
 import ShortBlogPosts from "../components/shared/short-blog-posts";
+import LandingPageContent from "../components/seo-content/mainpages/landing-page";
 
 export default function Home() {
   let todays_date = getFormattedCurrentDate();
-  const[seo_content, setSeoContent] = useState([]);
 
   //Call the predictions function
   var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date="+todays_date);
-
-  useEffect(()=>{
-      getGithubSiteContent("mainpages/landing-page.md").then(data => {  
-          setSeoContent(data.page_content);
-      })   
-  },[])
 
   //If data is completly loaded. Display, Else, Show preloader
   if(renderPredictions[0].endpointStatus === ""){
@@ -61,7 +53,7 @@ export default function Home() {
             <br/>  
             <div className="">
                 <div className="container">
-                    <SeoContentDisplay props={seo_content}/>
+                    <LandingPageContent/>
                 </div>
             </div>
         </div>

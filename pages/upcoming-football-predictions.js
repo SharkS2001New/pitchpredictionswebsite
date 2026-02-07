@@ -5,25 +5,17 @@ import DataNotFoundPage from "../components/includes/datanotfound";
 import React,{useEffect,useState} from 'react';
 import { useRouter } from 'next/router'
 import getFormattedCurrentDate from "../components/functions/GetTodaysDate";
-import SeoContentDisplay from "../components/shared/seo_content_display";
-import getGithubSiteContent from "../components/functions/GithubPagesContent";
 import FilterTodaysMatchesLiveUpcomingFinished from "../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterUpcomingOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/upcoming-football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
+import UpcomingFootballPredictionsContent from "../components/seo-content/mainpages/upcoming-football-predictions";
 
 function UpcomingFixtures(){
     let todays_date = getFormattedCurrentDate();
-    const [seo_content, setSeoContent] = useState([]);
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function and process response data
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_incoming_fixtures?fixture_date="+todays_date);
-
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/upcoming-football-predictions.md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -70,7 +62,7 @@ function UpcomingFixtures(){
                     <br/>   
                     <div className="">
                         <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
+                            <UpcomingFootballPredictionsContent/>
                         </div>
                     </div>
                 </div>

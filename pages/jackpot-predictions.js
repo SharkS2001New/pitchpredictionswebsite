@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import getJackpotNameFromSlug from '../components/functions/GetJackpotName';
-import getGithubSiteContent from '../components/functions/GithubPagesContent';
-import SeoContentDisplay from '../components/shared/seo_content_display';
 import ReturnSlugFromJackpotName from '../components/functions/getJackpotNameFromSlug';
 import { Adsense } from "@ctrl/react-adsense";
+import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpots-landing-page';
 
 function JackpotPages() {
     const slugs = [
@@ -73,7 +72,6 @@ function JackpotPages() {
   );
 
   const [activeJackpots, setActiveJackpots] = useState([]);
-  const [seoContent, setSeoContent] = useState([]);
 
   const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }; // This is the authorization header from the api.pitchpredictions.com
 
@@ -81,9 +79,6 @@ function JackpotPages() {
     if (searchTerm.trim() === '') {
       getActiveJackpots();
     }
-    getGithubSiteContent("jackpots/jackpots-landing-page.md").then((data) => {
-      setSeoContent(data.page_content);
-    });
   }, [searchTerm]);
 
   const getActiveJackpots = async () => {
@@ -166,7 +161,7 @@ function JackpotPages() {
       <br/>   
       <div className="">
         <div className="container">
-          <SeoContentDisplay props={seoContent} />
+          <JackpotPredictionsContent/>
         </div>
       </div>
     </div>
