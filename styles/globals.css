@@ -1485,3 +1485,29 @@ ins.adsbygoogle[data-ad-status=unfilled] {
 .sponsors-list li a:hover {
   text-decoration: underline;
 }
+
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #B11111, #dc3545);
+  }
+  .bg-gradient-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+  }
+  .bg-gradient-info {
+    background: linear-gradient(45deg, #17a2b8, #0dcaf0);
+  }
+  .bg-gradient-dark {
+    background: linear-gradient(45deg, #343a40, #212529);
+  }
+
+    .social-share-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
