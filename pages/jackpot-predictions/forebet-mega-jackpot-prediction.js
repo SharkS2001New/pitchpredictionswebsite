@@ -29,12 +29,6 @@ function SportpesaMegaJackpotPredictions(){
                     layout="display"
                     format="auto"
                 />   
-                 {/* <br/>   
-                <div className="">
-                    <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
-                    </div>
-                </div>          */}
             </div>
             )
     }else{
@@ -54,12 +48,6 @@ function SportpesaMegaJackpotPredictions(){
                         layout="display"
                         format="auto"
                     /> 
-                    {/* <br/>   
-                    <div className="">
-                        <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
-                        </div>
-                    </div> */}
                 </div>
             )
         }

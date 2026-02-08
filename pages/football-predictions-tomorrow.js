@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React from "react";
 import { useRouter } from 'next/router';
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
@@ -10,7 +10,6 @@ import { Adsense } from "@ctrl/react-adsense";
 import TomorrowFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-tomorrow";
 
 function TommorrowFixtures(){
-    const [seo_content, setSeoContent] = useState([]);
     const tommorrows_date = FormatedDate(1);
     const router = useRouter(); //fetch page link data
 

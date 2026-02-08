@@ -39,8 +39,8 @@ function App({ Component, pageProps }) {
     "/top-football-tips-and-predictions/today",
   ];
 
-  // Only render if NOT excluded
-  const shouldShowAd = !excludedRoutes.includes(path);
+  // 1xBet Click under Only render if NOT excluded
+  // const shouldShowAd = !excludedRoutes.includes(path);
 
   return (
     <React.Fragment>

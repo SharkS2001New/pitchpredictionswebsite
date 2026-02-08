@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from "react";
+import React from "react";
 import getFormattedCurrentDate from '../components/functions/GetTodaysDate';
 import DataNotFoundPage from '../components/includes/datanotfound';
 import PreLoader from '../components/includes/loader';

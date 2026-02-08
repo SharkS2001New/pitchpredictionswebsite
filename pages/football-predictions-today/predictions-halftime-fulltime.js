@@ -8,7 +8,7 @@ import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
+import SeoContentDisplay from "../../components/shared/seo_content_display1";
 import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 
 function TodaysFixturesHTFT(){     

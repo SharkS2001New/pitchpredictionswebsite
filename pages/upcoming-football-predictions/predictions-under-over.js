@@ -5,7 +5,7 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import React,{useEffect,useState} from 'react';
 import { useRouter } from 'next/router'
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
+import SeoContentDisplay from "../../components/shared/seo_content_display1";
 import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterUpcomingOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/upcoming-football-predictions/filter-pred1x2-ov-un-dc-ht-ft";

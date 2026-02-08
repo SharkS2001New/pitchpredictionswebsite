@@ -5,26 +5,16 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import DateofWeekend from "../../components/functions/compute_weekend_dates";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
-import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 import FilterWeekendOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-weekend/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
 
 function WeekendFixtures(){
     //get weekends date
     const dates = DateofWeekend();
-    const [seo_content, setSeoContent] = useState([]);
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_weekend_fixtures?saturday_date="+dates[0]+"&sunday_date="+dates[1]);
-
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/football-predictions-weekend.md").then(data => {  
-            setSeoContent(data.page_content);
-        })   
-    },[])
-
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -60,12 +50,6 @@ function WeekendFixtures(){
                         layout="display"
                         format="auto"
                     /> 
-                    <br/> 
-                    <div className="">
-                        <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
-                        </div>
-                    </div>
                 </div>
             )
         }

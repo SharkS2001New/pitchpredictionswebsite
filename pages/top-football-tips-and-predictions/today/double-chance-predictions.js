@@ -2,28 +2,19 @@ import PreLoader from "../../../components/includes/loader";
 import RenderData from "../../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../../components/includes/datanotfound";
-import React,{useState, useEffect} from "react";
+import React from "react";
 import { useRouter } from 'next/router'
 import getFormattedCurrentDate from "../../../components/functions/GetTodaysDate";
 import FiltersTopFootballPredictions from "../../../components/shared/filters-top-football-predictions";
 import FilterTodaysTopOverallDoubleChanceUnderOverHTFTPred1x2 from "../../../components/top-football-tips-and-predictions/today/filter-pred1x2-ov-un-dc-ht-ft";
-// import getGithubSiteContent from "../../components/functions/GithubPagesContent";
-// import SeoContentDisplay from "../../components/shared/seo_content_display";
 import { Adsense } from "@ctrl/react-adsense";
 
 function TopFootballFixturesToday(){     
     let todays_date = getFormattedCurrentDate();
     const router = useRouter(); //fetch page link data
-    // const[seo_content, setSeoContent] = useState([]);
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date="+todays_date);
-
-    // useEffect(()=>{
-    //     getGithubSiteContent("mainpages/football-predictions-today.md").then(data => {  
-    //         setSeoContent(data.page_content);
-    //     })   
-    // },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -65,13 +56,6 @@ function TopFootballFixturesToday(){
                     layout="display"
                     format="auto"
                 /> 
-                <br/> 
-                {/* <br/>
-                <div className="">
-                    <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
-                    </div>
-                </div> */}
             </div>
         )
     }

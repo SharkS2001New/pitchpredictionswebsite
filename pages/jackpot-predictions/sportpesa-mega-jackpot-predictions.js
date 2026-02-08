@@ -2,7 +2,7 @@ import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from 'next/router'
 import { Adsense } from "@ctrl/react-adsense";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";

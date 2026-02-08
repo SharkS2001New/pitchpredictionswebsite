@@ -28,12 +28,6 @@ function SportpesaMidweekJackpotPredictions(){
                     layout="display"
                     format="auto"
                 /> 
-                 {/* <br/>   
-                <div className="">
-                    <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
-                    </div>
-                </div> */}
             </div>
             )
     }else{
@@ -53,12 +47,6 @@ function SportpesaMidweekJackpotPredictions(){
                         layout="display"
                         format="auto"
                     /> 
-                    <br/>   
-                    {/* <div className="">
-                        <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
-                        </div>
-                    </div>                 */}
                 </div>
             )
         }

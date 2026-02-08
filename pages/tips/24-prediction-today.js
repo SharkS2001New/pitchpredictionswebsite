@@ -5,7 +5,7 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import React,{useState,useEffect} from "react";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import getGithubSiteContent from "../../components/functions/GithubPagesContent";
-import SeoContentDisplay from "../../components/shared/seo_content_display";
+import SeoContentDisplay from "../../components/shared/seo_content_display1";
 import { useRouter } from "next/router";
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../../components/shared/popular_tips_display";

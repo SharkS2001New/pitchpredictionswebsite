@@ -61,17 +61,7 @@ function Footer(){
               <li className="nav-item mb-2"><a href="/football-predictions-tomorrow" className="nav-a p-0 text-light">Football Predictions for tomorrow</a></li>
               <li className="nav-item mb-2"><a href="/football-predictions-weekend" className="nav-a p-0 text-light">Football Predictions for the Weekend</a></li>
               <li className="nav-item mb-2"><a href="/jackpot-predictions" className="nav-a p-0 text-light">Jackpot Predictions</a></li>
-              <li className="nav-item mb-2"><a href="/sitemaps" className="nav-a p-0 text-light">Sitemaps</a></li> 
-              <li className="nav-item mb-2"><a href="https://www.bettingtips.co.ke" target="_blank" className="nav-a p-0 text-light">Betting tips</a></li> 
-              <li className="nav-item mb-2"><a href="https://www.feedinco.com" target="_blank" className="nav-a p-0 text-light">Feedinco Betting tips</a></li> 
-              <li className="nav-item mb-2"><a href="https://www.betrekatips.com" target="_blank" className="nav-a p-0 text-light">Betrekatips</a></li>
-              <li className="nav-item mb-2"><a href="https://todayspredict.com" target="_blank" className="nav-a p-0 text-light">Today's Football Prediction</a></li>
-              <li className="nav-item mb-2"><a href="https://tips100.com" target="_blank" className="nav-a p-0 text-light">100 Sure Straight Wins</a></li>
-              <li className="nav-item mb-2"><a href="https://tipsxtra.com" target="_blank" className="nav-a p-0 text-light">Tipsxtra</a></li>
-              <li className="nav-item mb-2"><a href="https://sportiya.com/raja-win678-com" target="_blank" className="nav-a p-0 text-light">Raja Win678.com</a></li>
-              <li className="nav-item mb-2"><a href="https://forebetpredict.com/soccervista" target="_blank" className="nav-a p-0 text-light">Soccervista</a></li>
-              <li className="nav-item mb-2"><a href="https://thisweekpoolresult.com" target="_blank" className="nav-a p-0 text-light">This Week Pool Result</a></li>
-              <li className="nav-item mb-2"><a href="http://100percentwinnings.com" target="_blank" className="nav-a p-0 text-light">100 Percent Winning Tips</a></li>
+              <li className="nav-item mb-2"><a href="/sitemaps" className="nav-a p-0 text-light">Sitemaps</a></li>             
             </ul>
           </div>
 
@@ -90,10 +80,21 @@ function Footer(){
 
         <div className="row">
             <div className="col-12 mb-0">
-                <h5 className="text-center mb-3">Sponsors</h5>
+                <h5 className="text-center mb-3">Our Partners & Sponsors</h5>
                 <ul className="sponsors-list">
                   <li className="mb-0"><a target="_blank" href="https://www.authorandrewsmith.com">Xoilac xem bong da</a></li>
                   <li className="mb-0"><a target="_blank" href="https://www.docandrewmurray.com">Socolive truc tiep bong da</a></li>
+                  {/**Partners links */}
+                  <li className="mb-0"><a target="_blank" href="https://www.bettingtips.co.ke">Betting tips</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.feedinco.com">Feedinco Betting tips</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.betrekatips.com">Betrekatips</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://todayspredict.com">Today's Football Prediction</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://tips100.com">100 Sure Straight Wins</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://tipsxtra.com">Tipsxtra</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://sportiya.com/raja-win678-com">Raja Win678.com</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://forebetpredict.com/soccervista">Soccervista</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://thisweekpoolresult.com">This Week Pool Result</a></li>
+                  <li className="mb-0"><a target="_blank" href="http://100percentwinnings.com">100 Percent Winning Tips</a></li>
                 </ul>
             </div>
         </div>

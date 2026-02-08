@@ -7,23 +7,14 @@ import { useRouter } from 'next/router'
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysFinishedOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/finished/filter-pred1x2-ov-un-dc-ht-ft";
-// import SeoContentDisplay from "../components/shared/seo_content_display";
-// import getGithubSiteContent from "../components/functions/GithubPagesContent";
 import { Adsense } from "@ctrl/react-adsense";
 
 function TodaysFinishedFixtures(){
     let todays_date = getFormattedCurrentDate();
     const router = useRouter(); //fetch page link data
-    // const [seo_content, setSeoContent] = useState([]);
 
     //Call the predictions function and process response data
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_todays_completed_games?fixture_date="+todays_date);
-
-    // useEffect(()=>{
-    //     getGithubSiteContent("mainpages/upcoming-football-predictions.md").then(data => {  
-    //         setSeoContent(data.page_content);
-    //     })   
-    // },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -77,11 +68,6 @@ function TodaysFinishedFixtures(){
                         format="auto"
                     /> 
                     <br/> 
-                    {/* <div className="">
-                        <div className="container">
-                            <SeoContentDisplay props={seo_content}/>
-                        </div>
-                    </div> */}
                 </div>
             )
         }
