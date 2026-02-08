@@ -1,6 +1,4 @@
 import { useRouter } from 'next/router';
-import {useState, useEffect} from 'react';
-import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 
 function MetaContent(){
     let title = "";
@@ -13,7 +11,6 @@ function MetaContent(){
     var meta_content_array = [];
 
     const router = useRouter();
-    const [seo_content, setSeoContent] = useState([]);
 
     var current_url = router.pathname.substring(1);
     
