@@ -2,17 +2,14 @@ import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import React,{useState,useEffect} from "react";
+import React from "react";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
-import { useRouter } from "next/router";
 import { Adsense } from "@ctrl/react-adsense";
 // import AdsterraAd from "../../components/shared/AdsterraAd";
 import PopularTips from "../../components/shared/popular_tips_display";
 import SokafansPredictionsContent from "../../components/seo-content/tips/sokafans";
 
 function SokafansPredictions(){    
-    const router = useRouter(); //access page url
-
     let todays_date = getFormattedCurrentDate();
 
     //Call the predictions function

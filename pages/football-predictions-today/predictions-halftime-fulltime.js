@@ -2,28 +2,19 @@ import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import React,{useState, useEffect} from "react";
+import React from "react";
 import { useRouter } from 'next/router';
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
 import { Adsense } from "@ctrl/react-adsense";
-import SeoContentDisplay from "../../components/shared/seo_content_display1";
-import getGithubSiteContent from "../../components/functions/GithubPagesContent";
 
 function TodaysFixturesHTFT(){     
     let todays_date = getFormattedCurrentDate();
-    const[seo_content, setSeoContent] = useState([]);
     const router = useRouter(); //fetch page link data
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_todays_games?fixture_date="+todays_date);
-
-    useEffect(()=>{
-        getGithubSiteContent("mainpages/predictions-halftime-fulltime.md").then(data => {  
-            setSeoContent(data.page_content);
-        })    
-    },[])
 
     //If data is completly loaded. Display, Else, Show preloader
     if(renderPredictions[0].endpointStatus === ""){
@@ -65,12 +56,6 @@ function TodaysFixturesHTFT(){
                     layout="display"
                     format="auto"
                 /> 
-                <br/> 
-                <div className="">
-                    <div className="container">
-                        <SeoContentDisplay props={seo_content}/>
-                    </div>
-                </div>
             </div>
         )
     }

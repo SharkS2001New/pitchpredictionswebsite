@@ -2,19 +2,14 @@ import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import React,{useState,useEffect} from "react";
+import React from "react";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
-import { useRouter } from "next/router";
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../../components/shared/popular_tips_display";
 import SureTipsContent from "../../components/seo-content/tips/sure-tips";
 
 function CompetitorPredictions(){    
-    const router = useRouter(); //access page url
-
     let todays_date = getFormattedCurrentDate();
-
-    const[seo_content, setSeoContent] = useState([]);
 
     //Call the predictions function
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date="+todays_date);

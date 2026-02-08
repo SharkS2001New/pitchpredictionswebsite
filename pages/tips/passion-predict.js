@@ -8,7 +8,6 @@ import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../../components/shared/popular_tips_display";
 
 function CompetitorPredictions(){    
-
     let todays_date = getFormattedCurrentDate();
 
     //Call the predictions function

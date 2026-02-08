@@ -1,7 +1,7 @@
 import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
-import React,{ useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from 'next/router'
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
@@ -10,7 +10,6 @@ import FilterLiveOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/
 import { Adsense } from "@ctrl/react-adsense";
 
 function LiveFixtures(){
-    const [seo_content, setSeoContent] = useState([]);
     let todays_date = getFormattedCurrentDate(); 
     const router = useRouter(); //fetch page link data
 

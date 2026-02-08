@@ -4,14 +4,11 @@ import PagesMatchPredictionDetails from "../../components/shared/pages_match_pre
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import React from "react";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
-import { useRouter } from "next/router";
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../../components/shared/popular_tips_display";
 import CorrectScorePredictionsContent from "../../components/seo-content/tips/correct-score";
 
 function CompetitorPredictions(){    
-    const router = useRouter(); //access page url
-
     let todays_date = getFormattedCurrentDate();
 
     //Call the predictions function
