@@ -5,7 +5,7 @@ import { Adsense } from "@ctrl/react-adsense";
 import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpots-landing-page';
 
 function JackpotPages() {
-    const slugs = [
+    const allSlugs = [
       'sportpesa-mega-jackpot-predictions',
       'sportpesa-midweek-jackpot-predictions',
       'sportpesa-supa-jackpot-17-predictions-tz',
@@ -50,36 +50,18 @@ function JackpotPages() {
   ];
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeJackpots, setActiveJackpots] = useState([]);
     
   const handleSearchChange = (event) => {
-    const searchTerm = event.target.value.trim();
-    setSearchTerm(searchTerm);
-
-    if (searchTerm !== '') {
-        setActiveJackpots([]);
-        const filteredActiveJackpots = activeJackpots.filter((jackpot) =>
-            jackpot.jackpot_name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setActiveJackpots(filteredActiveJackpots);
-    } else {
-        getActiveJackpots();
-    }
+    const value = event.target.value.trim();
+    setSearchTerm(value);
   };
 
-  
-  const filteredSlugs = slugs.filter((slug) =>
-      getJackpotNameFromSlug(slug).toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const [activeJackpots, setActiveJackpots] = useState([]);
-
-  const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }; // This is the authorization header from the api.pitchpredictions.com
+  const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" };
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      getActiveJackpots();
-    }
-  }, [searchTerm]);
+    getActiveJackpots();
+  }, []);
 
   const getActiveJackpots = async () => {
     try {
@@ -96,6 +78,37 @@ function JackpotPages() {
     }
   };
 
+  // Filter all slugs based on search term
+  let filteredSlugs = allSlugs;
+  if (searchTerm !== '') {
+    filteredSlugs = allSlugs.filter((slug) =>
+      getJackpotNameFromSlug(slug).toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  // Filter active jackpots based on search term
+  let filteredActiveJackpots = activeJackpots;
+  if (searchTerm !== '') {
+    filteredActiveJackpots = activeJackpots.filter((jackpot) =>
+      jackpot.jackpot_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  // Remove active jackpots from the "All Jackpots" list
+  const activeJackpotNames = filteredActiveJackpots.map(j => 
+    j.jackpot_name.toLowerCase().replace(' predictions', '')
+  );
+  
+  const filteredInactiveSlugs = filteredSlugs.filter(slug => {
+    const jackpotName = getJackpotNameFromSlug(slug).toLowerCase();
+    return !activeJackpotNames.some(activeName => 
+      jackpotName.includes(activeName) || activeName.includes(jackpotName.replace(' predictions', ''))
+    );
+  });
+
+  // Calculate continuous numbering
+  let itemCount = 0;
+
   return (
     <div className="sites-card">
       <br />
@@ -110,23 +123,29 @@ function JackpotPages() {
         />
       </div>
       <div className="row" style={{ textAlign: 'left', fontWeight: "bold", margin: "0px 5px 5px 5px" }}>
-          {activeJackpots.length > 0 ? (
+          {filteredActiveJackpots.length > 0 && (
               <div>
-                <h3>Active Jackpots</h3>
-                {activeJackpots.map((jackpot, index) => (
-                  <div key={jackpot.jackpot_tips_id} className="m-1">
-                    <a href={`/jackpot-predictions/${ReturnSlugFromJackpotName(jackpot.jackpot_name.toSentenceCase())}`}>
-                      {index + 1}. {jackpot.jackpot_name.toSentenceCase() + " Predictions"} &nbsp;&nbsp; (<span className="fixturesTextSize" style={{color: "#212529"}}>No of Games: {jackpot.numberOfGames}</span>)
-                    </a>
-                    <div className="m-1">
-                      <p className="fixturesTextSize ml-5" style={{color: "gray"}}>(Start Date: {formatDate(jackpot.startDate)} - End Date: {formatDate(jackpot.endDate)})</p>
+                <h3>Active Jackpots ({filteredActiveJackpots.length})</h3>
+                {filteredActiveJackpots.map((jackpot) => {
+                  itemCount++;
+                  return (
+                    <div key={jackpot.jackpot_tips_id} className="m-1">
+                      <a href={`/jackpot-predictions/${ReturnSlugFromJackpotName(jackpot.jackpot_name.toSentenceCase())}`}>
+                        {itemCount}. {jackpot.jackpot_name.toSentenceCase() + " Predictions"} &nbsp;&nbsp; 
+                        (<span className="fixturesTextSize" style={{color: "#212529"}}>No of Games: {jackpot.numberOfGames}</span>)
+                      </a>
+                      <div className="m-1">
+                        <p className="fixturesTextSize ml-5" style={{color: "gray"}}>
+                          (Start Date: {formatDate(jackpot.startDate)} - End Date: {formatDate(jackpot.endDate)})
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-          ) : null}
+          )}
           <br/>
-           <div className="desktop-container-resize mb-1">
+          <div className="desktop-container-resize mb-1">
               <div className="col-sm-12 text-center bg-light pt-1">
                   <Adsense
                       client="ca-pub-5665711413000284"
@@ -138,14 +157,14 @@ function JackpotPages() {
               </div>
           </div>
           <br/>
-          <h3>All Jackpots</h3>
-          {filteredSlugs.map((slug, index) => {
+          <h3>Other Jackpots ({filteredInactiveSlugs.length})</h3>
+          {filteredInactiveSlugs.map((slug) => {
+            itemCount++;
             const jackpotName = getJackpotNameFromSlug(slug);
-            const displayIndex = index + 1;
             return (
               <div key={slug} className="m-2">
                 <a href={`/jackpot-predictions/${slug}`}>
-                  {displayIndex}. {jackpotName}
+                  {itemCount}. {jackpotName}
                 </a>
               </div>
             );
@@ -181,4 +200,3 @@ String.prototype.toSentenceCase = function() {
     return match.charAt(0).toUpperCase() + match.slice(1).toLowerCase();
   });
 };
-
