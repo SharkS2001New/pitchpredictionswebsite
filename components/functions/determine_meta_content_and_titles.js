@@ -1251,8 +1251,8 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url ==="jackpot-predictions"){
-        title = "Jackpot Prediction ▷ Free Tips and Bonuses for this week";
-        meta_desc_content = "Get all jackpot prediction and free tips for SportPesa, Betika, and more. Visit Pitch Predictions for daily and weekly picks to boost your winning chances.";
+        title = "All Upcoming Jackpot Predictions - Free Sure Tips & Bonus Wins";
+        meta_desc_content = "Get the most accurate Jackpot predictions for Sportpesa, Betika, Betpawa & Mozzart. Unlock winning Mega & Midweek jackpot tips, expert analysis, and bonus-winning strategies for this weekend.";
         meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips";
         page_title = "All Jackpot Predictions, Tips and Bonuses this Week";
 
