@@ -534,9 +534,9 @@ function SportpesaMegaJackpotPredictions() {
                     font-size: 0.9em;
                 }
                 
-                .blink_me {
-                    animation: blinker 2s linear infinite;
-                }
+                // .blink_me {
+                //     animation: blinker 2s linear infinite;
+                // }
                 
                 @keyframes blinker {
                     50% {

@@ -19,41 +19,45 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
         const topSystem = system.reduce((a,b) => b.value > a.value ? b : a);
 
         return (
-          <div className="card mb-4 shadow-sm rounded-4" key={game.fixture_id}>
+          <div className="fixturesWholeRow fixturesTextSize mb-2 py-2" key={game.fixture_id} style={{borderBottom: "1px solid #ddd"}}>
             
             {/* HEADER + ODDS + SYSTEM */}
-            <div className="card-header d-flex flex-column flex-md-row justify-content-between gap-3 bg-light">
-              <div>
-                <h5 className="mb-2">
-                  <span>{game.jackpot_position}. </span><strong>{game.home_team_name}</strong> vs <strong>{game.away_team_name}</strong>
-                </h5>
+            <div className="card-header d-flex flex-column flex-md-row justify-content-between mb-3 gap-3 ">
+              <div className="text-nowrap">
+                <div className="mb-2">
+                  <strong>{game.jackpot_position}. {game.home_team_name}</strong> vs <strong>{game.away_team_name}</strong>
+                </div>
                 <small className="text-muted">{game.date} | {game.status_long}</small>
               </div>
 
-              <div className="d-flex align-items-center gap-3 mt-md-0">
-                {/* Odds */}
-                <div className="d-flex gap-2 text-center">
-                  <div className="border rounded px-3 py-2 bg-white shadow-sm">
+
+              {/* Odds + System Prediction */}
+              <div className="d-flex align-items-center gap-2 mt-md-0 w-100">
+                
+                {/* Odds: centered on desktop */}
+                <div className="d-flex gap-2 text-center flex-fill justify-content-md-center">
+                  <div className="border rounded px-2 py-1 bg-white shadow-sm">
                     <strong>1</strong><br/>
                     <span className="text-success fw-bold">{game.bets_home}</span>
                   </div>
-                  <div className="border rounded px-3 py-2 bg-white shadow-sm">
+                  <div className="border rounded px-2 py-1 bg-white shadow-sm">
                     <strong>X</strong><br/>
                     <span className="text-warning fw-bold">{game.bets_draw}</span>
                   </div>
-                  <div className="border rounded px-3 py-2 bg-white shadow-sm">
+                  <div className="border rounded px-2 py-1 bg-white shadow-sm">
                     <strong>2</strong><br/>
                     <span className="text-info fw-bold">{game.bets_away}</span>
                   </div>
                 </div>
 
-                {/* System prediction */}
-                <div className="text-end">
+                {/* System prediction: far right */}
+                <div className="text-end ms-auto">
                   <small className="text-dark fw-bold">Our Prediction</small>
-                  <div className={`fw-bold ${topSystem.key==='home'?'text-success':topSystem.key==='draw'?'text-warning':'text-info'}`}>
+                  <div className="fw-bold text-success">
                     {topSystem.label} - {topSystem.value}%
                   </div>
                 </div>
+
               </div>
             </div>
 
@@ -82,18 +86,28 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   </div>
                 ) : (
                   <div className="d-flex gap-2">
-                    {system.map((item, i) => (
-                      <div className="flex-fill text-center" key={i}>
-                        <div className="small text-muted">{item.label}</div>
-                        <div className="progress mb-1" style={{height:'12px'}}>
-                          <div 
-                            className={`progress-bar ${item.key==='home'?'bg-success':item.key==='draw'?'bg-warning':'bg-info'}`} 
-                            style={{width: `${stats?.percentages?.[item.key] || 0}%`}}
-                          ></div>
+                    {['home','draw','away'].map((key, i) => {
+                      const votes = stats?.stats || {};
+                      const totalVotes = votes.total_votes || 0;
+                      let percent = 0;
+                      if (totalVotes > 0) {
+                        if (key === 'home') percent = Math.round((votes.home_votes / totalVotes) * 100);
+                        if (key === 'draw') percent = Math.round((votes.draw_votes / totalVotes) * 100);
+                        if (key === 'away') percent = Math.round((votes.away_votes / totalVotes) * 100);
+                      }
+
+                      const color = key==='home'?'bg-success':key==='draw'?'bg-warning':'bg-info';
+
+                      return (
+                        <div className="flex-fill text-center" key={i}>
+                          <div className="small text-muted">{key==='home'? '1' : key==='draw'? 'X' : '2'}</div>
+                          <div className="progress" style={{height:'12px'}}>
+                            <div className={`progress-bar ${color}`} style={{width: `${percent}%`}}></div>
+                          </div>
+                          <small>{percent}%</small>
                         </div>
-                        <small>{stats?.percentages?.[item.key] || 0}%</small>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 )}
               </div>
