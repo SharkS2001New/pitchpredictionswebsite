@@ -770,15 +770,15 @@ function JackpotPages() {
                           Share
                         </button>
                       </div>
-                      
-                      <h6 className="card-title mb-3 flex-grow-1">
+
+                      <h3 className="h6 mb-3 flex-grow-1">
                         <a 
                           href={`/jackpot-predictions/${slug}`}
                           className="text-decoration-none text-dark"
                         >
                           {jackpotNameWithPredictions}
                         </a>
-                      </h6>
+                      </h3>
                       
                       <div className="mt-auto">
                         <div className="d-flex justify-content-between align-items-center">
@@ -788,8 +788,7 @@ function JackpotPages() {
                           </small>
                           <a 
                             href={`/jackpot-predictions/${slug}`}
-                            className="btn btn-outline-primary btn-sm"
-                          >
+                            className="btn btn-outline-primary btn-sm">
                             View
                           </a>
                         </div>

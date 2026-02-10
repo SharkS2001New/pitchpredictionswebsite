@@ -1294,6 +1294,10 @@ a, a:hover {
   .fixturesWholeRow:hover{
     background-color: rgb(235, 235, 235)
   }
+
+    /* .fixturesWholeRow1:hover{
+    background-color: rgb(235, 235, 235)
+  } */
   
   .predictionHoverEffect:hover {
     background-color: #e01d3d;
@@ -1304,6 +1308,16 @@ a, a:hover {
   .fixturesWholeRow:hover .teamNameLink,
   .fixturesWholeRow:hover .predictionHoverEffect,
   .fixturesWholeRow:hover .teamNameLink:hover .predictionHoverEffect:hover {
+    background-color: #e01d3d;
+    color: white;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 5px;
+  }
+
+  .fixturesWholeRow1:hover .teamNameLink,
+  .fixturesWholeRow1:hover .predictionHoverEffect,
+  .fixturesWholeRow1:hover .teamNameLink:hover .predictionHoverEffect:hover {
     background-color: #e01d3d;
     color: white;
     padding-left: 3px;
@@ -1486,30 +1500,102 @@ ins.adsbygoogle[data-ad-status=unfilled] {
   text-decoration: underline;
 }
 
-  .bg-gradient-primary {
-    background: linear-gradient(45deg, #B11111, #dc3545);
-  }
-  .bg-gradient-success {
-    background: linear-gradient(45deg, #28a745, #20c997);
-  }
-  .bg-gradient-info {
-    background: linear-gradient(45deg, #17a2b8, #0dcaf0);
-  }
-  .bg-gradient-dark {
-    background: linear-gradient(45deg, #343a40, #212529);
-  }
+.bg-gradient-primary {
+  background: linear-gradient(45deg, #B11111, #dc3545);
+}
+.bg-gradient-success {
+  background: linear-gradient(45deg, #28a745, #20c997);
+}
+.bg-gradient-info {
+  background: linear-gradient(45deg, #17a2b8, #0dcaf0);
+}
+.bg-gradient-dark {
+  background: linear-gradient(45deg, #343a40, #212529);
+}
 
-    .social-share-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
+.social-share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
+/**Jackpots Css **/
+
+.voting-info-card {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.voting-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.stat-item {
+  padding: 8px 15px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  min-width: 180px;
+}
+
+.stat-item.text-danger {
+  color: #dc3545;
+  border-color: #f5c6cb;
+  background-color: #f8d7da;
+}
+
+.voting-note {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.9em;
+  background: #e9ecef;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #6c757d;
+}
+
+.voting-note i {
+  margin-right: 5px;
+  color: #007bff;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 768px) {
+  .sites-card {
+      padding: 15px;
+  }
   
+  .voting-stats {
+      flex-direction: column;
+      gap: 10px;
+  }
+  
+  .stat-item {
+      min-width: auto;
+      width: 100%;
+  }
+  
+  .voting-info-card {
+      padding: 12px;
+  }
+}

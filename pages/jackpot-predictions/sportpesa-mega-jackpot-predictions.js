@@ -1,48 +1,39 @@
-// components/pages/sportpesa-mega-jackpot.js
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import PreLoader from "../../components/includes/loader";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
-import JackpotGamesNewUI from "../../components/shared/jackpot-games-new-ui";
+import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 
 function SportpesaMegaJackpotPredictions() {         
-    const router = useRouter();    
     const [gamesData, setGamesData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedVotes, setSelectedVotes] = useState({});
     const [voteStats, setVoteStats] = useState({});
     const [deviceId, setDeviceId] = useState('');
-    const [isRefreshingStats, setIsRefreshingStats] = useState({});
 
     useEffect(() => {
         initializeDeviceId();
         fetchGamesData();
     }, []);
 
-    // Initialize device ID once
+    // Initialize persistent device ID
     const initializeDeviceId = async () => {
         try {
-            let storedDeviceId = localStorage.getItem('device_id');
+            let storedDeviceId = localStorage.getItem('persistent_device_id');
             
             if (!storedDeviceId) {
-                // Generate a unique device ID
+                // Create a persistent device ID
                 const components = [
                     navigator.userAgent,
                     navigator.platform,
-                    screen.width,
-                    screen.height,
-                    screen.colorDepth,
-                    Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    Date.now(),
-                    Math.random().toString(36).substr(2, 9)
+                    screen.width.toString(),
+                    screen.height.toString(),
+                    screen.colorDepth.toString()
                 ];
                 
                 const deviceString = components.join('|');
-                
-                // Simple hash function
                 let hash = 0;
                 for (let i = 0; i < deviceString.length; i++) {
                     const char = deviceString.charCodeAt(i);
@@ -50,17 +41,17 @@ function SportpesaMegaJackpotPredictions() {
                     hash = hash & hash;
                 }
                 
-                storedDeviceId = `web_device_${Math.abs(hash).toString(36)}_${Date.now()}`;
-                localStorage.setItem('device_id', storedDeviceId);
+                storedDeviceId = `device_${Math.abs(hash).toString(36)}`;
+                localStorage.setItem('persistent_device_id', storedDeviceId);
             }
             
             setDeviceId(storedDeviceId);
             return storedDeviceId;
         } catch (err) {
             console.error("Error generating device ID:", err);
-            const fallbackId = `web_fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const fallbackId = `device_${Date.now()}`;
             setDeviceId(fallbackId);
-            localStorage.setItem('device_id', fallbackId);
+            localStorage.setItem('persistent_device_id', fallbackId);
             return fallbackId;
         }
     };
@@ -82,16 +73,12 @@ function SportpesaMegaJackpotPredictions() {
                 }));
                 
                 setGamesData(formattedData);
-                
-                // After loading games, fetch vote stats
                 await fetchVoteStats(formattedData);
                 
-                // Then check existing votes
                 if (deviceId) {
                     await checkExistingVotes(formattedData);
                 }
                 
-                // Load locally saved votes
                 loadSavedVotes(formattedData);
             } else {
                 setError("No data available");
@@ -153,7 +140,6 @@ function SportpesaMegaJackpotPredictions() {
             const jackpotId = games[0]?.jackpot_tips_id;
             const fixtureIds = games.map(game => game.fixture_id);
 
-            // Use the bulk endpoint for better performance
             const response = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
                 method: 'POST',
                 headers: {
@@ -170,7 +156,6 @@ function SportpesaMegaJackpotPredictions() {
             if (result.status && result.data) {
                 setVoteStats(result.data);
             } else {
-                // Initialize empty stats if no votes yet
                 const emptyStats = {};
                 fixtureIds.forEach(fixtureId => {
                     emptyStats[fixtureId] = {
@@ -211,22 +196,24 @@ function SportpesaMegaJackpotPredictions() {
 
     const handleVote = async (fixtureId, prediction) => {
         if (!deviceId) {
-            alert("Device ID not initialized. Please refresh the page.");
             return;
         }
 
         try {
             const game = gamesData.find(g => g.fixture_id === fixtureId);
             if (!game) {
-                alert("Game not found");
                 return;
+            }
+
+            // Check if game is still votable (NS status only)
+            if (game.status_short !== 'NS') {
+                return; // Silently return if game is completed
             }
 
             // Submit vote to server
             const success = await submitVoteToServer(game, fixtureId, prediction);
             
             if (success) {
-                // Update local state
                 const newVotes = {
                     ...selectedVotes,
                     [fixtureId]: {
@@ -237,20 +224,18 @@ function SportpesaMegaJackpotPredictions() {
                 setSelectedVotes(newVotes);
                 localStorage.setItem('jackpot_selected_votes', JSON.stringify(newVotes));
                 
-                // Immediately update the UI with optimistic update
                 updateVoteStatsOptimistically(fixtureId, prediction);
                 
-                // Then fetch real updated stats (non-blocking)
                 setTimeout(() => {
                     refreshVoteStats(fixtureId);
                 }, 500);
-                
-                // Show success message
-                alert(`Vote submitted successfully!`);
             }
         } catch (err) {
             console.error("Vote submission error:", err);
-            alert(err.message || "Failed to submit vote. Please try again.");
+            // Only show alert for unexpected errors
+            if (!err.message.includes('already completed')) {
+                alert(err.message || "Failed to submit vote. Please try again.");
+            }
         }
     };
 
@@ -265,15 +250,9 @@ function SportpesaMegaJackpotPredictions() {
             newStats.total_votes += 1;
             
             switch(prediction) {
-                case '1':
-                    newStats.home_votes += 1;
-                    break;
-                case 'X':
-                    newStats.draw_votes += 1;
-                    break;
-                case '2':
-                    newStats.away_votes += 1;
-                    break;
+                case '1': newStats.home_votes += 1; break;
+                case 'X': newStats.draw_votes += 1; break;
+                case '2': newStats.away_votes += 1; break;
             }
             
             const homePercent = newStats.total_votes > 0 ? 
@@ -315,7 +294,6 @@ function SportpesaMegaJackpotPredictions() {
             const game = gamesData.find(g => g.fixture_id === fixtureId);
             if (!game) return;
 
-            // Fetch updated stats for this specific fixture
             const response = await fetch(`https://api.pitchpredictions.com/api/jackpot/vote/stats/${game.jackpot_tips_id}/${fixtureId}`);
             const result = await response.json();
             
@@ -337,12 +315,18 @@ function SportpesaMegaJackpotPredictions() {
 
     const submitVoteToServer = async (game, fixtureId, prediction) => {
         try {
+            // Only allow voting on NS games
+            if (game.status_short !== 'NS') {
+                throw new Error(`Game ${game.home_team} vs ${game.away_team} is already completed (${game.status_short})`);
+            }
+
             const voteData = {
                 jackpot_id: game.jackpot_tips_id,
                 fixture_id: fixtureId,
                 prediction: prediction,
                 device_id: deviceId,
-                jackpot_name: game.jackpot_name || 'Sportpesa Mega Jackpot'
+                jackpot_name: game.jackpot_name || 'Sportpesa Mega Jackpot',
+                game_status: game.status_short
             };
 
             const response = await fetch('https://api.pitchpredictions.com/api/jackpot/vote', {
@@ -364,67 +348,6 @@ function SportpesaMegaJackpotPredictions() {
             throw err;
         }
     };
-
-    const handleConfirmPicks = () => {
-        const voteCount = Object.keys(selectedVotes).length;
-        const totalGames = gamesData.length;
-        
-        if (voteCount === 0) {
-            alert("Please select at least one prediction before confirming.");
-            return;
-        }
-        
-        if (voteCount < totalGames) {
-            const confirmProceed = confirm(`You have selected ${voteCount} out of ${totalGames} games. Do you want to proceed with your current selections?`);
-            if (!confirmProceed) return;
-        }
-        
-        // Create a voting slip
-        const votingSlip = {
-            jackpot_id: gamesData[0]?.jackpot_tips_id,
-            jackpot_name: gamesData[0]?.jackpot_name || 'Sportpesa Mega Jackpot',
-            timestamp: new Date().toISOString(),
-            device_id: deviceId,
-            votes: selectedVotes,
-            total_games: totalGames,
-            votes_count: voteCount
-        };
-        
-        // Save slip to localStorage
-        localStorage.setItem('voting_slip', JSON.stringify(votingSlip));
-        
-        // Show success message
-        alert(`Your ${voteCount} predictions have been recorded! Good luck!`);
-        
-        console.log("Voting slip saved:", votingSlip);
-    };
-
-    const getCommunityPrediction = (fixtureId) => {
-        const stats = voteStats[fixtureId];
-        if (stats && stats.community_prediction) {
-            return {
-                prediction: stats.community_prediction,
-                percentages: stats.percentages
-            };
-        }
-        return null;
-    };
-
-    const getUserVoteCount = (fixtureId) => {
-        if (selectedVotes[fixtureId]) {
-            return 1;
-        }
-        return 0;
-    };
-
-    // Prepare data for JackpotGamesNewUI component
-    const preparedGamesData = gamesData.map(game => ({
-        ...game,
-        community_prediction: getCommunityPrediction(game.fixture_id),
-        user_vote_count: getUserVoteCount(game.fixture_id),
-        vote_stats: voteStats[game.fixture_id] || null,
-        is_refreshing: isRefreshingStats[game.fixture_id] || false
-    }));
 
     if (isLoading) {
         return <PreLoader />;
@@ -462,14 +385,12 @@ function SportpesaMegaJackpotPredictions() {
                 </p>
             </div>
 
-            {/* New UI Component */}
-            <JackpotGamesNewUI 
-                gamesData={preparedGamesData} 
+            {/* Games Component */}
+            <JackpotGamesBootstrap 
+                gamesData={gamesData} 
                 selectedVotes={selectedVotes}
-                onVote={handleVote}
-                onConfirm={handleConfirmPicks}
-                deviceId={deviceId}
                 voteStats={voteStats}
+                onVote={handleVote}
             />
 
             {/* Ads */}
@@ -490,80 +411,12 @@ function SportpesaMegaJackpotPredictions() {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style jsx>{`  
                 .sites-card {
                     max-width: 1200px;
                     margin: 0 auto;
-                    padding: 20px;
-                }
-                
-                .premium-banner {
-                    // background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    // padding: 15px;
-                    border-radius: 10px;
-                    margin-bottom: 20px;
-                    // box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                }
-                
-                .voting-info-card {
-                    background: #f8f9fa;
-                    border-left: 4px solid #007bff;
-                    padding: 15px;
-                    border-radius: 8px;
-                    margin-bottom: 20px;
-                }
-                
-                .voting-stats {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 20px;
-                    margin-bottom: 10px;
-                }
-                
-                .stat-item {
-                    padding: 5px 10px;
-                    background: white;
-                    border-radius: 5px;
-                    border: 1px solid #dee2e6;
-                }
-                
-                .voting-note {
-                    color: #6c757d;
-                    margin: 0;
-                    font-size: 0.9em;
-                }
-                
-                // .blink_me {
-                //     animation: blinker 2s linear infinite;
-                // }
-                
-                @keyframes blinker {
-                    50% {
-                        opacity: 0.7;
-                    }
-                }
-                
-                // .seo-content-section {
-                //     margin-top: 40px;
-                //     padding: 20px;
-                //     background: #f8f9fa;
-                //     border-radius: 10px;
-                // }
-                
-                @media (max-width: 768px) {
-                    .sites-card {
-                        padding: 10px;
-                    }
-                    
-                    .voting-stats {
-                        flex-direction: column;
-                        gap: 10px;
-                    }
-                    
-                    .stat-item {
-                        width: 100%;
-                    }
+                    background-color: white;
+                    padding: 10px;
                 }
             `}</style>
         </div>
