@@ -39,6 +39,7 @@ function App({ Component, pageProps }) {
     "/jackpot-predictions",
     "/jackpot-predictions/sportpesa-mega-jackpot-predictions",
     "/jackpot-predictions/sportpesa-midweek-jackpot-predictions",
+    "/jackpot-predictions/betika-midweek-jackpot-predictions",
     "/top-football-tips-and-predictions/today",
   ];
 

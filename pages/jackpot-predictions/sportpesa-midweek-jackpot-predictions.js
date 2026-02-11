@@ -12,6 +12,8 @@ function SportpesaMidweekJackpotPredictions() {
     const [selectedVotes, setSelectedVotes] = useState({});
     const [voteStats, setVoteStats] = useState({});
     const [deviceId, setDeviceId] = useState('');
+    const [votingInProgress, setVotingInProgress] = useState({});
+    const [refreshingStats, setRefreshingStats] = useState({});
 
     useEffect(() => {
         initializeDeviceId();
@@ -199,6 +201,11 @@ function SportpesaMidweekJackpotPredictions() {
             return;
         }
 
+        // Check if already voting for this fixture
+        if (votingInProgress[fixtureId]) {
+            return; // Already voting, ignore click
+        }
+
         try {
             const game = gamesData.find(g => g.fixture_id === fixtureId);
             if (!game) {
@@ -209,6 +216,9 @@ function SportpesaMidweekJackpotPredictions() {
             if (game.status_short !== 'NS') {
                 return; // Silently return if game is completed
             }
+
+            // Set voting in progress for this fixture
+            setVotingInProgress(prev => ({ ...prev, [fixtureId]: true }));
 
             // Submit vote to server
             const success = await submitVoteToServer(game, fixtureId, prediction);
@@ -236,6 +246,9 @@ function SportpesaMidweekJackpotPredictions() {
             if (!err.message.includes('already completed')) {
                 alert(err.message || "Failed to submit vote. Please try again.");
             }
+        } finally {
+            // Clear voting in progress state
+            setVotingInProgress(prev => ({ ...prev, [fixtureId]: false }));
         }
     };
 
@@ -289,7 +302,7 @@ function SportpesaMidweekJackpotPredictions() {
 
     const refreshVoteStats = async (fixtureId) => {
         try {
-            setIsRefreshingStats(prev => ({ ...prev, [fixtureId]: true }));
+            setRefreshingStats(prev => ({ ...prev, [fixtureId]: true }));
             
             const game = gamesData.find(g => g.fixture_id === fixtureId);
             if (!game) return;
@@ -309,7 +322,7 @@ function SportpesaMidweekJackpotPredictions() {
         } catch (err) {
             console.error("Error refreshing vote stats:", err);
         } finally {
-            setIsRefreshingStats(prev => ({ ...prev, [fixtureId]: false }));
+            setRefreshingStats(prev => ({ ...prev, [fixtureId]: false }));
         }
     };
 
@@ -325,7 +338,7 @@ function SportpesaMidweekJackpotPredictions() {
                 fixture_id: fixtureId,
                 prediction: prediction,
                 device_id: deviceId,
-                jackpot_name: game.jackpot_name || 'Sportpesa Mega Jackpot',
+                jackpot_name: game.jackpot_name || 'Sportpesa Midweek Jackpot',
                 game_status: game.status_short
             };
 
@@ -391,6 +404,8 @@ function SportpesaMidweekJackpotPredictions() {
                 selectedVotes={selectedVotes}
                 voteStats={voteStats}
                 onVote={handleVote}
+                votingInProgress={votingInProgress}
+                refreshingStats={refreshingStats}
             />
 
             {/* Ads */}
