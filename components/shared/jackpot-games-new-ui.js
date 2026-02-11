@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Adsense } from "@ctrl/react-adsense";
+import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
 
 function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes = {}, onVote, votingInProgress = {} }) {
 
@@ -18,23 +19,12 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
     );
   };
 
-  // Helper function to get vote label text
-  const getVoteLabel = (prediction) => {
-    switch(prediction) {
-      case '1': return 'Home (1)';
-      case 'X': return 'Draw (X)';
-      case '2': return 'Away (2)';
-      default: return prediction;
-    }
-  };
-
   return (
     <div className="container my-4">
       {gamesData.map((game, index) => {
         const stats = voteStats[game.fixture_id] || {};
         const hasVoted = !!selectedVotes[game.fixture_id];
         const userVote = selectedVotes[game.fixture_id]?.prediction;
-        const voteLabel = getVoteLabel(userVote);
         
         const isCompleted = ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'SUSP'].includes(game.status_short);
         
@@ -103,7 +93,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                     <TeamIcon name={game.away_team_name} logo={game.away_team_logo} size={20} />
                     <strong>{game.away_team_name}</strong>                 
                   </div>
-                  <small className="text-muted fw-bold">{game.date} |  
+                  <small className="text-muted fw-bold">{DateTimeToUsersTimezone(game.date)} |  
                     {game.status_short && (
                       <span className={`badge bg-${getStatusColor(game.status_short)} ms-1`}>
                         {game.status_long || game.status_short}
