@@ -1,9 +1,7 @@
 export default function SportpesaMegaJackpotContent() {
   return (
     <section className="seo-content">
-      <h2>Sportpesa Mega Jackpot Prediction – 17 Games Today</h2>
-
-      <h3>The Challenge of the 17 Game Jackpot (Problem)</h3>
+      <h2>The Challenge of the 17 Game Jackpot (Problem)</h2>
       <p>
         Every week, thousands of football enthusiasts try their luck with the life-changing Sportpesa Mega Jackpot.
         But let’s be honest – making accurate predictions for the outcome of 17 highly competitive football games is
