@@ -1259,8 +1259,8 @@ function MetaContent(){
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-mega-jackpot-predictions") {
-        title = "Free SportPesa Mega Jackpot Predictions – 17 Games";
-        meta_desc_content = "Get this week’s SportPesa Mega Jackpot 17-game predictions for free. Expert analysis to improve your winning chances and bonuses.";
+        title = " Sportpesa Mega Jackpot Prediction - 17 Games Today | Vote & Win";
+        meta_desc_content = " Win big with accurate Sportpesa Mega Jackpot predictions. Solve the 17-game puzzle with expert data and our new Community Voting feature. See who others are backing today!";
         meta_keywords = "SportPesa Mega Jackpot tips, SportPesa predictions, Mega Jackpot analysis, football jackpot tips, SportPesa betting advice";
         page_title = "SportPesa Mega Jackpot Tips and Prediction";
     
