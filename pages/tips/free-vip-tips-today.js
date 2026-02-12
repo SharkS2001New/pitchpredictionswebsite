@@ -6,6 +6,7 @@ import React from "react";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../../components/shared/popular_tips_display";
+import FreeVipTipsTodayContent from "../../components/seo-content/tips/free-vip-tips-today";
 
 function CompetitorPredictions(){    
     let todays_date = getFormattedCurrentDate();
@@ -38,6 +39,11 @@ function CompetitorPredictions(){
                     layout="display"
                     format="auto"
                 /> 
+                 <div className="">
+                    <div className="container">
+                        <FreeVipTipsTodayContent/>
+                    </div>
+                </div>
             </div>
         )
     }

@@ -81,6 +81,8 @@ export default function SportpesaMegaJackpotContent() {
 
       <p><strong>Join Pitch Predictions today — where smart bettors come to win.</strong></p>
 
+      <p><strong>Disclaimer:</strong> Predictions are based on statistical analysis and community trends and do not guarantee outcomes.</p>
+      
     </section>
   );
 }

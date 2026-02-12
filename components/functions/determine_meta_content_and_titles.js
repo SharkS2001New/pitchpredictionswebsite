@@ -903,10 +903,10 @@ function MetaContent(){
     
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);                  
     } else if(current_url.includes("tips/sokafans")){
-        title = "Sokafans Football Tips and Mega Jackpot Predictions";
-        meta_desc_content = "Get Soka fans prediction and free football tips for today’s matches. Access expert jackpot insights, mega jackpot predictions, and sure tips to improve your winning chances.";
+        title = "Sokafans Predictions – Free Expert Football Tips & Jackpots";
+        meta_desc_content = "Stay ahead with daily Sokafans predictions on Pitch Predictions. Accurate 1X2, BTTS, and jackpot tips for Africa & America. Bet responsibly and make informed decisions.";
         meta_keywords = "sokafans, sokafans prediction, sokafans mega jackpot prediction, sokafans prediction today, sokafans tips, sokafans tips today prediction, sokafans free tips today, sokafans jackpot prediction, sokafans 100% sure tips";
-        page_title = "Free Sokafans Predictions and Expert Football Tips";
+        page_title = "Sokafans Predictions – Daily Football Tips & Jackpot Guidance | Pitch Predictions";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
     } else if (current_url.includes("tips/betensured-predictions")) {
@@ -1155,10 +1155,10 @@ function MetaContent(){
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
     // New pages
     } else if(current_url.includes("1x2-betting-tips")){
-        title = "1X2 Betting Tips Today";
-        meta_desc_content = "Get reliable 1X2 betting tips today with well-analyzed match predictions. Explore home win, draw, and away win tips to support smarter betting decisions.";
+        title = "Accurate 1X2 Betting Tips & Football Predictions";
+        meta_desc_content = "Get expert 1X2 football betting tips, statistics, and safe strategies. Perfect for bettors in Africa and America seeking smarter wagers.";
         meta_keywords = "1x2 betting tips, 1x2 betting tips today, 1x2 betting tips prediction, 1x2 match predictions, 1x2 tips today";
-        page_title = "1X2 Betting Tips and Match Predictions for Today";
+        page_title = "1X2 Betting Tips – Expert Football Predictions for Africa & America";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
