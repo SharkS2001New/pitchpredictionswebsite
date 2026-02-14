@@ -95,6 +95,7 @@ function Footer(){
                   <li className="mb-0"><a target="_blank" href="https://forebetpredict.com/soccervista">Soccervista</a></li>
                   <li className="mb-0"><a target="_blank" href="https://thisweekpoolresult.com">This Week Pool Result</a></li>
                   <li className="mb-0"><a target="_blank" href="http://100percentwinnings.com">100 Percent Winning Tips</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.fulltimepredict.com">fulltimepredict</a></li>
                 </ul>
             </div>
         </div>
