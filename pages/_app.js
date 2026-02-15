@@ -19,6 +19,7 @@ import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
 import Script from 'next/script';
+import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
 // import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
@@ -32,7 +33,7 @@ function App({ Component, pageProps }) {
 
     // Excluded routes
   const excludedRoutes = [
-    // "/",
+    "/",
     "/blog",
     "/tips/betnumbers-predictions",
     "/tips/must-win-teams-today",
@@ -126,6 +127,8 @@ function App({ Component, pageProps }) {
                       src="https://tafatips.com/tafatips-popup-ads.js"
                       strategy="afterInteractive"
                     /> }
+
+                    <GuzBetCatfishBanner/>
 
                   </div>    
                   {!isAuthPage && 
