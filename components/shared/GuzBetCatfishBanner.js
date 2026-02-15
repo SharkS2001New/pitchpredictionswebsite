@@ -15,7 +15,7 @@ export default function GuzBetCatfishBanner() {
       <a
         href="https://guzzbet.com"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="sponsored nofollow noopener noreferrer"
         style={{ display: "block", lineHeight: 0 }}
       >
         <picture>
