@@ -20,7 +20,7 @@ import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
 import Script from 'next/script';
 import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
-// import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
+import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -120,7 +120,7 @@ function App({ Component, pageProps }) {
                     </div>
 
                     {/**1xbet click under ads */}
-                    {/* {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />} */}
+                    {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />}
                      {/**Taifa Bet */}
                     {shouldShowAd && !isAuthPage &&       
                     <Script
