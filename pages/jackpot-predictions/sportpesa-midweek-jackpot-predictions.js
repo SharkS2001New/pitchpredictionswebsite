@@ -1,3 +1,4 @@
+// pages/jackpot/sportpesa-midweek-jackpot-predictions.js
 import React, { useState, useEffect } from 'react';
 import PreLoader from "../../components/includes/loader";
 import DataNotFoundPage from "../../components/includes/datanotfound";
@@ -5,20 +6,31 @@ import { Adsense } from "@ctrl/react-adsense";
 import SportpesaMidweekJackpotContent from '../../components/seo-content/jackpots/sportpesa-midweek-jackpot-predictions';
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 
-function SportpesaMidweekJackpotPredictions() {         
-    const [gamesData, setGamesData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+function SportpesaMidweekJackpotPredictions({ 
+    initialGamesData, 
+    endpointStatus, 
+    error,
+    initialVoteStats 
+}) {         
+    const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
-    const [voteStats, setVoteStats] = useState({});
+    const [voteStats, setVoteStats] = useState(initialVoteStats || {});
     const [deviceId, setDeviceId] = useState('');
     const [votingInProgress, setVotingInProgress] = useState({});
     const [refreshingStats, setRefreshingStats] = useState({});
 
+    // Initialize device ID on client side only
     useEffect(() => {
         initializeDeviceId();
-        fetchGamesData();
     }, []);
+
+    // Load saved votes from localStorage after device ID is set
+    useEffect(() => {
+        if (deviceId && gamesData.length > 0) {
+            loadSavedVotes();
+            checkExistingVotes();
+        }
+    }, [deviceId, gamesData]);
 
     // Initialize persistent device ID
     const initializeDeviceId = async () => {
@@ -58,47 +70,12 @@ function SportpesaMidweekJackpotPredictions() {
         }
     };
 
-    const fetchGamesData = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(
-                "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Midweek Jackpot"
-            );
-            const data = await response.json();
-            
-            if (data.status && data.data) {
-                const formattedData = data.data.map(game => ({
-                    ...game,
-                    jackpot_id: game.jackpot_tips_id,
-                    fixture_id: game.fixture_id,
-                    game_id: game.id
-                }));
-                
-                setGamesData(formattedData);
-                await fetchVoteStats(formattedData);
-                
-                if (deviceId) {
-                    await checkExistingVotes(formattedData);
-                }
-                
-                loadSavedVotes(formattedData);
-            } else {
-                setError("No data available");
-            }
-        } catch (err) {
-            console.error("Fetch error:", err);
-            setError("Failed to fetch data. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const checkExistingVotes = async (games) => {
-        if (!deviceId || games.length === 0) return;
+    const checkExistingVotes = async () => {
+        if (!deviceId || gamesData.length === 0) return;
 
         try {
-            const fixtureIds = games.map(game => game.fixture_id);
-            const jackpotId = games[0]?.jackpot_tips_id;
+            const fixtureIds = gamesData.map(game => game.fixture_id);
+            const jackpotId = gamesData[0]?.jackpot_tips_id;
 
             if (!jackpotId) return;
 
@@ -135,55 +112,17 @@ function SportpesaMidweekJackpotPredictions() {
         }
     };
 
-    const fetchVoteStats = async (games) => {
-        if (games.length === 0) return;
-
-        try {
-            const jackpotId = games[0]?.jackpot_tips_id;
-            const fixtureIds = games.map(game => game.fixture_id);
-
-            const response = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jackpot_id: jackpotId,
-                    fixture_ids: fixtureIds
-                })
-            });
-
-            const result = await response.json();
-            
-            if (result.status && result.data) {
-                setVoteStats(result.data);
-            } else {
-                const emptyStats = {};
-                fixtureIds.forEach(fixtureId => {
-                    emptyStats[fixtureId] = {
-                        stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
-                        percentages: { home: 0, draw: 0, away: 0 },
-                        community_prediction: null
-                    };
-                });
-                setVoteStats(emptyStats);
-            }
-        } catch (err) {
-            console.error("Error fetching vote stats:", err);
-        }
-    };
-
-    const loadSavedVotes = (games) => {
+    const loadSavedVotes = () => {
         try {
             const savedVotes = localStorage.getItem('jackpot_selected_votes');
             if (savedVotes) {
                 const parsedVotes = JSON.parse(savedVotes);
                 
-                const currentJackpotId = games[0]?.jackpot_tips_id;
+                const currentJackpotId = gamesData[0]?.jackpot_tips_id;
                 const filteredVotes = {};
                 
                 Object.keys(parsedVotes).forEach(fixtureId => {
-                    const game = games.find(g => g.fixture_id === fixtureId);
+                    const game = gamesData.find(g => g.fixture_id == fixtureId);
                     if (game && game.jackpot_tips_id === currentJackpotId) {
                         filteredVotes[fixtureId] = parsedVotes[fixtureId];
                     }
@@ -207,7 +146,7 @@ function SportpesaMidweekJackpotPredictions() {
         }
 
         try {
-            const game = gamesData.find(g => g.fixture_id === fixtureId);
+            const game = gamesData.find(g => g.fixture_id == fixtureId);
             if (!game) {
                 return;
             }
@@ -304,7 +243,7 @@ function SportpesaMidweekJackpotPredictions() {
         try {
             setRefreshingStats(prev => ({ ...prev, [fixtureId]: true }));
             
-            const game = gamesData.find(g => g.fixture_id === fixtureId);
+            const game = gamesData.find(g => g.fixture_id == fixtureId);
             if (!game) return;
 
             const response = await fetch(`https://api.pitchpredictions.com/api/jackpot/vote/stats/${game.jackpot_tips_id}/${fixtureId}`);
@@ -362,14 +301,34 @@ function SportpesaMidweekJackpotPredictions() {
         }
     };
 
-    if (isLoading) {
-        return <PreLoader />;
-    }
-
-    if (error || gamesData.length === 0) {
+    // Handle error state
+    if (endpointStatus === "error" || error) {
         return (
             <div className="sites-card">
                 <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
+                <br/>
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />   
+                <br/>   
+                <div className="">
+                    <div className="container">
+                        <SportpesaMidweekJackpotContent/>
+                    </div>
+                </div>         
+            </div>
+        );
+    }
+
+    // Handle empty data state
+    if (!gamesData || gamesData.length === 0) {
+        return (
+            <div className="sites-card">
+                <DataNotFoundPage props="No jackpot fixtures available at the moment." />
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -436,6 +395,97 @@ function SportpesaMidweekJackpotPredictions() {
             `}</style>
         </div>
     );
+}
+
+export async function getServerSideProps() {
+    const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+    };
+
+    try {
+        // Fetch jackpot fixtures
+        const response = await fetch(
+            "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Midweek Jackpot",
+            { headers }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        let formattedData = [];
+        let voteStats = {};
+        
+        if (data.status && data.data) {
+            formattedData = data.data.map(game => ({
+                ...game,
+                jackpot_id: game.jackpot_tips_id,
+                fixture_id: game.fixture_id,
+                game_id: game.id
+            }));
+
+            // Fetch initial vote stats for all fixtures
+            if (formattedData.length > 0) {
+                const jackpotId = formattedData[0]?.jackpot_tips_id;
+                const fixtureIds = formattedData.map(game => game.fixture_id);
+
+                try {
+                    const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                        },
+                        body: JSON.stringify({
+                            jackpot_id: jackpotId,
+                            fixture_ids: fixtureIds
+                        })
+                    });
+
+                    const statsResult = await statsResponse.json();
+                    
+                    if (statsResult.status && statsResult.data) {
+                        voteStats = statsResult.data;
+                    }
+                } catch (statsError) {
+                    console.error("Error fetching vote stats:", statsError);
+                    
+                    // Create empty stats for all fixtures
+                    fixtureIds.forEach(fixtureId => {
+                        voteStats[fixtureId] = {
+                            stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
+                            percentages: { home: 0, draw: 0, away: 0 },
+                            community_prediction: null
+                        };
+                    });
+                }
+            }
+        }
+
+        return {
+            props: {
+                initialGamesData: formattedData,
+                endpointStatus: data.status === true ? "success" : "error",
+                error: data.status === true ? null : (data.message || "Failed to load jackpot fixtures"),
+                initialVoteStats: voteStats
+            }
+        };
+
+    } catch (error) {
+        console.error("Error fetching jackpot data:", error);
+
+        return {
+            props: {
+                initialGamesData: [],
+                endpointStatus: "error",
+                error: error.message || "Failed to load jackpot fixtures",
+                initialVoteStats: {}
+            }
+        };
+    }
 }
 
 export default SportpesaMidweekJackpotPredictions;

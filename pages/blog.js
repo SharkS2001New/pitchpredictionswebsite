@@ -1,27 +1,9 @@
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import PreLoader from "../components/includes/loader";
+import { useState } from "react";
 
-export default function Blogs() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Blogs({ initialBlogs, error }) {
+  const [blogs] = useState(initialBlogs || []);
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 10;
-
-  useEffect(() => {
-    fetch("https://api.pitchpredictions.com/api/blog", {
-      headers: { Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2" },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setBlogs(data.data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching blogs:", err);
-        setLoading(false);
-      });
-  }, []);
 
   // Pagination logic
   const indexOfLastBlog = currentPage * blogsPerPage;
@@ -29,12 +11,23 @@ export default function Blogs() {
   const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
+  // Handle error state
+  if (error) {
+    return (
+      <div className="blogs-page">
+        <div className="container">
+          <div className="no-blogs">
+            <p>Error loading blogs. Please try again later.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="blogs-page">
       <div className="container">
-        {loading ? (
-          <PreLoader/>
-        ) : blogs.length === 0 ? (
+        {!blogs || blogs.length === 0 ? (
           <div className="no-blogs">
             <p>No blogs available.</p>
           </div>
@@ -45,16 +38,16 @@ export default function Blogs() {
                 <div key={blog.id} className="col-12 col-lg-6">
                   <div className="blog-card">
                     <div className="blog-content">
-                        <small className="blog-category mb-3">
+                      <small className="blog-category mb-3">
                         {blog.category?.blogs_category_title
-                            ? blog.category.blogs_category_title.charAt(0).toUpperCase() + blog.category.blogs_category_title.slice(1).toLowerCase()
-                            : "Articles"}
-                        </small>
+                          ? blog.category.blogs_category_title.charAt(0).toUpperCase() + 
+                            blog.category.blogs_category_title.slice(1).toLowerCase()
+                          : "Articles"}
+                      </small>
 
-
-                      <Link href={`/blog/${blog.slug}`} className="blog-title">
+                      <a href={`/blog/${blog.slug}`} className="blog-title">
                         {blog.title}
-                      </Link>
+                      </a>
 
                       <div className="blog-meta mt-3">
                         {blog.user?.name || "Admin"} &nbsp;/&nbsp;
@@ -73,24 +66,26 @@ export default function Blogs() {
                       </p>
                     </div>
 
-                   <div className="blog-footer">
-                    <Link
-                      href={`/blog/${blog.slug}`}
-                      className="read-more-btn"
-                      rel="bookmark">
-                      <span className="kenta-button-icon">
-                        <i className="fas fa-arrow-right"></i>
-                      </span>
-                      <span className="kenta-button-text">
-                        Read More <i className="bi bi-arrow-right"></i>
-                      </span>
-                    </Link>
+                    <div className="blog-footer">
+                      <a
+                        href={`/blog/${blog.slug}`}
+                        className="read-more-btn"
+                        rel="bookmark"
+                      >
+                        <span className="kenta-button-icon">
+                          <i className="fas fa-arrow-right"></i>
+                        </span>
+                        <span className="kenta-button-text">
+                          Read More <i className="bi bi-arrow-right"></i>
+                        </span>
+                      </a>
 
-                    <div className="blog-social">
-                      <span><i className="bi bi-clock"></i> {blog.read_time} Minutes</span>
+                      <div className="blog-social">
+                        <span>
+                          <i className="bi bi-clock"></i> {blog.read_time} Minutes
+                        </span>
+                      </div>
                     </div>
-                  </div>
-
                   </div>
                 </div>
               ))}
@@ -115,4 +110,39 @@ export default function Blogs() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+  };
+
+  try {
+    const response = await fetch("https://api.pitchpredictions.com/api/blog", {
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      props: {
+        initialBlogs: data.data || [],
+        error: null
+      }
+    };
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    
+    return {
+      props: {
+        initialBlogs: [],
+        error: error.message || "Failed to load blogs"
+      }
+    };
+  }
 }
