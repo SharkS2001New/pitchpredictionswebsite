@@ -34,18 +34,51 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     }
   };
 
-  // Get jackpot name from slug
+  // Helper function to convert string to sentence case
+  const toSentenceCase = (str) => {
+    if (!str) return '';
+    return str.replace(/\b\w+/g, function(match) {
+      return match.charAt(0).toUpperCase() + match.slice(1).toLowerCase();
+    });
+  };
+
+  // Get jackpot name from slug (matches the existing slugs format)
   const getJackpotNameFromSlug = (slug) => {
     if (!slug) return '';
-    return slug.split('-').map(word => 
+    // Remove '-predictions' suffix if present
+    let nameWithoutPredictions = slug.replace(/-predictions$/, '');
+    // Convert hyphens to spaces and capitalize each word
+    return nameWithoutPredictions.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
 
-  // Get slug from jackpot name
-  const ReturnSlugFromJackpotName = (jackpotName) => {
+  // Find matching slug from allSlugs based on jackpot name
+  const findMatchingSlug = (jackpotName) => {
     if (!jackpotName) return '';
-    return jackpotName.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
+    
+    // Clean up the jackpot name for matching
+    const cleanName = jackpotName.toLowerCase()
+      .replace(/ predictions$/i, '')
+      .replace(/[^\w\s]/g, '')
+      .trim();
+    
+    // Create variations for matching
+    const nameVariations = [
+      cleanName,
+      cleanName.replace(/\s+/g, '-'),
+      cleanName.replace(/\s+/g, '-') + '-predictions'
+    ];
+    
+    // Find matching slug in allSlugs
+    const matchingSlug = allSlugs.find(slug => {
+      const slugLower = slug.toLowerCase();
+      return nameVariations.some(variation => 
+        slugLower.includes(variation) || variation.includes(slugLower.replace(/-predictions$/, ''))
+      );
+    });
+    
+    return matchingSlug || '';
   };
 
   const openShareModal = (jackpotName, slug) => {
@@ -231,20 +264,36 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     );
   };
 
-  // Safely filter active jackpots
-  const filteredActiveJackpots = Array.isArray(activeJackpots) 
-    ? (searchTerm
-        ? activeJackpots.filter((jackpot) =>
-            jackpot?.jackpot_name?.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-        : activeJackpots)
+  // Map active jackpots to include their matching slugs
+  const activeJackpotsWithSlugs = Array.isArray(activeJackpots) 
+    ? activeJackpots
+        .filter(jackpot => jackpot && jackpot.jackpot_name)
+        .map(jackpot => {
+          const slug = findMatchingSlug(jackpot.jackpot_name);
+          return {
+            ...jackpot,
+            slug: slug,
+            displayName: jackpot.jackpot_name.includes('Predictions') 
+              ? toSentenceCase(jackpot.jackpot_name)
+              : `${toSentenceCase(jackpot.jackpot_name)} Predictions`
+          };
+        })
+        .filter(jackpot => jackpot.slug) // Only include jackpots that have matching slugs
     : [];
 
-  // Safely filter inactive slugs
+  // Safely filter active jackpots by search term
+  const filteredActiveJackpots = searchTerm
+    ? activeJackpotsWithSlugs.filter((jackpot) =>
+        jackpot.jackpot_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : activeJackpotsWithSlugs;
+
+  // Get active jackpot names for filtering inactive slugs
   const activeJackpotNames = filteredActiveJackpots
-    .map(j => j?.jackpot_name?.toLowerCase().replace(' predictions', '') || '')
+    .map(j => j.jackpot_name?.toLowerCase().replace(/ predictions$/, '') || '')
     .filter(Boolean);
   
+  // Filter all slugs based on search term
   let filteredSlugs = Array.isArray(allSlugs) ? allSlugs : [];
   if (searchTerm) {
     filteredSlugs = filteredSlugs.filter((slug) =>
@@ -252,22 +301,23 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     );
   }
   
+  // Filter out slugs that match active jackpots
   const filteredInactiveSlugs = filteredSlugs.filter(slug => {
-    const jackpotName = getJackpotNameFromSlug(slug).toLowerCase();
+    const slugName = getJackpotNameFromSlug(slug).toLowerCase();
     return !activeJackpotNames.some(activeName => 
-      jackpotName.includes(activeName) || activeName.includes(jackpotName.replace(' predictions', ''))
+      slugName.includes(activeName) || activeName.includes(slugName.replace(/ predictions$/, ''))
     );
   });
 
-  // Create structured data for SEO (only if there are active jackpots)
-  const structuredData = Array.isArray(activeJackpots) && activeJackpots.length > 0 ? {
+  // Create structured data for SEO
+  const structuredData = filteredActiveJackpots.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": activeJackpots.slice(0, 10).map((jackpot, index) => ({
+    "itemListElement": filteredActiveJackpots.slice(0, 10).map((jackpot, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://www.pitchpredictions.com/jackpot-predictions/${ReturnSlugFromJackpotName(jackpot?.jackpot_name || '')}`,
-      "name": jackpot?.jackpot_name || 'Jackpot'
+      "url": `https://www.pitchpredictions.com/jackpot-predictions/${jackpot.slug}`,
+      "name": jackpot.displayName
     }))
   } : null;
 
@@ -326,13 +376,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             {!isMobile ? (
               <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredActiveJackpots.map((jackpot, index) => {
-                  if (!jackpot) return null;
-                  
-                  const slug = ReturnSlugFromJackpotName(jackpot.jackpot_name);
                   const analysis = jackpot.expert_analysis || generateEEATAnalysis(jackpot);
-                  const jackpotNameWithPredictions = jackpot.jackpot_name?.includes('Predictions') 
-                    ? jackpot.jackpot_name 
-                    : `${jackpot.jackpot_name || 'Jackpot'} Predictions`;
                   const accuracy = Math.round(jackpot.avg_confidence || 0);
                   const completedGames = jackpot.completed_games || 0;
                   
@@ -355,10 +399,10 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             </div>
                             <h3 className="h6 mb-0 flex-grow-1">
                               <a 
-                                href={`/jackpot-predictions/${slug}`}
+                                href={`/jackpot-predictions/${jackpot.slug}`}
                                 className="text-decoration-none text-dark"
                               >
-                                {jackpotNameWithPredictions}
+                                {jackpot.displayName}
                               </a>
                             </h3>
                           </div>
@@ -465,7 +509,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             <div className="col-6">
                               <button 
                                 className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center"
-                                onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
+                                onClick={() => openShareModal(jackpot.displayName, jackpot.slug)}
                               >
                                 <i className="bi bi-share me-1"></i>
                                 Share
@@ -473,7 +517,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             </div>
                             <div className="col-6">
                               <a 
-                                href={`/jackpot-predictions/${slug}`}
+                                href={`/jackpot-predictions/${jackpot.slug}`}
                                 className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center"
                               >
                                 View Predictions
@@ -489,13 +533,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             ) : (
               // Mobile version
               filteredActiveJackpots.map((jackpot, index) => {
-                if (!jackpot) return null;
-                
-                const slug = ReturnSlugFromJackpotName(jackpot.jackpot_name);
                 const analysis = jackpot.expert_analysis || generateEEATAnalysis(jackpot);
-                const jackpotNameWithPredictions = jackpot.jackpot_name?.includes('Predictions') 
-                  ? jackpot.jackpot_name 
-                  : `${jackpot.jackpot_name || 'Jackpot'} Predictions`;
                 const accuracy = Math.round(jackpot.avg_confidence || 0);
                 const completedGames = jackpot.completed_games || 0;
                 
@@ -517,10 +555,10 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                         </div>
                         <h3 className="h6 mb-0 flex-grow-1">
                           <a 
-                            href={`/jackpot-predictions/${slug}`}
+                            href={`/jackpot-predictions/${jackpot.slug}`}
                             className="text-decoration-none text-dark"
                           >
-                            {jackpotNameWithPredictions}
+                            {jackpot.displayName}
                           </a>
                         </h3>
                       </div>
@@ -602,14 +640,14 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                         <div className="col-6">
                           <button 
                             className="btn btn-outline-secondary btn-sm w-100"
-                            onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
+                            onClick={() => openShareModal(jackpot.displayName, jackpot.slug)}
                           >
                             <i className="bi bi-share me-1"></i>Share
                           </button>
                         </div>
                         <div className="col-6">
                           <a 
-                            href={`/jackpot-predictions/${slug}`}
+                            href={`/jackpot-predictions/${jackpot.slug}`}
                             className="btn btn-primary btn-sm w-100"
                           >
                             View Predictions
@@ -652,57 +690,64 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
               Other Jackpots ({filteredInactiveSlugs.length})
             </h2>
             
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-              {filteredInactiveSlugs.map((slug, index) => {
-                const jackpotName = getJackpotNameFromSlug(slug);
-                const jackpotNameWithPredictions = jackpotName.includes('Predictions') 
-                  ? jackpotName 
-                  : `${jackpotName} Predictions`;
-                const continuousNumber = filteredActiveJackpots.length + index + 1;
-                
-                return (
-                  <div key={slug} className="col">
-                    <div className="card h-100 border">
-                      <div className="card-body p-3 d-flex flex-column">
-                        <div className="d-flex justify-content-between align-items-start mb-2">
-                          <span className="badge bg-secondary">{continuousNumber}</span>
-                          <button 
-                            className="btn btn-sm btn-outline-secondary border-0 d-flex align-items-center"
-                            onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
-                          >
-                            <i className="bi bi-share me-1"></i>
-                            Share
-                          </button>
-                        </div>
+            {filteredInactiveSlugs.length === 0 && searchTerm ? (
+              <div className="alert alert-info">
+                <i className="bi bi-info-circle me-2"></i>
+                No jackpots found matching "{searchTerm}". Try a different search term.
+              </div>
+            ) : (
+              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                {filteredInactiveSlugs.map((slug, index) => {
+                  const jackpotName = getJackpotNameFromSlug(slug);
+                  const jackpotNameWithPredictions = jackpotName.includes('Predictions') 
+                    ? jackpotName 
+                    : `${jackpotName} Predictions`;
+                  const continuousNumber = filteredActiveJackpots.length + index + 1;
+                  
+                  return (
+                    <div key={slug} className="col">
+                      <div className="card h-100 border">
+                        <div className="card-body p-3 d-flex flex-column">
+                          <div className="d-flex justify-content-between align-items-start mb-2">
+                            <span className="badge bg-secondary">{continuousNumber}</span>
+                            <button 
+                              className="btn btn-sm btn-outline-secondary border-0 d-flex align-items-center"
+                              onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
+                            >
+                              <i className="bi bi-share me-1"></i>
+                              Share
+                            </button>
+                          </div>
 
-                        <h3 className="h6 mb-3 flex-grow-1">
-                          <a 
-                            href={`/jackpot-predictions/${slug}`}
-                            className="text-decoration-none text-dark"
-                          >
-                            {jackpotNameWithPredictions}
-                          </a>
-                        </h3>
-                        
-                        <div className="mt-auto">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <small className="text-muted">
-                              <i className="bi bi-clock-history me-1"></i>
-                              Historical predictions
-                            </small>
+                          <h3 className="h6 mb-3 flex-grow-1">
                             <a 
                               href={`/jackpot-predictions/${slug}`}
-                              className="btn btn-outline-primary btn-sm">
-                              View
+                              className="text-decoration-none text-dark"
+                            >
+                              {jackpotNameWithPredictions}
                             </a>
+                          </h3>
+                          
+                          <div className="mt-auto">
+                            <div className="d-flex justify-content-between align-items-center">
+                              <small className="text-muted">
+                                <i className="bi bi-clock-history me-1"></i>
+                                Historical predictions
+                              </small>
+                              <a 
+                                href={`/jackpot-predictions/${slug}`}
+                                className="btn btn-outline-primary btn-sm">
+                                View
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -747,7 +792,7 @@ export async function getServerSideProps({ req, query }) {
   const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
   const searchTerm = query.search || '';
   
-  // All possible jackpot slugs
+  // All possible jackpot slugs (original URLs)
   const allSlugs = [
     'sportpesa-mega-jackpot-predictions',
     'sportpesa-midweek-jackpot-predictions',
@@ -811,13 +856,6 @@ export async function getServerSideProps({ req, query }) {
     
     // Ensure we always return an array
     let activeJackpots = data.status && Array.isArray(data.data) ? data.data : [];
-    
-    // Filter active jackpots by search term if provided
-    if (searchTerm && activeJackpots.length > 0) {
-      activeJackpots = activeJackpots.filter(j => 
-        j?.jackpot_name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
     
     return {
       props: {
