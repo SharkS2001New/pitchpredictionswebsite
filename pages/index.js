@@ -9,7 +9,6 @@ import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
 import ShortBlogPosts from "../components/shared/short-blog-posts";
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
-import Head from 'next/head';
 
 export default function Home({ 
     initialData, 

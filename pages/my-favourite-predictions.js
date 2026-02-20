@@ -1,5 +1,7 @@
+// pages/my-selected-matches.js
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { Adsense } from "@ctrl/react-adsense";
 import RenderData from "../components/shared/render_fixtures_data";
 import WinningTeamAndOdd from "../components/functions/determine_winning_team_and_odd";
 import ProbabilityResults from "../components/functions/determine_probability_results";
@@ -9,26 +11,25 @@ import DataNotFoundPage from "../components/includes/datanotfound";
 import PreLoader from "../components/includes/loader";
 import FixturesTableDisplay from "../components/shared/fixtures_table_display";
 import FetchFixtureByIdMyFav from "../components/functions/FetchfixturesById-Myfavourites";
-import { Adsense } from "@ctrl/react-adsense";
 
-function MySelectedMatches(){    
+function MySelectedMatches() {    
     const router = useRouter();
-    const [my_state_data, setMyStateData] = useState([]);
+    const [myStateData, setMyStateData] = useState([]);
     const [isMobile, setIsMobile] = useState(false);
-    const [favMatchesUpdateCounter, setfavMatchesUpdateCounter] = useState(0);
-    const [favLiveMatchesUpdateCounter, setfavLiveMatchesUpdateCounter] = useState(0);
-    const [loading, setIsLoading] = useState("");
+    const [favMatchesUpdateCounter, setFavMatchesUpdateCounter] = useState(0);
+    const [favLiveMatchesUpdateCounter, setFavLiveMatchesUpdateCounter] = useState(0);
+    const [loading, setLoading] = useState("loading");
     
     const mounted = useRef(false);
     
     // Calculate the width on window change detection
-    function detectWindowSize() {
+    const detectWindowSize = () => {
         setIsMobile(window.innerWidth < 760);
-    }
+    };
     
     useEffect(() => {
         if (router.isReady) {
-            setIsMobile(window.innerWidth < 760);
+            detectWindowSize();
             window.addEventListener('resize', detectWindowSize);
         }
     
@@ -40,18 +41,25 @@ function MySelectedMatches(){
     // Method used to refresh the data automatically
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setfavMatchesUpdateCounter(prevCounter => prevCounter + 1);
+            setFavMatchesUpdateCounter(prevCounter => prevCounter + 1);
         }, 500);
     
         if (mounted.current) {
-            const favoritematches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
-            if (favoritematches) {
-                setMyStateData(favoritematches);
+            try {
+                const favoriteMatches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
+                if (favoriteMatches && Array.isArray(favoriteMatches)) {
+                    setMyStateData(favoriteMatches);
+                } else {
+                    setMyStateData([]);
+                }
+            } catch (error) {
+                console.error('Error parsing localStorage data:', error);
+                setMyStateData([]);
             }
-            setIsLoading("loaded");
+            setLoading("loaded");
         } else {
             mounted.current = true;
-            setIsLoading("loading");
+            setLoading("loading");
         }
     
         return () => {
@@ -62,14 +70,18 @@ function MySelectedMatches(){
     // Method used to refresh the live data automatically
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setfavLiveMatchesUpdateCounter(prevCounter => prevCounter + 1);
+            setFavLiveMatchesUpdateCounter(prevCounter => prevCounter + 1);
         }, 10000);
     
         if (mounted.current) {
-            const favoritematches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
-            if (favoritematches) {
-                const fixtureIds = favoritematches.map(item => ({ fixture_id: item.fixture_id }));
-                FetchFixtureByIdMyFav(fixtureIds);
+            try {
+                const favoriteMatches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
+                if (favoriteMatches && Array.isArray(favoriteMatches) && favoriteMatches.length > 0) {
+                    const fixtureIds = favoriteMatches.map(item => ({ fixture_id: item.fixture_id }));
+                    FetchFixtureByIdMyFav(fixtureIds);
+                }
+            } catch (error) {
+                console.error('Error fetching live data for favorites:', error);
             }
         } else {
             mounted.current = true;
@@ -80,108 +92,118 @@ function MySelectedMatches(){
         };
     }, [favLiveMatchesUpdateCounter]);
     
-    // to be used in forming fixture details array
-    const predictionsList = [];
-    
-    //forming the fixture details array
-    for(let i = 0; i <my_state_data.length;i++){  
-        let winning_team = "";
-        let winning_odd = 0;
-
-        let home_odd  = "";
-        let draw_odd = "";
-        let away_odd = "";
-
-        if(my_state_data[i].percent_pred_home != null){
-            home_odd  = my_state_data[i].percent_pred_home.slice(0, -1);
-            draw_odd = my_state_data[i].percent_pred_draw.slice(0, -1);
-            away_odd = my_state_data[i].percent_pred_away.slice(0, -1);  
+    // Process the data to create predictions list
+    const processPredictions = () => {
+        if (!myStateData || myStateData.length === 0) {
+            return [];
         }
-                
-        //Decode halftime data stored as a json in mysql
-        var scores_data = JSON.parse(my_state_data[i].scores);
+        
+        const predictionsList = [];
+        
+        for(let i = 0; i < myStateData.length; i++) {
+            const match = myStateData[i];
+            
+            // Skip if match data is invalid
+            if (!match) continue;
+            
+            let winning_team = "";
+            let winning_odd = 0;
 
-        var halftime_data = "";
-        var extratime_data = "";
-        var penalty_data = "";
+            let home_odd = "";
+            let draw_odd = "";
+            let away_odd = "";
 
-        if(my_state_data[i].scores != null){
-            if(scores_data.halftime.home != null){
-                halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
-            }                
+            if (match.percent_pred_home != null) {
+                home_odd = match.percent_pred_home.slice(0, -1);
+                draw_odd = match.percent_pred_draw.slice(0, -1);
+                away_odd = match.percent_pred_away.slice(0, -1);  
+            }
+                    
+            // Decode halftime data stored as a json in mysql
+            let halftime_data = "";
+            let extratime_data = "";
+            let penalty_data = "";
+            
+            if (match.scores != null) {
+                try {
+                    const scores_data = JSON.parse(match.scores);
+                    
+                    if (scores_data?.halftime?.home != null) {
+                        halftime_data = '(' + scores_data.halftime.home + ' - ' + scores_data.halftime.away + ')';
+                    }                
 
-            if(scores_data.extratime.home != null){
-                extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
+                    if (scores_data?.extratime?.home != null) {
+                        extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
+                    }
+
+                    if (scores_data?.penalty?.home != null) {
+                        penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
+                    }
+                } catch (error) {
+                    console.error('Error parsing scores data:', error);
+                }
             }
 
-            if(scores_data.penalty.home != null){
-                penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-            }
-        }
+            const computedWinningPreds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, match);
 
-        let computed_winning_preds = WinningTeamAndOdd(home_odd,draw_odd,away_odd,my_state_data[i]);
+            winning_team = computedWinningPreds[0];
+            winning_odd = computedWinningPreds[1];
+        
+            const probabilityResults = ProbabilityResults(match, winning_team);
 
-        winning_team = computed_winning_preds[0];
-        winning_odd = computed_winning_preds[1];
-    
-        let probability_results = ProbabilityResults(my_state_data[i],winning_team);
+            const livescoresResults = DetermineLiveScores(match, isMobile);
 
-        let livescores_results = DetermineLiveScores(my_state_data[i],isMobile);
+            const livestatus = livescoresResults[0];
+            const livescores = livescoresResults[1];
 
-        let livestatus = livescores_results[0];
-        let livescores = livescores_results[1];
+            const fixturesAverage = ComputeFixtureAverage(
+                match.teams_perfomance_home_for,
+                match.teams_perfomance_home_aganist,
+                match.teams_perfomance_away_for,
+                match.teams_perfomance_away_aganist,
+                match.teams_games_played_home,
+                match.teams_games_played_away
+            );
 
-        let fixturesAverage = ComputeFixtureAverage(my_state_data[i].teams_perfomance_home_for,my_state_data[i].teams_perfomance_home_aganist,my_state_data[i].teams_perfomance_away_for,my_state_data[i].teams_perfomance_away_aganist,my_state_data[i].teams_games_played_home,my_state_data[i].teams_games_played_away);
-
-        var sharedTabledetailsArray = [];
-
-        sharedTabledetailsArray.push(
-            {
-                game_details:my_state_data[i],
-                home_odd : home_odd,
+            const sharedTableDetailsArray = [{
+                game_details: match,
+                home_odd: home_odd,
                 draw_odd: draw_odd,
                 away_odd: away_odd,
-                probability_results : probability_results,
-                winning_odd : winning_odd,
-                winning_team:winning_team,
-                livestatus : livestatus,
-                livescores : livescores,
-                halftime_data : halftime_data,
-                extratime_data : extratime_data,
-                penalty_data:penalty_data,
-                average : fixturesAverage
-            }
-        )
+                probability_results: probabilityResults,
+                winning_odd: winning_odd,
+                winning_team: winning_team,
+                livestatus: livestatus,
+                livescores: livescores,
+                halftime_data: halftime_data,
+                extratime_data: extratime_data,
+                penalty_data: penalty_data,
+                average: fixturesAverage
+            }];
+            
+            // Add to predictions list
+            predictionsList.push(
+                <FixturesTableDisplay 
+                    props={sharedTableDetailsArray} 
+                    key={match.fixture_id || i} 
+                    isMobile={isMobile}
+                />
+            );
+        }
         
-        //Array to render in the page, for fixture details
-        predictionsList.push(
-            <FixturesTableDisplay  props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
-        )
-    } 
+        return predictionsList;
+    };
 
-    //wait for the dadta to load completly to be ready 
-    if (loading === "loaded" && predictionsList.length > 0) { 
-        return(
-        <React.Fragment>
-            <div className="desktop-container-resize sites-card">
-                <RenderData renderPredictions = {predictionsList} isMobile= {isMobile}/>                 
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
-                /> 
-                <br/>   
-            </div>
-        </React.Fragment>
-        )  
-    }else if(loading === "loaded" && predictionsList.length === 0){
+    const predictionsList = processPredictions();
+
+    // Render based on loading state and data availability
+    if (loading === "loading") {
+        return <PreLoader />;
+    } else if (loading === "loaded" && predictionsList.length === 0) {
         return (
-            <React.Fragment>
+            <>
                 <div className="sites-card">
-                    <DataNotFoundPage props = "You haven't selected any games yet. To get started, simply click on the game icon next to any game listed on the website."/>
+                    <DataNotFoundPage props="You haven't selected any games yet. To get started, simply click on the game icon next to any game listed on the website."/>
                     <br/>
                     <Adsense
                         client="ca-pub-5665711413000284"
@@ -192,11 +214,28 @@ function MySelectedMatches(){
                     /> 
                     <br/>   
                 </div>
-            </React.Fragment>
-        )
-    }else if(loading ==="loading"){
-        return <PreLoader/>
+            </>
+        );
+    } else if (loading === "loaded" && predictionsList.length > 0) {
+        return (
+            <>
+                <div className="desktop-container-resize sites-card">
+                    <RenderData renderPredictions={predictionsList} isMobile={isMobile} />                 
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    /> 
+                    <br/>   
+                </div>
+            </>
+        );
     }
-   
+    
+    return null;
 }
+
 export default MySelectedMatches;
