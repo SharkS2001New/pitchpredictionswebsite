@@ -109,10 +109,7 @@ export async function getServerSideProps() {
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
     // First batch: 0-20 records
-    const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
-    
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
+    const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;    
     
     try {
         const controller = new AbortController();
@@ -159,14 +156,6 @@ export async function getServerSideProps() {
                     console.error('Error fetching full batch for free VIP tips:', batchError);
                     // If full batch fails, keep the first batch data
                 }
-            }
-            
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
             }
             
             return {

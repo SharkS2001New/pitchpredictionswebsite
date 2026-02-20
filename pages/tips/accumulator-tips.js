@@ -154,14 +154,6 @@ export async function getServerSideProps() {
                 }
             }
             
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
-            }
-            
             return {
                 props: {
                     initialData: finalData,

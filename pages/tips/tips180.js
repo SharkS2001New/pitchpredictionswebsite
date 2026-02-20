@@ -113,9 +113,6 @@ export async function getServerSideProps() {
     // First batch: 0-20 records
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -162,15 +159,7 @@ export async function getServerSideProps() {
                     // If full batch fails, keep the first batch data
                 }
             }
-            
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
-            }
-            
+
             return {
                 props: {
                     initialData: finalData,
