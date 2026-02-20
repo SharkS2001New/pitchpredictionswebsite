@@ -12,71 +12,76 @@ import OneXTwoContent from "../components/seo-content/mainpages/1x2-betting-tips
 export default function Home({ 
     initialData, 
     endpointStatus, 
-    endpointMessage, 
     error,
     baseUrl,
     todaysDate 
 }) {
   
-  // Call the predictions component with props
-  var renderPredictions = PagesMatchPredictionDetails({ 
-    initialData, 
-    endpointStatus, 
-    endpointMessage, 
-    error,
-    baseUrl: baseUrl,
-    dateParam: todaysDate
-  });
-
-  // If data is completely loaded. Display, Else, Show preloader
-  if(renderPredictions[0]?.endpointStatus === "loading" || renderPredictions[0]?.endpointStatus === ""){
-      return <PreLoader />;
-  } else if(renderPredictions[0]?.endpointStatus === "error" || error){
-      return (
-          <>
-              <div className="sites-card">
-                  <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
-                  <br/>
-              </div>
-          </>
-      );
-  } else if(renderPredictions.length > 0){
-      return(
-          <>              
-              <div className="sites-card">
-                  <PopularTips/>
-                  
-                  <RenderData renderPredictions={renderPredictions}/>
-                  
-                  <br/>
-                  
-                  <div className="text-center">
-                      <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">
-                          Football Predictions for Today
-                      </a>
-                  </div>
-                  
-                  <br/>
-                  
-                  <Adsense
-                      client="ca-pub-5665711413000284"
-                      slot="3850951453"
-                      style={{ display: "block" }}
-                      layout="display"
-                      format="auto"
-                  />
-                  
-                  <br/>  
-                  
-                  <div className="">
-                      <div className="container">
-                          <OneXTwoContent/>
-                      </div>
-                  </div>
-              </div>
-          </>
-      );
+  // Show preloader while server is fetching data
+  if (typeof window === 'undefined') {
+    return <PreLoader />;
   }
+
+  // Handle error state
+  if (endpointStatus === "error" || error) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
+        <br/>
+      </div>
+    );
+  }
+  
+  // Process the data - PagesMatchPredictionDetails now just returns an array of components
+  const renderPredictions = PagesMatchPredictionDetails({ 
+    initialData,
+    baseUrl: baseUrl
+  });
+  
+  // Handle empty data state
+  if (renderPredictions.length === 0) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="No matches available for today"/>
+        <br/>
+      </div>
+    );
+  }
+  
+  // Render the page with data
+  return (
+    <div className="sites-card">
+      <PopularTips/>
+      
+      <RenderData renderPredictions={renderPredictions}/>
+      
+      <br/>
+      
+      <div className="text-center">
+        <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">
+          Football Predictions for Today
+        </a>
+      </div>
+      
+      <br/>
+      
+      <Adsense
+        client="ca-pub-5665711413000284"
+        slot="3850951453"
+        style={{ display: "block" }}
+        layout="display"
+        format="auto"
+      />
+      
+      <br/>  
+      
+      <div className="">
+        <div className="container">
+          <OneXTwoContent/>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export async function getServerSideProps() {
@@ -87,6 +92,9 @@ export async function getServerSideProps() {
   
   // First batch: 0-20 records
   const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+  
+  // Record start time to ensure minimum loading time if needed
+  const startTime = Date.now();
   
   try {
     const controller = new AbortController();
@@ -108,45 +116,62 @@ export async function getServerSideProps() {
     
     const data = await response.json();
     
-    let finalData = data.status ? data.data : [];
-    let finalStatus = data.status ? "success" : "error";
-    let finalMessage = data.message || "";
-    
-    // Check if we need to fetch the full batch (if more than 20 records)
-    if (data.status && data.data && data.data.length > 20) {
-      try {
-        // Fetch full batch: 0-850 records
-        const fullBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=850`;
-        
-        const fullResponse = await fetch(fullBatchUrl, {
-          headers: { 
-            "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+    // Check API response structure
+    if (data.status === true) {
+      let finalData = data.data || [];
+      
+      // Check if we need to fetch the full batch (if more than 20 records)
+      if (data.data && data.data.length > 20) {
+        try {
+          // Fetch full batch: 0-850 records
+          const fullBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=850`;
+          
+          const fullResponse = await fetch(fullBatchUrl, {
+            headers: { 
+              "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+            }
+          });
+          
+          const fullData = await fullResponse.json();
+          
+          if (fullData.status === true) {
+            finalData = fullData.data || [];
           }
-        });
-        
-        const fullData = await fullResponse.json();
-        
-        if (fullData.status === true) {
-          finalData = fullData.data;
-          finalMessage = fullData.message;
-          finalStatus = "success";
+        } catch (batchError) {
+          console.error('Error fetching full batch:', batchError);
+          // If full batch fails, keep the first batch data
         }
-      } catch (batchError) {
-        console.error('Error fetching full batch:', batchError);
-        // If full batch fails, keep the first batch data
       }
+      
+      // Calculate elapsed time
+      const elapsedTime = Date.now() - startTime;
+      
+      // If fetch was too fast, add a small delay to show preloader (optional)
+      if (elapsedTime < 500) {
+        await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
+      }
+      
+      return {
+        props: {
+          initialData: finalData,
+          endpointStatus: "success",
+          error: null,
+          baseUrl: baseUrl,
+          todaysDate: todaysDate
+        }
+      };
+    } else {
+      // API returned status: false
+      return {
+        props: {
+          initialData: [],
+          endpointStatus: "error",
+          error: data.message || "Failed to load predictions",
+          baseUrl: baseUrl,
+          todaysDate: todaysDate
+        }
+      };
     }
-    
-    return {
-      props: {
-        initialData: finalData,
-        endpointStatus: finalStatus,
-        endpointMessage: finalMessage,
-        error: null,
-        baseUrl: baseUrl,
-        todaysDate: todaysDate
-      }
-    };
   } catch (error) {
     console.error('Error fetching homepage predictions:', error);
     
@@ -154,7 +179,6 @@ export async function getServerSideProps() {
       props: {
         initialData: [],
         endpointStatus: "error",
-        endpointMessage: "Failed to load predictions",
         error: error.message,
         baseUrl: baseUrl,
         todaysDate: todaysDate

@@ -16,15 +16,11 @@ import HalfTimeProbabilityResults from "../functions/halftime_probability_result
 
 function PagesMatchPredictionDetails({ 
     initialData = [], 
-    endpointStatus = "loading", 
-    endpointMessage = "",
-    error = null,
     baseUrl = "" // Base URL for live updates
 }) {
     const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
     const [gamesfixtures, setGames] = useState(initialData);
-    const [currentEndpointStatus, setCurrentEndpointStatus] = useState(endpointStatus);
     const [liveUpdateCounter, setLiveUpdateCounter] = useState(0);
     const predictionsList = [];
 
@@ -84,7 +80,6 @@ function PagesMatchPredictionDetails({
                 const data = await response.json();
 
                 if (data.status === true) {
-                    setCurrentEndpointStatus(data.message);
                     setGames(data.data);
                 }
             } catch (error) {
@@ -95,198 +90,185 @@ function PagesMatchPredictionDetails({
         fetchLiveUpdates();
     }, [liveUpdateCounter, router.pathname, baseUrl]);
 
-    // Handle error
-    if (error) {
-        return [{
-            endpointStatus: "error",
-            isMobile,
-            error
-        }];
+    // If no data, return empty array
+    if (!gamesfixtures || gamesfixtures.length === 0) {
+        return [];
     }
 
-    // Process fixtures - EXACT same as your original code (keeping all your logic)
-    if (currentEndpointStatus === "success" && gamesfixtures.length > 0) {
-        for(let i = 0; i < gamesfixtures.length; i++) {  
-            let winning_team = "";
-            let winning_odd = 0;
+    // Process fixtures - EXACT same as your original logic
+    for(let i = 0; i < gamesfixtures.length; i++) {  
+        let winning_team = "";
+        let winning_odd = 0;
 
-            //Decode halftime data stored as a json in mysql
-            var scores_data = JSON.parse(gamesfixtures[i].scores);
-            var halftime_data = "";
-            var extratime_data = "";
-            var penalty_data = "";
-            
-            if(gamesfixtures[i].scores != null){
-                if(scores_data.halftime != null) {
-                    if(scores_data.halftime.home != null){
-                        halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
-                    }         
-                    
-                    if(scores_data.extratime.home != null){
-                        extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
-                    }
-    
-                    if(scores_data.penalty.home != null){
-                        penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-                    }
-                }                
-            }
-
-            let home_odd = "";
-            let draw_odd = "";
-            let away_odd = "";
-
-            if(gamesfixtures[i].percent_pred_home !== null){
-                home_odd  = parseInt(gamesfixtures[i].percent_pred_home.slice(0, -1));
-            }else{
-                home_odd = "-";
-            }
-
-            if(gamesfixtures[i].percent_pred_draw !== null){
-                draw_odd = parseInt(gamesfixtures[i].percent_pred_draw.slice(0, -1));
-            }else{
-                draw_odd = "-";
-            }
-
-            if(gamesfixtures[i].percent_pred_away !== null){
-                away_odd = parseInt(gamesfixtures[i].percent_pred_away.slice(0, -1));  
-            }else{
-                away_odd = "-";
-            }
-
-            let ht_home_odd = "";
-            let ht_draw_odd = "";
-            let ht_away_odd = "";
-
-            if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-                if(gamesfixtures[i].hf_percent_pred_home !== null){
-                    ht_home_odd  = parseInt(gamesfixtures[i].hf_percent_pred_home.slice(0, -1));
-                }else{
-                    ht_home_odd = "-";
-                }
-
-                if(gamesfixtures[i].hf_percent_pred_draw !== null){
-                    ht_draw_odd = parseInt(gamesfixtures[i].hf_percent_pred_draw.slice(0, -1));
-                }else{
-                    ht_draw_odd = "-";
-                }
-
-                if(gamesfixtures[i].hf_percent_pred_away !== null){
-                    ht_away_odd = parseInt(gamesfixtures[i].hf_percent_pred_away.slice(0, -1));  
-                }else{
-                    ht_away_odd = "-";
-                }
-            }
+        //Decode halftime data stored as a json in mysql
+        var scores_data = JSON.parse(gamesfixtures[i].scores);
+        var halftime_data = "";
+        var extratime_data = "";
+        var penalty_data = "";
         
-            let computed_winning_preds = "";
-            
-            let probability_results = "";
-
-            let ht_computed_winning_preds ="";
-            let ht_probability_results = "";
-            let ht_winning_team ="";
-            let ht_winning_odd ="";
-
-            let fixturesAverage = ComputeFixtureAverage(
-                gamesfixtures[i].teams_perfomance_home_for,
-                gamesfixtures[i].teams_perfomance_home_aganist,
-                gamesfixtures[i].teams_perfomance_away_for,
-                gamesfixtures[i].teams_perfomance_away_aganist,
-                gamesfixtures[i].teams_games_played_home,
-                gamesfixtures[i].teams_games_played_away
-            )
-         
-            if(router.pathname.substring(1).includes("double-chance-predictions")) {
-                computed_winning_preds =  DoubleChanceWinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i], router.pathname.substring(1));
-
-                winning_team = computed_winning_preds[0];
-                winning_odd = computed_winning_preds[1];
-
-                probability_results = DoubleChanceProbabilityResults(gamesfixtures[i], winning_team, router.pathname.substring(1));
-
-            } else if(router.pathname.substring(1).includes("predictions-under-over")) {
-                computed_winning_preds =  UnderOverWinningTeamAndOdd(fixturesAverage, isMobile);
-
-                winning_team = computed_winning_preds[0];
-                winning_odd = computed_winning_preds[1];
-
-                probability_results = UnderOverProbabilityResults(gamesfixtures[i], winning_team);
-
-            } else if(router.pathname.substring(1).includes("predictions-both-to-score")) {
-
-                probability_results = BothTeamsToScore(gamesfixtures[i]);
-            
-            } else if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-                ht_computed_winning_preds =  HalfTimeWinningTeamAndOdd(ht_home_odd, ht_draw_odd, ht_away_odd, gamesfixtures[i]);
-
-                ht_winning_team = ht_computed_winning_preds[0];
-                ht_winning_odd = ht_computed_winning_preds[1];
-
-                ht_probability_results = HalfTimeProbabilityResults(gamesfixtures[i], ht_winning_team);
-
-                computed_winning_preds =  WinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i]);
-
-                winning_team = computed_winning_preds[0];
-                winning_odd = computed_winning_preds[1];
-
-                probability_results = ProbabilityResults(gamesfixtures[i], winning_team);
-            } else {
-                computed_winning_preds =  WinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i]);
-
-                winning_team = computed_winning_preds[0];
-                winning_odd = computed_winning_preds[1];
-
-                probability_results = ProbabilityResults(gamesfixtures[i], winning_team);
-            }            
-
-            let livescores_results = DetermineLiveScores(gamesfixtures[i], isMobile);
-
-            let livestatus = livescores_results[0];
-            let livescores = livescores_results[1];
-
-            var sharedTabledetailsArray = [];
-
-            sharedTabledetailsArray.push(
-                {
-                    game_details: gamesfixtures[i],
-                    home_odd: home_odd,
-                    draw_odd: draw_odd,
-                    away_odd: away_odd,
-                    probability_results: probability_results,
-                    winning_odd: winning_odd,
-                    winning_team: winning_team,
-                    livestatus: livestatus,
-                    livescores: livescores,
-                    halftime_data: halftime_data,
-                    extratime_data: extratime_data,
-                    penalty_data: penalty_data,
-                    average: fixturesAverage,
-                    // If it's halftime/fulltime page
-                    ...(router.pathname.substring(1).includes("predictions-halftime-fulltime") && {
-                        ht_home_odd: ht_home_odd,
-                        ht_draw_odd: ht_draw_odd,
-                        ht_away_odd: ht_away_odd,
-                        ht_probability_results: ht_probability_results,
-                        ht_winning_odd: ht_winning_odd,
-                        ht_winning_team: ht_winning_team,
-                    }),
-                }
-            );
+        if(gamesfixtures[i].scores != null){
+            if(scores_data.halftime != null) {
+                if(scores_data.halftime.home != null){
+                    halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
+                }         
                 
-            predictionsList.push(
-                <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
-            );
-        }  
+                if(scores_data.extratime.home != null){
+                    extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
+                }
+
+                if(scores_data.penalty.home != null){
+                    penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
+                }
+            }                
+        }
+
+        let home_odd = "";
+        let draw_odd = "";
+        let away_odd = "";
+
+        if(gamesfixtures[i].percent_pred_home !== null){
+            home_odd  = parseInt(gamesfixtures[i].percent_pred_home.slice(0, -1));
+        }else{
+            home_odd = "-";
+        }
+
+        if(gamesfixtures[i].percent_pred_draw !== null){
+            draw_odd = parseInt(gamesfixtures[i].percent_pred_draw.slice(0, -1));
+        }else{
+            draw_odd = "-";
+        }
+
+        if(gamesfixtures[i].percent_pred_away !== null){
+            away_odd = parseInt(gamesfixtures[i].percent_pred_away.slice(0, -1));  
+        }else{
+            away_odd = "-";
+        }
+
+        let ht_home_odd = "";
+        let ht_draw_odd = "";
+        let ht_away_odd = "";
+
+        if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
+            if(gamesfixtures[i].hf_percent_pred_home !== null){
+                ht_home_odd  = parseInt(gamesfixtures[i].hf_percent_pred_home.slice(0, -1));
+            }else{
+                ht_home_odd = "-";
+            }
+
+            if(gamesfixtures[i].hf_percent_pred_draw !== null){
+                ht_draw_odd = parseInt(gamesfixtures[i].hf_percent_pred_draw.slice(0, -1));
+            }else{
+                ht_draw_odd = "-";
+            }
+
+            if(gamesfixtures[i].hf_percent_pred_away !== null){
+                ht_away_odd = parseInt(gamesfixtures[i].hf_percent_pred_away.slice(0, -1));  
+            }else{
+                ht_away_odd = "-";
+            }
+        }
+    
+        let computed_winning_preds = "";
         
-        return predictionsList;
-    } else {
-        // Return status object for loading/error states
-        return [{
-            endpointStatus: currentEndpointStatus,
-            isMobile,
-            message: endpointMessage
-        }];
-    }
+        let probability_results = "";
+
+        let ht_computed_winning_preds ="";
+        let ht_probability_results = "";
+        let ht_winning_team ="";
+        let ht_winning_odd ="";
+
+        let fixturesAverage = ComputeFixtureAverage(
+            gamesfixtures[i].teams_perfomance_home_for,
+            gamesfixtures[i].teams_perfomance_home_aganist,
+            gamesfixtures[i].teams_perfomance_away_for,
+            gamesfixtures[i].teams_perfomance_away_aganist,
+            gamesfixtures[i].teams_games_played_home,
+            gamesfixtures[i].teams_games_played_away
+        )
+     
+        if(router.pathname.substring(1).includes("double-chance-predictions")) {
+            computed_winning_preds =  DoubleChanceWinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i], router.pathname.substring(1));
+
+            winning_team = computed_winning_preds[0];
+            winning_odd = computed_winning_preds[1];
+
+            probability_results = DoubleChanceProbabilityResults(gamesfixtures[i], winning_team, router.pathname.substring(1));
+
+        } else if(router.pathname.substring(1).includes("predictions-under-over")) {
+            computed_winning_preds =  UnderOverWinningTeamAndOdd(fixturesAverage, isMobile);
+
+            winning_team = computed_winning_preds[0];
+            winning_odd = computed_winning_preds[1];
+
+            probability_results = UnderOverProbabilityResults(gamesfixtures[i], winning_team);
+
+        } else if(router.pathname.substring(1).includes("predictions-both-to-score")) {
+
+            probability_results = BothTeamsToScore(gamesfixtures[i]);
+        
+        } else if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
+            ht_computed_winning_preds =  HalfTimeWinningTeamAndOdd(ht_home_odd, ht_draw_odd, ht_away_odd, gamesfixtures[i]);
+
+            ht_winning_team = ht_computed_winning_preds[0];
+            ht_winning_odd = ht_computed_winning_preds[1];
+
+            ht_probability_results = HalfTimeProbabilityResults(gamesfixtures[i], ht_winning_team);
+
+            computed_winning_preds =  WinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i]);
+
+            winning_team = computed_winning_preds[0];
+            winning_odd = computed_winning_preds[1];
+
+            probability_results = ProbabilityResults(gamesfixtures[i], winning_team);
+        } else {
+            computed_winning_preds =  WinningTeamAndOdd(home_odd, draw_odd, away_odd, gamesfixtures[i]);
+
+            winning_team = computed_winning_preds[0];
+            winning_odd = computed_winning_preds[1];
+
+            probability_results = ProbabilityResults(gamesfixtures[i], winning_team);
+        }            
+
+        let livescores_results = DetermineLiveScores(gamesfixtures[i], isMobile);
+
+        let livestatus = livescores_results[0];
+        let livescores = livescores_results[1];
+
+        var sharedTabledetailsArray = [];
+
+        sharedTabledetailsArray.push(
+            {
+                game_details: gamesfixtures[i],
+                home_odd: home_odd,
+                draw_odd: draw_odd,
+                away_odd: away_odd,
+                probability_results: probability_results,
+                winning_odd: winning_odd,
+                winning_team: winning_team,
+                livestatus: livestatus,
+                livescores: livescores,
+                halftime_data: halftime_data,
+                extratime_data: extratime_data,
+                penalty_data: penalty_data,
+                average: fixturesAverage,
+                // If it's halftime/fulltime page
+                ...(router.pathname.substring(1).includes("predictions-halftime-fulltime") && {
+                    ht_home_odd: ht_home_odd,
+                    ht_draw_odd: ht_draw_odd,
+                    ht_away_odd: ht_away_odd,
+                    ht_probability_results: ht_probability_results,
+                    ht_winning_odd: ht_winning_odd,
+                    ht_winning_team: ht_winning_team,
+                }),
+            }
+        );
+            
+        predictionsList.push(
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
+        );
+    }  
+    
+    return predictionsList;
 }
 
 export default PagesMatchPredictionDetails;

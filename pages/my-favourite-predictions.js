@@ -1,7 +1,8 @@
 // pages/my-selected-matches.js
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
+import Head from 'next/head';
 import RenderData from "../components/shared/render_fixtures_data";
 import WinningTeamAndOdd from "../components/functions/determine_winning_team_and_odd";
 import ProbabilityResults from "../components/functions/determine_probability_results";
@@ -23,9 +24,9 @@ function MySelectedMatches() {
     const mounted = useRef(false);
     
     // Calculate the width on window change detection
-    const detectWindowSize = () => {
+    const detectWindowSize = useCallback(() => {
         setIsMobile(window.innerWidth < 760);
-    };
+    }, []);
     
     useEffect(() => {
         if (router.isReady) {
@@ -36,7 +37,22 @@ function MySelectedMatches() {
         return () => {
             window.removeEventListener('resize', detectWindowSize);
         };
-    }, [router.isReady]);
+    }, [router.isReady, detectWindowSize]);
+    
+    // Function to load favorites from localStorage
+    const loadFavorites = useCallback(() => {
+        try {
+            const favoriteMatches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
+            if (favoriteMatches && Array.isArray(favoriteMatches)) {
+                setMyStateData(favoriteMatches);
+            } else {
+                setMyStateData([]);
+            }
+        } catch (error) {
+            console.error('Error parsing localStorage data:', error);
+            setMyStateData([]);
+        }
+    }, []);
     
     // Method used to refresh the data automatically
     useEffect(() => {
@@ -45,27 +61,19 @@ function MySelectedMatches() {
         }, 500);
     
         if (mounted.current) {
-            try {
-                const favoriteMatches = JSON.parse(localStorage.getItem("myselectedfavoritematchesdata"));
-                if (favoriteMatches && Array.isArray(favoriteMatches)) {
-                    setMyStateData(favoriteMatches);
-                } else {
-                    setMyStateData([]);
-                }
-            } catch (error) {
-                console.error('Error parsing localStorage data:', error);
-                setMyStateData([]);
-            }
+            loadFavorites();
             setLoading("loaded");
         } else {
             mounted.current = true;
             setLoading("loading");
+            // Initial load
+            loadFavorites();
         }
     
         return () => {
             clearInterval(intervalId);
         };
-    }, [favMatchesUpdateCounter]);
+    }, [favMatchesUpdateCounter, loadFavorites]);
     
     // Method used to refresh the live data automatically
     useEffect(() => {
@@ -83,8 +91,6 @@ function MySelectedMatches() {
             } catch (error) {
                 console.error('Error fetching live data for favorites:', error);
             }
-        } else {
-            mounted.current = true;
         }
     
         return () => {
@@ -93,7 +99,7 @@ function MySelectedMatches() {
     }, [favLiveMatchesUpdateCounter]);
     
     // Process the data to create predictions list
-    const processPredictions = () => {
+    const processPredictions = useCallback(() => {
         if (!myStateData || myStateData.length === 0) {
             return [];
         }
@@ -192,7 +198,7 @@ function MySelectedMatches() {
         }
         
         return predictionsList;
-    };
+    }, [myStateData, isMobile]);
 
     const predictionsList = processPredictions();
 
@@ -202,6 +208,12 @@ function MySelectedMatches() {
     } else if (loading === "loaded" && predictionsList.length === 0) {
         return (
             <>
+                <Head>
+                    <title>My Selected Matches | Football Predictions Favorites | PitchPredictions</title>
+                    <meta name="description" content="View your selected favorite football matches. Track predictions, live scores, and analysis for games you've chosen to follow." />
+                    <meta name="robots" content="noindex, nofollow" />
+                </Head>
+                
                 <div className="sites-card">
                     <DataNotFoundPage props="You haven't selected any games yet. To get started, simply click on the game icon next to any game listed on the website."/>
                     <br/>
@@ -219,6 +231,12 @@ function MySelectedMatches() {
     } else if (loading === "loaded" && predictionsList.length > 0) {
         return (
             <>
+                <Head>
+                    <title>My Selected Matches | Football Predictions Favorites | PitchPredictions</title>
+                    <meta name="description" content="View your selected favorite football matches. Track predictions, live scores, and analysis for games you've chosen to follow." />
+                    <meta name="robots" content="noindex, nofollow" />
+                </Head>
+                
                 <div className="desktop-container-resize sites-card">
                     <RenderData renderPredictions={predictionsList} isMobile={isMobile} />                 
                     <br/>

@@ -123,11 +123,11 @@ function FootballPredictionsByCountry(){
     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_upcoming_fixtures_by_country?country_name="+country_name);
 
     //If data is completly loaded. Display, Else, Show preloader
-    if(renderPredictions[0].endpointStatus === ""){
+    if(renderPredictions.length ==0){
         return(
             <PreLoader/>
         ) 
-    }else if(renderPredictions[0].endpointStatus === "error"){
+    }else if(renderPredictions.length > 0){
 
         return (   
             <React.Fragment>        

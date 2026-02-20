@@ -1,6 +1,7 @@
 // pages/team-comparison.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Adsense } from "@ctrl/react-adsense";
+import Head from 'next/head';
 import FetchSearchResultsForTeamComparison from "../components/functions/search-by-team-comparison";
 import fetchTeamsLast6Matches from "../components/teamdetails/functions/fetch_last_6_matches";
 import getFormattedCurrentDate from "../components/functions/GetTodaysDate";
@@ -27,24 +28,30 @@ function TeamComparison() {
     const [loading, setLoading] = useState(false);
     const [compareClicked, setCompareClicked] = useState(false);
 
-    // Clean up function to abort any ongoing requests
-    const abortController = new AbortController();
+    // Use ref for abort controller to persist across renders
+    const abortControllerRef = useRef(null);
 
     useEffect(() => {
+        // Create abort controller on mount
+        abortControllerRef.current = new AbortController();
+        
+        // Clean up on unmount
         return () => {
-            abortController.abort();
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
         };
     }, []);
 
-    const closeHomeForm = () => {
+    const closeHomeForm = useCallback(() => {
         setHomeSearchResults([]);
-    };
+    }, []);
   
-    const closeAwayForm = () => {
+    const closeAwayForm = useCallback(() => {
         setAwaySearchResults([]);
-    };
+    }, []);
   
-    const searchHomeTeamOnChange = async (inputedSearchQuery) => {
+    const searchHomeTeamOnChange = useCallback(async (inputedSearchQuery) => {
         setHomeSearchQuery(inputedSearchQuery);
         
         if (inputedSearchQuery.length >= 3) {
@@ -58,9 +65,9 @@ function TeamComparison() {
         } else {
             setHomeSearchResults([]);
         }
-    };
-  
-    const searchAwayTeamOnChange = async (inputedSearchQuery) => {
+    }, []);
+
+    const searchAwayTeamOnChange = useCallback(async (inputedSearchQuery) => {
         setAwaySearchQuery(inputedSearchQuery);
         
         if (inputedSearchQuery.length >= 3) {
@@ -74,9 +81,9 @@ function TeamComparison() {
         } else {
             setAwaySearchResults([]);
         }
-    };
+    }, []);
 
-    const homeTeamClick = (homeTeamNameSelected, homeTeamId) => {
+    const homeTeamClick = useCallback((homeTeamNameSelected, homeTeamIdSelected) => {
         // Set the value of the input text element
         const txtHomeTeamNameElement = document.getElementById('homeSearchInput');
         const txtHomeTeamIdElement = document.getElementById('txtHomeTeamId');
@@ -86,15 +93,15 @@ function TeamComparison() {
         }
 
         if (txtHomeTeamIdElement) {
-            txtHomeTeamIdElement.value = homeTeamId;
+            txtHomeTeamIdElement.value = homeTeamIdSelected;
         }
 
         setHomeTeamSelectedName(homeTeamNameSelected);
-        setHomeTeamId(homeTeamId);
+        setHomeTeamId(homeTeamIdSelected);
         closeHomeForm();
-    };
+    }, [closeHomeForm]);
 
-    const awayTeamClick = (awayTeamNameSelected, awayTeamId) => {
+    const awayTeamClick = useCallback((awayTeamNameSelected, awayTeamIdSelected) => {
         const txtAwayTeamNameElement = document.getElementById('awaySearchInput');
         const txtAwayTeamIdElement = document.getElementById('txtAwayTeamId');
 
@@ -103,15 +110,52 @@ function TeamComparison() {
         }
 
         if (txtAwayTeamIdElement) {
-            txtAwayTeamIdElement.value = awayTeamId;
+            txtAwayTeamIdElement.value = awayTeamIdSelected;
         }
 
         setAwayTeamSelectedName(awayTeamNameSelected);
-        setAwayTeamId(awayTeamId);
+        setAwayTeamId(awayTeamIdSelected);
         closeAwayForm();
-    };
+    }, [closeAwayForm]);
 
-    const btnCompareTeams = async () => {
+    const getH2HData = useCallback(async (homeTeamIdVal, awayTeamIdVal, currentDate) => {
+        const url = "https://api.pitchpredictions.com/api/fetch_h2h_fixtures";
+        
+        const headers = {
+            "Content-type": "application/json; charset=UTF-8",
+            "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    home_team_id: homeTeamIdVal,
+                    away_team_id: awayTeamIdVal,
+                    fixture_date: currentDate
+                }),
+                headers: headers,
+                signal: abortControllerRef.current?.signal
+            });
+
+            const data = await response.json();
+
+            if (data.status === true) {
+                setH2HMatchDetails(data.data || []);
+            } else {
+                setH2HMatchDetails([]);
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.log('Request aborted');
+            } else {
+                console.error('Error fetching H2H data:', error);
+                setH2HMatchDetails([]);
+            }
+        }
+    }, []);
+
+    const btnCompareTeams = useCallback(async () => {
         const homeInput = document.getElementById('homeSearchInput');
         const awayInput = document.getElementById('awaySearchInput');
         const txtHomeTeamIdElement = document.getElementById('txtHomeTeamId');
@@ -175,197 +219,168 @@ function TeamComparison() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const getH2HData = async (homeTeamId, awayTeamId, currentDate) => {
-        const url = "https://api.pitchpredictions.com/api/fetch_h2h_fixtures";
-        
-        const headers = {
-            "Content-type": "application/json; charset=UTF-8",
-            "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-        };
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify({
-                    home_team_id: homeTeamId,
-                    away_team_id: awayTeamId,
-                    fixture_date: currentDate
-                }),
-                headers: headers,
-                signal: abortController.signal
-            });
-
-            const data = await response.json();
-
-            if (data.status === true) {
-                setH2HMatchDetails(data.data || []);
-            } else {
-                setH2HMatchDetails([]);
-            }
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.log('Request aborted');
-            } else {
-                console.error('Error fetching H2H data:', error);
-                setH2HMatchDetails([]);
-            }
-        }
-    };
+    }, [getH2HData]);
 
     const hasData = teamLast6MatchesAway.length > 0 || 
                     teamLast6MatchesHome.length > 0 || 
                     h2hMatchDetails.length > 0;
 
     return (
-        <div className="sites-card">
-            {/* Instructions Section - Only show when no data */}
-            {!hasData && !compareClicked && (
-                <>
-                    <div className="row container">
-                        <h2 className="sectionTitle text-center">How to Compare Teams Performances</h2>
-                        <div>
-                            <ol>
-                                <li>Type the team name in the "Team A" input field, ensuring it is at least 3 letters long. As you type, suggestions will appear, and you should select the desired team from the suggestions.</li>
-                                <li>Type a keyword in the "Team B" input field. Again, suggestions will appear as you type, and you should select the desired team from the suggestions.</li>
-                                <li>After selecting teams for both "Team A" and "Team B," click on the "Compare Teams" button.</li>
-                                <li>Wait for the results to appear below.</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <hr/>
-                </>
-            )}
-
-            {/* Search Forms */}
-            <div className="row container">
-                <div className="col-md-6 mb-2">
-                    <HomeSearchForm
-                        label="Team A"
-                        onChange={searchHomeTeamOnChange}
-                        searchResults={homeSearchResults}
-                        closeForm={closeHomeForm}
-                        searchQuery={homeSearchQuery}
-                        onClick={homeTeamClick}
-                    />
-                </div>
-                <div className="col-md-6 mb-2">
-                    <AwaySearchForm
-                        label="Team B"
-                        onChange={searchAwayTeamOnChange}
-                        searchResults={awaySearchResults}
-                        closeForm={closeAwayForm}
-                        searchQuery={awaySearchQuery}
-                        onClick={awayTeamClick}
-                    />
-                </div>
-            </div>
-
-            {/* Compare Button */}
-            <div className="row container">
-                <div className="col-md-3"></div>
-                <div className="col-md-6 text-center">
-                    <button 
-                        type="button" 
-                        className="btn btn-danger" 
-                        onClick={btnCompareTeams}
-                        disabled={loading}
-                    >
-                        {loading ? 'Loading...' : 'Compare Teams'}
-                    </button>
-                </div>
-                <div className="col-md-3"></div>
-            </div>
+        <>
+            <Head>
+                <title>Team Comparison | Compare Football Teams Head-to-Head | PitchPredictions</title>
+                <meta name="description" content="Compare football teams head-to-head. Analyze recent form, head-to-head matches, and performance statistics. Make informed betting decisions with our team comparison tool." />
+                <meta name="keywords" content="team comparison, football teams head to head, h2h comparison, team form analysis" />
+            </Head>
             
-            <br/>
-
-            {/* H2H Results Section */}
-            {loading ? (
-                <>
-                    <div className="row">
-                        <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
-                    </div> 
-                    <div className="responsive-row header matchdetailsheader" style={{cursor: "auto"}}>
-                        <div className="responsive-cell team-link-probability">Date</div>
-                        <div className="responsive-cell team-link-probability" style={{textAlign: "left"}}>League</div>
-                        <div className="responsive-cell team-link" style={{textAlign: "left"}}>Match</div>
-                        <div className="responsive-cell">Score</div>
-                    </div>
-                    <InPagePreLoader />
-                </>
-            ) : (
-                h2hMatchDetails.length > 0 && (
-                    <div className="center container-fluid">
-                        <H2HTeamComparisons 
-                            props={h2hMatchDetails} 
-                            home_team_id={homeTeamId} 
-                            away_team_id={awayTeamId}
-                        />
-                    </div>
-                )
-            )}
-
-            <br/>
-
-            {/* Team Performance Sections */}
-            <div className="row text-center">
-                <div className="col-md-6 col-12">
-                    {teamLast6MatchesHome.length > 0 ? (
-                        <TeamComparisonDataPage
-                            props={teamLast6MatchesHome}
-                            team_id={homeTeamId}
-                            filter_date={getFormattedCurrentDate()}
-                            title={"Games Played By - " + homeTeamSelectedName}
-                            team_name={homeTeamSelectedName}
-                        />
-                    ) : (
-                        homeTeamSelectedName !== "" && compareClicked && !loading && (
-                            <div className="alert alert-info">
-                                No recent matches found for {homeTeamSelectedName}
+            <div className="sites-card">
+                {/* Instructions Section - Only show when no data */}
+                {!hasData && !compareClicked && (
+                    <>
+                        <div className="row container">
+                            <h2 className="sectionTitle text-center">How to Compare Teams Performances</h2>
+                            <div>
+                                <ol>
+                                    <li>Type the team name in the "Team A" input field, ensuring it is at least 3 letters long. As you type, suggestions will appear, and you should select the desired team from the suggestions.</li>
+                                    <li>Type a keyword in the "Team B" input field. Again, suggestions will appear as you type, and you should select the desired team from the suggestions.</li>
+                                    <li>After selecting teams for both "Team A" and "Team B," click on the "Compare Teams" button.</li>
+                                    <li>Wait for the results to appear below.</li>
+                                </ol>
                             </div>
-                        )
-                    )}
+                        </div>
+                        <hr/>
+                    </>
+                )}
+
+                {/* Search Forms */}
+                <div className="row container">
+                    <div className="col-md-6 mb-2">
+                        <HomeSearchForm
+                            label="Team A"
+                            onChange={searchHomeTeamOnChange}
+                            searchResults={homeSearchResults}
+                            closeForm={closeHomeForm}
+                            searchQuery={homeSearchQuery}
+                            onClick={homeTeamClick}
+                        />
+                    </div>
+                    <div className="col-md-6 mb-2">
+                        <AwaySearchForm
+                            label="Team B"
+                            onChange={searchAwayTeamOnChange}
+                            searchResults={awaySearchResults}
+                            closeForm={closeAwayForm}
+                            searchQuery={awaySearchQuery}
+                            onClick={awayTeamClick}
+                        />
+                    </div>
+                </div>
+
+                {/* Compare Button */}
+                <div className="row container">
+                    <div className="col-md-3"></div>
+                    <div className="col-md-6 text-center">
+                        <button 
+                            type="button" 
+                            className="btn btn-danger" 
+                            onClick={btnCompareTeams}
+                            disabled={loading}
+                        >
+                            {loading ? 'Loading...' : 'Compare Teams'}
+                        </button>
+                    </div>
+                    <div className="col-md-3"></div>
                 </div>
                 
-                <div className="col-md-6 col-12">
-                    {teamLast6MatchesAway.length > 0 ? (
-                        <TeamComparisonDataPage
-                            props={teamLast6MatchesAway}
-                            team_id={awayTeamId}
-                            filter_date={getFormattedCurrentDate()}
-                            title={"Games Played By - " + awayTeamSelectedName}
-                            team_name={awayTeamSelectedName}
-                        />
-                    ) : (
-                        awayTeamSelectedName !== "" && compareClicked && !loading && (
-                            <div className="alert alert-info">
-                                No recent matches found for {awayTeamSelectedName}
-                            </div>
-                        )
-                    )}
+                <br/>
+
+                {/* H2H Results Section */}
+                {loading ? (
+                    <>
+                        <div className="row">
+                            <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
+                        </div> 
+                        <div className="responsive-row header matchdetailsheader" style={{cursor: "auto"}}>
+                            <div className="responsive-cell team-link-probability">Date</div>
+                            <div className="responsive-cell team-link-probability" style={{textAlign: "left"}}>League</div>
+                            <div className="responsive-cell team-link" style={{textAlign: "left"}}>Match</div>
+                            <div className="responsive-cell">Score</div>
+                        </div>
+                        <InPagePreLoader />
+                    </>
+                ) : (
+                    h2hMatchDetails.length > 0 && (
+                        <div className="center container-fluid">
+                            <H2HTeamComparisons 
+                                props={h2hMatchDetails} 
+                                home_team_id={homeTeamId} 
+                                away_team_id={awayTeamId}
+                            />
+                        </div>
+                    )
+                )}
+
+                <br/>
+
+                {/* Team Performance Sections */}
+                <div className="row text-center">
+                    <div className="col-md-6 col-12">
+                        {teamLast6MatchesHome.length > 0 ? (
+                            <TeamComparisonDataPage
+                                props={teamLast6MatchesHome}
+                                team_id={homeTeamId}
+                                filter_date={getFormattedCurrentDate()}
+                                title={"Games Played By - " + homeTeamSelectedName}
+                                team_name={homeTeamSelectedName}
+                            />
+                        ) : (
+                            homeTeamSelectedName !== "" && compareClicked && !loading && (
+                                <div className="alert alert-info">
+                                    No recent matches found for {homeTeamSelectedName}
+                                </div>
+                            )
+                        )}
+                    </div>
+                    
+                    <div className="col-md-6 col-12">
+                        {teamLast6MatchesAway.length > 0 ? (
+                            <TeamComparisonDataPage
+                                props={teamLast6MatchesAway}
+                                team_id={awayTeamId}
+                                filter_date={getFormattedCurrentDate()}
+                                title={"Games Played By - " + awayTeamSelectedName}
+                                team_name={awayTeamSelectedName}
+                            />
+                        ) : (
+                            awayTeamSelectedName !== "" && compareClicked && !loading && (
+                                <div className="alert alert-info">
+                                    No recent matches found for {awayTeamSelectedName}
+                                </div>
+                            )
+                        )}
+                    </div>
                 </div>
+
+                <br/> 
+
+                {/* AdSense */}
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                /> 
+                
+                <br/>         
+                <br/>
             </div>
-
-            <br/> 
-
-            {/* AdSense */}
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            /> 
-            
-            <br/>         
-            <br/>
-        </div>
+        </>
     );
 }
 
 // Search Form Component for Home Team
-const HomeSearchForm = ({ label, onChange, searchResults, onClick }) => {
+const HomeSearchForm = React.memo(({ label, onChange, searchResults, onClick }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleInputChange = (e) => {
@@ -428,10 +443,12 @@ const HomeSearchForm = ({ label, onChange, searchResults, onClick }) => {
             )} 
         </form>
     );
-};
+});
+
+HomeSearchForm.displayName = 'HomeSearchForm';
 
 // Search Form Component for Away Team
-const AwaySearchForm = ({ label, onChange, searchResults, onClick }) => {
+const AwaySearchForm = React.memo(({ label, onChange, searchResults, onClick }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleInputChange = (e) => {
@@ -494,6 +511,8 @@ const AwaySearchForm = ({ label, onChange, searchResults, onClick }) => {
             )}
         </form>
     );
-};
+});
+
+AwaySearchForm.displayName = 'AwaySearchForm';
 
 export default TeamComparison;
