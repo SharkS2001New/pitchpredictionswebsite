@@ -1,162 +1,348 @@
-import React,{useState,useEffect} from "react";
+// pages/league/[country-name]/[football-prediction-for-league]/results.js
+import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
+import { Adsense } from "@ctrl/react-adsense";
 import PreLoader from "../../../../components/includes/loader";
 import RenderData from "../../../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../../../components/shared/pages_match_predictions_details";
-import { useRouter } from 'next/router';
 import DataNotFoundPage from "../../../../components/includes/datanotfound";
 import LeaguesDetailsTop from "../../../../components/leaguesdetails/leagues_top_details";
 import FiltersLeagueDetails from "../../../../components/leaguesdetails/filters-league-details";
-import FetchLeaguesTopData from "../../../../components/functions/FetchLeaguesTopData";
 import FilterLeaguesResultsOverallDoubleChanceUnderOverHTFTPred1x2 from "../../../../components/leaguesdetails/results/filter-pred1x2-ov-un-dc-ht-ft";
-import { Adsense } from "@ctrl/react-adsense";
+import getFormattedCurrentDate from "../../../../components/functions/GetTodaysDate";
 
-function FootballPredictionsByLeague(){
-    const router = useRouter(); //fetch page a data    
+function FootballPredictionsByLeagueResults({ 
+    initialData, 
+    endpointStatus, 
+    error,
+    baseUrl,
+    leagueName,
+    countryName,
+    displayLeagueName,
+    displayCountryName,
+    leagueId,
+    initialTopLeaguesData
+}) {
+    const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
-    const [endpointStatus,setEndPointStatus] = useState("");
-    const [topLeaguesData, setTopLeaguesData] = useState([]);
+    const [topLeaguesData, setTopLeaguesData] = useState(initialTopLeaguesData || []);
 
-    let league_name = "";
-    let country_name = "";
-    let leagueId = "";
-
-    const headers =  {
-        "Content-type": "application/json; charset=UTF-8",
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-    }
-    
-    //function to form league name
-    const removeLastIntegerPart = (str) => {
-        const regex = /-\d+$/;
-        const match = str.match(regex);
-        if (match) {
-            const integerPart = match[0];
-            return str.slice(0, str.lastIndexOf(integerPart));
-        } else {
-            return str;
+    // Client-side only: check for mobile
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsMobile(window.innerWidth < 760);
         }
-    };
+    }, []);
 
-    if(router.isReady){
-        let league_name_url = router.query["football-prediction-for-league"];  
-       
-
-        //if url has no id, redirect to homepage
-        if(league_name_url.match(/-(\d+)$/)){
-            league_name = removeLastIntegerPart(league_name_url); //get league name from url
-            //country name
-            const query_link = router.query["country-name"];
-            const prefix = "football-predictions-for-";
-            country_name = query_link.substring(prefix.length);
-
-            leagueId = parseInt(league_name_url.match(/-(\d+)$/)[1]);//get league id from the url
-        }else{
-            router.push('/', undefined, { 
-                statusCode: 301
-            })
-        } 
-    }
-
-    //select the active tab by checking the # tag value on page load
-    useEffect(()=>{ 
-        if (router.isReady) { //Checking if router is ready prevents the page from loading without some data
-            //Determine screen size on mobile or desktop
-            window.screen.width < 760 ? setIsMobile(true) : setIsMobile(false);
+    // Window resize detection (client-side only)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        function detectWindowSize() {
+            setIsMobile(window.innerWidth < 760);
         }
+        
+        window.addEventListener('resize', detectWindowSize);
+        return () => window.removeEventListener('resize', detectWindowSize);
+    }, []);
 
-        FetchLeaguesTopData(leagueId).then(data => {
-            if(data.status == true){
-                var h2h_data = data.data;
+    // Process the data - PagesMatchPredictionDetails now just returns an array of components
+    const renderPredictions = PagesMatchPredictionDetails({ 
+        initialData,
+        baseUrl: baseUrl
+    });
 
-                setEndPointStatus(data.message);
+    // Form the dynamic URL for filters
+    const league_url = `${countryName}/${leagueName}-${leagueId}`;
 
-                setTopLeaguesData(h2h_data);
-
-            }else{
-                setEndPointStatus(data.message);
-            }
-        })
-    }, [router.isReady])
-
-     //Calculate the width on windows change detection
-     function detectWindowSize() {
-        window.innerWidth < 760 ? setIsMobile(true) : setIsMobile(false);        
+    // Handle loading state
+    if (!router.isReady) {
+        return <PreLoader />;
     }
 
-    if (router.isReady) { //Checking if router is ready prevents the page from loading without some data
-        window.onresize = detectWindowSize;
-    }
-
-     // Call the predictions function
-     var renderPredictions = PagesMatchPredictionDetails("https://api.pitchpredictions.com/api/fetch_league_results?league_name="+league_name+"&country_name="+country_name);
-    
-     let league_url = "";
-    
-     // form the dynamic url 
-     league_url = country_name+'/'+league_name+'-'+leagueId;
-
-     //If data is completly loaded. Display, Else, Show preloader
-     if(renderPredictions[0].endpointStatus === ""){
-         return(
-             <PreLoader/>
-         ) 
-     }else if(renderPredictions[0].endpointStatus === "error"){
-        if(topLeaguesData.length > 0){
-         return ( 
+    // Handle error state
+    if (endpointStatus === "error" || error) {
+        return (
             <React.Fragment>
-                <div className="sites-card mb-2">
-                    <LeaguesDetailsTop league_name={topLeaguesData[0].league_name} country_name={topLeaguesData[0].country_name} leagueId={topLeaguesData[0].league_id} country_logo={topLeaguesData[0].downloaded_country_flag} league_logo= {topLeaguesData[0].downloaded_league_logo} />
-                    <div className="border-top"></div>                      
-                    <FiltersLeagueDetails url_filter = {router.pathname.substring(1)} league_url={league_url} league_type={topLeaguesData[0].league_type}/>
-                </div>
+                {topLeaguesData.length > 0 ? (
+                    <div className="sites-card mb-2">
+                        <LeaguesDetailsTop 
+                            league_name={topLeaguesData[0].league_name} 
+                            country_name={topLeaguesData[0].country_name} 
+                            leagueId={topLeaguesData[0].league_id} 
+                            country_logo={topLeaguesData[0].downloaded_country_flag} 
+                            league_logo={topLeaguesData[0].downloaded_league_logo} 
+                        />
+                        <div className="border-top"></div> 
+                        <FiltersLeagueDetails 
+                            url_filter={router.pathname.substring(1)} 
+                            league_url={league_url} 
+                            league_type={topLeaguesData[0].league_type} 
+                        />
+                    </div>
+                ) : (
+                    <div className="sites-card mb-2">
+                        <LeaguesDetailsTop 
+                            league_name={displayLeagueName} 
+                            country_name={displayCountryName} 
+                            leagueId={leagueId} 
+                            country_logo="" 
+                            league_logo="" 
+                        />
+                    </div>
+                )}
                 <div className="sites-card">
-                    <DataNotFoundPage props = "We don't have any matches for this league to show you right now, please try again later."/>
+                    <DataNotFoundPage props="We don't have any results for this league to show you right now, please try again later."/>
                     <br/>
-                    <Adsense
-                        client="ca-pub-5665711413000284"
-                        slot="7856848919"
-                        style={{ display: "block" }}
-                        layout="display"
-                        format="auto"
-                    /> 
+                    <div className="desktop-container-resize mb-1">
+                        <div className="col-sm-12 text-center bg-light pt-1">
+                            <Adsense
+                                client="ca-pub-5665711413000284"
+                                slot="7856848919"
+                                style={{ display: "block" }}
+                                layout="display"
+                                format="auto"
+                            />
+                        </div>
+                    </div>
                 </div>
             </React.Fragment>
-            )
-         }
-     }else{
-         if(renderPredictions.length >0 && topLeaguesData.length > 0){
-                return(
-                 <React.Fragment>
-                     {/* data is displayed in tabs */}
-                     <div className="desktop-container-resize">
-                       <div className="sites-card mb-2">
-                            <LeaguesDetailsTop league_name={topLeaguesData[0].league_name} country_name={topLeaguesData[0].country_name} leagueId={topLeaguesData[0].league_id} country_logo={topLeaguesData[0].downloaded_country_flag} league_logo= {topLeaguesData[0].downloaded_league_logo} />
-                            <div className="border-top"></div>
-                            <FiltersLeagueDetails url_filter = {router.pathname.substring(1)} league_url={league_url} league_type={topLeaguesData[0].league_type}/>
-                            <div className="border-top"></div>
-                            <FilterLeaguesResultsOverallDoubleChanceUnderOverHTFTPred1x2 url_filter = {router.pathname.substring(1)}  my_dynamic_url ={encodeURI(`/league/football-predictions-for-${topLeaguesData[0].country_name.toLowerCase()}/${topLeaguesData[0].league_name.replace(/\s+/g, "-").toLowerCase()}-${topLeaguesData[0].league_id}/results`)} />                 
-                       </div>
-                       <div className="sites-card">  
-                            <RenderData renderPredictions={renderPredictions} isMobile= {isMobile}/>
-                            <br/>
-                            <div className="desktop-container-resize mb-1">
-                                <div className="col-sm-12 text-center bg-light pt-1">
-                                    <Adsense
-                                        client="ca-pub-5665711413000284"
-                                        slot="7856848919"
-                                        style={{ display: "block" }}
-                                        layout="display"
-                                        format="auto"
-                                    /> 
-                                </div>
-                            </div>
-                       </div>
+        );
+    }
+
+    // Handle empty data state
+    if (!renderPredictions || renderPredictions.length === 0) {
+        return (
+            <React.Fragment>
+                {topLeaguesData.length > 0 ? (
+                    <div className="sites-card mb-2">
+                        <LeaguesDetailsTop 
+                            league_name={topLeaguesData[0].league_name} 
+                            country_name={topLeaguesData[0].country_name} 
+                            leagueId={topLeaguesData[0].league_id} 
+                            country_logo={topLeaguesData[0].downloaded_country_flag} 
+                            league_logo={topLeaguesData[0].downloaded_league_logo} 
+                        />
+                        <div className="border-top"></div> 
+                        <FiltersLeagueDetails 
+                            url_filter={router.pathname.substring(1)} 
+                            league_url={league_url} 
+                            league_type={topLeaguesData[0].league_type} 
+                        />
                     </div>
-                 </React.Fragment> 
-             )
-         }else {
-            return <PreLoader/>
-         }
-     }
+                ) : (
+                    <div className="sites-card mb-2">
+                        <LeaguesDetailsTop 
+                            league_name={displayLeagueName} 
+                            country_name={displayCountryName} 
+                            leagueId={leagueId} 
+                            country_logo="" 
+                            league_logo="" 
+                        />
+                    </div>
+                )}
+                <div className="sites-card">
+                    <DataNotFoundPage props={`No results available for ${displayCountryName}, ${displayLeagueName}`}/>
+                    <br/>
+                    <div className="desktop-container-resize mb-1">
+                        <div className="col-sm-12 text-center bg-light pt-1">
+                            <Adsense
+                                client="ca-pub-5665711413000284"
+                                slot="7856848919"
+                                style={{ display: "block" }}
+                                layout="display"
+                                format="auto"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </React.Fragment>
+        );
+    }
+
+    // Render the page with data
+    return (
+        <React.Fragment>
+            <div className="desktop-container-resize">
+                <div className="sites-card mb-2">
+                    <LeaguesDetailsTop 
+                        league_name={topLeaguesData.length > 0 ? topLeaguesData[0].league_name : displayLeagueName} 
+                        country_name={topLeaguesData.length > 0 ? topLeaguesData[0].country_name : displayCountryName} 
+                        leagueId={leagueId} 
+                        country_logo={topLeaguesData.length > 0 ? topLeaguesData[0].downloaded_country_flag : ""} 
+                        league_logo={topLeaguesData.length > 0 ? topLeaguesData[0].downloaded_league_logo : ""} 
+                    />
+                    <div className="border-top"></div>
+                    <FiltersLeagueDetails 
+                        url_filter={router.pathname.substring(1)} 
+                        league_url={league_url} 
+                        league_type={topLeaguesData.length > 0 ? topLeaguesData[0].league_type : ""}
+                    />
+                    <div className="border-top"></div>
+                    <FilterLeaguesResultsOverallDoubleChanceUnderOverHTFTPred1x2 
+                        url_filter={router.pathname.substring(1)}  
+                        my_dynamic_url={encodeURI(`/league/football-predictions-for-${countryName.replace(/\s+/g, "-").toLowerCase()}/${leagueName.replace(/\s+/g, "-").toLowerCase()}-${leagueId}/results`)} 
+                    />               
+                </div>
+                
+                <div className="sites-card">  
+                    <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+                    <br/>
+                    <div className="desktop-container-resize mb-1">
+                        <div className="col-sm-12 text-center bg-light pt-1">
+                            <Adsense
+                                client="ca-pub-5665711413000284"
+                                slot="7856848919"
+                                style={{ display: "block" }}
+                                layout="display"
+                                format="auto"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </React.Fragment>
+    );
 }
-export default FootballPredictionsByLeague;
+
+// Helper function to remove last integer part (from your original code)
+function removeLastIntegerPart(str) {
+    const regex = /-\d+$/;
+    const match = str.match(regex);
+    if (match) {
+        const integerPart = match[0];
+        return str.slice(0, str.lastIndexOf(integerPart));
+    } else {
+        return str;
+    }
+}
+
+export async function getServerSideProps(context) {
+    // Get parameters from URL
+    // URL example: /league/football-predictions-for-england/premier-league-39/results
+    const countryParam = context.params?.["country-name"] || ''; // "football-predictions-for-england"
+    const leagueParam = context.params?.["football-prediction-for-league"] || ''; // "premier-league-39"
+    
+    // Validate that leagueParam has an ID
+    if (!leagueParam.match(/-\d+$/)) {
+        // Redirect to homepage if no ID in URL
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        };
+    }
+    
+    // Extract country name from country param
+    const countryPrefix = "football-predictions-for-";
+    let extractedCountry = countryParam;
+    
+    if (countryParam.startsWith(countryPrefix)) {
+        extractedCountry = countryParam.substring(countryPrefix.length); // "england"
+    }
+    
+    // Extract league name and ID from league param
+    const leagueNameWithHyphens = removeLastIntegerPart(leagueParam); // "premier-league"
+    const leagueId = parseInt(leagueParam.match(/-(\d+)$/)[1], 10); // 39
+    
+    // For API calls, replace hyphens with spaces
+    const countryNameForApi = extractedCountry.replace(/-/g, ' '); // "england"
+    const leagueNameForApi = leagueNameWithHyphens.replace(/-/g, ' '); // "premier league"
+    
+    // For display, capitalize each word
+    const displayCountryName = extractedCountry
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '); // "England"
+    
+    const displayLeagueName = leagueNameWithHyphens
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '); // "Premier League"
+    
+    // If no country or league name found, or no league ID, return error
+    if (!countryNameForApi || !leagueNameForApi || !leagueId) {
+        return {
+            props: {
+                initialData: [],
+                endpointStatus: "error",
+                error: "Invalid league or country parameters",
+                baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
+                leagueName: leagueNameForApi || "",
+                countryName: countryNameForApi || "",
+                displayLeagueName: displayLeagueName || "",
+                displayCountryName: displayCountryName || "",
+                leagueId: leagueId || 0,
+                initialTopLeaguesData: []
+            }
+        };
+    }
+    
+    const headers = {
+        "Content-type": "application/json; charset=UTF-8",
+        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+    };
+    
+    try {
+        // Fetch top leagues data using league_id
+        let topLeaguesData = [];
+        try {
+            const topUrl = `https://api.pitchpredictions.com/api/fetch_leagues_data?league_id=${leagueId}`;
+            
+            const topResponse = await fetch(topUrl, { headers });
+            const topData = await topResponse.json();
+            
+            if (topData.status === true) {
+                topLeaguesData = topData.data || [];
+            }
+        } catch (topError) {
+            console.error('Error fetching leagues top data:', topError);
+        }
+        
+        // Fetch league results
+        const resultsUrl = `https://api.pitchpredictions.com/api/fetch_league_results?league_name=${encodeURIComponent(leagueNameForApi)}&country_name=${encodeURIComponent(countryNameForApi)}`;
+        
+        const resultsResponse = await fetch(resultsUrl, { headers });
+        
+        if (!resultsResponse.ok) {
+            throw new Error(`HTTP error! status: ${resultsResponse.status}`);
+        }
+        
+        const resultsData = await resultsResponse.json();
+        
+        return {
+            props: {
+                initialData: resultsData.data || [],
+                endpointStatus: resultsData.status === true ? "success" : "error",
+                error: resultsData.status === true ? null : (resultsData.message || "Failed to load league results"),
+                baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
+                leagueName: leagueNameForApi,
+                countryName: countryNameForApi,
+                displayLeagueName: displayLeagueName,
+                displayCountryName: displayCountryName,
+                leagueId: leagueId,
+                initialTopLeaguesData: topLeaguesData
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching league results:', error);
+        
+        return {
+            props: {
+                initialData: [],
+                endpointStatus: "error",
+                error: error.message,
+                baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
+                leagueName: leagueNameForApi,
+                countryName: countryNameForApi,
+                displayLeagueName: displayLeagueName,
+                displayCountryName: displayCountryName,
+                leagueId: leagueId,
+                initialTopLeaguesData: []
+            }
+        };
+    }
+}
+
+export default FootballPredictionsByLeagueResults;

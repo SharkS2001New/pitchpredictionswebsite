@@ -19,25 +19,36 @@ function TodaysFixturesByLeague(props){
     const router = useRouter(); //fetch page link data
     const [isMobile, setIsMobile] = useState(false);
     
+    // Check for mobile on client side only
     useEffect(()=>{ 
-        if(router.isReady){
+        if (typeof window !== 'undefined' && router.isReady) {
             //Determine screen size on mobile or desktop
-            window.screen.width < 760 ? setIsMobile(true) : setIsMobile(false);
+            setIsMobile(window.screen.width < 760);
         } 
-    },[router]);
+    },[router.isReady]);
 
-    //Calculate the width on windows change detection
-    function detectWindowSize() {
-        window.innerWidth < 760 ? setIsMobile(true) : setIsMobile(false);        
-    }
+    // Handle window resize with client-side only check
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        function detectWindowSize() {
+            setIsMobile(window.innerWidth < 760);        
+        }
 
-    if (router.isReady) { //Checking if router is ready prevents the page from loading without some data
-        window.onresize = detectWindowSize;
+        window.addEventListener('resize', detectWindowSize);
+        
+        // Cleanup
+        return () => window.removeEventListener('resize', detectWindowSize);
+    }, []);
+
+    // Don't render anything during SSR or if router isn't ready
+    if (!router.isReady || typeof window === 'undefined') {
+        return null;
     }
  
     var predictionsList = [];
 
-    for(let i = 0; i <props.todays_matches.length;i++){  
+    for(let i = 0; i < props.todays_matches.length; i++){  
         let winning_team = "";
         let winning_odd = 0;
 
@@ -53,91 +64,102 @@ function TodaysFixturesByLeague(props){
         
         let probability_results = "";
 
-        let ht_computed_winning_preds ="";
+        let ht_computed_winning_preds = "";
         let ht_probability_results = "";
-        let ht_winning_team ="";
-        let ht_winning_odd ="";
+        let ht_winning_team = "";
+        let ht_winning_odd = "";
 
+        // Safely handle percentage values
         if(props.todays_matches[i].percent_pred_home != null){
-            home_odd  = props.todays_matches[i]["percent_pred_home"].slice(0, -1);
-            draw_odd = props.todays_matches[i]["percent_pred_draw"].slice(0, -1);
-            away_odd = props.todays_matches[i]["percent_pred_away"].slice(0, -1);
+            home_odd  = String(props.todays_matches[i]["percent_pred_home"]).slice(0, -1);
+            draw_odd = String(props.todays_matches[i]["percent_pred_draw"]).slice(0, -1);
+            away_odd = String(props.todays_matches[i]["percent_pred_away"]).slice(0, -1);
         }
 
         if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
             if(props.todays_matches[i].hf_percent_pred_home != null){
-                ht_home_odd  = props.todays_matches[i]["hf_percent_pred_home"].slice(0, -1);
-                ht_draw_odd = props.todays_matches[i]["hf_percent_pred_draw"].slice(0, -1);
-                ht_away_odd = props.todays_matches[i]["hf_percent_pred_away"].slice(0, -1);
+                ht_home_odd  = String(props.todays_matches[i]["hf_percent_pred_home"]).slice(0, -1);
+                ht_draw_odd = String(props.todays_matches[i]["hf_percent_pred_draw"]).slice(0, -1);
+                ht_away_odd = String(props.todays_matches[i]["hf_percent_pred_away"]).slice(0, -1);
             }
         }
                 
         //Decode halftime data stored as a json in mysql
-        var scores_data = JSON.parse(props.todays_matches[i].scores);
+        var scores_data = {};
+        try {
+            scores_data = JSON.parse(props.todays_matches[i].scores || '{}');
+        } catch (e) {
+            scores_data = {};
+        }
 
         var halftime_data = "";
         var extratime_data = "";
         var penalty_data = "";
 
-        if(props.todays_matches[i].scores != null){
-            if(scores_data.halftime.home != null){
-                halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
-            }                
+        if(scores_data && scores_data.halftime && scores_data.halftime.home != null){
+            halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
+        }                
 
-            if(scores_data.extratime.home != null){
-                extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
-            }
-
-            if(scores_data.penalty.home != null){
-                penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-            }
+        if(scores_data && scores_data.extratime && scores_data.extratime.home != null){
+            extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
         }
 
-        let fixturesAverage = ComputeFixtureAverage(props.todays_matches[i].teams_perfomance_home_for,props.todays_matches[i].teams_perfomance_home_aganist,props.todays_matches[i].teams_perfomance_away_for,props.todays_matches[i].teams_perfomance_away_aganist,props.todays_matches[i].teams_games_played_home,props.todays_matches[i].teams_games_played_away)
+        if(scores_data && scores_data.penalty && scores_data.penalty.home != null){
+            penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
+        }
+
+        let fixturesAverage = ComputeFixtureAverage(
+            props.todays_matches[i].teams_perfomance_home_for,
+            props.todays_matches[i].teams_perfomance_home_aganist,
+            props.todays_matches[i].teams_perfomance_away_for,
+            props.todays_matches[i].teams_perfomance_away_aganist,
+            props.todays_matches[i].teams_games_played_home,
+            props.todays_matches[i].teams_games_played_away
+        );
      
         if(router.pathname.substring(1).includes("double-chance-predictions")) {
-            computed_winning_preds =  DoubleChanceWinningTeamAndOdd(home_odd,draw_odd,away_odd,props.todays_matches[i],router.pathname.substring(1));
+            computed_winning_preds = DoubleChanceWinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i], router.pathname.substring(1));
 
             winning_team = computed_winning_preds[0];
             winning_odd = computed_winning_preds[1]; 
 
-            probability_results = DoubleChanceProbabilityResults(props.todays_matches[i],winning_team, router.pathname.substring(1));
+            probability_results = DoubleChanceProbabilityResults(props.todays_matches[i], winning_team, router.pathname.substring(1));
 
         } else if(router.pathname.substring(1).includes("predictions-under-over")) {
-            computed_winning_preds =  UnderOverWinningTeamAndOdd(fixturesAverage, isMobile);
+            computed_winning_preds = UnderOverWinningTeamAndOdd(fixturesAverage, isMobile);
 
             winning_team = computed_winning_preds[0];
             winning_odd = computed_winning_preds[1];
 
-            probability_results = UnderOverProbabilityResults(props.todays_matches[i],winning_team);
+            probability_results = UnderOverProbabilityResults(props.todays_matches[i], winning_team);
             
         } else if(router.pathname.substring(1).includes("predictions-both-to-score")) {
-
             probability_results = BothTeamsToScore(props.todays_matches[i]);
         
         } else if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-            ht_computed_winning_preds =  HalfTimeWinningTeamAndOdd(ht_home_odd,ht_draw_odd,ht_away_odd,props.todays_matches[i]);
+            ht_computed_winning_preds = HalfTimeWinningTeamAndOdd(ht_home_odd, ht_draw_odd, ht_away_odd, props.todays_matches[i]);
 
             ht_winning_team = ht_computed_winning_preds[0];
             ht_winning_odd = ht_computed_winning_preds[1];
 
             ht_probability_results = HalfTimeProbabilityResults(props.todays_matches[i], ht_winning_team);
 
-            computed_winning_preds =  WinningTeamAndOdd(home_odd,draw_odd,away_odd,props.todays_matches[i]);
+            computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i]);
 
             winning_team = computed_winning_preds[0];
             winning_odd = computed_winning_preds[1];
 
-            probability_results = ProbabilityResults(props.todays_matches[i],winning_team);
+            probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
         } else {
-            computed_winning_preds =  WinningTeamAndOdd(home_odd,draw_odd,away_odd,props.todays_matches[i]);
+            computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i]);
 
             winning_team = computed_winning_preds[0];
             winning_odd = computed_winning_preds[1];
 
-            probability_results = ProbabilityResults(props.todays_matches[i],winning_team);
+            probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
         }        
-        let livescores_results = DetermineLiveScores(props.todays_matches[i],isMobile);
+        
+        let livescores_results = DetermineLiveScores(props.todays_matches[i], isMobile);
 
         let livestatus = livescores_results[0];
         let livescores = livescores_results[1];
@@ -146,21 +168,21 @@ function TodaysFixturesByLeague(props){
 
         sharedTabledetailsArray.push(
             {
-                game_details:props.todays_matches[i],
-                home_odd : home_odd,
+                game_details: props.todays_matches[i],
+                home_odd: home_odd,
                 draw_odd: draw_odd,
                 away_odd: away_odd,
-                probability_results : probability_results,
-                winning_odd : winning_odd,
-                winning_team:winning_team,
-                livestatus : livestatus,
-                livescores : livescores,
-                halftime_data : halftime_data,
-                extratime_data : extratime_data,
-                penalty_data:penalty_data,
-                average : fixturesAverage,
-                 // If it's halftime/fulltime page
-                 ...(router.pathname.substring(1).includes("predictions-halftime-fulltime") && {
+                probability_results: probability_results,
+                winning_odd: winning_odd,
+                winning_team: winning_team,
+                livestatus: livestatus,
+                livescores: livescores,
+                halftime_data: halftime_data,
+                extratime_data: extratime_data,
+                penalty_data: penalty_data,
+                average: fixturesAverage,
+                // If it's halftime/fulltime page
+                ...(router.pathname.substring(1).includes("predictions-halftime-fulltime") && {
                     ht_home_odd: ht_home_odd,
                     ht_draw_odd: ht_draw_odd,
                     ht_away_odd: ht_away_odd,
@@ -169,12 +191,12 @@ function TodaysFixturesByLeague(props){
                     ht_winning_team: ht_winning_team,
                 }),
             }
-        )
+        );
             
         //Form the array of Fixtures Table by league
         predictionsList.push(
-            <FixturesTableDisplay  props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
-        )
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
+        );
     } 
 
     if(predictionsList.length > 0){
@@ -183,11 +205,15 @@ function TodaysFixturesByLeague(props){
                 <div className="sites-card mb-2">
                     <div className="desktop-container-resize mb-1">
                         <div className="col-sm-12 text-center bg-light pt-1">
-                            <h2 className="sectionTitle">Todays Fixtures -  {props.country_name} , {props.league_name}</h2>
+                            <h2 className="sectionTitle">Today's Fixtures - {props.country_name}, {props.league_name}</h2>
                         </div>
                     </div>   
                     {/**Display fixtures for todays matches for selected league */}
-                    <LeaguesPageRender url_name={router.pathname.substring(1)} renderPredictions={predictionsList} isMobile={isMobile} />
+                    <LeaguesPageRender 
+                        url_name={router.pathname.substring(1)} 
+                        renderPredictions={predictionsList} 
+                        isMobile={isMobile} 
+                    />
                     <br/>
                     <Adsense
                         client="ca-pub-5665711413000284"
@@ -198,12 +224,10 @@ function TodaysFixturesByLeague(props){
                     /> 
                 </div> 
             </React.Fragment>
-        ) 
-    }else {
-        return <></>
+        );
+    } else {
+        return null;
     }
-       
-    
 }
 
 export default TodaysFixturesByLeague;
