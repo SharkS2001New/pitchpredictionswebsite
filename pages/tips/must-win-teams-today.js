@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
-import PreLoader from "../components/includes/loader";
-import RenderData from "../components/shared/render_fixtures_data";
-import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
-import DataNotFoundPage from "../components/includes/datanotfound";
-import getFormattedCurrentDate from "../components/functions/GetTodaysDate";
-import PopularTips from "../components/shared/popular_tips_display";
-import MustWinTeamsTodayContent from "../components/seo-content/tips/must-win-teams-today";
+import DataNotFoundPage from "../../components/includes/datanotfound";
+import PopularTips from "../../components/shared/popular_tips_display";
+import RenderData from "../../components/shared/render_fixtures_data";
+import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
+import PreLoader from "../../components/includes/loader";
+import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
+import MustWinTeamsTodayContent from "../../components/seo-content/tips/must-win-teams-today";
 
 function MustWinTeamsToday({ 
     initialData, 
