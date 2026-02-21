@@ -1,4 +1,4 @@
-// pages/football-predictions-today.js
+// pages/double-chance-predictions.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
@@ -17,7 +17,7 @@ function TodaysFixtures({
     error,
     baseUrl,
     todaysDate 
-}) {
+}){     
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -81,6 +81,18 @@ function TodaysFixtures({
         return <PreLoader />;
     }
 
+    // Format today's date for display
+    const formatDisplayDate = (dateString) => {
+        if (!dateString) return '';
+        try {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', options);
+        } catch (e) {
+            return dateString;
+        }
+    };
+
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
@@ -110,7 +122,7 @@ function TodaysFixtures({
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No matches available for today`}/>
+                <DataNotFoundPage props={`No double chance predictions available for ${formatDisplayDate(todaysDate)}`}/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -126,12 +138,7 @@ function TodaysFixtures({
     // Render the page with data
     return (
         <div className="sites-card">
-            <p className="text-center blink_me">Looking for Premium Football Predictions!!!&nbsp;</p>
-            <p className="text-center">
-                <a href="/auth/login" className="btn btn-danger btn-sm">Subscribe Now</a>
-            </p>
-            
-            <div className="container-fluid">                                 
+            <div className="container-fluid">                  
                 <div className="row" style={{backgroundColor: "#edf3f5"}}>
                     <div className="col-md-3 col-2"></div>
                     <div className="col-md-7 col-12">
@@ -139,7 +146,6 @@ function TodaysFixtures({
                     </div>
                     <div className="col-md-2 col-1"></div>
                 </div>
-                
                 <div className="row" style={{backgroundColor: "#edf3f5"}}>
                     <div className="col-md-1 col-2"></div>
                     <div className="col-md-10 col-12">
@@ -164,7 +170,7 @@ function TodaysFixtures({
                 style={{ display: "block" }}
                 layout="display"
                 format="auto"
-            /> 
+            />
             
             <br/>   
             
@@ -183,15 +189,22 @@ export async function getServerSideProps() {
     // Base URL for today's games
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
     
-    // First batch: ONLY fetch 0-20 records on server
+    // First batch: ONLY fetch 0-20 records on server (NO full batch)
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        // Fetch first batch only
         const response = await fetch(firstBatchUrl, {
             headers: { 
                 "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            }
+            },
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -199,6 +212,7 @@ export async function getServerSideProps() {
         
         const data = await response.json();
         
+        // Check API response structure
         if (data.status === true) {
             return {
                 props: {
@@ -210,18 +224,19 @@ export async function getServerSideProps() {
                 }
             };
         } else {
+            // API returned status: false
             return {
                 props: {
                     initialData: [],
                     endpointStatus: "error",
-                    error: data.message || "Failed to load today's predictions",
+                    error: data.message || "Failed to load today's games",
                     baseUrl: baseUrl,
                     todaysDate: todaysDate
                 }
             };
         }
     } catch (error) {
-        console.error('Error fetching today\'s predictions:', error);
+        console.error('Error fetching today\'s games:', error);
         
         return {
             props: {
