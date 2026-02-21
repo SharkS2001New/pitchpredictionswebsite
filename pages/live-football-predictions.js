@@ -1,5 +1,5 @@
 // pages/live-football-predictions.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
 import PreLoader from "../components/includes/loader";
@@ -19,10 +19,66 @@ function LiveFixtures({
     todaysDate 
 }) {
     const router = useRouter();
+    const [allData, setAllData] = useState(initialData || []);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+    const [hasMore, setHasMore] = useState(true);
+    const [loadTrigger, setLoadTrigger] = useState(0); // Used to trigger loads from child components
+
+    // This function will be called when "Show More" is clicked
+    const loadMoreData = async () => {
+        if (loadingMore || !hasMore) return;
+        
+        setLoadingMore(true);
+        const chunkSize = 50;
+        const startIndex = currentStartIndex;
+        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 850);
+        
+        try {
+            const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
+            
+            const response = await fetch(chunkUrl, {
+                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+            });
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const chunkData = await response.json();
+            
+            if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
+                // Append new data to existing data
+                setAllData(prevData => [...prevData, ...chunkData.data]);
+                setCurrentStartIndex(endIndex + 1);
+                
+                // Check if we've reached the maximum (850) or got less than requested
+                if (endIndex >= 850 || chunkData.data.length < chunkSize) {
+                    setHasMore(false);
+                }
+            } else {
+                // No more data available
+                setHasMore(false);
+            }
+        } catch (error) {
+            console.error('Error loading more live data:', error);
+        } finally {
+            setLoadingMore(false);
+        }
+    };
+
+    // useEffect that watches loadTrigger to trigger data loading
+    useEffect(() => {
+        if (loadTrigger > 0) {
+            loadMoreData();
+        }
+    }, [loadTrigger]);
+
+    // Function to be called from child components
+    const handleLoadMore = () => {
+        setLoadTrigger(prev => prev + 1);
+    };
 
     // Show preloader while server is fetching data
-    // Since this runs on server, we check if we're in browser or not
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || (!initialData && !error)) {
         return <PreLoader />;
     }
 
@@ -49,14 +105,16 @@ function LiveFixtures({
         );
     }
     
-    // Process the data - PagesMatchPredictionDetails now just returns an array of components
+    // Process the data - PagesMatchPredictionDetails now receives allData
     const renderPredictions = PagesMatchPredictionDetails({ 
-        initialData,
-        baseUrl: baseUrl
+        gamesData: allData,
+        onLoadMore: handleLoadMore,
+        isLoadingMore: loadingMore,
+        hasMore: hasMore
     });
     
     // Handle empty data state
-    if (renderPredictions.length === 0) {
+    if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
                 <DataNotFoundPage props="No live matches to show you at the moment, please try again later"/>
@@ -99,7 +157,12 @@ function LiveFixtures({
                 </div>
             </div>
             
-            <RenderData renderPredictions={renderPredictions}/>
+            <RenderData 
+                renderPredictions={renderPredictions}
+                onLoadMore={handleLoadMore}
+                isLoadingMore={loadingMore}
+                hasMore={hasMore}
+            />
             
             <br />
             
@@ -128,7 +191,7 @@ export async function getServerSideProps() {
     // Base URL for live games
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_live_games";
     
-    // First batch: 0-20 records
+    // First batch: ONLY fetch 0-20 records on server
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Record start time to ensure minimum loading time if needed
@@ -138,7 +201,7 @@ export async function getServerSideProps() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         
-        // Fetch first batch
+        // Fetch first batch only - no full batch fetch on server
         const response = await fetch(firstBatchUrl, {
             headers: { 
                 "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
@@ -156,29 +219,6 @@ export async function getServerSideProps() {
         
         // Check API response structure
         if (data.status === true) {
-            let finalData = data.data || [];
-            
-            // Check if we need to fetch the full batch
-            if (data.data && data.data.length > 20) {
-                try {
-                    const fullBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=850`;
-                    
-                    const fullResponse = await fetch(fullBatchUrl, {
-                        headers: { 
-                            "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-                        }
-                    });
-                    
-                    const fullData = await fullResponse.json();
-                    
-                    if (fullData.status === true) {
-                        finalData = fullData.data || [];
-                    }
-                } catch (batchError) {
-                    console.error('Error fetching full batch for live games:', batchError);
-                }
-            }
-            
             // Calculate elapsed time
             const elapsedTime = Date.now() - startTime;
             
@@ -189,7 +229,7 @@ export async function getServerSideProps() {
             
             return {
                 props: {
-                    initialData: finalData,
+                    initialData: data.data || [],
                     endpointStatus: "success",
                     error: null,
                     baseUrl: baseUrl,

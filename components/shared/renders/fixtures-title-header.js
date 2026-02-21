@@ -4,6 +4,7 @@ import React from "react";
 function FixturesHeaderBar(props){
     var meta_content_data = MetaContent();
     
+    console.log(props);
     return (
     <React.Fragment>
         {/** Title bar */}

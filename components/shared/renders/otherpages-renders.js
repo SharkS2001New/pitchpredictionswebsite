@@ -1,5 +1,6 @@
 import { Adsense } from "@ctrl/react-adsense";
 import React, { useState } from "react";
+import PreLoader from "../../includes/loader";
 
 function OtherPagesRenders(props) {
   const [rowsToShow, setRowsToShow] = useState(10);
@@ -101,6 +102,11 @@ function OtherPagesRenders(props) {
     const storeDataByOtherPagesData = structuredDataByOtherPagesData.filter(Boolean).slice(0, rowsToShow);
 
     const handleLoadMore = () => {
+      // First, trigger parent to load more data from API
+      if (props.onLoadMore) {
+        props.onLoadMore();
+      }
+      // Then increase rowsToShow to display more groups (will show new data when it arrives)
       setRowsToShow((prevRowsToShow) => prevRowsToShow + 50);
     };
  
@@ -138,16 +144,29 @@ function OtherPagesRenders(props) {
           </div>
         ))}
 
-        {storeDataByOtherPagesData.length < structuredDataByOtherPagesData.length && (
-          <div className="text-center">
+        {/* Show More button - only if there might be more data */}
+        {props.hasMore !== false && (
+          <div className="text-center my-2">
             <button
               className="btn btn-link btn-sm fixturesTextSize"
-              style={{ color: "#B11111", fontWeight: "bold" }}
-              onClick={handleLoadMore}>
-              Show More Matches
+              style={{ minWidth: "150px", color: "#B11111", fontWeight: "bold" }}
+              onClick={handleLoadMore}
+              disabled={props.isLoadingMore}>
+              {props.isLoadingMore ? (
+                <PreLoader/>
+              ) : (
+                "Show More Matches"
+              )}
             </button>
           </div>  
         )}
+
+        {/* Show a message when no more data is available */}
+        {/* {props.hasMore === false && storeDataByOtherPagesData.length > 0 && (
+          <div className="text-center my-4 text-muted">
+            <em>No more matches to load</em>
+          </div>
+        )} */}
       </div>
     );
   }

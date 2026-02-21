@@ -54,27 +54,28 @@ function App({ Component, pageProps }) {
         <title>{meta_content_data[0]}</title>
         <link rel="icon" href="/pitch_predictions_icons.ico" />
 
-        <link rel="dns-prefetch" href="https://www.pitchpredictions.com" crossOrigin />
-        <link rel="preconnect" href="https://www.pitchpredictions.com" crossOrigin />
+        {/* Fix: Use string values for crossOrigin */}
+        <link rel="dns-prefetch" href="https://www.pitchpredictions.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.pitchpredictions.com" crossOrigin="anonymous" />
 
-        <link rel="dns-prefetch" href="https://api.pitchpredictions.com" crossOrigin />
-        <link rel="preconnect" href="https://api.pitchpredictions.com" crossOrigin />
+        <link rel="dns-prefetch" href="https://api.pitchpredictions.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.pitchpredictions.com" crossOrigin="anonymous" />
 
         <link href="https://www.googletagmanager.com/gtag/js?id=G-N7X33S1CMF" rel="preload" as="script"/>
-        <link rel='dns-prefetch' href="https://www.googletagmanager.com" crossOrigin />
-        <link rel='preconnect' href="https://www.googletagmanager.com" crossOrigin />
+        <link rel='dns-prefetch' href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel='preconnect' href="https://www.googletagmanager.com" crossOrigin="anonymous" />
 
-        <link rel="dns-prefetch" href="https://adservice.google.com/" crossOrigin />
-        <link rel="preconnect" href="https://adservice.google.com/" crossOrigin />
+        <link rel="dns-prefetch" href="https://adservice.google.com/" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://adservice.google.com/" crossOrigin="anonymous" />
 
-        <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net/" crossOrigin />
-        <link rel="preconnect" href="https://googleads.g.doubleclick.net/" crossOrigin /> 
+        <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net/" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://googleads.g.doubleclick.net/" crossOrigin="anonymous" /> 
 
-        <link rel="dns-prefetch" href="https://www.googletagservices.com/" crossOrigin />
-        <link rel="preconnect" href="https://www.googletagservices.com/" crossOrigin /> 
+        <link rel="dns-prefetch" href="https://www.googletagservices.com/" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagservices.com/" crossOrigin="anonymous" /> 
 
-        <link rel="dns-prefetch" href="https://tpc.googlesyndication.com/" crossOrigin />
-        <link rel="preconnect" href="https://tpc.googlesyndication.com/" crossOrigin />
+        <link rel="dns-prefetch" href="https://tpc.googlesyndication.com/" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://tpc.googlesyndication.com/" crossOrigin="anonymous" />
 
         <link rel="canonical" href={`https://www.pitchpredictions.com${router.asPath}`} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -1,5 +1,5 @@
 // pages/index.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import getFormattedCurrentDate from '../components/functions/GetTodaysDate';
 import DataNotFoundPage from '../components/includes/datanotfound';
 import PreLoader from '../components/includes/loader';
@@ -14,16 +14,71 @@ export default function Home({
     initialData, 
     endpointStatus, 
     error,
-    baseUrl,
-    isLoading 
+    baseUrl
 }) {
-  
-  // Show preloader while server is fetching data
-  if (isLoading) {
+  const [allData, setAllData] = useState(initialData || []);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+  const [hasMore, setHasMore] = useState(true);
+  const [loadTrigger, setLoadTrigger] = useState(0); // Used to trigger loads from OtherPagesRenders
+
+  // This function will be called from OtherPagesRenders when "Show More" is clicked
+  const loadMoreData = async () => {
+    if (loadingMore || !hasMore) return;
+    
+    setLoadingMore(true);
+    const chunkSize = 50;
+    const startIndex = currentStartIndex;
+    const endIndex = Math.min(currentStartIndex + chunkSize - 1, 850);
+    
+    try {
+      const chunkUrl = `${baseUrl}&start_index=${startIndex}&end_index=${endIndex}`;
+      
+      const response = await fetch(chunkUrl, {
+        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+      });
+      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const chunkData = await response.json();
+      
+      if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
+        // Append new data to existing data
+        setAllData(prevData => [...prevData, ...chunkData.data]);
+        setCurrentStartIndex(endIndex + 1);
+        
+        // Check if we've reached the maximum (850)
+        if (endIndex >= 850 || chunkData.data.length < chunkSize) {
+          setHasMore(false);
+        }
+      } else {
+        // No more data available
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error loading more data:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Expose the loadMore function to child components via a custom event or context
+  // For now, we'll use a useEffect that watches loadTrigger
+  useEffect(() => {
+    if (loadTrigger > 0) {
+      loadMoreData();
+    }
+  }, [loadTrigger]);
+
+  // Function to be called from child components (will be passed down)
+  const handleLoadMore = () => {
+    setLoadTrigger(prev => prev + 1);
+  };
+
+  if (!initialData && !error) {
     return <PreLoader />;
   }
 
-  // Handle error state
   if (endpointStatus === "error" || error) {
     return (
       <div className="sites-card">
@@ -33,14 +88,15 @@ export default function Home({
     );
   }
   
-  // Process the data - PagesMatchPredictionDetails now just returns an array of components
+  // Process the data - Pass the loadMore function down
   const renderPredictions = PagesMatchPredictionDetails({ 
-    initialData, 
-    baseUrl: baseUrl
+    gamesData: allData,
+    onLoadMore: handleLoadMore,
+    isLoadingMore: loadingMore,
+    hasMore: hasMore
   });
   
-  // Handle empty data state
-  if (renderPredictions.length === 0) {
+  if (renderPredictions.length === 0 && !loadingMore && !initialData) {
     return (
       <div className="sites-card">
         <DataNotFoundPage props="No matches available for today"/>
@@ -49,7 +105,6 @@ export default function Home({
     );
   }
   
-  // Render the page with data
   return (
     <>
       <div className="sites-card">
@@ -58,7 +113,14 @@ export default function Home({
           <a href="/auth/login" className="btn btn-danger btn-sm">Subscribe Now</a>
         </p>
         <PopularTips/>
-        <RenderData renderPredictions={renderPredictions}/>
+        
+        <RenderData 
+          renderPredictions={renderPredictions} 
+          onLoadMore={handleLoadMore}
+          isLoadingMore={loadingMore}
+          hasMore={hasMore}
+        />
+        
         <br/>
         <div className="text-center">
           <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">Football Predictions for Today</a>
@@ -87,98 +149,46 @@ export default function Home({
 export async function getServerSideProps() {
   const todaysDate = getFormattedCurrentDate();
   
-  // Base URL without pagination params
   const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
-  
-  // First batch: 0-20 records
   const firstBatchUrl = `${baseUrl}&start_index=0&end_index=20`;
   
-  // Set loading to true initially
-  let isLoading = true;
-  
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
-    // Fetch first batch
     const response = await fetch(firstBatchUrl, {
-      headers: { 
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-      },
-      signal: controller.signal
+      headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
     });
     
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     
     const data = await response.json();
     
-    // Check API response structure
     if (data.status === true) {
-      let finalData = data.data || [];
-      
-      // Check if we need to fetch the full batch (if more than 20 records)
-      if (data.data && data.data.length > 20) {
-        try {
-          // Fetch full batch: 0-850 records
-          const fullBatchUrl = `${baseUrl}&start_index=0&end_index=850`;
-          
-          const fullResponse = await fetch(fullBatchUrl, {
-            headers: { 
-              "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            }
-          });
-          
-          const fullData = await fullResponse.json();
-          
-          if (fullData.status === true) {
-            finalData = fullData.data || [];
-          }
-        } catch (batchError) {
-          console.error('Error fetching full batch:', batchError);
-          // If full batch fails, keep the first batch data
-        }
-      }
-      
-      isLoading = false;
-      
       return {
         props: {
-          initialData: finalData,
+          initialData: data.data || [],
           endpointStatus: "success",
           error: null,
-          baseUrl: baseUrl,
-          isLoading: isLoading
+          baseUrl: baseUrl
         }
       };
     } else {
-      isLoading = false;
-      
       return {
         props: {
           initialData: [],
           endpointStatus: "error",
           error: data.message || "API returned error",
-          baseUrl: baseUrl,
-          isLoading: isLoading
+          baseUrl: baseUrl
         }
       };
     }
   } catch (error) {
     console.error('Error fetching homepage predictions:', error);
     
-    isLoading = false;
-    
     return {
       props: {
         initialData: [],
         endpointStatus: "error",
         error: error.message,
-        baseUrl: baseUrl,
-        isLoading: isLoading
+        baseUrl: baseUrl
       }
     };
   }

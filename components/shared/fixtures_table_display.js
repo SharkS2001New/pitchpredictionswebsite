@@ -12,6 +12,7 @@ import OverUnderProbabilitiesScale from "../functions/OverUnderProbabilitiesScal
 
 function FixturesTableDisplay(props,key){    
     const router = useRouter(); //access page route
+    const [mounted, setMounted] = useState(false);
 
     const fixturestablearray = [];   
     var fixture_details  = props.props[0];
@@ -19,29 +20,34 @@ function FixturesTableDisplay(props,key){
     const [iconColor,setIconColor] = useState("currentColor");
     const [iconPath, setIconPath] = useState("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z")
     
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     //Call function to convert date time to users timezone
     const myNewDateString = DateTimeToUsersTimezone(fixture_details.game_details.date).split(' ')[0];
     const myFullNewDateString = DateTimeToUsersTimezone(fixture_details.game_details.date);
 
     //on page load. Change color of icon
     useEffect(()=>{
-        if(CheckiffixtureIsSelected(fixture_details.game_details.fixture_id)){
-
-            setIconColor("red");
-            setIconPath("M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z")
-       
-        }else{
-
-            setIconColor("currentColor");
-            setIconPath("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z");
+        if (typeof window !== 'undefined') {
+            if(CheckiffixtureIsSelected(fixture_details.game_details.fixture_id)){
+                setIconColor("red");
+                setIconPath("M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z")
+            } else {
+                setIconColor("currentColor");
+                setIconPath("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z");
+            }
         }
-    })
+    }, [fixture_details.game_details.fixture_id]);
 
     // form the dynamic url
     let url_name = encodeURIComponent(fixture_details.game_details.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+fixture_details.game_details.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+fixture_details.game_details.fixture_id);
    
     //Click to select matches
     const selectMyMatches = (game_details) => {
+        if (typeof window === 'undefined') return;
+        
         //Push the game details data of the selected fixture to session storage
         let existingData = localStorage.getItem("myselectedfavoritematchesdata");
         let dataArray = existingData ? JSON.parse(existingData) : [];
@@ -111,6 +117,28 @@ function FixturesTableDisplay(props,key){
     let winning_team_probs = UnderOverWinningTeamAndOdd(fixture_details.average, props.isMobile);
     let under_over_pred_value = UnderOverProbabilityResults(fixture_details.game_details, winning_team_probs[0]);
     let over_under_prob_scale = OverUnderProbabilitiesScale(fixture_details.average);
+
+    // Helper function to get style objects that won't change between server and client
+    const getOddsCardStyle = (condition) => {
+        return {
+            fontWeight: condition ? "bold" : "normal",
+            border: condition ? "1px solid green" : "none"
+        };
+    };
+
+    const getAverageStyle = () => {
+        const totalGoals = parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away);
+        const isCorrect = (totalGoals >= 3 && fixture_details.average >= 2.5) || (totalGoals < 3 && fixture_details.average < 2.5);
+        
+        return {
+            color: isCorrect ? "green" : "",
+            fontSize: isCorrect ? "15px" : "",
+            fontWeight: isCorrect ? "bold" : ""
+        };
+    };
+
+    // Don't render dynamic styles on server to avoid hydration mismatch
+    const shouldUseClientStyles = mounted && typeof window !== 'undefined';
         
     fixturestablearray.push(
         <div key={key} className="responsive-row fixturesTextSize fixturesWholeRow" style={{cursor : "auto"}}>  
@@ -133,7 +161,7 @@ function FixturesTableDisplay(props,key){
                 </div>
                 </React.Fragment>
             }         
-            <div className="responsive-cell team-link" style={{ textAlign: "left",fontWeight:"bold", whiteSpace: "pre-wrap" }} title={toottiptitle}>                
+            <div className="responsive-cell team-link" style={{ textAlign: "left", fontWeight:"bold", whiteSpace: "pre-wrap" }} title={toottiptitle}>                
                 {router.pathname.substring(1) !== "match/[match-details]" ?
                 <a href={'/match/football-predictions-' + url_name+"/matches"}>
                     <div className="teamNameLink">
@@ -156,44 +184,41 @@ function FixturesTableDisplay(props,key){
             </div> 
             {props.isMobile == false ? //desktop
             <div className="responsive-cell team-link-y hide-on-mobile" title="Odds 1  X  2"><br/>
-                <span className="odds-card" style={{fontWeight: fixture_details.winning_odd  ==  fixture_details["game_details"]["bets_home"] && fixture_details["game_details"]["bets_home"] !==null ? "bold" : "",
-                    border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home > fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_home"] !==null) ? "1px solid green" : "" : "",
-                   }}> {fixture_details["game_details"]["bets_home"] === null ? "   -  " : fixture_details["game_details"]["bets_home"]} &nbsp;</span>
+                <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(
+                    fixture_details.winning_odd == fixture_details["game_details"]["bets_home"] && fixture_details["game_details"]["bets_home"] !==null
+                ) : {}}> {fixture_details["game_details"]["bets_home"] === null ? "   -  " : fixture_details["game_details"]["bets_home"]} &nbsp;</span>
 
-                <span className="odds-card" style={{fontWeight: fixture_details.winning_odd == fixture_details["game_details"]["bets_draw"]  && fixture_details["game_details"]["bets_draw"] !==null  ? "bold" : "",
-                     border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home === fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_draw"] !==null) ? "1px solid green" : "" : "",
-                }}> {fixture_details["game_details"]["bets_draw"] === null ? "   -  " : fixture_details["game_details"]["bets_draw"]} &nbsp;</span>
+                <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(
+                    fixture_details.winning_odd == fixture_details["game_details"]["bets_draw"] && fixture_details["game_details"]["bets_draw"] !==null
+                ) : {}}> {fixture_details["game_details"]["bets_draw"] === null ? "   -  " : fixture_details["game_details"]["bets_draw"]} &nbsp;</span>
 
-                <span className="odds-card" style={{fontWeight: fixture_details.winning_odd == fixture_details["game_details"]["bets_away"]  && fixture_details["game_details"]["bets_away"] !==null  ? "bold" : "",
-                     border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_away > fixture_details.game_details.goals_home && fixture_details["game_details"]["bets_away"] !==null && fixture_details["game_details"]["bets_away"]!=="-") ? "1px solid green" : "" : "",
-                }}>&nbsp;{fixture_details["game_details"]["bets_away"] === null || fixture_details["game_details"]["bets_away"]==="-" ? "   -  " : fixture_details["game_details"]["bets_away"]} &nbsp;</span>
+                <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(
+                    fixture_details.winning_odd == fixture_details["game_details"]["bets_away"] && fixture_details["game_details"]["bets_away"] !==null
+                ) : {}}>&nbsp;{fixture_details["game_details"]["bets_away"] === null || fixture_details["game_details"]["bets_away"]==="-" ? "   -  " : fixture_details["game_details"]["bets_away"]} &nbsp;</span>
             </div>
             : 
             <div className="responsive-cell team-link-probability" title="Odds"> 
                 <div className="row fixturesTextSize">
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px" ,fontWeight: fixture_details.winning_odd == fixture_details["game_details"]["bets_home"] ? "bold" : ""}}>
-                        <span className="odds-card" style={{border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home > fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_home"] !==null) ? "1px solid green" : "" : ""}}>&nbsp;{fixture_details["game_details"]["bets_home"] === null ? "   -   " : fixture_details["game_details"]["bets_home"]}&nbsp;</span>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home > fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_home"] !==null) ? "1px solid green" : "" : ""} : {}}>&nbsp;{fixture_details["game_details"]["bets_home"] === null ? "   -   " : fixture_details["game_details"]["bets_home"]}&nbsp;</span>
                     </div>
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px", fontWeight: fixture_details.winning_odd == fixture_details["game_details"]["bets_draw"] ? "bold" : ""}}>
-                        <span className="odds-card" style={{border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home === fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_draw"] !==null) ? "1px solid green" : "" : ""}}>&nbsp;{fixture_details["game_details"]["bets_draw"] === null ? "   -   " : fixture_details["game_details"]["bets_draw"]}&nbsp;</span>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home === fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_draw"] !==null) ? "1px solid green" : "" : ""} : {}}>&nbsp;{fixture_details["game_details"]["bets_draw"] === null ? "   -   " : fixture_details["game_details"]["bets_draw"]}&nbsp;</span>
                     </div>
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px", fontWeight: fixture_details.winning_odd == fixture_details["game_details"]["bets_away"] ? "bold" : ""}}>
-                        <span className="odds-card" style={{border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_away >
-                            fixture_details.game_details.goals_home && fixture_details["game_details"]["bets_away"] !==null  && fixture_details["game_details"]["bets_away"]!=="-") ? "1px solid green" : "" : ""}}>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_away >
+                            fixture_details.game_details.goals_home && fixture_details["game_details"]["bets_away"] !==null  && fixture_details["game_details"]["bets_away"]!=="-") ? "1px solid green" : "" : ""} : {}}>
                             &nbsp;{fixture_details["game_details"]["bets_away"] === null || fixture_details["game_details"]["bets_away"]==="-" ? "   -   " : fixture_details["game_details"]["bets_away"]}&nbsp;</span>
                     </div>                 
                 </div>
             </div>
             }
-            <div className="responsive-cell team-link-average hide-on-mobile" title="Average Goals" style={{color: (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) >=3 && fixture_details.average >= 2.5 ? "green" : 
-                (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) < 3 && fixture_details.average < 2.5 ? "green" : "",
-                fontSize: (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) >=3 && fixture_details.average >= 2.5 ? "15px" : 
-                (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) < 3 && fixture_details.average < 2.5 ? "15px" : "",
-                fontWeight: (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) >=3 && fixture_details.average >= 2.5 ? "bold" : 
-                (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) < 3 && fixture_details.average < 2.5 ? "bold" : "" }}>
+            <div className="responsive-cell team-link-average hide-on-mobile" title="Average Goals" style={shouldUseClientStyles ? getAverageStyle() : {}}>
                 {fixture_details.average}
-                {(parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) >=3 && fixture_details.average >= 2.5 ? <i className="bi bi-arrow-up"></i> : 
-                (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) < 3 && fixture_details.average < 2.5 ? <i className="bi bi-arrow-down"></i> : "" }
+                {shouldUseClientStyles && (
+                    (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) >=3 && fixture_details.average >= 2.5 ? <i className="bi bi-arrow-up"></i> : 
+                    (parseInt(fixture_details.game_details.goals_home) + parseInt(fixture_details.game_details.goals_away)) < 3 && fixture_details.average < 2.5 ? <i className="bi bi-arrow-down"></i> : ""
+                )}
             </div>
             
             {props.isMobile == false ? //desktop 
