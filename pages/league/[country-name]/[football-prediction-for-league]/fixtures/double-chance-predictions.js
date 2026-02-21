@@ -97,10 +97,9 @@ function FootballPredictionsByLeague({
         return () => window.removeEventListener('resize', detectWindowSize);
     }, []);
 
-    // Process the data - PagesMatchPredictionDetails now just returns an array of components
+    // Process the data - PagesMatchPredictionDetails now receives gamesData
     const renderPredictions = PagesMatchPredictionDetails({ 
-        initialData,
-        baseUrl: baseUrl
+        gamesData: initialData, // Use initialData directly since no pagination needed
     });
 
     // Form the dynamic URL for filters

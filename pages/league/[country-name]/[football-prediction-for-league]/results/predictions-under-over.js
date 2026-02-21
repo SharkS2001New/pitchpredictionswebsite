@@ -9,7 +9,6 @@ import DataNotFoundPage from "../../../../../components/includes/datanotfound";
 import LeaguesDetailsTop from "../../../../../components/leaguesdetails/leagues_top_details";
 import FiltersLeagueDetails from "../../../../../components/leaguesdetails/filters-league-details";
 import FilterLeaguesResultsOverallDoubleChanceUnderOverHTFTPred1x2 from "../../../../../components/leaguesdetails/results/filter-pred1x2-ov-un-dc-ht-ft";
-import getFormattedCurrentDate from "../../../../../components/functions/GetTodaysDate";
 
 function FootballPredictionsByLeagueResults({ 
     initialData, 
@@ -46,10 +45,9 @@ function FootballPredictionsByLeagueResults({
         return () => window.removeEventListener('resize', detectWindowSize);
     }, []);
 
-    // Process the data - PagesMatchPredictionDetails now just returns an array of components
+    // Process the data - Pass gamesData instead of initialData
     const renderPredictions = PagesMatchPredictionDetails({ 
-        initialData,
-        baseUrl: baseUrl
+        gamesData: initialData, // Use gamesData to match updated component
     });
 
     // Form the dynamic URL for filters
@@ -182,7 +180,7 @@ function FootballPredictionsByLeagueResults({
                     <FilterLeaguesResultsOverallDoubleChanceUnderOverHTFTPred1x2 
                         url_filter={router.pathname.substring(1)}  
                         my_dynamic_url={encodeURI(`/league/football-predictions-for-${countryName.replace(/\s+/g, "-").toLowerCase()}/${leagueName.replace(/\s+/g, "-").toLowerCase()}-${leagueId}/results`)} 
-                    />                 
+                    />               
                 </div>
                 
                 <div className="sites-card">  
@@ -205,7 +203,7 @@ function FootballPredictionsByLeagueResults({
     );
 }
 
-// Helper function to remove last integer part
+// Helper function to remove last integer part (from your original code)
 function removeLastIntegerPart(str) {
     const regex = /-\d+$/;
     const match = str.match(regex);
