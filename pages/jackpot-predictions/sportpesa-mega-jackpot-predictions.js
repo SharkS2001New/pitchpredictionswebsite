@@ -1,6 +1,5 @@
 // pages/jackpot/sportpesa-mega-jackpot-predictions.js
 import React, { useState, useEffect } from 'react';
-import PreLoader from "../../components/includes/loader";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";

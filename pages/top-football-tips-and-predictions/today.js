@@ -31,7 +31,7 @@ function TopFootballFixturesToday({
         setLoadingMore(true);
         const chunkSize = 50;
         const startIndex = currentStartIndex;
-        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400); // Note: Using 400 as max from your code
+        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400); // Using 400 as max
         
         try {
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
@@ -75,8 +75,8 @@ function TopFootballFixturesToday({
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
-    if (typeof window === 'undefined' || (!initialData && !error)) {
+    // Show preloader while server is fetching data - SIMPLIFIED CONDITION
+    if (!initialData && !error) {
         return <PreLoader />;
     }
 
@@ -181,11 +181,8 @@ export async function getServerSideProps() {
     // Base URL for top winning predictions
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
+    // First batch: ONLY fetch 0-20 records on server
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
-    
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
     
     try {
         const controller = new AbortController();
@@ -209,14 +206,6 @@ export async function getServerSideProps() {
         
         // Check API response structure
         if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
-            }
-            
             return {
                 props: {
                     initialData: data.data || [],
@@ -227,7 +216,6 @@ export async function getServerSideProps() {
                 }
             };
         } else {
-            // API returned status: false
             return {
                 props: {
                     initialData: [],
