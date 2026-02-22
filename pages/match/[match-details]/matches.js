@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Head from "next/head";
-
 import MatchDetailsTop from "../../../components/matchdetails/match_details_top";
 import H2HFixturesData from "../../../components/matchdetails/h2h_fixtures";
 import Last6Matches from "../../../components/matchdetails/last_6_matches";
