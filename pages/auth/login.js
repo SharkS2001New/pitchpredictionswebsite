@@ -4,7 +4,6 @@ import nookies from 'nookies';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import AuthPreloader from './includes/auth_preLoader';
-import SocialLogin from '../../components/auth/SocialLogin';
 
 function Login() {
   const [email, setEmail] = useState('');

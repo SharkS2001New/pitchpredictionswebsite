@@ -178,7 +178,7 @@ export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
     
     // Base URL for today's games
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_fixtures_by_date";
+    const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
     
     // First batch: ONLY fetch 0-20 records on server
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;

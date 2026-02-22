@@ -1,162 +1,221 @@
-import React,{useEffect, useState} from "react";
-import PreLoader from "../../../components/includes/loader";
-import { useRouter } from 'next/router'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+
 import MatchDetailsTop from "../../../components/matchdetails/match_details_top";
 import H2HFixturesData from "../../../components/matchdetails/h2h_fixtures";
 import Last6Matches from "../../../components/matchdetails/last_6_matches";
-import DataNotFoundPage from "../../../components/includes/datanotfound";
-import FiltersMatchDetails from "../../../components/matchdetails/filters-match-details";
+import PreLoader from "../../../components/includes/loader";
+
 import fetchLast6MatchesHome from "../../../components/matchdetails/functions/fetch_last_6_matches";
 import fetchLast6MatchesAway from "../../../components/matchdetails/functions/fetch_last_6_matches_away";
-import getMatchDetailsTopData from "../../../components/matchdetails/functions/match_details_top_data";
-import { Adsense } from "@ctrl/react-adsense";
+import FiltersMatchDetails from "../../../components/matchdetails/filters-match-details";
 
-function MatchDetails(){
-    const router = useRouter(); //fetch page link data
-    const [isMobile, setIsMobile] = useState(false);
-    const [match_details_data,setMatchDetailsFilters] = useState([]);
-    const [endpointStatus1,setEndPointStatus1] = useState("");
-    const [endpointStatus2,setEndPointStatus2] = useState("");
+/* ================= SERVER SIDE ================= */
 
-    const current_url = router.query['match-details'];
-    let fixtureIdInteger = 0;
+export async function getServerSideProps(context) {
+  const { params, query } = context;
 
-    //fetch fixture id from the url
-    if(router.isReady){
-        fixtureIdInteger = parseInt(current_url.split("-").pop(), 10);
+  const slug = params?.["match-details"] || query["match-details"];
+
+  let fixtureIdInteger = 0;
+
+  if (slug) {
+    const mainPart = slug.split("/")[0];
+    const matches = mainPart.match(/-(\d+)$/);
+
+    if (matches?.[1]) {
+      fixtureIdInteger = parseInt(matches[1], 10);
+    }
+  }
+
+  // ❗ invalid id → redirect
+  if (!fixtureIdInteger) {
+    return {
+      redirect: { destination: "/", permanent: false },
+    };
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
+      {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      return {
+        redirect: { destination: "/", permanent: false },
+      };
     }
 
-    const headers =  {
-        "Content-type": "application/json; charset=UTF-8",
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-    }
-
-    const url = "https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id="+fixtureIdInteger;
-    const [game_details, setGamesDetails] = useState([]);
-
-    const home_team_matches_url = "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team";
-    const [home_team_matches, setHomeTeamMatches] = useState([]);
-
-    
-    const away_team_matches_url = "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team";
-    const [away_team_matches, setAwayTeamMatches] = useState([]);
-    
-    useEffect(()=>{ 
-        if(router.isReady){
-            //Determine screen size on mobile or desktop
-            window.screen.width < 760 ? setIsMobile(true) : setIsMobile(false);
-
-            //Fetch filters from database, and use the results to execute and display the rest of the data
-            getMatchDetailsTopData(url).then(data => {
-                if(data){
-                    setGamesDetails(data);
-
-                    fetchLast6MatchesHome(home_team_matches_url,data[0].home_team_id,data[0].unformated_date).then(data1 => {
-
-                        if(data1.status == true){
-                            var h2h_data = data1.data;
-                    
-                            setEndPointStatus1(data1.message);
-                                                        
-                            setHomeTeamMatches(h2h_data);
-                        }else{
-                            setEndPointStatus1(data1.message);
-                        }   
-                    })
-        
-                    fetchLast6MatchesAway(away_team_matches_url,data[0].away_team_id,data[0].unformated_date).then(data1 => { 
-                        if(data1.status == true){
-                            var away_h2h_data = data1.data;
-            
-                            setEndPointStatus2(data1.message);
-            
-                            setAwayTeamMatches(away_h2h_data);
-                        }else{
-                            setEndPointStatus2(data1.message);
-                        }
-                    })
-    
-                    //Set more filters to be used in filtering external end points
-                    setMatchDetailsFilters(data[0]);
-                }else{
-                    router.push('/', undefined, { 
-                        statusCode: 301
-                    })
-                }               
-            })
-        } 
-    },[router]);
-
-    //Calculate the width on windows change detection
-    function detectWindowSize() {
-        window.innerWidth < 760 ? setIsMobile(true) : setIsMobile(false);        
-    }
-
-    if (router.isReady) { //Checking if router is ready prevents the page from loading without some data
-        window.onresize = detectWindowSize;
-    }
-
-    let url_name = "";
-    
-    // form the dynamic url
-    if(endpointStatus1 === "success" && endpointStatus2 === "success"){
-        url_name = encodeURIComponent(match_details_data.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+match_details_data.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+fixtureIdInteger);
-    }
-   
-    // If data is completly loaded. Display, Else, Show preloader
-    if(endpointStatus1 === "" || endpointStatus2 === ""){
-        return(
-            <PreLoader/>
-        ) 
-    }else if(endpointStatus1 === "error" || endpointStatus2 ==="error"){
-        return (<React.Fragment>           
-                <div className="sites-card mb-2">
-                    <MatchDetailsTop props={game_details} home_team_id={match_details_data.home_team_id} away_team_id ={match_details_data.away_team_id} home_team_data={home_team_matches} away_team_data={away_team_matches} />
-                    <div className="border-top"></div>                      
-                    {/* data is displayed in tabs */}
-                    <FiltersMatchDetails url_filter = {router.pathname.substring(1)} match_url={url_name} league_type={match_details_data.league_type}/> 
-                </div>   
-                <div className="sites-card">
-                    <DataNotFoundPage props = "Sorry, there isn't enough data available to display at this time."/>
-                    <br/>
-                    <Adsense
-                        client="ca-pub-5665711413000284"
-                        slot="7856848919"
-                        style={{ display: "block" }}
-                        layout="display"
-                        format="auto"
-                    /> 
-                </div>
-            </React.Fragment>
-            )            
-
-    }else if(endpointStatus1 === "success" && endpointStatus2 === "success"){
-        if(game_details.length >0){ //this is to be changed
-            return (
-                <React.Fragment>
-                    {home_team_matches.length && away_team_matches.length >0 ?
-                    <React.Fragment>
-                        <div className="sites-card mb-2">
-                            <MatchDetailsTop props={game_details} home_team_id={match_details_data.home_team_id} away_team_id ={match_details_data.away_team_id} home_team_data={home_team_matches} away_team_data={away_team_matches} />
-                            <div className="border-top"></div>                      
-                            {/* data is displayed in tabs */}
-                            <FiltersMatchDetails url_filter = {router.pathname.substring(1)} match_url={url_name} league_type={match_details_data.league_type}/> 
-                        </div> 
-                        <div className="sites-card">                            
-                            <Last6Matches home_team={match_details_data.home_team_name} away_team={match_details_data.away_team_name} home_team_id={match_details_data.home_team_id}
-                                away_team_id ={match_details_data.away_team_id} home_team_data={home_team_matches} away_team_data={away_team_matches} fixture_date = { match_details_data.unformated_date }/>
-
-                            <H2HFixturesData  home_team_id={match_details_data.home_team_id} away_team_id ={match_details_data.away_team_id} fixture_date = { match_details_data.unformated_date }/>
-                            <br/>                           
-                        </div>
-                    </React.Fragment>
-                    : <></>
-                    }
-                </React.Fragment>
-            )
-        }
-    }
+    return {
+      props: {
+        initialMatchDetails: data,
+        fixtureIdInteger,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: { destination: "/", permanent: false },
+    };
+  }
 }
 
+
+/* ================= COMPONENT ================= */
+
+function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
+  const router = useRouter();
+
+  // ✅ SSR data
+  const [game_details] = useState(initialMatchDetails.data || []);
+  const [match_details_data] = useState(
+    initialMatchDetails?.data[0] || null
+  );
+
+  // ✅ secondary states
+  const [homeTeamMatches, setHomeTeamMatches] = useState([]);
+  const [awayTeamMatches, setAwayTeamMatches] = useState([]);
+  const [endPointStatus1, setEndPointStatus1] = useState("");
+  const [endPointStatus2, setEndPointStatus2] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
+
+  /* ================= MOBILE DETECTION ================= */
+
+  useEffect(() => {
+    const detectWindowSize = () => {
+      setIsMobile(window.innerWidth < 760);
+    };
+
+    detectWindowSize();
+    window.addEventListener("resize", detectWindowSize);
+
+    return () =>
+      window.removeEventListener("resize", detectWindowSize);
+  }, []);
+
+  /* ================= SECONDARY FETCH ================= */
+
+  useEffect(() => {
+    if (!match_details_data?.home_team_id) return;
+
+    const homeUrl =
+      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team";
+
+    const awayUrl =
+      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team";
+
+    const loadSecondary = async () => {
+      try {
+        setIsLoadingSecondary(true);
+
+        const [homeRes, awayRes] = await Promise.all([
+          fetchLast6MatchesHome(
+            homeUrl,
+            match_details_data.home_team_id,
+            match_details_data.unformated_date
+          ),
+          fetchLast6MatchesAway(
+            awayUrl,
+            match_details_data.away_team_id,
+            match_details_data.unformated_date
+          ),
+        ]);
+
+        if (homeRes?.status === true) {
+          setHomeTeamMatches(homeRes.data || []);
+          setEndPointStatus1(homeRes.message);
+        } else {
+          setEndPointStatus1(homeRes?.message || "error");
+        }
+
+        if (awayRes?.status === true) {
+          setAwayTeamMatches(awayRes.data || []);
+          setEndPointStatus2(awayRes.message);
+        } else {
+          setEndPointStatus2(awayRes?.message || "error");
+        }
+      } catch (err) {
+        setEndPointStatus1("error");
+        setEndPointStatus2("error");
+      } finally {
+        setIsLoadingSecondary(false);
+      }
+    };
+
+    loadSecondary();
+  }, [match_details_data]);
+
+  /* ================= LOADING ================= */
+  if (!match_details_data) {
+    return <PreLoader />;
+  }
+
+  /* ================= RENDER ================= */
+
+    let url_name = "";
+
+    // form the dynamic url
+    url_name = encodeURIComponent(match_details_data.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+match_details_data.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+fixtureIdInteger);
+
+    return (
+    <>
+      {/* ✅ SSR CONTENT — SEO GOLD */}
+      <div className="sites-card mb-2">
+        <MatchDetailsTop
+          props={game_details}
+          home_team_id={match_details_data.home_team_id}
+          away_team_id={match_details_data.away_team_id}
+          home_team_data={homeTeamMatches}
+          away_team_data={awayTeamMatches}
+        />
+        <div className="border-top"></div>                      
+        {/* data is displayed in tabs */}
+        <FiltersMatchDetails url_filter = {router.pathname.substring(1)} match_url={url_name} league_type={match_details_data.league_type}/> 
+      </div>
+
+      {/* ✅ CLIENT CONTENT */}
+      <div className="sites-card">
+        {isLoadingSecondary ? (
+          <PreLoader />
+        ) : (
+          <>          
+            {/* H2H */}
+            <H2HFixturesData
+              home_team_id={match_details_data.home_team_id}
+              away_team_id={match_details_data.away_team_id}
+              fixture_date={match_details_data.unformated_date}
+            />
+
+            {/* Last 6 */}
+            {homeTeamMatches.length > 0 &&
+              awayTeamMatches.length > 0 && (
+                <Last6Matches
+                  home_team={match_details_data.home_team_name}
+                  away_team={match_details_data.away_team_name}
+                  home_team_id={match_details_data.home_team_id}
+                  away_team_id={match_details_data.away_team_id}
+                  home_team_data={homeTeamMatches}
+                  away_team_data={awayTeamMatches}
+                  fixture_date={
+                    match_details_data.unformated_date
+                  }
+                />
+              )}
+
+          </>
+        )}
+      </div>
+    </>
+  );
+}
 
 export default MatchDetails;
