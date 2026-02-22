@@ -21,7 +21,7 @@ function UpcomingFixtures({
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+    const [currentStartIndex, setCurrentStartIndex] = useState(20);
     const [hasMore, setHasMore] = useState(true);
     const [loadTrigger, setLoadTrigger] = useState(0);
 
@@ -46,11 +46,9 @@ function UpcomingFixtures({
             const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-                // Append new data to existing data
                 setAllData(prevData => [...prevData, ...chunkData.data]);
                 setCurrentStartIndex(endIndex + 1);
                 
-                // Check if we've reached the maximum or got less than requested
                 if (endIndex >= 850 || chunkData.data.length < chunkSize) {
                     setHasMore(false);
                 }
@@ -77,21 +75,9 @@ function UpcomingFixtures({
     };
 
     // Show preloader while server is fetching data
-    if (typeof window === 'undefined' || (!initialData && !error)) {
+    if (!initialData && !error) {
         return <PreLoader />;
     }
-
-    // Format date for display
-    const formatDisplayDate = (dateString) => {
-        if (!dateString) return '';
-        try {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', options);
-        } catch (e) {
-            return dateString;
-        }
-    };
 
     // Handle error state
     if (endpointStatus === "error" || error) {
@@ -122,7 +108,7 @@ function UpcomingFixtures({
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No upcoming matches available from ${formatDisplayDate(todaysDate)}`}/>
+                <DataNotFoundPage props="No upcoming matches available at the moment"/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -146,7 +132,6 @@ function UpcomingFixtures({
                     </div>
                     <div className="col-md-2 col-1"></div>
                 </div>
-                
                 <div className="row" style={{backgroundColor: "#edf3f5"}}>
                     <div className="col-md-1 col-2"></div>
                     <div className="col-md-10 col-12">
@@ -190,25 +175,15 @@ export async function getServerSideProps() {
     // Base URL for upcoming fixtures
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_incoming_fixtures";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
+    // First batch: ONLY fetch 0-20 records on server
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
         const response = await fetch(firstBatchUrl, {
             headers: { 
                 "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
+            }
         });
-        
-        clearTimeout(timeoutId);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -216,16 +191,7 @@ export async function getServerSideProps() {
         
         const data = await response.json();
         
-        // Check API response structure
         if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
-            }
-            
             return {
                 props: {
                     initialData: data.data || [],
@@ -236,19 +202,18 @@ export async function getServerSideProps() {
                 }
             };
         } else {
-            // API returned status: false
             return {
                 props: {
                     initialData: [],
                     endpointStatus: "error",
-                    error: data.message || "Failed to load upcoming predictions",
+                    error: data.message || "Failed to load upcoming fixtures",
                     baseUrl: baseUrl,
                     todaysDate: todaysDate
                 }
             };
         }
     } catch (error) {
-        console.error('Error fetching upcoming predictions:', error);
+        console.error('Error fetching upcoming fixtures:', error);
         
         return {
             props: {
