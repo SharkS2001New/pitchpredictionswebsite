@@ -287,7 +287,7 @@ export async function getServerSideProps(context) {
         // Fetch top leagues data using league_id
         let topLeaguesData = [];
         try {
-            const topUrl = `https://api.pitchpredictions.com/api/fetch_leagues_data?league_id=${leagueId}`;
+            const topUrl = `https://api.pitchpredictions.com/api/fetch_leagues_top_data?league_id=${leagueId}`;
             
             const topResponse = await fetch(topUrl, { headers });
             const topData = await topResponse.json();

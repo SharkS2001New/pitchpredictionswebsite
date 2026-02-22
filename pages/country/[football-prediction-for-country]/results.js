@@ -197,7 +197,7 @@ export async function getServerSideProps(context) {
         // Fetch top countries data
         let countriesTopData = [];
         try {
-            const topUrl = `https://api.pitchpredictions.com/api/fetch_countries_data?country_name=${encodeURIComponent(countryNameForApi)}`;
+            const topUrl = `https://api.pitchpredictions.com/api/fetch_countries_top_data?country_name=${encodeURIComponent(countryNameForApi)}`;
             console.log('Fetching top data:', topUrl);
             
             const topResponse = await fetch(topUrl, { headers });
