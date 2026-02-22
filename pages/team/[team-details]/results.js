@@ -16,7 +16,7 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
 
   const [isMobile, setIsMobile] = useState(false);
   
-  // ✅ Fix: Access the first item correctly
+  // SSR data - available immediately
   const [teams_top_data, setTeamsTopData] = useState(
     initialTeamsTopData?.data?.[0] || null
   );
@@ -25,6 +25,7 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
     initialLast6Matches?.data || []
   );
   
+  // Secondary data - will load later
   const [team_last6_matches_when_home, setTeamLast6MatchesHome] = useState([]);
   const [team_last6_matches_when_away, setTeamLast6MatchesAway] = useState([]);
   
@@ -32,10 +33,17 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
   const [endpointStatus2, setEndPointStatus2] = useState("");
   const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
 
-  // client-side fetch for home/away matches
-  useEffect(() => {
-    if (!teams_top_data) return;
+  // If no team data from SSR, show not found
+  if (!teams_top_data) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Team details not found." />
+      </div>
+    );
+  }
 
+  // client-side fetch for home/away matches (runs after page loads)
+  useEffect(() => {
     const fetchSecondaryData = async () => {
       setIsLoadingSecondary(true);
       
@@ -75,7 +83,7 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
     setIsMobile(window.innerWidth < 760);
     
     fetchSecondaryData();
-  }, [teamIdInteger, teams_top_data]);
+  }, [teamIdInteger, teams_top_data]); // Only runs once on mount and if these deps change
 
   // detect mobile screen on resize
   useEffect(() => {
@@ -86,20 +94,6 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
     window.addEventListener("resize", detectWindowSize);
     return () => window.removeEventListener("resize", detectWindowSize);
   }, []);
-
-  // Show loading state while fetching secondary data
-  if (isLoadingSecondary) {
-    return <PreLoader />;
-  }
-
-  // If no team data
-  if (!teams_top_data) {
-    return (
-      <div className="sites-card">
-        <DataNotFoundPage props="Team details not found." />
-      </div>
-    );
-  }
 
   const todays_date = new Date().toISOString().split("T")[0];
   
@@ -123,50 +117,15 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
     teamName.replace(/\s+/g, "-").toLowerCase() + "-" + teamIdInteger
   );
 
-  // Check if we have any errors
-  const hasError = endpointStatus1 === "error" || endpointStatus2 === "error";
-  const hasNoData = endpointStatus1 === "no_data" && endpointStatus2 === "no_data";
-  
-  // Check data availability
+  // Check data availability for secondary content
   const hasGeneralMatches = team_last6_matches.length > 0;
   const hasHomeMatches = team_last6_matches_when_home.length > 0;
   const hasAwayMatches = team_last6_matches_when_away.length > 0;
+  const hasError = endpointStatus1 === "error" || endpointStatus2 === "error";
 
-  // Error state
-  if (hasError) {
-    return (
-      <>
-        <div className="sites-card mb-2">
-          <TeamDetailsTop
-            props={teams_top_data}
-            last_6_matches={team_last6_matches}
-            team_id={teamIdInteger}
-          />
-          <div className="row">
-            <div className="text-center fw-bold">
-              <h6><b>{getMatchStatus()}</b></h6>
-            </div>
-          </div>
-          <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
-          <FiltersTeamDetails
-            url_filter={router.pathname.substring(1)}
-            match_url={url_name}
-            league_type={teams_top_data.league_type}
-          />
-        </div>
-
-        <div className="sites-card">
-          <DataNotFoundPage props="Sorry, there isn't enough data available to display at this time." />
-          <br />
-        </div>
-      </>
-    );
-  }
-
-  // Success state - Show all data including home/away matches
   return (
     <>
-      {/* Top Section - Always visible */}
+      {/* ===== SSR CONTENT - LOADS IMMEDIATELY ===== */}
       <div className="sites-card mb-2">
         <TeamDetailsTop
           props={teams_top_data}
@@ -188,66 +147,85 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
         />
       </div>
 
-      {/* Matches Section - Show all match data */}
+      {/* ===== CLIENT-SIDE CONTENT - LOADS AFTER ===== */}
       <div className="sites-card">
-        {/* All Matches (combined home/away) */}
-        {hasGeneralMatches && (
-          <GamesPlayedByTeam
-            props={team_last6_matches}
-            team_id={teamIdInteger}
-            filter_date={teams_top_data.unformated_date}
-            title={`Games Played By ${teamName}`}
-            team_name={teamName}
-          />
-        )}
-
-        {/* Home Matches */}
-        {hasHomeMatches && (
+        {/* Show loading skeleton while fetching secondary data */}
+        {isLoadingSecondary ? (
+          <PreLoader/>
+        ) : (
           <>
-            <br />
-            <GamesPlayedByTeam
-              props={team_last6_matches_when_home}
-              team_id={teamIdInteger}
-              filter_date={teams_top_data.unformated_date}
-              title="Home Matches"
-              team_name={teamName}
-            />
-          </>
-        )}
+            {/* All Matches (combined home/away) */}
+            {hasGeneralMatches && (
+              <GamesPlayedByTeam
+                props={team_last6_matches}
+                team_id={teamIdInteger}
+                filter_date={teams_top_data.unformated_date}
+                title={`Games Played By ${teamName}`}
+                team_name={teamName}
+              />
+            )}
 
-        {/* AdSense between home and away */}
-        {hasHomeMatches && hasAwayMatches && (
-          <>
-            <br />
-            <Adsense
-              client="ca-pub-5665711413000284"
-              slot="3850951453"
-              style={{ display: "block" }}
-              layout="display"
-              format="auto"
-            />
-            <br />
-          </>
-        )}
+            {/* Home Matches */}
+            {hasHomeMatches && (
+              <>
+                <br />
+                <GamesPlayedByTeam
+                  props={team_last6_matches_when_home}
+                  team_id={teamIdInteger}
+                  filter_date={teams_top_data.unformated_date}
+                  title="Home Matches"
+                  team_name={teamName}
+                />
+              </>
+            )}
 
-        {/* Away Matches */}
-        {hasAwayMatches && (
-          <>
-            <GamesPlayedByTeam
-              props={team_last6_matches_when_away}
-              team_id={teamIdInteger}
-              filter_date={teams_top_data.unformated_date}
-              title="Away Matches"
-              team_name={teamName}
-            />
-          </>
-        )}
+            {/* AdSense between home and away */}
+            {hasHomeMatches && hasAwayMatches && (
+              <>
+                <br />
+                <Adsense
+                  client="ca-pub-5665711413000284"
+                  slot="3850951453"
+                  style={{ display: "block" }}
+                  layout="display"
+                  format="auto"
+                />
+                <br />
+              </>
+            )}
 
-        {/* Show message if no data at all */}
-        {!hasGeneralMatches && !hasHomeMatches && !hasAwayMatches && !hasError && (
-          <>
-            <DataNotFoundPage props="No match data available for this team." />
-            <br />
+            {/* Away Matches */}
+            {hasAwayMatches && (
+              <>
+                <GamesPlayedByTeam
+                  props={team_last6_matches_when_away}
+                  team_id={teamIdInteger}
+                  filter_date={teams_top_data.unformated_date}
+                  title="Away Matches"
+                  team_name={teamName}
+                />
+              </>
+            )}
+
+            {/* Show error/no data message if applicable */}
+            {hasError && (
+              <>
+                <DataNotFoundPage props="Unable to load some match data. Please try again later." />
+                <br />
+              </>
+            )}
+
+            {/* Show message if no data at all */}
+            {!isLoadingSecondary && 
+             !hasGeneralMatches && 
+             !hasHomeMatches && 
+             !hasAwayMatches && 
+             !hasError && (
+              <>
+                <DataNotFoundPage props="No match data available for this team." />
+                <br />
+              </>
+            )}
           </>
         )}
       </div>
