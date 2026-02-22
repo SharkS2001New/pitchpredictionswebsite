@@ -43,8 +43,7 @@ function FootballPredictionsByCountry({
 
     // Process the data - PagesMatchPredictionDetails now just returns an array of components
     const renderPredictions = PagesMatchPredictionDetails({ 
-        initialData,
-        baseUrl: baseUrl
+        gamesData: initialData, // Use initialData directly since no pagination needed
     });
 
     // Format country name for display (if displayCountryName not provided)

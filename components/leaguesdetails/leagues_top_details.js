@@ -11,6 +11,7 @@ function  LeaguesDetailsTop(props){
 
     let league_details = props
 
+    console.log(league_details.league_logo)
     if(league_details  !=undefined){
        // form the dynamic url     
         return (

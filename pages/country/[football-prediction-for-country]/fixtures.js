@@ -15,7 +15,6 @@ function FootballPredictionsByCountry({
     initialData, 
     endpointStatus, 
     error,
-    baseUrl,
     countryName,
     displayCountryName,
     todaysDate,
@@ -95,8 +94,7 @@ function FootballPredictionsByCountry({
 
     // Process the data - PagesMatchPredictionDetails now just returns an array of components
     const renderPredictions = PagesMatchPredictionDetails({ 
-        initialData,
-        baseUrl: baseUrl
+        gamesData: initialData, // Use initialData directly since no pagination needed
     });
 
     // Handle error state
