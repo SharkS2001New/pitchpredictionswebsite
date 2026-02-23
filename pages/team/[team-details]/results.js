@@ -83,7 +83,7 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
     setIsMobile(window.innerWidth < 760);
     
     fetchSecondaryData();
-  }, [teamIdInteger, teams_top_data]); // Only runs once on mount and if these deps change
+  }, [teamIdInteger, teams_top_data]);
 
   // detect mobile screen on resize
   useEffect(() => {
@@ -109,8 +109,12 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
   const isHomeTeam = teams_top_data.home_team_id === teamIdInteger;
   const teamName = isHomeTeam ? teams_top_data.home_team_name : teams_top_data.away_team_name;
 
-  // Prepare predictions renderer
-  const renderPredictions = <SelectedMacthesPredDetails props={[teams_top_data]} />;
+  // ✅ FIXED: Prepare predictions data properly
+  // Create an array with the team data for SelectedMacthesPredDetails
+  const predictionsData = [teams_top_data];
+  
+  // Create the predictions element
+  const renderPredictions = <SelectedMacthesPredDetails props={predictionsData} />;
 
   // Form dynamic URL
   const url_name = encodeURIComponent(
@@ -139,7 +143,10 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
             </h2>
           </div>
         </div>
-        <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+        
+        {/* ✅ FIXED: Pass the entire renderPredictions element, not its props */}
+        {/* <RenderData renderPredictions={renderPredictions} isMobile={isMobile} /> */}
+        
         <FiltersTeamDetails
           url_filter={router.pathname.substring(1)}
           match_url={url_name}
