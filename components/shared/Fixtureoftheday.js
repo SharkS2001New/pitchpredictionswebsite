@@ -15,19 +15,58 @@ function FixtureOfTheDay() {
   const [iconColor, setIconColor] = useState("currentColor");
   const [iconPath, setIconPath] = useState("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z")
 
-  useEffect(() => {
-    getFixtureOfTheDay();
+  // Cache key based on current date (changes daily)
+  const cacheKey = `fixture_of_the_day_${currentDate}`;
+  const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
-    if (CheckiffixtureIsSelected(gamesfixtures.fixture_id)) {
+  useEffect(() => {
+    loadFixtureData();
+
+    if (gamesfixtures.fixture_id && CheckiffixtureIsSelected(gamesfixtures.fixture_id)) {
       setIconColor("red");
-      setIconPath("M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z")
+      setIconPath("M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z");
     } else {
       setIconColor("currentColor");
       setIconPath("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z");
     }
   }, [gamesfixtures.fixture_id]);
 
-  async function getFixtureOfTheDay() {
+  // Function to load data (either from cache or API)
+  const loadFixtureData = async () => {
+    try {
+      // Check if we're on the client side
+      if (typeof window === 'undefined') {
+        await fetchFromAPI();
+        return;
+      }
+
+      // Try to get cached data
+      const cachedData = localStorage.getItem(cacheKey);
+      
+      if (cachedData) {
+        const { timestamp, data, isPrimary, status } = JSON.parse(cachedData);
+        const now = new Date().getTime();
+        
+        // If cache is still valid (less than 1 hour old)
+        if (now - timestamp < CACHE_DURATION) {
+          setGames(data);
+          setIsPrimaryResponse(isPrimary);
+          setEndPointStatus(status);
+          return;
+        }
+      }
+      
+      // Cache expired or doesn't exist - fetch from API
+      await fetchFromAPI();
+      
+    } catch (error) {
+      console.error("Cache error:", error);
+      // If cache fails, fall back to API
+      await fetchFromAPI();
+    }
+  };
+
+  async function fetchFromAPI() {
     try {
       // Fetch fixtures from the primary URL
       const primaryResponse = await fetch("https://api.pitchpredictions.com/api/match_of_the_day?fixture_date=" + currentDate, {
@@ -37,10 +76,15 @@ function FixtureOfTheDay() {
       const primaryData = await primaryResponse.json();
 
       if (primaryData.status === true && primaryData.data.length > 0) {
+        const data = primaryData.data[0];
         setEndPointStatus(primaryData.message);
-        setGames(primaryData.data[0]);
-        setIsPrimaryResponse(true); // Mark as primary response
-        return primaryData.data[0];
+        setGames(data);
+        setIsPrimaryResponse(true);
+        
+        // Save to cache
+        saveToCache(data, true, primaryData.message);
+        
+        return data;
       } else {
         // If primary URL does not return a valid game, fetch from the alternative URL
         const alternativeResponse = await fetch("https://api.pitchpredictions.com/api/auto_featured_match_of_the_day?fixture_date=" + currentDate, {
@@ -50,12 +94,19 @@ function FixtureOfTheDay() {
         const alternativeData = await alternativeResponse.json();
 
         if (alternativeData.status === true && alternativeData.data.length > 0) {
+          const data = alternativeData.data[0];
           setEndPointStatus(alternativeData.message);
-          setGames(alternativeData.data[0]);
-          setIsPrimaryResponse(false); // Mark as alternative response
-          return alternativeData.data[0];
+          setGames(data);
+          setIsPrimaryResponse(false);
+          
+          // Save to cache
+          saveToCache(data, false, alternativeData.message);
+          
+          return data;
         } else {
           setEndPointStatus("No game available");
+          // Cache the "no game" status too (with shorter cache maybe)
+          saveToCache(null, false, "No game available");
         }
       }
     } catch (error) {
@@ -64,12 +115,35 @@ function FixtureOfTheDay() {
     }
   }
 
+  // Helper function to save data to cache
+  const saveToCache = (data, isPrimary, status) => {
+    try {
+      if (typeof window !== 'undefined') {
+        const cacheData = {
+          timestamp: new Date().getTime(),
+          data: data,
+          isPrimary: isPrimary,
+          status: status
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+      }
+    } catch (error) {
+      console.error("Failed to save to cache:", error);
+    }
+  };
+
+  // Force refresh function (useful for admin/debugging)
+  const refreshData = () => {
+    localStorage.removeItem(cacheKey);
+    fetchFromAPI();
+  };
+
   let probability_results = "";
 
   // Call function to convert date time to users timezone
-  const myNewDateString = DateTimeToUsersTimezone(gamesfixtures.date);
+  const myNewDateString = gamesfixtures.date ? DateTimeToUsersTimezone(gamesfixtures.date) : "";
 
-  if (endpointStatus === "success") {
+  if (endpointStatus === "success" || endpointStatus === "success (cached)") {
     if (isPrimaryResponse) {
       // For primary response, use gamesfixtures.option_picked directly
       probability_results = ProbabilityResults(gamesfixtures, gamesfixtures.option_picked);
@@ -95,12 +169,16 @@ function FixtureOfTheDay() {
         <div className="skeleton-row skeleton-row-shimmer"></div>
       </div>
     );
-  } else if (endpointStatus === "success") {
+  } else if (endpointStatus === "success" || endpointStatus === "success (cached)") {
     return (
       <div className="row" style={{ backgroundColor: "white", cursor: "auto" }}>
         <br />
         <div className="responsive-row" style={{ backgroundColor: "#202c3c", color: "white" }}>
           <span style={{ fontSize: "15px", fontWeight: "bold", marginTop: "5px", marginLeft: "10px" }}>Game of the Day</span>
+          {/* Optional: Add small cache indicator (remove in production) */}
+          {/* {endpointStatus === "success (cached)" && (
+            <span style={{ fontSize: "10px", marginLeft: "10px", color: "#ccc" }}>(cached)</span>
+          )} */}
         </div>
         <div className="responsive-row" style={{ border: "none", color: "black", fontWeight: "bold", backgroundColor: "white", paddingBottom: "15px", height: "100px" }}>
           <div className="responsive-cell team-link-standings mb-4" title={gamesfixtures.country_name}>

@@ -21,6 +21,8 @@ import { Adsense } from "@ctrl/react-adsense";
 import Script from 'next/script';
 import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
 import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
+import AfroPariClickUnderAds from '../components/shared/AfroPariClickUnderAds';
+import AfroPariClickPopupAds from '../components/shared/AfroPariClickPopupAds';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -31,7 +33,7 @@ function App({ Component, pageProps }) {
   // Check if the current page includes 'auth' in its route
   const isAuthPage = router.pathname.includes("auth");
 
-    // Excluded routes
+  // Excluded routes
   const excludedRoutes = [
     "/",
     "/blog",
@@ -44,9 +46,60 @@ function App({ Component, pageProps }) {
     "/top-football-tips-and-predictions/today",
   ];
 
-  // 1xBet Click under Only render if NOT excluded
-  const shouldShowAd = !excludedRoutes.includes(path);
+  // Check if ad should show (not excluded and not auth page)
+  const shouldShowAd = !excludedRoutes.includes(path) && !isAuthPage;
 
+  // State to track if we're on the client side
+  const [isClient, setIsClient] = React.useState(false);
+
+  // State to track current ad variant - initialize based on sessionStorage if available
+  const [adVariant, setAdVariant] = React.useState(() => {
+    // During SSR, return null
+    if (typeof window === 'undefined') return null;
+    
+    // On client, check sessionStorage
+    const lastShown = sessionStorage.getItem('last_ad_company');
+    const hasVisited = sessionStorage.getItem('has_visited');
+    
+    if (hasVisited && lastShown) {
+      // For returning visitors in same session, show the opposite
+      return lastShown === '1XBET' ? 'AFROPARI' : '1XBET';
+    }
+    return null;
+  });
+
+  // Effect to handle client-side initialization
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Effect to handle ad rotation per page view with random start
+  React.useEffect(() => {
+    if (!shouldShowAd || !isClient) {
+      setAdVariant(null);
+      return;
+    }
+
+    const hasVisited = sessionStorage.getItem('has_visited');
+    const lastShown = sessionStorage.getItem('last_ad_company');
+    
+    if (!hasVisited) {
+      // First page of session - random choice
+      const firstCompany = Math.random() < 0.5 ? '1XBET' : 'AFROPARI';
+      sessionStorage.setItem('last_ad_company', firstCompany);
+      sessionStorage.setItem('has_visited', 'true');
+      setAdVariant(firstCompany);
+    } else if (!adVariant && lastShown) {
+      // This handles the case where we need to set the variant for subsequent pages
+      const nextCompany = lastShown === '1XBET' ? 'AFROPARI' : '1XBET';
+      sessionStorage.setItem('last_ad_company', nextCompany);
+      setAdVariant(nextCompany);
+    }
+  }, [path, shouldShowAd, isClient, adVariant]);
+
+  // Don't render ads until client-side to prevent hydration mismatch
+  const showAds = isClient && shouldShowAd;
+  
   return (
     <React.Fragment>
       {/* Inject seo content for static pages excluding the dynamic pages such as match details and football predictions by date*/}
@@ -120,16 +173,34 @@ function App({ Component, pageProps }) {
                       <Component {...pageProps} />
                     </div>
 
-                    {/**1xbet click under ads */}
-                    {shouldShowAd && !isAuthPage && <O1XBetClickUnderAds />}
-                     {/**Taifa Bet */}
-                    {shouldShowAd && !isAuthPage &&       
-                    <Script
-                      src="https://tafatips.com/tafatips-popup-ads.js"
-                      strategy="afterInteractive"
-                    /> }
+                    {/* Conditional rendering of ads based on rotation - only when on client */}
+                    {showAds && adVariant === '1XBET' && (
+                      <>
+                        {/* 1xBet Click under ads */}
+                        <O1XBetClickUnderAds />
+                        
+                        {/* 1xBet Popup (Taifa Bet) */}
+                        <Script
+                          src="https://tafatips.com/tafatips-popup-ads.js"
+                          strategy="afterInteractive"
+                        />
+                      </>
+                    )}
 
-                    <GuzBetCatfishBanner/>
+                    {showAds && adVariant === 'AFROPARI' && (
+                      <>
+                        {/* AfroPari Click under ads */}
+                        <AfroPariClickUnderAds />
+                        
+                        {/* AfroPari Popup */}
+                        <AfroPariClickPopupAds />
+                      </>
+                    )}
+
+                    {/* GuzBet Catfish Banner */}
+                    {showAds && adVariant === '1XBET' && (
+                      <GuzBetCatfishBanner/>
+                    )}
 
                   </div>    
                   {!isAuthPage && 
@@ -160,4 +231,4 @@ function App({ Component, pageProps }) {
   )  
 }
 
-export default  App;
+export default App;

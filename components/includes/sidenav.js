@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from "next/router";
 import jsonpopularLeagues from "../../public/jsonfiles/popular-leagues.json";
 import jsonotherLeagues from "../../public/jsonfiles/other-leagues.json";
@@ -6,179 +6,239 @@ import jsonotherCompetitions from "../../public/jsonfiles/other-competitions.jso
 import LeagusByCountryCollapsible from "./leagues_by_country_collapsible";
 import GetLeagueId from '../functions/GetLeagueId';
 
-function SideNavBar(){
-    var router = useRouter();
+function SideNavBar() {
+    const router = useRouter();
+    
+    // Memoize the leagueId to prevent recalculations
+    const leagueId = useMemo(() => GetLeagueId(router), [router]);
 
-    const openSidemenu = () =>{
+    // State with lazy initialization from localStorage
+    const [pinnedLeagues, setPinnedLeagues] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('pinnedLeagues');
+            return cached ? JSON.parse(cached) : [];
+        }
+        return [];
+    });
+    
+    const [otherLeagues, setOtherLeagues] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('otherLeagues');
+            return cached ? JSON.parse(cached) : [];
+        }
+        return [];
+    });
+    
+    const [otherCompetions, setOtherCompetions] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const cached = localStorage.getItem('otherCompetitions');
+            return cached ? JSON.parse(cached) : [];
+        }
+        return [];
+    });
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const openSidemenu = useCallback(() => {
         document.body.classList.toggle('sb-sidenav-toggled');
         localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
-    }
+    }, []);
 
-    const [pinnedLeagues, setPinnedLeagues] = useState([]);
-    const [otherLeagues, setOtherLeagues] = useState([]);
-    const [otherCompetions, setOtherCompetions] = useState([]);
+    // Cache duration - 24 hours
+    const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
-    // const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }; // This is the authorization header from the backend.sokapedia.com
+    useEffect(() => {
+        loadAllLeagues();
+    }, []);
 
-    useEffect(()=>{
-        //Fetch popular fixtures from the database
-        getPinnedLeagues().then(data => {
+    const loadAllLeagues = async () => {
+        setIsLoading(true);
+        
+        // Check cache timestamps
+        const pinnedTimestamp = localStorage.getItem('pinnedLeagues_timestamp');
+        const otherTimestamp = localStorage.getItem('otherLeagues_timestamp');
+        const compTimestamp = localStorage.getItem('otherCompetitions_timestamp');
+        const now = Date.now();
+
+        // Load pinned leagues if cache expired or doesn't exist
+        if (!pinnedTimestamp || now - parseInt(pinnedTimestamp) > CACHE_DURATION) {
+            await getPinnedLeagues();
+        }
+
+        // Load other leagues if cache expired or doesn't exist
+        if (!otherTimestamp || now - parseInt(otherTimestamp) > CACHE_DURATION) {
+            await getOtherLeagues();
+        }
+
+        // Load other competitions if cache expired or doesn't exist
+        if (!compTimestamp || now - parseInt(compTimestamp) > CACHE_DURATION) {
+            await getOtherCompetions();
+        }
+
+        setIsLoading(false);
+    };
+
+    // Fetch pinned leagues and cache them
+    const getPinnedLeagues = useCallback(async () => {
+        try {
+            const data = jsonpopularLeagues.data;
             setPinnedLeagues(data);
-        })
+            
+            // Cache with timestamp
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('pinnedLeagues', JSON.stringify(data));
+                localStorage.setItem('pinnedLeagues_timestamp', Date.now().toString());
+            }
+        } catch (error) {
+            console.error("Error loading pinned leagues:", error);
+        }
+    }, []);
 
-        //Fetch other fixtures from the database
-        getOtherLeagues().then(data => {
+    // Fetch other leagues and cache them
+    const getOtherLeagues = useCallback(async () => {
+        try {
+            const data = jsonotherLeagues.data;
             setOtherLeagues(data);
-        })
+            
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('otherLeagues', JSON.stringify(data));
+                localStorage.setItem('otherLeagues_timestamp', Date.now().toString());
+            }
+        } catch (error) {
+            console.error("Error loading other leagues:", error);
+        }
+    }, []);
 
-        //fetch other competions from the database
-        getOtherCompetions().then(data => {
+    // Fetch other competitions and cache them
+    const getOtherCompetions = useCallback(async () => {
+        try {
+            const data = jsonotherCompetitions.data;
             setOtherCompetions(data);
-        })
-    },[])
+            
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('otherCompetitions', JSON.stringify(data));
+                localStorage.setItem('otherCompetitions_timestamp', Date.now().toString());
+            }
+        } catch (error) {
+            console.error("Error loading other competitions:", error);
+        }
+    }, []);
 
-    let leagueId = GetLeagueId(router);
-
-    let country_name = "";
-
-    if(router.pathname.substring(1).includes("country/[football-prediction-for-country]")){
-        if(router.isReady){
+    // Extract country name with useMemo
+    const countryName = useMemo(() => {
+        if (router.pathname.includes("country/[football-prediction-for-country]") && router.isReady) {
             const query_link = router.query["football-prediction-for-country"];
             const prefix = "football-predictions-for-";
-            country_name = query_link.substring(prefix.length);
+            return query_link ? query_link.substring(prefix.length) : "";
         }
-    }
-  
-    // Fetch pinned leagues from local storage
-    async function getPinnedLeagues() {
-        try {
-           //Fetch fixtures 
-            // const response = await fetch("https://api.pitchpredictions.com/api/fetch_popular_leagues",{
-            //     headers: headers
-            // });
-            // const data = await response.json();  
-            // return data.data;
+        return "";
+    }, [router.pathname, router.isReady, router.query]);
 
-            const data = jsonpopularLeagues.data;
+    // Memoize pinned leagues display to prevent recalculation on every render
+    const displayPinnedLeagues = useMemo(() => {
+        if (!pinnedLeagues?.length) return [];
 
-            return data;
-
-        } catch (error) {
-            console.error(error);
-        // Handle error here, e.g. show a message to the user
-        }
-    }
-
-    //Fetch other leagues
-    async function getOtherLeagues() {
-        try {
-            // Fetch fixtures 
-            // const response = await fetch("https://api.pitchpredictions.com/api/fetch_other_leagues",{
-            //     headers: headers
-            // });
-            // const data = await response.json();  
-            // return data.data;
-
-            const data = jsonotherLeagues.data;
-            return data;
-
-        } catch (error) {
-            console.error(error);
-        // Handle error here, e.g. show a message to the user
-        }
-    }
-    
-    //Fetch other competions
-    async function getOtherCompetions() {
-        try {
-            //Fetch fixtures 
-            // const response = await fetch("https://api.pitchpredictions.com/api/fetch_other_competions",{
-            //     headers: headers
-            // });
-            // const data = await response.json();  
-            // return data.data;
-
-            const data = jsonotherCompetitions.data;
-            return data;
-
-        } catch (error) {
-            console.error(error);
-        // Handle error here, e.g. show a message to the user
-        }
-    }  
-
-    //Pinned leagues display
-    var displayPinnedLeagues = [];
- 
-    if(pinnedLeagues != undefined){
-        if(pinnedLeagues.length>0){
-            for(var x = 0; x< pinnedLeagues.length;x++){
-                displayPinnedLeagues.push( 
-                <div className="d-flex align-items-center countryNameLink" key={x}>
-                    &nbsp;
-                    <div style={{height: "10%", width: "10%", objectFit: "contain"}}>
-                        <img
-                          src={pinnedLeagues[x]["downloaded_country_flag"]}
-                          height="100%"
-                          width="100%"
-                          className="img-fluid"
-                          alt={pinnedLeagues[x].country_name.replace(/\s+/g, '-').toLowerCase()+"-football-predictions"}
-                          style={{ backgroundColor: "whitesmoke"}}
-                          loading="lazy"/>
-                    </div>
-                    <a
-                      href={encodeURI("/league/football-predictions-for-"+pinnedLeagues[x].country_name.toLowerCase()+"/"+pinnedLeagues[x].league_name.replace(/\s+/g, '-').toLowerCase())+'-'+pinnedLeagues[x].league_id+"/fixtures"}
-                      className={`list-group-item list-group-item-action sideNavCustom1 border-none countryNameLink d-flex align-items-center ${"popular"+pinnedLeagues[x].league_id === "popular"+leagueId ? 'activeElement' : ''}`}
-                      onClick={openSidemenu}  title={pinnedLeagues[x].league_name}>
-                        {pinnedLeagues[x].league_name}
-                    </a>
+        return pinnedLeagues.map((league, index) => (
+            <div className="d-flex align-items-center countryNameLink" key={league.league_id || index}>
+                &nbsp;
+                <div style={{ height: "10%", width: "10%", objectFit: "contain" }}>
+                    <img
+                        src={league.downloaded_country_flag}
+                        height="100%"
+                        width="100%"
+                        className="img-fluid"
+                        alt={league.country_name?.replace(/\s+/g, '-').toLowerCase() + "-football-predictions"}
+                        style={{ backgroundColor: "whitesmoke" }}
+                        loading="lazy"
+                    />
                 </div>
-                )
-            }
-        }
+                <a
+                    href={encodeURI("/league/football-predictions-for-" + league.country_name.toLowerCase() + "/" + league.league_name.replace(/\s+/g, '-').toLowerCase()) + '-' + league.league_id + "/fixtures"}
+                    className={`list-group-item list-group-item-action sideNavCustom1 border-none countryNameLink d-flex align-items-center ${"popular" + league.league_id === "popular" + leagueId ? 'activeElement' : ''}`}
+                    onClick={openSidemenu}
+                    title={league.league_name}>
+                    {league.league_name}
+                </a>
+            </div>
+        ));
+    }, [pinnedLeagues, leagueId, openSidemenu]);
+
+    // Navigation items configuration for cleaner code
+    const navItems = useMemo(() => [
+        { href: "/football-predictions-today", label: "Football Predictions Today", exact: true },
+        { href: "/live-football-predictions", label: "Live Football Predictions", exact: true },
+        { href: "/upcoming-football-predictions", label: "Upcoming Football Predictions", exact: true },
+        { href: "/football-predictions-tomorrow", label: "Football Predictions Tomorrow", exact: true },
+        { href: "/football-predictions-weekend", label: "Football Predictions Weekend", exact: true },
+        { href: "/football-predictions-yesterday", label: "Football Predictions Yesterday", exact: true },
+        { 
+            href: "/top-football-tips-and-predictions/today", 
+            label: "Top Predictions (Top Picks)", 
+            active: router.pathname.includes("/top-football-tips-and-predictions/")
+        },
+        { href: "/jackpot-predictions", label: "Jackpot Predictions", exact: true }
+    ], [router.pathname]);
+
+    // Loading skeleton
+    if (isLoading && !pinnedLeagues.length) {
+        return (
+            <div className="" id="sidebar-wrapper">
+                <div className="sideNavCustom">
+                    <div className="list-group list-group-flush">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                            <div key={i} className="skeleton-row skeleton-row-shimmer" style={{ height: "40px", margin: "5px" }}></div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    return(   
-        <div className="" id="sidebar-wrapper"> 
+    return (
+        <div className="" id="sidebar-wrapper">
             <div className="sideNavCustom">
                 <div className="list-group list-group-flush">
-                    <span className="list-group-item list-group-item-action p-1 sideNavCustom1" style={{backgroundColor: "#212830"}}></span>
-                    <a href="/football-predictions-today" className={`list-group-item list-group-item-action p-1 sideNavCustom1 countryNameLink ${router.pathname.substring(1) === "football-predictions-today" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Football Predictions Today
-                    </a>
-                    <a href="/live-football-predictions" className={`list-group-item list-group-item-action p-1 sideNavCustom1 countryNameLink ${router.pathname.substring(1) === "live-football-predictions" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Live Football Predictions
-                    </a>
-                    <a href="/upcoming-football-predictions" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "upcoming-football-predictions" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Upcoming Football Predictions
-                    </a>
-                    <a href="/football-predictions-tomorrow" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "football-predictions-tomorrow" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Football Predictions Tomorrow
-                    </a>
-                    <a href="/football-predictions-weekend" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "football-predictions-weekend" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Football Predictions Weekend
-                    </a>
-                    <a href="/football-predictions-yesterday" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "football-predictions-yesterday" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Football Predictions Yesterday
-                    </a>
-                    <a href="/top-football-tips-and-predictions/today" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "top-football-tips-and-predictions/today"
-                     || router.pathname.substring(1) === "top-football-tips-and-predictions/tomorrow" || router.pathname.substring(1) === "top-football-tips-and-predictions/yesterday"  ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Top Predictions (Top Picks)
-                    </a>
-                    <a href="/jackpot-predictions" className={`list-group-item list-group-item-action sideNavCustom1 p-1 countryNameLink ${router.pathname.substring(1) === "jackpot-predictions" ? "activeElement" : ""}`} onClick={openSidemenu}>
-                        Jackpot Predictions
-                    </a>
-                    <div className="border-bottom" id="sidenavDynamicheader" style={{backgroundColor: "#202c3c", color: "white"}}>Top Leagues</div>
+                    <span className="list-group-item list-group-item-action p-1 sideNavCustom1" style={{ backgroundColor: "#212830" }}></span>
+                    
+                    {/* Dynamic navigation items */}
+                    {navItems.map((item) => (
+                        <a
+                            key={item.href}
+                            href={item.href}
+                            className={`list-group-item list-group-item-action p-1 sideNavCustom1 countryNameLink ${
+                                item.exact 
+                                    ? router.pathname.substring(1) === item.href.substring(1) ? "activeElement" : ""
+                                    : item.active ? "activeElement" : ""
+                            }`}
+                            onClick={openSidemenu}>
+                            {item.label}
+                        </a>
+                    ))}
+
+                    <div className="border-bottom" id="sidenavDynamicheader" style={{ backgroundColor: "#202c3c", color: "white" }}>
+                        Top Leagues
+                    </div>
+                    
                     <div className="responsive-cell team-link">
                         {displayPinnedLeagues}
                     </div>
-                    <div className="border-bottom" id="sidenavDynamicheader" style={{backgroundColor: "#202c3c", color: "white"}}>Countries</div>
-                    <LeagusByCountryCollapsible other_leagues = {otherLeagues}  other_competions = {otherCompetions} leagueId = {leagueId} countryName= {country_name}/><br/>
+                    
+                    <div className="border-bottom" id="sidenavDynamicheader" style={{ backgroundColor: "#202c3c", color: "white" }}>
+                        Countries
+                    </div>
+                    
+                    <LeagusByCountryCollapsible 
+                        other_leagues={otherLeagues} 
+                        other_competions={otherCompetions} 
+                        leagueId={leagueId} 
+                        countryName={countryName}
+                    />
+                    <br />
                 </div>
-            <br/>
+                <br />
             </div>
         </div>
-    )
+    );
 }
 
 export default SideNavBar;
