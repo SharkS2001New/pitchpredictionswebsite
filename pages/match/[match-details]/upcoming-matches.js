@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// pages/match/[match-details]/index.js
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import PreLoader from "../../../components/includes/loader";
 import MatchDetailsTop from "../../../components/matchdetails/match_details_top";
@@ -6,14 +7,10 @@ import FetchUpcomingMatches from "../../../components/matchdetails/fetch_upcomin
 import DataNotFoundPage from "../../../components/includes/datanotfound";
 import FiltersMatchDetails from "../../../components/matchdetails/filters-match-details";
 
-import fetchLast6MatchesHome from "../../../components/matchdetails/functions/fetch_last_6_matches";
-import fetchLast6MatchesAway from "../../../components/matchdetails/functions/fetch_last_6_matches_away";
-
 /* ================= SERVER SIDE ================= */
 
 export async function getServerSideProps(context) {
   const { params, query } = context;
-
   const slug = params?.["match-details"] || query["match-details"];
 
   let fixtureIdInteger = 0;
@@ -33,32 +30,89 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+  };
+
   try {
-    const res = await fetch(
+    // Fetch main match data
+    const matchRes = await fetch(
       `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
-      {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        },
-      }
+      { headers }
     );
 
-    const data = await res.json();
+    if (!matchRes.ok) {
+      throw new Error(`Match API responded with status: ${matchRes.status}`);
+    }
 
-    if (!data || data.length === 0) {
+    const matchData = await matchRes.json();
+
+    if (!matchData || matchData.length === 0 || !matchData.data?.[0]) {
       return {
         redirect: { destination: "/", permanent: false },
       };
     }
 
+    const matchDetails = matchData.data[0];
+    
+    // Fetch upcoming matches in parallel
+    const [upcomingHomeRes, upcomingAwayRes] = await Promise.allSettled([
+      // Upcoming home team matches
+      fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_home_team", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.home_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // Upcoming away team matches
+      fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_away_team", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          away_team_id: matchDetails.away_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      })
+    ]);
+
+    // Process upcoming home matches
+    let upcomingHomeData = [];
+    let upcomingHomeStatus = "error";
+    if (upcomingHomeRes.status === 'fulfilled' && upcomingHomeRes.value.ok) {
+      const homeData = await upcomingHomeRes.value.json();
+      if (homeData.status === true) {
+        upcomingHomeData = homeData.data || [];
+        upcomingHomeStatus = "success";
+      }
+    }
+
+    // Process upcoming away matches
+    let upcomingAwayData = [];
+    let upcomingAwayStatus = "error";
+    if (upcomingAwayRes.status === 'fulfilled' && upcomingAwayRes.value.ok) {
+      const awayData = await upcomingAwayRes.value.json();
+      if (awayData.status === true) {
+        upcomingAwayData = awayData.data || [];
+        upcomingAwayStatus = "success";
+      }
+    }
+
     return {
       props: {
-        initialMatchDetails: data,
+        initialMatchDetails: matchData,
         fixtureIdInteger,
+        initialUpcomingHome: upcomingHomeData,
+        initialUpcomingAway: upcomingAwayData,
+        upcomingHomeStatus,
+        upcomingAwayStatus,
       },
     };
   } catch (error) {
+    console.error('Error fetching match data:', error);
     return {
       redirect: { destination: "/", permanent: false },
     };
@@ -67,79 +121,26 @@ export async function getServerSideProps(context) {
 
 /* ================= COMPONENT ================= */
 
-function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
+function MatchDetails({ 
+  initialMatchDetails, 
+  fixtureIdInteger,
+  initialUpcomingHome,
+  initialUpcomingAway,
+  upcomingHomeStatus,
+  upcomingAwayStatus
+}) {
   const router = useRouter();
 
   // ✅ SSR data
   const [game_details] = useState(initialMatchDetails.data || []);
-  const [match_details_data] = useState(
-    initialMatchDetails?.data[0] || null
-  );
-
-  // ✅ secondary state
-  const [home_team_matches, setHomeTeamMatches] = useState([]);
-  const [away_team_matches, setAwayTeamMatches] = useState([]);
-  const [endpointStatus1, setEndPointStatus1] = useState("");
-  const [endpointStatus2, setEndPointStatus2] = useState("");
-  const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
-
-  /* ================= SECONDARY FETCH ================= */
-
-  useEffect(() => {
-    if (!match_details_data?.home_team_id) return;
-
-    const homeUrl =
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team";
-
-    const awayUrl =
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team";
-
-    const loadSecondary = async () => {
-      try {
-        setIsLoadingSecondary(true);
-
-        const [homeRes, awayRes] = await Promise.all([
-          fetchLast6MatchesHome(
-            homeUrl,
-            match_details_data.home_team_id,
-            match_details_data.unformated_date
-          ),
-          fetchLast6MatchesAway(
-            awayUrl,
-            match_details_data.away_team_id,
-            match_details_data.unformated_date
-          ),
-        ]);
-
-        setEndPointStatus1(homeRes?.message || "error");
-        setEndPointStatus2(awayRes?.message || "error");
-
-        if (homeRes?.status) {
-          setHomeTeamMatches(homeRes.data || []);
-        }
-
-        if (awayRes?.status) {
-          setAwayTeamMatches(awayRes.data || []);
-        }
-      } catch (err) {
-        setEndPointStatus1("error");
-        setEndPointStatus2("error");
-      } finally {
-        setIsLoadingSecondary(false);
-      }
-    };
-
-    loadSecondary();
-  }, [match_details_data]);
+  const [match_details_data] = useState(initialMatchDetails?.data[0] || null);
 
   /* ================= LOADING ================= */
-
   if (!match_details_data) {
     return <PreLoader />;
   }
 
   /* ================= URL ================= */
-
   const url_name = encodeURIComponent(
     match_details_data.home_team_name
       .replace(/\s+/g, "-")
@@ -152,8 +153,11 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
       fixtureIdInteger
   );
 
-  /* ================= RENDER ================= */
+  // Determine overall status
+  const hasData = initialUpcomingHome.length > 0 || initialUpcomingAway.length > 0;
+  const hasError = upcomingHomeStatus === "error" && upcomingAwayStatus === "error";
 
+  /* ================= RENDER ================= */
   return (
     <>
       {/* ✅ SSR CONTENT */}
@@ -162,8 +166,8 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
           props={game_details}
           home_team_id={match_details_data.home_team_id}
           away_team_id={match_details_data.away_team_id}
-          home_team_data={home_team_matches}
-          away_team_data={away_team_matches}
+          home_team_data={[]} // These would need to be fetched separately
+          away_team_data={[]}
         />
 
         <div className="border-top"></div>
@@ -175,11 +179,9 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
         />
       </div>
 
-      {/* ✅ CLIENT CONTENT */}
+      {/* ✅ UPCOMING MATCHES CONTENT */}
       <div className="sites-card">
-        {isLoadingSecondary ? (
-          <PreLoader />
-        ) : endpointStatus1 === "error" ? (
+        {!hasData && hasError ? (
           <DataNotFoundPage props="Sorry, there isn't enough data available to display at this time." />
         ) : (
           <FetchUpcomingMatches
@@ -188,7 +190,10 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
             home_team_id={match_details_data.home_team_id}
             away_team_id={match_details_data.away_team_id}
             fixture_date={match_details_data.unformated_date}
-            // isMobile prop removed - handled by CSS
+            initialHomeMatches={initialUpcomingHome}
+            initialAwayMatches={initialUpcomingAway}
+            homeStatus={upcomingHomeStatus}
+            awayStatus={upcomingAwayStatus}
           />
         )}
       </div>
