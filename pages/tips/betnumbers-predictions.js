@@ -1,6 +1,5 @@
 // pages/betnumbers-predictions.js
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import PopularTips from "../../components/shared/popular_tips_display";
@@ -16,9 +15,8 @@ function BetNumbersPredictions({
     error,
     baseUrl,
     todaysDate,
-    popularTipsData // Add this prop
+    popularTipsData 
 }){     
-    const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20

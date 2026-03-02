@@ -1,6 +1,5 @@
 // pages/competitor-predictions.js
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import PopularTips from "../../components/shared/popular_tips_display";
@@ -8,16 +7,15 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
-import MwanasokaTipsContent from "../../components/seo-content/tips/mwanasoka";
 
 function CompetitorPredictions({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate 
+    todaysDate,
+    popularTipsData 
 }){     
-    const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
@@ -137,7 +135,7 @@ function CompetitorPredictions({
     // Render the page with data
     return (
         <div className="sites-card">
-            <PopularTips />
+            <PopularTips initialMatches={popularTipsData} />
             
             <RenderData 
                 renderPredictions={renderPredictions}

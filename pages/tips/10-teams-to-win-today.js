@@ -1,6 +1,5 @@
 // pages/competitor-predictions.js
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import PopularTips from "../../components/shared/popular_tips_display";
@@ -14,9 +13,9 @@ function CompetitorPredictions({
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate 
+    todaysDate,
+    popularTipsData 
 }){     
-    const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
@@ -136,7 +135,7 @@ function CompetitorPredictions({
     // Render the page with data
     return (
         <div className="sites-card">
-            <PopularTips />
+            <PopularTips initialMatches={popularTipsData} />
             
             <RenderData 
                 renderPredictions={renderPredictions}
@@ -163,45 +162,50 @@ export async function getServerSideProps() {
     
     // Base URL for top winning predictions
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
-    
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
+    // Fetch popular tips data URLs
+    const startDate = new Date().toLocaleDateString("en-CA");
+    const endDate = new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("en-CA"); 
+    const popularTipsUrl = `https://api.pitchpredictions.com/api/fetch_free_upcoming_matches?start_date=${startDate}&end_date=${endDate}`;
+    
+    const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" };
     
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        // Fetch both APIs in parallel using Promise.allSettled
+        const [mainResponse, popularTipsPromise] = await Promise.allSettled([
+            fetch(firstBatchUrl, { headers }),
+            fetch(popularTipsUrl, { headers })
+        ]);
         
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Process main data (required)
+        let mainData = { status: false, data: [] };
+        if (mainResponse.status === 'fulfilled' && mainResponse.value.ok) {
+            mainData = await mainResponse.value.json();
+        } else {
+            throw new Error('Main API failed');
         }
         
-        const data = await response.json();
+        // Process popular tips (optional - don't fail if this errors)
+        let popularTipsData = [];
+        if (popularTipsPromise.status === 'fulfilled' && popularTipsPromise.value.ok) {
+            const popularTipsJson = await popularTipsPromise.value.json();
+            popularTipsData = popularTipsJson.data || [];
+        } else {
+            console.log('Popular tips fetch failed, continuing without them');
+            // Don't throw error - just continue with empty array
+        }
         
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
+        // Check API response structure for main data
+        if (mainData.status === true) {
             return {
                 props: {
-                    initialData: data.data || [],
+                    initialData: mainData.data || [],
                     endpointStatus: "success",
                     error: null,
                     baseUrl: baseUrl,
-                    todaysDate: todaysDate
+                    todaysDate: todaysDate,
+                    popularTipsData: popularTipsData // Pass the popular tips data
                 }
             };
         } else {
@@ -210,14 +214,15 @@ export async function getServerSideProps() {
                 props: {
                     initialData: [],
                     endpointStatus: "error",
-                    error: data.message || "Failed to load competitor predictions",
+                    error: mainData.message || "Failed to load betnumbers predictions",
                     baseUrl: baseUrl,
-                    todaysDate: todaysDate
+                    todaysDate: todaysDate,
+                    popularTipsData: popularTipsData // Still pass popular tips even if main fails
                 }
             };
         }
     } catch (error) {
-        console.error('Error fetching competitor predictions:', error);
+        console.error('Error fetching betnumbers predictions:', error);
         
         return {
             props: {
@@ -225,10 +230,12 @@ export async function getServerSideProps() {
                 endpointStatus: "error",
                 error: error.message,
                 baseUrl: baseUrl,
-                todaysDate: todaysDate
+                todaysDate: todaysDate,
+                popularTipsData: [] // Empty array as fallback
             }
         };
     }
 }
+
 
 export default CompetitorPredictions;
