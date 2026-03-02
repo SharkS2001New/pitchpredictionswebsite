@@ -158,76 +158,77 @@ function CompetitorPredictions({
 }
 
 export async function getServerSideProps() {
-    const todaysDate = getFormattedCurrentDate();
+  const todaysDate = getFormattedCurrentDate();
+  const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
+  const firstBatchUrl = `${baseUrl}&start_index=0&end_index=20`;
+  
+  // Fetch popular tips data in parallel with main data
+  const startDate = new Date().toLocaleDateString("en-CA");
+  const endDate = new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("en-CA"); 
+  const popularTipsUrl = `https://api.pitchpredictions.com/api/fetch_free_upcoming_matches?start_date=${startDate}&end_date=${endDate}`;
+  
+  try {
+    // Fetch both APIs in parallel - this is KEY
+    const [mainResponse, popularTipsPromise] = await Promise.allSettled([
+      fetch(firstBatchUrl, {
+        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+      }),
+      fetch(popularTipsUrl, {
+        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+      })
+    ]);
     
-    // Base URL for top winning predictions
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
-    
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
-    const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
-    
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
-            
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
-                }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load competitor predictions",
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
-                }
-            };
-        }
-    } catch (error) {
-        console.error('Error fetching competitor predictions:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                todaysDate: todaysDate
-            }
-        };
+    // Process main data (required)
+    let mainData = { status: false, data: [] };
+    if (mainResponse.status === 'fulfilled' && mainResponse.value.ok) {
+      mainData = await mainResponse.value.json();
+    } else {
+      throw new Error('Main API failed');
     }
+    
+    // Process popular tips (optional - don't fail if this errors)
+    let popularTipsData = [];
+    if (popularTipsPromise.status === 'fulfilled' && popularTipsPromise.value.ok) {
+      const popularTipsJson = await popularTipsPromise.value.json();
+      popularTipsData = popularTipsJson.data || [];
+    } else {
+      console.log('Popular tips fetch failed, continuing without them');
+      // Don't throw error - just continue with empty array
+    }
+    
+    if (mainData.status === true) {
+      return {
+        props: {
+          initialData: mainData.data || [],
+          endpointStatus: "success",
+          error: null,
+          baseUrl: baseUrl,
+          popularTipsData: popularTipsData
+        }
+      };
+    } else {
+      return {
+        props: {
+          initialData: [],
+          endpointStatus: "error",
+          error: mainData.message || "API returned error",
+          baseUrl: baseUrl,
+          popularTipsData: popularTipsData
+        }
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching homepage predictions:', error);
+    
+    return {
+      props: {
+        initialData: [],
+        endpointStatus: "error",
+        error: error.message,
+        baseUrl: baseUrl,
+        popularTipsData: [] // Empty array as fallback
+      }
+    };
+  }
 }
-
 export default CompetitorPredictions;

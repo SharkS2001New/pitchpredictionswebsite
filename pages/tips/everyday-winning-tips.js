@@ -7,7 +7,6 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
-import SokafansPredictionsContent from "../../components/seo-content/tips/sokafans";
 import EverydayWinningTipsContent from "../../components/seo-content/tips/everyday-winning-tips";
 
 function SokafansPredictions({ 
