@@ -1,438 +1,470 @@
-import React from "react";
-import { useRouter } from 'next/router'
-import { useState,useEffect } from "react";
+// components/matchdetails/last_6_matches.js
+import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
 import ComputedWinDrawings from "../functions/computed_win_lose_draw_drawing";
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 import { Adsense } from "@ctrl/react-adsense";
 import InPagePreLoader from "../includes/inpagepreloader";
 
-function Last6Matches(props){    
-    let [home_team_matches, setHomeTeamMatches] = useState([]);
-    let [away_team_matches, setAwayTeamMatches] = useState([]);
-    const [loading1, setLoading1] = useState([]);
-    const [loading2, setLoading2] = useState([]);
+function Last6Matches({ 
+    home_team,
+    away_team,
+    home_team_id,
+    away_team_id,
+    fixture_date,
+    home_team_data = [],
+    away_team_data = [],
+    initialHomeLeagues = [],
+    initialAwayLeagues = []
+}) {
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+    
+    const [home_team_matches, setHomeTeamMatches] = useState(home_team_data);
+    const [away_team_matches, setAwayTeamMatches] = useState(away_team_data);
+    const [home_team_last6_matches_leagues, setHomeTeamLast6MatchesLeagues] = useState(initialHomeLeagues);
+    const [away_team_last6_matches_leagues, setAwayTeamLast6MatchesLeagues] = useState(initialAwayLeagues);
+    
+    const [loading1, setLoading1] = useState(false);
+    const [loading2, setLoading2] = useState(false);
+    const [homeTeamNum, setHomeTeamNum] = useState(10);
+    const [awayTeamNum, setAwayTeamNum] = useState(10);
+    const [activeLeagueIdHome, setActiveLeagueIdHome] = useState("all");
+    const [activeLeagueIdAway, setActiveLeagueIdAway] = useState("all");
 
-    const home_team_matches_array = [];
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
-    const away_team_matches_array = [];
-    const last_6matches_leagues_url = "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues";
-    const [home_team_last6_matches_leagues, setHomeTeamLast6MatchesLeaguesArray] = useState([]);
-    const [away_team_last6_matches_leagues, setAwayTeamLast6MatchesLeaguesArray] = useState([]);
-    var home_team_last6_matches_leagues_display_array = [];
-    var away_team_last6_matches_leagues_display_array = [];
-
-    const headers =  {
-        "Content-type": "application/json; charset=UTF-8", 
+    const headers = {
+        "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-    }
+    };
 
-    const [ homeTeamNum, setHomeTeamNum] = useState(10); // Default number of posts dislplayed
-    const [ awayTeamNum, setAwayTeamNum] = useState(10); // Default number of posts dislplayed
+    const last_6matches_leagues_url = "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues";
 
-    const [activeLeagueIdHome, setactiveLeagueIdHome] = useState(null);
-    const [activeLeagueIdAway, setactiveLeagueIdAway] = useState(null);
-
-    const router = useRouter(); //fetch page link data
-
-    useEffect(()=>{ 
-        setHomeTeamMatches(props.home_team_data);
-        setAwayTeamMatches(props.away_team_data);
-        
-        
-        if(router.isReady){       
-
-            async function fetchHomeLast6MatchesLeaguesByTeamId() {
-                // Show preloader
-                setLoading1(true);
-
-                try {
-                    // Fetch fixtures 
-                    const response2 = await fetch(last_6matches_leagues_url,{
-                        method: 'POST',
-                        body: JSON.stringify({home_team_id: props.home_team_id, fixture_date: props.fixture_date}),
-                        headers: headers,
-                    });
+    useEffect(() => {
+        if (router.isReady && mounted) {
+            // Check stored league IDs
+            const storedHomeLeague = typeof window !== 'undefined' ? localStorage.getItem("active_league_id_home") : null;
+            const storedAwayLeague = typeof window !== 'undefined' ? localStorage.getItem("active_league_id_away") : null;
             
-                    var data2 = await response2.json();  
-                    
-                    if(data2.status == true){
-                        var last_6_m_data = data2.data;
-                        
-                        setHomeTeamLast6MatchesLeaguesArray(last_6_m_data);
-
-                        const hasLeagueId = last_6_m_data.some(item => item.league_id === window.localStorage.getItem("active_league_id_home"));
-
-                        if(hasLeagueId){
-                            setactiveLeagueIdHome(window.localStorage.getItem("active_league_id_home"));
-                        }else{
-                            setactiveLeagueIdHome("all");
-                        }
-                    }     
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    // Hide preloader
-                    setLoading1(false);
-                }        
+            if (storedHomeLeague && initialHomeLeagues.some(l => l.league_id == storedHomeLeague)) {
+                setActiveLeagueIdHome(storedHomeLeague);
+            }
+            
+            if (storedAwayLeague && initialAwayLeagues.some(l => l.league_id == storedAwayLeague)) {
+                setActiveLeagueIdAway(storedAwayLeague);
             }
 
-        async function fetchAwayLast6MatchesLeaguesByTeamId() {
-            // Show preloader
-            setLoading2(true);
-
-            try {
-                // Fetch fixtures 
-                const response2 = await fetch(last_6matches_leagues_url,{
-                    method: 'POST',
-                    body: JSON.stringify({home_team_id: props.away_team_id,fixture_date: props.fixture_date}),
-                    headers: headers,
-                });
-        
-                var data2 = await response2.json();  
-                
-                if(data2.status == true){
-                    var last_6_m_data = data2.data;
-                
-                    setAwayTeamLast6MatchesLeaguesArray(last_6_m_data);
-
-                    const hasLeagueId = last_6_m_data.some(item => item.league_id === window.localStorage.getItem("active_league_id_away"));
-
-                    if(hasLeagueId){
-                        setactiveLeagueIdAway(window.localStorage.getItem("active_league_id_away"));
-                    }else{
-                        setactiveLeagueIdAway("all");
-                    }
-                }    
-            } catch (error) {
-                console.error(error);
-            } finally {
-                // Hide preloader
-                setLoading2(false);
-            } 
-        
+            // Fetch leagues data if not provided via props
+            if (initialHomeLeagues.length === 0) {
+                fetchHomeLast6MatchesLeagues();
+            }
+            if (initialAwayLeagues.length === 0) {
+                fetchAwayLast6MatchesLeagues();
+            }
         }
-        
-            fetchHomeLast6MatchesLeaguesByTeamId();
+    }, [router.isReady, initialHomeLeagues, initialAwayLeagues, mounted]);
 
-            fetchAwayLast6MatchesLeaguesByTeamId();
-        }
-
-     },[]);
-
-     const filterHomeMatchesByLeagues = async(leagueId) => {
-          // Show preloader
-          setLoading1(true);
-    
-          try {
-            // Fetch fixtures 
-            const response1 = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league",{
+    const fetchHomeLast6MatchesLeagues = async () => {
+        setLoading1(true);
+        try {
+            const response = await fetch(last_6matches_leagues_url, {
                 method: 'POST',
-                body: JSON.stringify({home_team_id: props.home_team_id, league_id:leagueId,fixture_date: props.fixture_date}),
+                body: JSON.stringify({ 
+                    home_team_id, 
+                    fixture_date 
+                }),
                 headers: headers,
             });
 
-            var data1 = await response1.json();  
+            const data = await response.json();
 
-            if(data1.status == true){
-                var h2h_data = data1.data;
-                
-                setHomeTeamMatches(h2h_data);
+            if (data.status === true) {
+                setHomeTeamLast6MatchesLeagues(data.data || []);
             }
-            
-            localStorage.setItem("active_league_id_home", leagueId);
-
-            isActive = leagueId === activeLeagueIdHome;
-
-            setactiveLeagueIdHome(leagueId)
         } catch (error) {
             console.error(error);
         } finally {
-            // Hide preloader
             setLoading1(false);
         }
-     }
+    };
 
-     const filterAwayMatchesByLeagues = async(leagueId) => {
-        // Show preloader
+    const fetchAwayLast6MatchesLeagues = async () => {
         setLoading2(true);
-    
         try {
-            // Fetch fixtures 
-            const response1 = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league",{
+            const response = await fetch(last_6matches_leagues_url, {
                 method: 'POST',
-                body: JSON.stringify({home_team_id: props.away_team_id, league_id:leagueId,fixture_date: props.fixture_date}),
+                body: JSON.stringify({ 
+                    home_team_id: away_team_id, 
+                    fixture_date 
+                }),
                 headers: headers,
             });
-    
-            var data1 = await response1.json();  
-    
-            if(data1.status == true){
-                var h2h_data = data1.data;
-                    
-                setAwayTeamMatches(h2h_data);
+
+            const data = await response.json();
+
+            if (data.status === true) {
+                setAwayTeamLast6MatchesLeagues(data.data || []);
             }
-    
-            localStorage.setItem("active_league_id_away", leagueId);
-    
-            isActive = leagueId === activeLeagueIdAway;
-    
-            setactiveLeagueIdAway(leagueId);
         } catch (error) {
             console.error(error);
         } finally {
-            // Hide preloader
             setLoading2(false);
         }
-    }    
-    
-   const allhomefixtureslast6matches = () => {
-        // Show preloader
-        setLoading1(true);
-            
-        try {
-            setHomeTeamMatches(props.home_team_data);
+    };
 
-            localStorage.setItem("active_league_id_home", "all");
-            
-            setactiveLeagueIdHome("all");
+    const filterHomeMatchesByLeagues = async (leagueId) => {
+        setLoading1(true);
+        try {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    home_team_id, 
+                    league_id: leagueId, 
+                    fixture_date 
+                }),
+                headers: headers,
+            });
+
+            const data = await response.json();
+
+            if (data.status === true) {
+                setHomeTeamMatches(data.data);
+            }
+
+            localStorage.setItem("active_league_id_home", leagueId);
+            setActiveLeagueIdHome(leagueId);
         } catch (error) {
             console.error(error);
         } finally {
-            // Hide preloader
             setLoading1(false);
         }
-   }
+    };
 
-   const allawayfixtureslast6matches = () => {
-        setAwayTeamMatches(props.away_team_data);
+    const filterAwayMatchesByLeagues = async (leagueId) => {
+        setLoading2(true);
+        try {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    home_team_id: away_team_id, 
+                    league_id: leagueId, 
+                    fixture_date 
+                }),
+                headers: headers,
+            });
 
+            const data = await response.json();
+
+            if (data.status === true) {
+                setAwayTeamMatches(data.data);
+            }
+
+            localStorage.setItem("active_league_id_away", leagueId);
+            setActiveLeagueIdAway(leagueId);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading2(false);
+        }
+    };
+
+    const allHomeFixtures = () => {
+        setHomeTeamMatches(home_team_data);
+        localStorage.setItem("active_league_id_home", "all");
+        setActiveLeagueIdHome("all");
+    };
+
+    const allAwayFixtures = () => {
+        setAwayTeamMatches(away_team_data);
         localStorage.setItem("active_league_id_away", "all");
+        setActiveLeagueIdAway("all");
+    };
 
-        setactiveLeagueIdAway("all"); 
-    }
+    // Build home matches list
+    const home_team_matches_array = [];
+    if (home_team_matches.length > 0) {
+        home_team_matches.slice(0, homeTeamNum).forEach((match, index) => {
+            const url_name = encodeURIComponent(
+                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+                match.fixture_id
+            );
 
-    // form the dynamic url
-    let url_name = "";
+            // Determine styles based on team IDs
+            const homeTeamStyle = {};
+            const awayTeamStyle = {};
+            
+            if (mounted) {
+                // Only apply conditional styles after mount
+                if (home_team_id === match.home_team_id) {
+                    homeTeamStyle.fontWeight = "bold";
+                }
+                if (match.away_team_id == home_team_id) {
+                    awayTeamStyle.fontWeight = "bold";
+                }
+            }
 
-    if(home_team_matches.length>0){
-        {home_team_matches.slice(0, homeTeamNum).map((hometeam_d, l) => {
-            url_name = encodeURIComponent(hometeam_d.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+hometeam_d.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+hometeam_d.fixture_id),
-
-            home_team_matches_array.push( 
-                <React.Fragment key={l}>
-                <a href={'/match/football-predictions-' + url_name+"/matches"} title="Click to View Match details">         
-                    <div className="responsive-row fixturesTextSize matchDetailsLink">
-                        <div className="responsive-cell team-link-probability">{DateTimeToUsersTimezone(hometeam_d.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}</div>
-                        <div className="responsive-cell team-link-probability">  
-                            <div style={{ display: "flex", alignItems: "center" }}>
-                                <img
-                                src={hometeam_d.downloaded_league_logo}
-                                className="league_image_logo"
-                                alt={hometeam_d.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
-                                style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
-                                loading="lazy"
-                                />
-                                <span>{hometeam_d.league_short_name}</span>
+            home_team_matches_array.push(
+                <React.Fragment key={index}>
+                    <a href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
+                        <div className="responsive-row fixturesTextSize matchDetailsLink">
+                            <div className="responsive-cell team-link-probability">
+                                {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                            </div>
+                            <div className="responsive-cell team-link-probability">
+                                <div style={{ display: "flex", alignItems: "center" }}>
+                                    <img
+                                        src={match.downloaded_league_logo}
+                                        className="league_image_logo"
+                                        alt={match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
+                                        style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
+                                        loading="lazy"
+                                    />
+                                    <span>{match.league_short_name}</span>
+                                </div>
+                            </div>
+                            <div className="responsive-cell team-link" style={{ textAlign: "left" }}>
+                                <div style={homeTeamStyle}>
+                                    {match.home_team_name}
+                                </div>
+                                <div style={awayTeamStyle}>
+                                    {match.away_team_name}
+                                </div>
+                            </div>
+                            <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
+                                <span>{match.goals_home} - {match.goals_away}</span>
+                                <br />
+                                <span>({JSON.parse(match.scores).halftime.home} - {JSON.parse(match.scores).halftime.away})</span>
+                            </div>
+                            <div className="responsive-cell team-link-probability">
+                                {ComputedWinDrawings(home_team_id, match.home_team_id, match.away_team_id, match.goals_home, match.goals_away, index)}
                             </div>
                         </div>
-                        <div className="responsive-cell team-link" style={{textAlign: "left"}}>
-                            <div style={{ fontWeight: props.home_team_id === hometeam_d.home_team_id ? "bold" : "" }}>{hometeam_d.home_team_name}</div>
-                            <div  style={{fontWeight: hometeam_d.away_team_id  == props.home_team_id ? "bold" : ""}}>{hometeam_d.away_team_name}</div>
-                        </div>
-                        <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
-                            <span>{hometeam_d.goals_home} - {hometeam_d.goals_away}</span>
-                            <br />
-                            <span>({JSON.parse(hometeam_d.scores).halftime.home} - {JSON.parse(hometeam_d.scores).halftime.away})</span>
-                        </div>
-                        <div className="responsive-cell team-link-probability">{ComputedWinDrawings(props.home_team_id, hometeam_d.home_team_id, hometeam_d.away_team_id, hometeam_d.goals_home, hometeam_d.goals_away, l)}</div>
-                    </div>
-                </a>
+                    </a>
                 </React.Fragment>
             );
-        })}        
-    }    
+        });
+    }
 
-    if(away_team_matches.length>0){
-        {away_team_matches.slice(0, awayTeamNum).map((awayteam_d,m) => ( 
-            url_name = encodeURIComponent(awayteam_d.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+awayteam_d.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+awayteam_d.fixture_id),
+    // Build away matches list
+    const away_team_matches_array = [];
+    if (away_team_matches.length > 0) {
+        away_team_matches.slice(0, awayTeamNum).forEach((match, index) => {
+            const url_name = encodeURIComponent(
+                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+                match.fixture_id
+            );
 
-            away_team_matches_array.push(  
-                <React.Fragment key={m}>
-                <a href={'/match/football-predictions-' + url_name+"/matches"} title="Click to View Match details">         
-                 <div className="responsive-row fixturesTextSize matchDetailsLink" key={m}>
-                    <div className="responsive-cell team-link-probability">{DateTimeToUsersTimezone(awayteam_d.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}</div>
-                    <div className="responsive-cell team-link-probability">
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                            <img
-                            src={awayteam_d.downloaded_league_logo}                           
-                            className="league_image_logo"
-                            alt={awayteam_d.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
-                            style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
-                            loading="lazy"
-                            />
-                            <span>{awayteam_d.league_short_name}</span>
+            // Determine styles based on team IDs
+            const homeTeamStyle = {};
+            const awayTeamStyle = {};
+            
+            if (mounted) {
+                // Only apply conditional styles after mount
+                if (away_team_id === match.home_team_id) {
+                    homeTeamStyle.fontWeight = "bold";
+                }
+                if (match.away_team_id == away_team_id) {
+                    awayTeamStyle.fontWeight = "bold";
+                }
+            }
+
+            away_team_matches_array.push(
+                <React.Fragment key={index}>
+                    <a href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
+                        <div className="responsive-row fixturesTextSize matchDetailsLink">
+                            <div className="responsive-cell team-link-probability">
+                                {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                            </div>
+                            <div className="responsive-cell team-link-probability">
+                                <div style={{ display: "flex", alignItems: "center" }}>
+                                    <img
+                                        src={match.downloaded_league_logo}
+                                        className="league_image_logo"
+                                        alt={match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
+                                        style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
+                                        loading="lazy"
+                                    />
+                                    <span>{match.league_short_name}</span>
+                                </div>
+                            </div>
+                            <div className="responsive-cell team-link" style={{ textAlign: "left" }}>
+                                <div style={homeTeamStyle}>
+                                    {match.home_team_name}
+                                </div>
+                                <div style={awayTeamStyle}>
+                                    {match.away_team_name}
+                                </div>
+                            </div>
+                            <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
+                                <span>{match.goals_home} - {match.goals_away}</span>
+                                <br />
+                                <span>({JSON.parse(match.scores).halftime.home} - {JSON.parse(match.scores).halftime.away})</span>
+                            </div>
+                            <div className="responsive-cell team-link-probability">
+                                {ComputedWinDrawings(away_team_id, match.home_team_id, match.away_team_id, match.goals_home, match.goals_away, index)}
+                            </div>
                         </div>
-                    </div>
-                    <div className="responsive-cell team-link" style={{textAlign: "left"}}>
-                        <div style={{ fontWeight: props.away_team_id === awayteam_d.home_team_id ? "bold" : "" }}>{awayteam_d.home_team_name}</div>
-                        <div  style={{fontWeight: awayteam_d.away_team_id  == props.away_team_id ? "bold" : ""}}>{awayteam_d.away_team_name}</div>
-                    </div>
-                    <div className="responsive-cell team-link-probability" style={{whiteSpace:"nowrap"}}>
-                        <span>{awayteam_d.goals_home} - {awayteam_d.goals_away}</span><br/>
-                        <span>({JSON.parse(awayteam_d.scores).halftime.home} - {JSON.parse(awayteam_d.scores).halftime.away})</span></div>
-                    <div className="responsive-cell team-link-probability">{ComputedWinDrawings(props.away_team_id,awayteam_d.home_team_id,awayteam_d.away_team_id,awayteam_d.goals_home,awayteam_d.goals_away,m)}</div>
-                </div>
-                </a>
+                    </a>
                 </React.Fragment>
-            )
-        ))}             
-     }
-
-     let isActive = "";
-     //League filters home
-     if(home_team_last6_matches_leagues.length >1){
-        for(let y =  0; y <home_team_last6_matches_leagues.length;y++){  
-            const league = home_team_last6_matches_leagues[y];
-            isActive = league.league_id === activeLeagueIdHome;
-
-            home_team_last6_matches_leagues_display_array.push(
-                <React.Fragment key={y}>
-                    <li className="nav-item" id="leagueNavClick" style={{color: 'white',backgroundColor: isActive ? '#eb4d68' : 'transparent'}}  onClick={()=>filterHomeMatchesByLeagues(home_team_last6_matches_leagues[y].league_id)}>
-                        <a id={home_team_last6_matches_leagues[y].league_id} className="nav-link link-light last6mhovereffects">{home_team_last6_matches_leagues[y].league_name}</a>
-                    </li>
-                </React.Fragment>
-            )
-        }
+            );
+        });
     }
 
-    if(away_team_last6_matches_leagues.length >1){
-        for(let j =  0; j < away_team_last6_matches_leagues.length;j++){  
-            const league = away_team_last6_matches_leagues[j];
-            isActive = league.league_id === activeLeagueIdAway;
-
-            away_team_last6_matches_leagues_display_array.push(
-                <React.Fragment key={j}>
-                    <li className="nav-item" id="leagueNavClick" style={{color:"white", backgroundColor: isActive ? '#eb4d68' : 'transparent'}} onClick={()=>filterAwayMatchesByLeagues(away_team_last6_matches_leagues[j].league_id)}>
-                        <a id={away_team_last6_matches_leagues[j].league_id} className="nav-link link-light last6mhovereffects">{away_team_last6_matches_leagues[j].league_name}</a>
-                    </li>
-                </React.Fragment>
-            )
-        }
+    // Build home leagues filter
+    const homeLeaguesDisplay = [];
+    if (home_team_last6_matches_leagues.length > 1) {
+        home_team_last6_matches_leagues.forEach((league, index) => {
+            const isActive = league.league_id == activeLeagueIdHome;
+            homeLeaguesDisplay.push(
+                <li key={index} className="nav-item" 
+                    style={{ color: 'white', backgroundColor: isActive ? '#eb4d68' : 'transparent' }}
+                    onClick={() => filterHomeMatchesByLeagues(league.league_id)}>
+                    <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
+                </li>
+            );
+        });
     }
 
-    function handleClick() {
-        if(home_team_matches.length > homeTeamNum){
-            setHomeTeamNum(prevHomeTeamNum => prevHomeTeamNum + 10) // 10 is the number of matches you want to load per click
-        }else{
-            setHomeTeamNum(6) // 6 is the number of matches you want to load per click
-        }
+    // Build away leagues filter
+    const awayLeaguesDisplay = [];
+    if (away_team_last6_matches_leagues.length > 1) {
+        away_team_last6_matches_leagues.forEach((league, index) => {
+            const isActive = league.league_id == activeLeagueIdAway;
+            awayLeaguesDisplay.push(
+                <li key={index} className="nav-item"
+                    style={{ color: "white", backgroundColor: isActive ? '#eb4d68' : 'transparent' }}
+                    onClick={() => filterAwayMatchesByLeagues(league.league_id)}>
+                    <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
+                </li>
+            );
+        });
     }
 
-    function handleClickAway() {
-        if(away_team_matches.length > awayTeamNum){
-            setAwayTeamNum(prevAwayTeamNum => prevAwayTeamNum + 10) // 10 is the number of matches you want to load per click
-        }else{
-            setAwayTeamNum(6) // 6 is the number of matches you want to load per click
+    const handleHomeClick = () => {
+        if (home_team_matches.length > homeTeamNum) {
+            setHomeTeamNum(prev => prev + 10);
+        } else {
+            setHomeTeamNum(6);
         }
+    };
+
+    const handleAwayClick = () => {
+        if (away_team_matches.length > awayTeamNum) {
+            setAwayTeamNum(prev => prev + 10);
+        } else {
+            setAwayTeamNum(6);
+        }
+    };
+
+    if (home_team_matches.length === 0 && away_team_matches.length === 0) {
+        return null;
     }
 
     return (
-        <>
-            {home_team_matches.length || away_team_matches.length >0 ? 
-                <React.Fragment>          
-                <div className="row">
-                    {home_team_matches.length >0 ?
-                    <div className="col-md-12 mb-2">
-                        <div className="text-center fw-bold sectionTitle">
-                            <span>LAST MATCHES: {props.home_team.toUpperCase()}</span><br/>                  
-                        </div>
-                    {/* <!-- Scroll Nav --> */}
+        <div className="row">
+            {home_team_matches.length > 0 && (
+                <div className="col-md-12 mb-2">
+                    <div className="text-center fw-bold sectionTitle">
+                        <span>LAST MATCHES: {home_team.toUpperCase()}</span>
+                    </div>
+                    
+                    {home_team_last6_matches_leagues.length > 1 && (
                         <div className="responsive-row header matchdetailsheader">
                             <div className="flex-grow-1 w-100 o-hidden">
-                                <ul className="nav nav-fill position-relative flex-nowrap ">
-                                    <li id={home_team_last6_matches_leagues.length >1 ? "leagueNavClick" : ""} className="nav-item" style={{textAlign:"left", maxWidth: "15%", backgroundColor: activeLeagueIdHome =="all" ? "#eb4d68" : ""}}  onClick={allhomefixtureslast6matches}>
+                                <ul className="nav nav-fill position-relative flex-nowrap">
+                                    <li className="nav-item" 
+                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdHome == "all" ? "#eb4d68" : "" }}
+                                        onClick={allHomeFixtures}>
                                         <a className="nav-link link-light last6mhovereffects">All</a>
                                     </li>
-                                    {home_team_last6_matches_leagues_display_array}
+                                    {homeLeaguesDisplay}
                                 </ul>
                             </div>
                         </div>
-                        <div className="responsive-row header matchdetailsheader" style={{cursor : "auto"}}>
-                            <div className="responsive-cell team-link-probability">Date</div>
-                            <div className="responsive-cell team-link-probability" style={{textAlign: "left"}}>League</div>
-                            <div className="responsive-cell team-link" style={{textAlign: "left"}}>Match</div>
-                            <div className="responsive-cell team-link-probability" style={{whiteSpace: "nowrap"}}>Score</div>
-                            <div className="responsive-cell team-link-probability"></div>
-                        </div>
-                        {loading1 == true ? 
-                            <InPagePreLoader/>
-                         :home_team_matches_array
-                         }
-                        {loading1 == true ? "" :
-                        home_team_matches.length > 10 ?
-                            <div className="text-center">
-                                <button className="btn btn-link btn-sm fixturesTextSize" style={{color:"#B11111", fontWeight: "bold"}} onClick={handleClick}>
-                                    {home_team_matches.length > homeTeamNum ? "Show More Matches" : "Show Less Matches"}
-                                </button>                             
-                            </div>
-                            : <></>
-                        }   
-                        <br/>
+                    )}
+                    
+                    <div className="responsive-row header matchdetailsheader" style={{ cursor: "auto" }}>
+                        <div className="responsive-cell team-link-probability">Date</div>
+                        <div className="responsive-cell team-link-probability" style={{ textAlign: "left" }}>League</div>
+                        <div className="responsive-cell team-link" style={{ textAlign: "left" }}>Match</div>
+                        <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>Score</div>
+                        <div className="responsive-cell team-link-probability"></div>
+                    </div>
+                    
+                    {loading1 ? <InPagePreLoader /> : home_team_matches_array}
+                    
+                    {!loading1 && home_team_matches.length > 10 && (
                         <div className="text-center">
+                            <button className="btn btn-link btn-sm fixturesTextSize" 
+                                style={{ color: "#B11111", fontWeight: "bold" }} 
+                                onClick={handleHomeClick}>
+                                {home_team_matches.length > homeTeamNum ? "Show More Matches" : "Show Less Matches"}
+                            </button>
+                        </div>
+                    )}
+                    
+                    <br/>
+                    <div className="text-center">
                         <Adsense
                             client="ca-pub-5665711413000284"
                             slot="7856848919"
                             style={{ display: "block" }}
                             layout="display"
                             format="auto"
-                        />   
-                        </div>                   
+                        />
                     </div>
-                    :<></>
-                    }                    
-                    {away_team_matches.length > 0 ? 
-                    <div className="col-md-12 mb-2">
-                            <div className="text-center fw-bold sectionTitle">
-                                <span>LAST MATCHES: {props.away_team.toUpperCase()}</span><br/>                
-                            </div>
-                            {/* <!-- Scroll Nav --> */}
-                            <div className="responsive-row header matchdetailsheader">
-                                <div className="flex-grow-1 w-100 o-hidden">
-                                    <ul className="nav scrollable nav-fill position-relative flex-nowrap">
-                                        <li id={away_team_last6_matches_leagues.length >1 ? "leagueNavClick" : ""} className="nav-item" style={{textAlign:"left",  maxWidth: "15%", backgroundColor: activeLeagueIdAway =="all" ? "#eb4d68" : ""}} onClick={allawayfixtureslast6matches}>
-                                            <a className="nav-link link-light last6mhovereffects">All</a>
-                                        </li>
-                                        {away_team_last6_matches_leagues_display_array}                
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className="responsive-row header fixturesTextSize" style={{cursor : "auto"}}>
-                                <div className="responsive-cell team-link-probability">Date</div>
-                                <div className="responsive-cell team-link-probability" style={{textAlign: "left"}}>League</div>
-                                <div className="responsive-cell team-link" style={{textAlign: "left"}}>Match</div>
-                                <div className="responsive-cell team-link-probability">Score</div>
-                                <div className="responsive-cell team-link-probability"></div>
-                            </div>
-                        {loading2 == true ? 
-                            <InPagePreLoader/>
-                        :
-                         away_team_matches_array
-                        }   
-                        {loading2 == true ? "" :
-                        away_team_matches.length >10 ?      
-                            <div className="text-center">
-                                <button className="btn btn-link btn-sm fixturesTextSize" style={{color:"#B11111", fontWeight: "bold"}} onClick={handleClickAway}>{away_team_matches.length > awayTeamNum ? "Show More Matches" : "Show Less Matches"}</button>                             
-                            </div>
-                            :<></>
-                        }
-                    </div>
-                    : <></>
-                    }
                 </div>
-        </React.Fragment>
-        :<></>  }
-        </>
-    )
+            )}
+            
+            {away_team_matches.length > 0 && (
+                <div className="col-md-12 mb-2">
+                    <div className="text-center fw-bold sectionTitle">
+                        <span>LAST MATCHES: {away_team.toUpperCase()}</span>
+                    </div>
+                    
+                    {away_team_last6_matches_leagues.length > 1 && (
+                        <div className="responsive-row header matchdetailsheader">
+                            <div className="flex-grow-1 w-100 o-hidden">
+                                <ul className="nav scrollable nav-fill position-relative flex-nowrap">
+                                    <li className="nav-item"
+                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdAway == "all" ? "#eb4d68" : "" }}
+                                        onClick={allAwayFixtures}>
+                                        <a className="nav-link link-light last6mhovereffects">All</a>
+                                    </li>
+                                    {awayLeaguesDisplay}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                    
+                    <div className="responsive-row header fixturesTextSize" style={{ cursor: "auto" }}>
+                        <div className="responsive-cell team-link-probability">Date</div>
+                        <div className="responsive-cell team-link-probability" style={{ textAlign: "left" }}>League</div>
+                        <div className="responsive-cell team-link" style={{ textAlign: "left" }}>Match</div>
+                        <div className="responsive-cell team-link-probability">Score</div>
+                        <div className="responsive-cell team-link-probability"></div>
+                    </div>
+                    
+                    {loading2 ? <InPagePreLoader /> : away_team_matches_array}
+                    
+                    {!loading2 && away_team_matches.length > 10 && (
+                        <div className="text-center">
+                            <button className="btn btn-link btn-sm fixturesTextSize" 
+                                style={{ color: "#B11111", fontWeight: "bold" }} 
+                                onClick={handleAwayClick}>
+                                {away_team_matches.length > awayTeamNum ? "Show More Matches" : "Show Less Matches"}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default Last6Matches;

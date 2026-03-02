@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+// pages/match/[match-details]/index.js
+import { useState } from "react";
 import { useRouter } from "next/router";
 import MatchDetailsTop from "../../../components/matchdetails/match_details_top";
 import H2HFixturesData from "../../../components/matchdetails/h2h_fixtures";
 import Last6Matches from "../../../components/matchdetails/last_6_matches";
 import PreLoader from "../../../components/includes/loader";
-
-import fetchLast6MatchesHome from "../../../components/matchdetails/functions/fetch_last_6_matches";
-import fetchLast6MatchesAway from "../../../components/matchdetails/functions/fetch_last_6_matches_away";
 import FiltersMatchDetails from "../../../components/matchdetails/filters-match-details";
 
 /* ================= SERVER SIDE ================= */
 
 export async function getServerSideProps(context) {
   const { params, query } = context;
-
   const slug = params?.["match-details"] || query["match-details"];
 
   let fixtureIdInteger = 0;
@@ -34,108 +31,195 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+  };
+
   try {
-    const res = await fetch(
+    // Fetch main match data first (required)
+    const matchRes = await fetch(
       `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
-      {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        },
-      }
+      { headers }
     );
 
-    const data = await res.json();
+    if (!matchRes.ok) {
+      throw new Error(`Match API responded with status: ${matchRes.status}`);
+    }
 
-    if (!data || data.length === 0) {
+    const matchData = await matchRes.json();
+
+    if (!matchData || matchData.length === 0 || !matchData.data?.[0]) {
       return {
         redirect: { destination: "/", permanent: false },
       };
     }
 
+    const matchDetails = matchData.data[0];
+    
+    // Fetch ALL secondary data in parallel
+    const [
+      h2hMatchesRes,
+      h2hLeaguesRes,
+      homeLast6Res,
+      awayLast6Res,
+      homeLast6LeaguesRes,
+      awayLast6LeaguesRes
+    ] = await Promise.allSettled([
+      // H2H matches
+      fetch("https://api.pitchpredictions.com/api/fetch_h2h_fixtures", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.home_team_id,
+          away_team_id: matchDetails.away_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // H2H leagues
+      fetch("https://api.pitchpredictions.com/api/fetch_h2h_league", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.home_team_id,
+          away_team_id: matchDetails.away_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // Home team last 6 matches
+      fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.home_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // Away team last 6 matches
+      fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          away_team_id: matchDetails.away_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // Home team last 6 matches leagues (for filtering)
+      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.home_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      }),
+      
+      // Away team last 6 matches leagues (for filtering)
+      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          home_team_id: matchDetails.away_team_id,
+          fixture_date: matchDetails.unformated_date
+        }),
+      })
+    ]);
+
+    // Process H2H matches
+    let h2hMatchesData = [];
+    if (h2hMatchesRes.status === 'fulfilled' && h2hMatchesRes.value.ok) {
+      const h2hData = await h2hMatchesRes.value.json();
+      if (h2hData.status === true) {
+        h2hMatchesData = h2hData.data || [];
+      }
+    }
+
+    // Process H2H leagues
+    let h2hLeaguesData = [];
+    if (h2hLeaguesRes.status === 'fulfilled' && h2hLeaguesRes.value.ok) {
+      const leaguesData = await h2hLeaguesRes.value.json();
+      if (leaguesData.status === true) {
+        h2hLeaguesData = leaguesData.data || [];
+      }
+    }
+
+    // Process home last 6 matches
+    let homeLast6Data = [];
+    if (homeLast6Res.status === 'fulfilled' && homeLast6Res.value.ok) {
+      const homeData = await homeLast6Res.value.json();
+      if (homeData.status === true) {
+        homeLast6Data = homeData.data || [];
+      }
+    }
+
+    // Process away last 6 matches
+    let awayLast6Data = [];
+    if (awayLast6Res.status === 'fulfilled' && awayLast6Res.value.ok) {
+      const awayData = await awayLast6Res.value.json();
+      if (awayData.status === true) {
+        awayLast6Data = awayData.data || [];
+      }
+    }
+
+    // Process home last 6 leagues
+    let homeLast6LeaguesData = [];
+    if (homeLast6LeaguesRes.status === 'fulfilled' && homeLast6LeaguesRes.value.ok) {
+      const leaguesData = await homeLast6LeaguesRes.value.json();
+      if (leaguesData.status === true) {
+        homeLast6LeaguesData = leaguesData.data || [];
+      }
+    }
+
+    // Process away last 6 leagues
+    let awayLast6LeaguesData = [];
+    if (awayLast6LeaguesRes.status === 'fulfilled' && awayLast6LeaguesRes.value.ok) {
+      const leaguesData = await awayLast6LeaguesRes.value.json();
+      if (leaguesData.status === true) {
+        awayLast6LeaguesData = leaguesData.data || [];
+      }
+    }
+
     return {
       props: {
-        initialMatchDetails: data,
+        initialMatchDetails: matchData,
         fixtureIdInteger,
+        initialH2HMatches: h2hMatchesData,
+        initialH2HLeagues: h2hLeaguesData,
+        initialHomeLast6: homeLast6Data,
+        initialAwayLast6: awayLast6Data,
+        initialHomeLast6Leagues: homeLast6LeaguesData,
+        initialAwayLast6Leagues: awayLast6LeaguesData,
       },
     };
   } catch (error) {
+    console.error('Error fetching match data:', error);
     return {
       redirect: { destination: "/", permanent: false },
     };
   }
 }
 
-
 /* ================= COMPONENT ================= */
 
-function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
+function MatchDetails({ 
+  initialMatchDetails, 
+  fixtureIdInteger,
+  initialH2HMatches,
+  initialH2HLeagues,
+  initialHomeLast6,
+  initialAwayLast6,
+  initialHomeLast6Leagues,
+  initialAwayLast6Leagues
+}) {
   const router = useRouter();
 
   // ✅ SSR data
   const [game_details] = useState(initialMatchDetails.data || []);
-  const [match_details_data] = useState(
-    initialMatchDetails?.data[0] || null
-  );
-
-  // ✅ secondary states
-  const [homeTeamMatches, setHomeTeamMatches] = useState([]);
-  const [awayTeamMatches, setAwayTeamMatches] = useState([]);
-  const [endPointStatus1, setEndPointStatus1] = useState("");
-  const [endPointStatus2, setEndPointStatus2] = useState("");
-  const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
-
-  /* ================= SECONDARY FETCH ================= */
-
-  useEffect(() => {
-    if (!match_details_data?.home_team_id) return;
-
-    const homeUrl =
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team";
-
-    const awayUrl =
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team";
-
-    const loadSecondary = async () => {
-      try {
-        setIsLoadingSecondary(true);
-
-        const [homeRes, awayRes] = await Promise.all([
-          fetchLast6MatchesHome(
-            homeUrl,
-            match_details_data.home_team_id,
-            match_details_data.unformated_date
-          ),
-          fetchLast6MatchesAway(
-            awayUrl,
-            match_details_data.away_team_id,
-            match_details_data.unformated_date
-          ),
-        ]);
-
-        if (homeRes?.status === true) {
-          setHomeTeamMatches(homeRes.data || []);
-          setEndPointStatus1(homeRes.message);
-        } else {
-          setEndPointStatus1(homeRes?.message || "error");
-        }
-
-        if (awayRes?.status === true) {
-          setAwayTeamMatches(awayRes.data || []);
-          setEndPointStatus2(awayRes.message);
-        } else {
-          setEndPointStatus2(awayRes?.message || "error");
-        }
-      } catch (err) {
-        setEndPointStatus1("error");
-        setEndPointStatus2("error");
-      } finally {
-        setIsLoadingSecondary(false);
-      }
-    };
-
-    loadSecondary();
-  }, [match_details_data]);
+  const [match_details_data] = useState(initialMatchDetails?.data[0] || null);
 
   /* ================= LOADING ================= */
   if (!match_details_data) {
@@ -143,60 +227,58 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
   }
 
   /* ================= RENDER ================= */
+  const url_name = encodeURIComponent(
+    match_details_data.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+    match_details_data.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+    fixtureIdInteger
+  );
 
-    let url_name = "";
-
-    // form the dynamic url
-    url_name = encodeURIComponent(match_details_data.home_team_name.replace(/\s+/g, '-').toLowerCase()+'-vs-'+match_details_data.away_team_name.replace(/\s+/g, '-').toLowerCase()+'-'+fixtureIdInteger);
-
-    return (
+  return (
     <>
-      {/* ✅ SSR CONTENT — SEO GOLD */}
+      {/* ✅ SSR CONTENT */}
       <div className="sites-card mb-2">
         <MatchDetailsTop
           props={game_details}
           home_team_id={match_details_data.home_team_id}
           away_team_id={match_details_data.away_team_id}
-          home_team_data={homeTeamMatches}
-          away_team_data={awayTeamMatches}
+          home_team_data={initialHomeLast6}
+          away_team_data={initialAwayLast6}
         />
-        <div className="border-top"></div>                      
-        {/* data is displayed in tabs */}
-        <FiltersMatchDetails url_filter = {router.pathname.substring(1)} match_url={url_name} league_type={match_details_data.league_type}/> 
+        <div className="border-top"></div>
+        <FiltersMatchDetails 
+          url_filter={router.pathname.substring(1)} 
+          match_url={url_name} 
+          league_type={match_details_data.league_type}
+        />
       </div>
 
-      {/* ✅ CLIENT CONTENT */}
+      {/* ✅ H2H CONTENT - Server rendered with initial data */}
       <div className="sites-card">
-        {isLoadingSecondary ? (
-          <PreLoader />
-        ) : (
-          <>          
-            {/* H2H */}
-            <H2HFixturesData
-              home_team_id={match_details_data.home_team_id}
-              away_team_id={match_details_data.away_team_id}
-              fixture_date={match_details_data.unformated_date}
-            />
-
-            {/* Last 6 */}
-            {homeTeamMatches.length > 0 &&
-              awayTeamMatches.length > 0 && (
-                <Last6Matches
-                  home_team={match_details_data.home_team_name}
-                  away_team={match_details_data.away_team_name}
-                  home_team_id={match_details_data.home_team_id}
-                  away_team_id={match_details_data.away_team_id}
-                  home_team_data={homeTeamMatches}
-                  away_team_data={awayTeamMatches}
-                  fixture_date={
-                    match_details_data.unformated_date
-                  }
-                />
-              )}
-
-          </>
-        )}
+        <H2HFixturesData
+          home_team_id={match_details_data.home_team_id}
+          away_team_id={match_details_data.away_team_id}
+          fixture_date={match_details_data.unformated_date}
+          initialH2HMatches={initialH2HMatches}
+          initialH2HLeagues={initialH2HLeagues}
+        />
       </div>
+
+      {/* ✅ Last 6 Matches - Server rendered with initial data */}
+      {(initialHomeLast6.length > 0 || initialAwayLast6.length > 0) && (
+        <div className="sites-card">
+          <Last6Matches
+            home_team={match_details_data.home_team_name}
+            away_team={match_details_data.away_team_name}
+            home_team_id={match_details_data.home_team_id}
+            away_team_id={match_details_data.away_team_id}
+            fixture_date={match_details_data.unformated_date}
+            home_team_data={initialHomeLast6}
+            away_team_data={initialAwayLast6}
+            initialHomeLeagues={initialHomeLast6Leagues}
+            initialAwayLeagues={initialAwayLast6Leagues}
+          />
+        </div>
+      )}
     </>
   );
 }
