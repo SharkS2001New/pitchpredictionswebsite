@@ -7,22 +7,7 @@ import FixturesTableDisplay from "./fixtures_table_display";
 import ComputeFixtureAverage from "../functions/ComputefixtureAverage";
 
 function SelectedMacthesPredDetails({ props: gameDetails }) {
-    const [isMobile, setIsMobile] = useState(false);
     const router = useRouter();
-
-    // Handle mobile detection
-    useEffect(() => {
-        if (!router.isReady) return;
-
-        const detectMobile = () => {
-            setIsMobile(window.innerWidth < 760);
-        };
-
-        detectMobile();
-        window.addEventListener('resize', detectMobile);
-        
-        return () => window.removeEventListener('resize', detectMobile);
-    }, [router.isReady]);
 
     // Process all match data using useMemo for performance
     const predictionsList = useMemo(() => {
@@ -73,8 +58,8 @@ function SelectedMacthesPredDetails({ props: gameDetails }) {
             // Compute probability results
             const probability_results = ProbabilityResults(game, winning_team);
 
-            // Get live scores
-            const [livestatus, livescores] = DetermineLiveScores(game, isMobile);
+            // Get live scores - isMobile parameter removed
+            const [livestatus, livescores] = DetermineLiveScores(game);
 
             // Compute fixture averages
             const fixturesAverage = ComputeFixtureAverage(
@@ -107,11 +92,11 @@ function SelectedMacthesPredDetails({ props: gameDetails }) {
                 <FixturesTableDisplay 
                     key={game.fixture_id || index}
                     props={sharedTabledetailsArray}
-                    isMobile={isMobile}
+                    // isMobile prop removed - now handled by CSS
                 />
             );
         });
-    }, [gameDetails, isMobile]); // Re-run when gameDetails or isMobile changes
+    }, [gameDetails]); // Removed isMobile dependency
 
     return predictionsList;
 }

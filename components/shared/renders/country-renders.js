@@ -35,11 +35,13 @@ function CountrysPageRenders(props) {
    
     return (
       <div key={formedleagueName}> 
+        {/* League header row */}
         <div style={{ backgroundColor: "#eef7ff", padding: "2px" }} className="responsive-row fixturesTextSize pb-1 pt-1 mb-1">
-            {props.isMobile == false ?
-              <div className="responsive-cell"></div>: ""
-            }         
-            <div className="responsive-cell team-link-x" style={{ textAlign: "left" }}>
+          {/* Empty cell for star column - desktop only */}
+          <div className="responsive-cell hide-on-mobile"></div>
+          
+          {/* League info cell */}
+          <div className="responsive-cell team-link-x" style={{ textAlign: "left" }}>
             <span style={{ fontWeight: "bold" }}>
               {countryName.toUpperCase()} :
               {/* link to leagues */}
@@ -57,6 +59,8 @@ function CountrysPageRenders(props) {
               </a>
             </span>
           </div>
+          
+          {/* Standings link cell */}
           <div className="responsive-cell team-link" style={{ marginLeft: "auto" }}>
             {group[0].props.props[0].game_details.league_type === "League" ?
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -68,13 +72,13 @@ function CountrysPageRenders(props) {
               </div>
             : "" }
           </div>
-          {props.isMobile == false ?
-            <div className="responsive-cell"></div>: ""
-          }
+          
+          {/* Empty cell for right alignment - desktop only */}
+          <div className="responsive-cell hide-on-mobile"></div>
         </div>
-         {/**Fixture details header only for desktop*/}
-        {props.isMobile == false ?
-        <div className="responsive-row" style={{fontSize: "12px", border: "none",backgroundColor: "whitesmoke"}}>
+        
+        {/* Fixture details header - desktop only */}
+        <div className="responsive-row hide-on-mobile" style={{fontSize: "12px", border: "none", backgroundColor: "whitesmoke"}}>
           <div className="responsive-cell"></div>
           <div className="responsive-cell team-link"></div>
           <div className="responsive-cell team-link-y">
@@ -88,9 +92,11 @@ function CountrysPageRenders(props) {
           <div className="responsive-cell team-link-l"></div>
           <div className="responsive-cell team-link-scores"></div>
         </div>
-        : "" }
+        
         {/* fixtures data */}
         {group.slice(0, rowsToShow)}
+        
+        {/* Show more button */}
         {group.length > rowsToShow && (
           <div className="table-row">
             <div className="table-cell" colSpan="12">

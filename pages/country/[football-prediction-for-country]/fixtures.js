@@ -22,7 +22,6 @@ function FootballPredictionsByCountry({
     initialTodaysMatches
 }) {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
     const [countriesTopdata, setCountriesTopData] = useState(initialCountriesTopData || "");
     const [todaysMatchesByCountry, setTodaysMatchesByCountry] = useState(initialTodaysMatches || []);
     
@@ -33,13 +32,6 @@ function FootballPredictionsByCountry({
         "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
-
-    // Client-side only: check for mobile
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsMobile(window.innerWidth < 760);
-        }
-    }, []);
 
     // Fetch todays data by country (for live updates)
     async function fetchTodaysFixturesByCountry() {
@@ -80,17 +72,10 @@ function FootballPredictionsByCountry({
         return () => clearInterval(intervalId);
     }, [liveUpdateCounter]);
 
-    // Window resize detection (client-side only)
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        function detectWindowSize() {
-            setIsMobile(window.innerWidth < 760);
-        }
-        
-        window.addEventListener('resize', detectWindowSize);
-        return () => window.removeEventListener('resize', detectWindowSize);
-    }, []);
+    // Handle initial loading state - same on server and client
+    if (!initialData && !error) {
+        return <PreLoader />;
+    }
 
     // Process the data - PagesMatchPredictionDetails now just returns an array of components
     const renderPredictions = PagesMatchPredictionDetails({ 
@@ -171,7 +156,7 @@ function FootballPredictionsByCountry({
             <TodaysFixturesByCountry 
                 todays_matches={todaysMatchesByCountry} 
                 country_name={countryName} 
-                isMobile={isMobile}
+                // isMobile prop removed - handled by CSS
             />
             
             <div className="sites-card">
@@ -181,7 +166,7 @@ function FootballPredictionsByCountry({
                     </div>
                 </div>
                 
-                <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+                <RenderData renderPredictions={renderPredictions} />
                 
                 <br/>
                 

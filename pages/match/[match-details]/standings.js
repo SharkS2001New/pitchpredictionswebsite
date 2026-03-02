@@ -73,7 +73,6 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
   const [away_team_matches, setAwayTeamMatches] = useState([]);
   const [tableStandings, setTableStandings] = useState([]);
 
-  const [isMobile, setIsMobile] = useState(false);
   const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
   const [standingsStatus, setStandingsStatus] = useState("");
 
@@ -81,20 +80,6 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
     "Content-type": "application/json; charset=UTF-8",
     Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
   };
-
-  /* ================= MOBILE ================= */
-
-  useEffect(() => {
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    detectWindowSize();
-    window.addEventListener("resize", detectWindowSize);
-
-    return () =>
-      window.removeEventListener("resize", detectWindowSize);
-  }, []);
 
   /* ================= SECONDARY FETCH ================= */
 
@@ -210,7 +195,6 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
             league_name={match_details_data.league_name}
             home_team_id={match_details_data.home_team_id}
             away_team_id={match_details_data.away_team_id}
-            isMobile={isMobile}
           />
         )}
       </div>

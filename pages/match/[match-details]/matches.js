@@ -83,22 +83,7 @@ function MatchDetails({ initialMatchDetails, fixtureIdInteger }) {
   const [awayTeamMatches, setAwayTeamMatches] = useState([]);
   const [endPointStatus1, setEndPointStatus1] = useState("");
   const [endPointStatus2, setEndPointStatus2] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
   const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
-
-  /* ================= MOBILE DETECTION ================= */
-
-  useEffect(() => {
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    detectWindowSize();
-    window.addEventListener("resize", detectWindowSize);
-
-    return () =>
-      window.removeEventListener("resize", detectWindowSize);
-  }, []);
 
   /* ================= SECONDARY FETCH ================= */
 

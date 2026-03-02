@@ -39,31 +39,33 @@ function LeaguesPageRender(props) {
     structuredDataByLeaguesOrByRoundsData.push(
       Object.entries(groups).map(([roundName, group]) => (
         <React.Fragment key={roundName}>
+          {/* Round header */}
           <div style={{ backgroundColor: "#eef7ff", fontWeight: "bold"}} className="table-row fixturesTextSize">
             <div className="table-cell pb-1 pt-1">
               {roundName}
             </div>
           </div>
-           {/**Fixture details header only for desktop*/}
-        {props.isMobile == false ?
-        <div className="responsive-row" style={{fontSize: "12px", border: "none",backgroundColor: "whitesmoke"}}>
-          <div className="responsive-cell"></div>
-          <div className="responsive-cell team-link"></div>
-          <div className="responsive-cell team-link-y">
-            <span className="m-4">1</span>
-            <span className="m-4">X</span>
-            <span className="m-4">2</span>
+          
+          {/* Fixture details header - desktop only */}
+          <div className="responsive-row hide-on-mobile" style={{fontSize: "12px", border: "none", backgroundColor: "whitesmoke"}}>
+            <div className="responsive-cell"></div>
+            <div className="responsive-cell team-link"></div>
+            <div className="responsive-cell team-link-y">
+              <span className="m-4">1</span>
+              <span className="m-4">X</span>
+              <span className="m-4">2</span>
+            </div>
+            <div className="responsive-cell team-link-average">Avg</div>
+            <div className="responsive-cell">Prediction</div>
+            <div className="responsive-cell team-link-standings"></div>
+            <div className="responsive-cell team-link-l"></div>
+            <div className="responsive-cell team-link-scores"></div>
           </div>
-          <div className="responsive-cell team-link-average">Avg</div>
-          <div className="responsive-cell">Prediction</div>
-          <div className="responsive-cell team-link-standings"></div>
-          <div className="responsive-cell team-link-l"></div>
-          <div className="responsive-cell team-link-scores"></div>
-        </div>
-        : "" }
-          {/* Div fixtures content */}
+          
+          {/* Fixtures content */}
           {group.slice(0, rowsToShow[roundName] || 10)}
-          {/* Div fixtures content ends here */}
+          
+          {/* Show more button */}
           {group.length > (rowsToShow[roundName] || 20) && (
             <div className="row">
               <button

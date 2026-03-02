@@ -1,45 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useRef } from "react";
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 
-const PopularTips = () => {
-  const [matches, setMatches] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+const PopularTips = ({ initialMatches }) => {
   const sliderRef = useRef(null);
-
-  const fetchMatches = async () => {
-    const startDate = new Date().toLocaleDateString("en-CA");
-    const endDate = new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("en-CA"); 
-
-    const apiUrl = `https://api.pitchpredictions.com/api/fetch_free_upcoming_matches?start_date=${startDate}&end_date=${endDate}`;
-
-    try {
-      const response = await fetch(apiUrl, {
-        headers: {
-          Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch matches");
-      }
-
-      const data = await response.json();
-      setMatches(data.data);
-    } catch (err) {
-      setError("Failed to fetch matches");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMatches();
-  }, []);
-
-  if (isLoading) return <div style={{ textAlign: 'center' }}></div>;  
-
-  if (error) return <div>{error}</div>;
 
   const getTip = (match) => {
     const { percent_pred_home, percent_pred_draw, percent_pred_away } = match;
@@ -66,6 +29,11 @@ const PopularTips = () => {
     });
   };
 
+  // If no matches, return null or a fallback UI
+  if (!initialMatches || initialMatches.length === 0) {
+    return null;
+  }
+
   return ( 
     <React.Fragment>
       <div className="desktop-container-resize mb-0">
@@ -78,8 +46,8 @@ const PopularTips = () => {
         &#8249;
       </button>
       <div className="match-slider" ref={sliderRef}>
-        {matches.map((match, index) => (
-          <div key={index} className="match-card">
+        {initialMatches.map((match, index) => (
+          <div key={match.fixture_id || index} className="match-card">
             <div className="date-bar">
               <span style={{color: "#212830"}}>Date: {DateTimeToUsersTimezone(match.date)}</span>
             </div>
@@ -90,6 +58,7 @@ const PopularTips = () => {
                     src={match.home_team_logo}
                     alt={match.home_team_name}
                     className="team-logo"
+                    loading="lazy"
                   />
                 </div>
                 <p className="team-name">{match.home_team_name}</p>
@@ -103,6 +72,7 @@ const PopularTips = () => {
                     src={match.away_team_logo}
                     alt={match.away_team_name}
                     className="team-logo"
+                    loading="lazy"
                   />
                 </div>
                 <p className="team-name">{match.away_team_name}</p>

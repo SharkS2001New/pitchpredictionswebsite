@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// components/shared/pages_match_predictions_details.js
+import React from "react";
 import WinningTeamAndOdd from "../functions/determine_winning_team_and_odd";
 import ProbabilityResults from "../functions/determine_probability_results";
 import DetermineLiveScores from "../functions/determine_live_scores";
@@ -13,34 +14,15 @@ import BothTeamsToScore from "../functions/BothTeamsToScore";
 import HalfTimeWinningTeamAndOdd from "../functions/halftime_winning_team_and_odd"; 
 import HalfTimeProbabilityResults from "../functions/halftime_probability_results";
 
-function PagesMatchPredictionDetails({ gamesData = [], isLoading = false, loadedCount = 0, totalCount = 850 }) {
+function PagesMatchPredictionDetails({ 
+    gamesData = [], 
+    isLoading = false, 
+    loadedCount = 0, 
+    totalCount = 850,
+    isMobile = false // Receive isMobile as a prop
+}) {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false); 
     const predictionsList = [];   
-
-    useEffect(()=>{ 
-        if (router.isReady && typeof window !== 'undefined') {
-            window.screen.width < 760 ? setIsMobile(true) : setIsMobile(false);
-        }
-    },[router.isReady]);
-
-    //Calculate the width on windows change detection
-    useEffect(() => {
-        function detectWindowSize() {
-            if (typeof window !== 'undefined') {
-                window.innerWidth < 760 ? setIsMobile(true) : setIsMobile(false);
-            }
-        }
-
-        if (router.isReady && typeof window !== 'undefined') {
-            window.addEventListener('resize', detectWindowSize);
-            
-            // Cleanup
-            return () => {
-                window.removeEventListener('resize', detectWindowSize);
-            };
-        }
-    }, [router.isReady]);
 
     // No loading indicator - silent loading
     // Just show whatever data we have, even if loading

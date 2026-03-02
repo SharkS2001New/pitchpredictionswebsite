@@ -27,7 +27,6 @@ function FootballPredictionsByLeague({
     initialTodaysMatches
 }) {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
     const [topLeaguesData, setTopLeaguesData] = useState(initialTopLeaguesData || []);
     const [todaysMatchesByLeague, setTodaysMatchesByLeague] = useState(initialTodaysMatches || []);
     
@@ -38,13 +37,6 @@ function FootballPredictionsByLeague({
         "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
-
-    // Client-side only: check for mobile
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsMobile(window.innerWidth < 760);
-        }
-    }, []);
 
     // Fetch today's data by league (for live updates)
     async function fetchTodaysFixturesByLeague() {
@@ -85,18 +77,6 @@ function FootballPredictionsByLeague({
         return () => clearInterval(intervalId);
     }, [liveUpdateCounter]);
 
-    // Window resize detection (client-side only)
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        function detectWindowSize() {
-            setIsMobile(window.innerWidth < 760);
-        }
-        
-        window.addEventListener('resize', detectWindowSize);
-        return () => window.removeEventListener('resize', detectWindowSize);
-    }, []);
-
     // Process the data - PagesMatchPredictionDetails now receives gamesData
     const renderPredictions = PagesMatchPredictionDetails({ 
         gamesData: initialData, // Use initialData directly since no pagination needed
@@ -107,6 +87,11 @@ function FootballPredictionsByLeague({
 
     // Handle loading state
     if (!router.isReady) {
+        return <PreLoader />;
+    }
+
+    // Handle initial data loading state
+    if (!initialData && !error) {
         return <PreLoader />;
     }
 
@@ -240,7 +225,7 @@ function FootballPredictionsByLeague({
                         todays_matches={todaysMatchesByLeague} 
                         country_name={topLeaguesData.length > 0 ? topLeaguesData[0].country_name : displayCountryName}  
                         league_name={topLeaguesData.length > 0 ? topLeaguesData[0].league_name : displayLeagueName} 
-                        isMobile={isMobile}
+                        // isMobile prop removed - handled by CSS
                     />
                 )}
                 
@@ -251,7 +236,7 @@ function FootballPredictionsByLeague({
                         </div>
                     </div> 
                     
-                    <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+                    <RenderData renderPredictions={renderPredictions} />
                     
                     <br/>
                     

@@ -272,7 +272,7 @@ a {
   }
 
   .halfTimeDataDisplay {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .header-size {
@@ -2024,3 +2024,166 @@ ins.adsbygoogle[data-ad-status=unfilled] {
         max-width: 100px;
     }
 }
+
+/* Desktop-only elements */
+@media (min-width: 769px) {
+  .desktop-only {
+    display: block !important;
+  }
+  
+  .mobile-only {
+    display: none !important;
+  }
+  
+  /* Desktop odds display */
+  .odds-desktop {
+    display: block;
+  }
+  
+  .odds-mobile {
+    display: none;
+  }
+  
+  /* Desktop prediction display */
+  .prediction-desktop {
+    display: block;
+  }
+  
+  .prediction-mobile {
+    display: none;
+  }
+  
+  /* Desktop status display */
+  .status-desktop {
+    display: block;
+  }
+  
+  .status-mobile {
+    display: none;
+  }
+}
+
+/* Mobile-only elements */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: block !important;
+  }
+  
+  /* Mobile odds display */
+  .odds-desktop {
+    display: none;
+  }
+  
+  .odds-mobile {
+    display: block;
+  }
+  
+  /* Mobile prediction display */
+  .prediction-desktop {
+    display: none;
+  }
+  
+  .prediction-mobile {
+    display: block;
+  }
+  
+  /* Mobile status display */
+  .status-desktop {
+    display: none;
+  }
+  
+  .status-mobile {
+    display: block;
+  }
+  
+  /* Adjust star cell for mobile */
+  .star-cell {
+    text-align: center;
+  }
+}
+
+/* League header adjustments */
+.league-header-row {
+  align-items: center;
+  border-top: 2px solid #ddd;
+  margin-top: 10px;
+}
+
+.league-header-row:first-of-type {
+  border-top: none;
+  margin-top: 0;
+}
+
+/* Fixtures header row */
+.fixtures-header-row {
+  font-size: 12px;
+  border: none;
+  background-color: whitesmoke;
+}
+
+/* Mobile adjustments for odds */
+@media (max-width: 768px) {
+  .team-link-probability .row {
+    margin: 0;
+  }
+  
+  .team-link-probability .col-md-12 {
+    padding: 2px 0;
+  }
+  
+  .winning-prob-mobile {
+    display: inline-block;
+    margin-top: 5px;
+    font-weight: bold;
+  }
+}
+
+/* Status cell adjustments */
+.status-desktop {
+  white-space: pre-wrap;
+}
+
+.status-mobile {
+  white-space: nowrap;
+}
+
+/* Desktop-only elements */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+  
+  .desktop-only {
+    display: block !important;
+  }
+}
+
+/* Mobile-only elements */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+/* Hide on desktop - show only on mobile */
+@media (min-width: 769px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+/* Hide on mobile - show only on desktop */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+

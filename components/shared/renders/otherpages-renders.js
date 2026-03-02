@@ -30,10 +30,12 @@ function OtherPagesRenders(props) {
 
       return (
         <React.Fragment key={`${formedleagueName}-${index}`}>
+        {/* League header row */}
         <div style={{ backgroundColor: "#eef7ff", padding: "2px" }} className="responsive-row fixturesTextSize pb-1 pt-1">
-          {props.isMobile == false ?
-            <div className="responsive-cell"></div> : ""
-          }
+          {/* Empty cell for star column - desktop only */}
+          <div className="responsive-cell hide-on-mobile"></div>
+          
+          {/* League info cell */}
           <div className="responsive-cell team-link-x" style={{ textAlign: "left" }}>
               <img
                 src={gameDetails.downloaded_country_flag ? gameDetails.downloaded_country_flag : gameDetails.downloaded_league_logo}
@@ -61,6 +63,8 @@ function OtherPagesRenders(props) {
               : ""}
               &nbsp;
           </div>
+          
+          {/* Standings link cell */}
           <div className="responsive-cell team-link" style={{ marginLeft: "auto" }}>
             {gameDetails.league_type ==="League" ? 
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -72,13 +76,13 @@ function OtherPagesRenders(props) {
               </div>
             : "" }
           </div>
-          {props.isMobile == false ?
-            <div className="responsive-cell"></div>: ""
-          }
+          
+          {/* Empty cell for right alignment - desktop only */}
+          <div className="responsive-cell hide-on-mobile"></div>
         </div>
-        {/**Fixture details header only for desktop*/}
-        {props.isMobile == false ?
-        <div className="responsive-row" style={{fontSize: "12px", border: "none",backgroundColor: "whitesmoke"}}>
+        
+        {/* Fixture details header - desktop only */}
+        <div className="responsive-row hide-on-mobile" style={{fontSize: "12px", border: "none", backgroundColor: "whitesmoke"}}>
           <div className="responsive-cell"></div>
           <div className="responsive-cell team-link"></div>
           <div className="responsive-cell team-link-y">
@@ -92,8 +96,8 @@ function OtherPagesRenders(props) {
           <div className="responsive-cell team-link-l"></div>
           <div className="responsive-cell team-link-scores"></div>
         </div>
-        : "" }
-        {/**Display fixtures in groups for main pages */}
+        
+        {/* Fixtures for this league */}
         {group} 
       </React.Fragment>         
       );
@@ -160,13 +164,6 @@ function OtherPagesRenders(props) {
             </button>
           </div>  
         )}
-
-        {/* Show a message when no more data is available */}
-        {/* {props.hasMore === false && storeDataByOtherPagesData.length > 0 && (
-          <div className="text-center my-4 text-muted">
-            <em>No more matches to load</em>
-          </div>
-        )} */}
       </div>
     );
   }

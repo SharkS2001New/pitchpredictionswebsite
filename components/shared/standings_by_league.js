@@ -52,13 +52,12 @@ function DisplayIndependentLeagueStandings(props) {
               <div className="responsive-cell">{standing.all.goals.against}</div>
               <div className="responsive-cell">{standing.goalsDiff}</div>
               <div className="responsive-cell" style={{fontWeight: "bold"}}>{standing.points}</div>
-              {props.isMobile == false ?
-                standing.form != null ?
-                <div className="responsive-cell team-link-y" style={{ display: "flex" }}>
+              {/* Form column - desktop only */}
+              {standing.form != null ?
+                <div className="responsive-cell team-link-y hide-on-mobile" style={{ display: "flex" }}>
                   {StandingsFormWinLose(standing.form, i + 1)}
                 </div>
-                : <></>
-                : ""
+                : <div className="responsive-cell team-link-y hide-on-mobile"></div>
               }
             </div>
             <br/>            
@@ -97,15 +96,14 @@ function DisplayIndependentLeagueStandings(props) {
               <div className="responsive-cell">{standing.home.goals.against}</div>
               <div className="responsive-cell">{standing.home.goals.for - standing.home.goals.against}</div>
               <div className="responsive-cell" style={{fontWeight: "bold"}}>{standing.home.win * 3 + standing.home.draw}</div>
-              {props.isMobile == false ?
-               standing.form != null ?
-               <div className="responsive-cell team-link-y" style={{ display: "flex" }}>
+              {/* Form column - desktop only */}
+              {standing.form != null ?
+                <div className="responsive-cell team-link-y hide-on-mobile" style={{ display: "flex" }}>
                   {StandingsFormWinLose(standing.form, i + 1)}
                 </div>
-              : <></>
-              : ""
+                : <div className="responsive-cell team-link-y hide-on-mobile"></div>
               }            
-              </div>             
+            </div>             
           </React.Fragment>
         ));
      
@@ -141,15 +139,14 @@ function DisplayIndependentLeagueStandings(props) {
               <div className="responsive-cell">{standing.away.goals.against}</div>
               <div className="responsive-cell">{standing.away.goals.for - standing.away.goals.against}</div>
               <div className="responsive-cell" style={{fontWeight: "bold"}}>{standing.away.win * 3 + standing.away.draw}</div>
-              {props.isMobile == false ?
-              standing.form != null ?
-                <div className="responsive-cell team-link-y" style={{ display: "flex" }}>
+              {/* Form column - desktop only */}
+              {standing.form != null ?
+                <div className="responsive-cell team-link-y hide-on-mobile" style={{ display: "flex" }}>
                   {StandingsFormWinLose(standing.form, i + 1)}
                 </div>
-              : <></>
-               : ""
+                : <div className="responsive-cell team-link-y hide-on-mobile"></div>
               }           
-              </div>
+            </div>
           </React.Fragment>
         ));
 
@@ -199,10 +196,10 @@ function DisplayIndependentLeagueStandings(props) {
                     <div className="responsive-cell" title="Points">
                       PTS
                     </div>
-                    {props.isMobile == false ?
-                      data_standings[0].form != null ?
-                      <div className="responsive-cell team-link-y" title="Form"></div>
-                      : <></> : ""
+                    {/* Form header - desktop only */}
+                    {data_standings[0].form != null ?
+                      <div className="responsive-cell team-link-y hide-on-mobile" title="Form"></div>
+                      : <div className="responsive-cell team-link-y hide-on-mobile"></div>
                     }
                   </div>
                   {standingsTableList.length > 0 ? standingsTableList : ""}
@@ -287,19 +284,14 @@ function DisplayIndependentLeagueStandings(props) {
                     <div className="responsive-cell" title="Points">
                       PTS
                     </div>
-                    {props.isMobile == false ?
-                    data_standings[0].form !=null ?
-                    <div className="responsive-cell team-link-y" title="Form"></div>
-                    : <></> : "" }
+                    {/* Form header - desktop only */}
+                    {data_standings[0].form != null ?
+                      <div className="responsive-cell team-link-y hide-on-mobile" title="Form"></div>
+                      : <div className="responsive-cell team-link-y hide-on-mobile"></div>
+                    }
                   </div>
                   {sortedHomeStandings}
                 </div>
-                {/* <br/>
-                  <div className="responsive-wrapper">
-                    <div className="responsive-cell" style={{flexBasis: "100%", maxWidth: "100%", textAlign: "left"}}>
-                      <p style={{color: "black", fontWeight: "bold", marginLeft:"20px", marginRight: "20px"}}>When teams have an equal number of points, tiebreakers are determined by goal difference, number of victories, goals scored, and goals scored away.</p>
-                    </div>
-                  </div> */}
               </div>
               <br/>
               <Adsense
@@ -344,19 +336,14 @@ function DisplayIndependentLeagueStandings(props) {
                     <div className="responsive-cell" title="Points">
                       PTS
                     </div>
-                    {props.isMobile == false ?
-                    data_standings[0].form !=null ?
-                    <div className="responsive-cell team-link-y" title="Form"></div>
-                    : <></> : "" }
-                    </div>
+                    {/* Form header - desktop only */}
+                    {data_standings[0].form != null ?
+                      <div className="responsive-cell team-link-y hide-on-mobile" title="Form"></div>
+                      : <div className="responsive-cell team-link-y hide-on-mobile"></div>
+                    }
+                  </div>
                   {sortedAwayStandings}
                 </div>
-                {/* <br/>
-                  <div className="responsive-wrapper">
-                    <div className="responsive-cell" style={{flexBasis: "100%", maxWidth: "100%", textAlign: "left"}}>
-                      <p style={{color: "black", fontWeight: "bold", marginLeft:"20px", marginRight: "20px"}}>When teams have an equal number of points, tiebreakers are determined by goal difference, number of victories, goals scored, and goals scored away.</p>
-                    </div>
-                  </div> */}
               </div>
             </React.Fragment>
           ) : (

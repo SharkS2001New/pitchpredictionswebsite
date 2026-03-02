@@ -77,7 +77,7 @@ function WeekendFixtures({
     };
 
     // Show preloader while server is fetching data
-    if (typeof window === 'undefined' || (!initialData && !error)) {
+    if (!initialData && !error) {
         return <PreLoader />;
     }
 

@@ -74,8 +74,6 @@ export async function getServerSideProps(context) {
 // =====================================================
 function Teams({ initialTeamsTopData, teamIdInteger }) {
   const router = useRouter();
-
-  const [isMobile, setIsMobile] = useState(false);
   
   // SSR data - available immediately
   const [teams_top_data, setTeamsTopData] = useState(
@@ -127,22 +125,9 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
         setIsLoadingSecondary(false);
       }
     };
-
-    // Initial mobile detection
-    setIsMobile(window.innerWidth < 760);
     
     fetchAllSecondaryData();
   }, [teamIdInteger, teams_top_data]);
-
-  // detect mobile screen on resize
-  useEffect(() => {
-    const detectWindowSize = () => {
-      window.innerWidth < 760 ? setIsMobile(true) : setIsMobile(false);
-    };
-
-    window.addEventListener("resize", detectWindowSize);
-    return () => window.removeEventListener("resize", detectWindowSize);
-  }, []);
 
   // If no team data from SSR, show not found
   if (!teams_top_data.length) {
@@ -200,7 +185,7 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
               </h2>
             </div>
           </div>
-          <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+          <RenderData renderPredictions={renderPredictions} />
           <FiltersTeamDetails 
             url_filter={router.pathname.substring(1)} 
             match_url={url_name} 
@@ -231,7 +216,7 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
               <h6><b>{getMatchStatus()}</b></h6>
             </div>
           </div>
-          <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+          <RenderData renderPredictions={renderPredictions} />
           <FiltersTeamDetails 
             url_filter={router.pathname.substring(1)} 
             match_url={url_name} 
@@ -271,7 +256,7 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
               </h2>
             </div>
           </div>
-          <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+          <RenderData renderPredictions={renderPredictions} />
           <FiltersTeamDetails 
             url_filter={router.pathname.substring(1)} 
             match_url={url_name} 
@@ -311,7 +296,7 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
             </h2>
           </div>
         </div>
-        <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+        <RenderData renderPredictions={renderPredictions} />
         <FiltersTeamDetails 
           url_filter={router.pathname.substring(1)} 
           match_url={url_name} 
@@ -326,7 +311,6 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
             props={table_standings} 
             home_team_id={teamIdInteger} 
             league_name={teamData.league_name} 
-            isMobile={isMobile}
           />
         ) : (
           <DataNotFoundPage props="League standings not available." />

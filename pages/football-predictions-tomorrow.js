@@ -75,8 +75,8 @@ function TomorrowFixtures({
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
-    if (typeof window === 'undefined' || (!initialData && !error)) {
+    // Handle initial loading state - same on server and client
+    if (!initialData && !error) {
         return <PreLoader />;
     }
 

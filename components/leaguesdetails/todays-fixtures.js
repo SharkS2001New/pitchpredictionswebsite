@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 import WinningTeamAndOdd from '../functions/determine_winning_team_and_odd';
 import ProbabilityResults from '../functions/determine_probability_results';
@@ -15,34 +15,16 @@ import HalfTimeWinningTeamAndOdd from '../functions/halftime_winning_team_and_od
 import HalfTimeProbabilityResults from '../functions/halftime_probability_results';
 import { Adsense } from "@ctrl/react-adsense";
 
-function TodaysFixturesByLeague(props){
+function TodaysFixturesByLeague(props) {
     const router = useRouter(); //fetch page link data
-    const [isMobile, setIsMobile] = useState(false);
+    const [mounted, setMounted] = useState(false);
     
-    // Check for mobile on client side only
-    useEffect(()=>{ 
-        if (typeof window !== 'undefined' && router.isReady) {
-            //Determine screen size on mobile or desktop
-            setIsMobile(window.screen.width < 760);
-        } 
-    },[router.isReady]);
-
-    // Handle window resize with client-side only check
     useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        function detectWindowSize() {
-            setIsMobile(window.innerWidth < 760);        
-        }
-
-        window.addEventListener('resize', detectWindowSize);
-        
-        // Cleanup
-        return () => window.removeEventListener('resize', detectWindowSize);
+        setMounted(true);
     }, []);
 
-    // Don't render anything during SSR or if router isn't ready
-    if (!router.isReady || typeof window === 'undefined') {
+    // Don't render anything during SSR to avoid hydration mismatch
+    if (!mounted) {
         return null;
     }
  
@@ -126,7 +108,8 @@ function TodaysFixturesByLeague(props){
             probability_results = DoubleChanceProbabilityResults(props.todays_matches[i], winning_team, router.pathname.substring(1));
 
         } else if(router.pathname.substring(1).includes("predictions-under-over")) {
-            computed_winning_preds = UnderOverWinningTeamAndOdd(fixturesAverage, isMobile);
+            // Note: UnderOverWinningTeamAndOdd still needs isMobile parameter - pass false as default
+            computed_winning_preds = UnderOverWinningTeamAndOdd(fixturesAverage, false);
 
             winning_team = computed_winning_preds[0];
             winning_odd = computed_winning_preds[1];
@@ -159,7 +142,8 @@ function TodaysFixturesByLeague(props){
             probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
         }        
         
-        let livescores_results = DetermineLiveScores(props.todays_matches[i], isMobile);
+        // isMobile parameter removed - now handled by CSS
+        let livescores_results = DetermineLiveScores(props.todays_matches[i]);
 
         let livestatus = livescores_results[0];
         let livescores = livescores_results[1];
@@ -195,7 +179,7 @@ function TodaysFixturesByLeague(props){
             
         //Form the array of Fixtures Table by league
         predictionsList.push(
-            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} />
         );
     } 
 
@@ -212,7 +196,6 @@ function TodaysFixturesByLeague(props){
                     <LeaguesPageRender 
                         url_name={router.pathname.substring(1)} 
                         renderPredictions={predictionsList} 
-                        isMobile={isMobile} 
                     />
                     <br/>
                     <Adsense

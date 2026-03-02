@@ -12,7 +12,6 @@ import { Adsense } from "@ctrl/react-adsense";
 
 function FootballPredictionsByLeagueTrends() {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
   const [overallData, setOverallData] = useState([]);
   const [endpointStatus, setEndpointStatus] = useState('');
   const [topLeaguesData, setTopLeaguesData] = useState([]);
@@ -73,20 +72,6 @@ function FootballPredictionsByLeagueTrends() {
       router.push('/', undefined, { statusCode: 301 });
     }
   }, [isReady, leagueInfo.redirect, router]);
-
-  // Window resize detection
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    detectWindowSize();
-    window.addEventListener('resize', detectWindowSize);
-
-    return () => window.removeEventListener('resize', detectWindowSize);
-  }, []);
 
   // Fetch data when leagueId is available
   useEffect(() => {

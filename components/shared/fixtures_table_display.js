@@ -114,7 +114,8 @@ function FixturesTableDisplay(props,key){
         
     let dc_winning_pred_value = DoubleChanceProbabilityResults(fixture_details.game_details, double_chance_probs[0],router.pathname.substring(1));
 
-    let winning_team_probs = UnderOverWinningTeamAndOdd(fixture_details.average, props.isMobile);
+    // Note: UnderOverWinningTeamAndOdd still needs isMobile parameter - we'll pass false as default
+    let winning_team_probs = UnderOverWinningTeamAndOdd(fixture_details.average, false);
     let under_over_pred_value = UnderOverProbabilityResults(fixture_details.game_details, winning_team_probs[0]);
     let over_under_prob_scale = OverUnderProbabilitiesScale(fixture_details.average);
 
@@ -142,25 +143,15 @@ function FixturesTableDisplay(props,key){
         
     fixturestablearray.push(
         <div key={key} className="responsive-row fixturesTextSize fixturesWholeRow" style={{cursor : "auto"}}>  
-            {props.isMobile == false ? 
-                //desktop device
-                <React.Fragment> 
-                <div className="responsive-cell" onClick={() => selectMyMatches(fixture_details.game_details)} style={{cursor : "pointer"}}><br/>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={iconColor} className="bi bi-star-fill" viewBox="0 0 16 16">
+            {/* Star icon - same for all devices */}
+            <div className="responsive-cell star-cell" onClick={() => selectMyMatches(fixture_details.game_details)} style={{cursor : "pointer"}}>
+                <br/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={iconColor} className="bi bi-star-fill" viewBox="0 0 16 16">
                     <path d={iconPath} />
-                    </svg> 
-                </div>
-                </React.Fragment>
-            : 
-                //mobile device
-                <React.Fragment>
-                <div className="responsive-cell" title={fixture_details.game_details.country_name} style={{textAlign: ""}}><br/>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={iconColor} className="bi bi-star-fill" viewBox="0 0 16 16" onClick={() => selectMyMatches(fixture_details.game_details)}>
-                    <path d={iconPath} />
-                    </svg>
-                </div>
-                </React.Fragment>
-            }         
+                </svg> 
+            </div>
+            
+            {/* Team names and date */}
             <div className="responsive-cell team-link" style={{ textAlign: "left", fontWeight:"bold", whiteSpace: "pre-wrap" }} title={toottiptitle}>                
                 {router.pathname.substring(1) !== "match/[match-details]" ?
                 <a href={'/match/football-predictions-' + url_name+"/matches"}>
@@ -182,8 +173,10 @@ function FixturesTableDisplay(props,key){
                 </div>
                 }
             </div> 
-            {props.isMobile == false ? //desktop
-            <div className="responsive-cell team-link-y hide-on-mobile" title="Odds 1  X  2"><br/>
+            
+            {/* Desktop odds */}
+            <div className="responsive-cell team-link-y hide-on-mobile" title="Odds 1  X  2">
+                <br/>
                 <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(
                     fixture_details.winning_odd == fixture_details["game_details"]["bets_home"] && fixture_details["game_details"]["bets_home"] !==null
                 ) : {}}> {fixture_details["game_details"]["bets_home"] === null ? "   -  " : fixture_details["game_details"]["bets_home"]} &nbsp;</span>
@@ -196,23 +189,25 @@ function FixturesTableDisplay(props,key){
                     fixture_details.winning_odd == fixture_details["game_details"]["bets_away"] && fixture_details["game_details"]["bets_away"] !==null
                 ) : {}}>&nbsp;{fixture_details["game_details"]["bets_away"] === null || fixture_details["game_details"]["bets_away"]==="-" ? "   -  " : fixture_details["game_details"]["bets_away"]} &nbsp;</span>
             </div>
-            : 
-            <div className="responsive-cell team-link-probability" title="Odds"> 
+            
+            {/* Mobile odds */}
+            <div className="responsive-cell team-link-probability hide-on-desktop" title="Odds"> 
                 <div className="row fixturesTextSize">
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
                         <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home > fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_home"] !==null) ? "1px solid green" : "" : ""} : {}}>&nbsp;{fixture_details["game_details"]["bets_home"] === null ? "   -   " : fixture_details["game_details"]["bets_home"]}&nbsp;</span>
                     </div>
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
                         <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_home === fixture_details.game_details.goals_away && fixture_details["game_details"]["bets_draw"] !==null) ? "1px solid green" : "" : ""} : {}}>&nbsp;{fixture_details["game_details"]["bets_draw"] === null ? "   -   " : fixture_details["game_details"]["bets_draw"]}&nbsp;</span>
                     </div>
-                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "4px"}}>
+                    <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
                         <span className="odds-card" style={shouldUseClientStyles ? {border: fixture_details.game_details.goals_home != null ? (fixture_details.game_details.goals_away >
                             fixture_details.game_details.goals_home && fixture_details["game_details"]["bets_away"] !==null  && fixture_details["game_details"]["bets_away"]!=="-") ? "1px solid green" : "" : ""} : {}}>
                             &nbsp;{fixture_details["game_details"]["bets_away"] === null || fixture_details["game_details"]["bets_away"]==="-" ? "   -   " : fixture_details["game_details"]["bets_away"]}&nbsp;</span>
                     </div>                 
                 </div>
             </div>
-            }
+            
+            {/* Average Goals */}
             <div className="responsive-cell team-link-average hide-on-mobile" title="Average Goals" style={shouldUseClientStyles ? getAverageStyle() : {}}>
                 {fixture_details.average}
                 {shouldUseClientStyles && (
@@ -221,36 +216,39 @@ function FixturesTableDisplay(props,key){
                 )}
             </div>
             
-            {props.isMobile == false ? //desktop 
-                <div className="responsive-cell" title="Prediction"><br/>
-                    {router.pathname.substring(1).includes("predictions-halftime-fulltime") && fixture_details.ht_probability_results != "" ?
-                        <>{fixture_details.ht_probability_results} &nbsp;|&nbsp;</>
-                    : <></>
-                    }                   
-                    <React.Fragment>
-                    {(fixture_details.home_odd === "-" || fixture_details.home_odd === null || fixture_details.home_odd == "") && (fixture_details.draw_odd === "-" || fixture_details.draw_odd === null || fixture_details.draw_odd == "") && (fixture_details.away_odd === "-" || fixture_details.away_odd === null || fixture_details.away_odd == "") ? "-" :                      
-                    <>
-                        {                       
-                        router.pathname.substring(1) === "" || router.pathname.substring(1).includes("tips/") || router.pathname.substring(1) ==="top-football-tips-and-predictions/today" ||
-                        router.pathname.substring(1) === "top-football-tips-and-predictions/yesterday" || router.pathname.substring(1) ==="top-football-tips-and-predictions/tomorrow" ?
-                        fixture_details.average < 2.0  || fixture_details.average > 3.0 ?
-                                under_over_pred_value
-                            :
-                            (fixture_details.winning_team ==="1" && fixture_details.home_odd < "50") || (fixture_details.winning_team ==="X" && fixture_details.draw_odd < "50") || (fixture_details.winning_team ==="2" && fixture_details.away_odd < "50")  ? 
-                                dc_winning_pred_value
-                            :
-                                fixture_details.probability_results
-                        :                          
-                            fixture_details.probability_results                    
-                        }
-                    </>
+            {/* Desktop prediction */}
+            <div className="responsive-cell hide-on-mobile" title="Prediction">
+                <br/>
+                {router.pathname.substring(1).includes("predictions-halftime-fulltime") && fixture_details.ht_probability_results != "" ?
+                    <>{fixture_details.ht_probability_results} &nbsp;|&nbsp;</>
+                : <></>
+                }                   
+                <React.Fragment>
+                {(fixture_details.home_odd === "-" || fixture_details.home_odd === null || fixture_details.home_odd == "") && (fixture_details.draw_odd === "-" || fixture_details.draw_odd === null || fixture_details.draw_odd == "") && (fixture_details.away_odd === "-" || fixture_details.away_odd === null || fixture_details.away_odd == "") ? "-" :                      
+                <>
+                    {                       
+                    router.pathname.substring(1) === "" || router.pathname.substring(1).includes("tips/") || router.pathname.substring(1) ==="top-football-tips-and-predictions/today" ||
+                    router.pathname.substring(1) === "top-football-tips-and-predictions/yesterday" || router.pathname.substring(1) ==="top-football-tips-and-predictions/tomorrow" ?
+                    fixture_details.average < 2.0  || fixture_details.average > 3.0 ?
+                            under_over_pred_value
+                        :
+                        (fixture_details.winning_team ==="1" && fixture_details.home_odd < "50") || (fixture_details.winning_team ==="X" && fixture_details.draw_odd < "50") || (fixture_details.winning_team ==="2" && fixture_details.away_odd < "50")  ? 
+                            dc_winning_pred_value
+                        :
+                            fixture_details.probability_results
+                    :                          
+                        fixture_details.probability_results                    
                     }
-                    </React.Fragment>
-                </div>
-            : //Mobile
-                <div className="responsive-cell team-link-standings" title="Prediction" style={{fontWeight:"bold", textAlign: "center"}}>
-                    {/** Prediction */}
-                    <React.Fragment><br/>{(fixture_details.home_odd === "-" || fixture_details.home_odd === null || fixture_details.home_odd == "") && (fixture_details.draw_odd === "-" || fixture_details.draw_odd === null || fixture_details.draw_odd == "") && (fixture_details.away_odd === "-" || fixture_details.away_odd === null || fixture_details.away_odd == "") ? "" :                      
+                </>
+                }
+                </React.Fragment>
+            </div>
+            
+            {/* Mobile prediction */}
+            <div className="responsive-cell team-link-standings hide-on-desktop" title="Prediction" style={{fontWeight:"bold", textAlign: "center"}}>
+                <React.Fragment>
+                    <br/>
+                    {(fixture_details.home_odd === "-" || fixture_details.home_odd === null || fixture_details.home_odd == "") && (fixture_details.draw_odd === "-" || fixture_details.draw_odd === null || fixture_details.draw_odd == "") && (fixture_details.away_odd === "-" || fixture_details.away_odd === null || fixture_details.away_odd == "") ? "" :                      
                     <>
                     {(fixture_details.home_odd === "-" || fixture_details.home_odd === null || fixture_details.home_odd == "") && (fixture_details.draw_odd === "-" || fixture_details.draw_odd === null || fixture_details.draw_odd == "") && (fixture_details.away_odd === "-" || fixture_details.away_odd === null || fixture_details.away_odd == "") ? "-" :                      
                         router.pathname.substring(1) === "" || router.pathname.substring(1).includes("tips/") || router.pathname.substring(1) ==="top-football-tips-and-predictions/today" ||
@@ -272,8 +270,9 @@ function FixturesTableDisplay(props,key){
                     <br/><br/></>
                     }
                     </React.Fragment>
-                    {/** Winning Probability % */}
-                    <span style={{fontWeight: "bold"}}>
+                    
+                    {/* Winning Probability % for mobile */}
+                    <span style={{fontWeight: "bold"}} className="hide-on-desktop">
                     {
                     fixture_details.home_odd == "-" | fixture_details.home_odd == null | fixture_details.home_odd == "" && fixture_details.draw_odd == "-" | fixture_details.draw_odd == null | fixture_details.draw_odd == "" && fixture_details.away_odd == "-" | fixture_details.away_odd == null | fixture_details.away_odd == "" ? "-"
                     :
@@ -300,8 +299,9 @@ function FixturesTableDisplay(props,key){
                     }
                     </span>
                 </div>
-            }
-            <div className="responsive-cell hide-on-mobile" title="Winning Probability" style={{fontWeight:"bold"}}> {/* Winning Probability % */}
+            
+            {/* Desktop winning probability */}
+            <div className="responsive-cell hide-on-mobile" title="Winning Probability" style={{fontWeight:"bold"}}>
                 <span className= {fixture_details.home_odd == "-" | fixture_details.home_odd == null | fixture_details.home_odd == ""  && fixture_details.draw_odd == "-" | fixture_details.draw_odd == null | fixture_details.draw_odd == "" && fixture_details.away_odd == "-" | fixture_details.away_odd == null | fixture_details.away_odd == "" ? "": "predictionHoverEffect"}>
                     {
                         fixture_details.home_odd == "-" | fixture_details.home_odd == null | fixture_details.home_odd == "" && fixture_details.draw_odd == "-" | fixture_details.draw_odd == null | fixture_details.draw_odd == "" && fixture_details.away_odd == "-" | fixture_details.away_odd == null | fixture_details.away_odd == "" ? "-"
@@ -328,18 +328,23 @@ function FixturesTableDisplay(props,key){
                     }
                 </span>
             </div> 
-           {props.isMobile == false ? //desktop 
-            <div className="responsive-cell team-link-standings" style={{ color: "red", whiteSpace:"pre-wrap" }} title="Status">
+            
+            {/* Desktop status */}
+            <div className="responsive-cell team-link-standings hide-on-mobile" style={{ color: "red", whiteSpace:"pre-wrap" }} title="Status">
                 <span style={{whiteSpace:"pre-wrap"}}>{fixture_details.livestatus}</span>
             </div>
-            :
-            <div className="responsive-cell team-link-l" style={{ color: "red", whiteSpace:"nowrap" }} title="Status">
-                <span style={{whiteSpace:"nowrap"}}>{fixture_details.livestatus}</span>
+            
+            {/* Mobile status */}
+            <div className="responsive-cell team-link-l hide-on-desktop" style={{ color: "red", whiteSpace:"nowrap" }} title="Status">
+                <span style={{whiteSpace:"nowrap"}}><br/>{fixture_details.livestatus}</span>
             </div>
-            }
+            
+            {/* Scores - same for all devices */}
             <div className="responsive-cell team-link-scores" style={{ color: "red" }} title="Scores">
-                {/* Check if extra time has data, if yes display else hide space */}
-                {fixture_details.extratime_data != <br/> ? <><span style={{color:"black"}}>{fixture_details.extratime_data}</span><br/></> : props.isMobile == true ? "" : <br/> } 
+                {fixture_details.extratime_data && fixture_details.extratime_data != <br/> ? 
+                    <><span style={{color:"black"}}>{fixture_details.extratime_data}</span><br/></> 
+                    : null
+                } 
                 {fixture_details.livescores}<br/>
                 <span className="halfTimeDataDisplay" style={{color:"black"}}>{fixture_details.halftime_data}</span>
             </div>          

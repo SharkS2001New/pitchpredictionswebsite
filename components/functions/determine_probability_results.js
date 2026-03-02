@@ -10,7 +10,7 @@ function ProbabilityResults(game_details,winning_team){
 
         probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"#ffb400",color:"white",fontWeight:"bold",textTransform:"lowercase"}}>{winning_team}</span>;
 
-    }else if(game_details.status_short === "FT" || game_details.status_short === "AWD" || game_details.status_short==="PEN" || game_details.status_short ==="AET"){
+    }else if(game_details.status_short === "FT" || game_details.status_short === "AWD" || game_details.status_short === "P" || game_details.status_short === "ET" || game_details.status_short==="PEN" || game_details.status_short ==="AET"){
         
         if(winning_team == 1 && game_details.goals_home > game_details.goals_away){
 

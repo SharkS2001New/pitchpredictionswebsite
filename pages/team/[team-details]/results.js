@@ -13,8 +13,6 @@ import { Adsense } from "@ctrl/react-adsense";
 
 function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
   const router = useRouter();
-
-  const [isMobile, setIsMobile] = useState(false);
   
   // SSR data - available immediately
   const [teams_top_data, setTeamsTopData] = useState(
@@ -78,22 +76,9 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
         setIsLoadingSecondary(false);
       }
     };
-
-    // Initial mobile detection
-    setIsMobile(window.innerWidth < 760);
     
     fetchSecondaryData();
   }, [teamIdInteger, teams_top_data]);
-
-  // detect mobile screen on resize
-  useEffect(() => {
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-    
-    window.addEventListener("resize", detectWindowSize);
-    return () => window.removeEventListener("resize", detectWindowSize);
-  }, []);
 
   const todays_date = new Date().toISOString().split("T")[0];
   
@@ -145,7 +130,7 @@ function Teams({ initialTeamsTopData, initialLast6Matches, teamIdInteger }) {
         </div>
         
         {/* ✅ FIXED: Pass the entire renderPredictions element, not its props */}
-        {/* <RenderData renderPredictions={renderPredictions} isMobile={isMobile} /> */}
+        <RenderData renderPredictions={renderPredictions} />
         
         <FiltersTeamDetails
           url_filter={router.pathname.substring(1)}

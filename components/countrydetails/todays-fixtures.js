@@ -10,27 +10,6 @@ import { Adsense } from '@ctrl/react-adsense';
 
 function TodaysFixturesByCountry(props) {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
-
-    // Client-side only: check for mobile
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsMobile(window.innerWidth < 760);
-        }
-    }, []);
-
-    // Window resize detection (client-side only)
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        function detectWindowSize() {
-            setIsMobile(window.innerWidth < 760);
-        }
-        
-        window.addEventListener('resize', detectWindowSize);
-        return () => window.removeEventListener('resize', detectWindowSize);
-    }, []);
-
     var predictionsList = [];
 
     for (let i = 0; i < props.todays_matches.length; i++) {
@@ -75,7 +54,8 @@ function TodaysFixturesByCountry(props) {
 
         let probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
 
-        let livescores_results = DetermineLiveScores(props.todays_matches[i], isMobile);
+        // isMobile parameter removed - now handled by CSS in DetermineLiveScores
+        let livescores_results = DetermineLiveScores(props.todays_matches[i]);
 
         let livestatus = livescores_results[0];
         let livescores = livescores_results[1];
@@ -109,7 +89,7 @@ function TodaysFixturesByCountry(props) {
 
         // Form the array of Fixtures Table by country
         predictionsList.push(
-            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile} />
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} />
         );
     }
 
@@ -125,7 +105,6 @@ function TodaysFixturesByCountry(props) {
                     <CountrysPageRenders 
                         url_name={router.pathname.substring(1)} 
                         renderPredictions={predictionsList} 
-                        isMobile={isMobile} 
                     />
                     <br />
                     <div className="desktop-container-resize mb-1">

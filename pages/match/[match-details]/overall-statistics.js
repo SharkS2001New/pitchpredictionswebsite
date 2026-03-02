@@ -58,7 +58,6 @@ function MatchDetails({ initialGameDetails, fixtureIdInteger }) {
 
   /* ---------- state ---------- */
 
-  const [isMobile, setIsMobile] = useState(false);
   const [endpointStatus, setEndPointStatus] = useState("");
   const [endpointStatus1, setEndPointStatus1] = useState("");
   const [endpointStatus2, setEndPointStatus2] = useState("");
@@ -80,18 +79,6 @@ function MatchDetails({ initialGameDetails, fixtureIdInteger }) {
     "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team";
 
   /* ================= EFFECTS ================= */
-
-  // ✅ mobile detection (safe)
-  useEffect(() => {
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    detectWindowSize();
-    window.addEventListener("resize", detectWindowSize);
-
-    return () => window.removeEventListener("resize", detectWindowSize);
-  }, []);
 
   // ✅ fetch secondary data ONLY
   useEffect(() => {

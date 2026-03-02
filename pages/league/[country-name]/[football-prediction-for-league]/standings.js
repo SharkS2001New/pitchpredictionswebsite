@@ -11,7 +11,6 @@ import { Adsense } from "@ctrl/react-adsense";
 
 function FootballPredictionsByLeagueStandings() {
   const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
   const [tableStandings, setTableStandings] = useState([]);
   const [endpointStatus, setEndpointStatus] = useState("");
   const [endpointStatus1, setEndpointStatus1] = useState("");
@@ -75,20 +74,6 @@ function FootballPredictionsByLeagueStandings() {
       router.push('/', undefined, { statusCode: 301 });
     }
   }, [router.isReady, leagueInfo.redirect, router]);
-
-  // Window resize detection
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const detectWindowSize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    detectWindowSize();
-    window.addEventListener('resize', detectWindowSize);
-
-    return () => window.removeEventListener('resize', detectWindowSize);
-  }, []);
 
   // Fetch standings data
   useEffect(() => {
@@ -214,7 +199,7 @@ function FootballPredictionsByLeagueStandings() {
             <DisplayIndependentLeagueStandings 
               props={tableStandings} 
               league_name={new_league_name} 
-              isMobile={isMobile} 
+              // isMobile prop removed - handled by CSS
             />
             <br />
           </div>

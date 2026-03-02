@@ -18,11 +18,16 @@ function YesterdayFixtures({
     yesterdayDate 
 }) {
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
     const [hasMore, setHasMore] = useState(true);
     const [loadTrigger, setLoadTrigger] = useState(0);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Load more data when "Show More" is clicked
     const loadMoreData = async () => {
@@ -75,11 +80,6 @@ function YesterdayFixtures({
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
-    if (typeof window === 'undefined' || (!initialData && !error)) {
-        return <PreLoader />;
-    }
-
     // Format yesterday's date for display
     const formatDisplayDate = (dateString) => {
         if (!dateString) return '';
@@ -91,6 +91,11 @@ function YesterdayFixtures({
             return dateString;
         }
     };
+
+    // Handle initial loading state - same on server and client
+    if (!initialData && !error) {
+        return <PreLoader />;
+    }
 
     // Handle error state
     if (endpointStatus === "error" || error) {

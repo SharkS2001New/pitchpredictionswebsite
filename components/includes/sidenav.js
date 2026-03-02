@@ -8,38 +8,24 @@ import GetLeagueId from '../functions/GetLeagueId';
 
 function SideNavBar() {
     const router = useRouter();
+    const [mounted, setMounted] = useState(false);
     
     // Memoize the leagueId to prevent recalculations
     const leagueId = useMemo(() => GetLeagueId(router), [router]);
 
-    // State with lazy initialization from localStorage
-    const [pinnedLeagues, setPinnedLeagues] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('pinnedLeagues');
-            return cached ? JSON.parse(cached) : [];
-        }
-        return [];
-    });
-    
-    const [otherLeagues, setOtherLeagues] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('otherLeagues');
-            return cached ? JSON.parse(cached) : [];
-        }
-        return [];
-    });
-    
-    const [otherCompetions, setOtherCompetions] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('otherCompetitions');
-            return cached ? JSON.parse(cached) : [];
-        }
-        return [];
-    });
-
+    // Initialize with empty arrays - no localStorage access during server render
+    const [pinnedLeagues, setPinnedLeagues] = useState([]);
+    const [otherLeagues, setOtherLeagues] = useState([]);
+    const [otherCompetions, setOtherCompetions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Set mounted state after hydration
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const openSidemenu = useCallback(() => {
+        if (typeof window === 'undefined') return;
         document.body.classList.toggle('sb-sidenav-toggled');
         localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
     }, []);
@@ -47,9 +33,22 @@ function SideNavBar() {
     // Cache duration - 24 hours
     const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
+    // Load from localStorage only after mounting
     useEffect(() => {
+        if (!mounted) return;
+
+        // Load cached data
+        const cachedPinned = localStorage.getItem('pinnedLeagues');
+        const cachedOther = localStorage.getItem('otherLeagues');
+        const cachedComp = localStorage.getItem('otherCompetitions');
+        
+        if (cachedPinned) setPinnedLeagues(JSON.parse(cachedPinned));
+        if (cachedOther) setOtherLeagues(JSON.parse(cachedOther));
+        if (cachedComp) setOtherCompetions(JSON.parse(cachedComp));
+
+        // Check if we need to fetch fresh data
         loadAllLeagues();
-    }, []);
+    }, [mounted]);
 
     const loadAllLeagues = async () => {
         setIsLoading(true);
@@ -85,10 +84,8 @@ function SideNavBar() {
             setPinnedLeagues(data);
             
             // Cache with timestamp
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('pinnedLeagues', JSON.stringify(data));
-                localStorage.setItem('pinnedLeagues_timestamp', Date.now().toString());
-            }
+            localStorage.setItem('pinnedLeagues', JSON.stringify(data));
+            localStorage.setItem('pinnedLeagues_timestamp', Date.now().toString());
         } catch (error) {
             console.error("Error loading pinned leagues:", error);
         }
@@ -100,10 +97,8 @@ function SideNavBar() {
             const data = jsonotherLeagues.data;
             setOtherLeagues(data);
             
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('otherLeagues', JSON.stringify(data));
-                localStorage.setItem('otherLeagues_timestamp', Date.now().toString());
-            }
+            localStorage.setItem('otherLeagues', JSON.stringify(data));
+            localStorage.setItem('otherLeagues_timestamp', Date.now().toString());
         } catch (error) {
             console.error("Error loading other leagues:", error);
         }
@@ -115,10 +110,8 @@ function SideNavBar() {
             const data = jsonotherCompetitions.data;
             setOtherCompetions(data);
             
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('otherCompetitions', JSON.stringify(data));
-                localStorage.setItem('otherCompetitions_timestamp', Date.now().toString());
-            }
+            localStorage.setItem('otherCompetitions', JSON.stringify(data));
+            localStorage.setItem('otherCompetitions_timestamp', Date.now().toString());
         } catch (error) {
             console.error("Error loading other competitions:", error);
         }
@@ -179,8 +172,8 @@ function SideNavBar() {
         { href: "/jackpot-predictions", label: "Jackpot Predictions", exact: true }
     ], [router.pathname]);
 
-    // Loading skeleton
-    if (isLoading && !pinnedLeagues.length) {
+    // Show loading skeleton during server render or initial mount
+    if (!mounted || (isLoading && !pinnedLeagues.length)) {
         return (
             <div className="" id="sidebar-wrapper">
                 <div className="sideNavCustom">

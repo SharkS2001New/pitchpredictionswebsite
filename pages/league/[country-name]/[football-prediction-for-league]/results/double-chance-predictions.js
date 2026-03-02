@@ -23,27 +23,7 @@ function FootballPredictionsByLeagueResults({
     initialTopLeaguesData
 }) {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
     const [topLeaguesData, setTopLeaguesData] = useState(initialTopLeaguesData || []);
-
-    // Client-side only: check for mobile
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsMobile(window.innerWidth < 760);
-        }
-    }, []);
-
-    // Window resize detection (client-side only)
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        function detectWindowSize() {
-            setIsMobile(window.innerWidth < 760);
-        }
-        
-        window.addEventListener('resize', detectWindowSize);
-        return () => window.removeEventListener('resize', detectWindowSize);
-    }, []);
 
     // Process the data - Pass gamesData instead of initialData
     const renderPredictions = PagesMatchPredictionDetails({ 
@@ -55,6 +35,11 @@ function FootballPredictionsByLeagueResults({
 
     // Handle loading state
     if (!router.isReady) {
+        return <PreLoader />;
+    }
+
+    // Handle initial data loading state
+    if (!initialData && !error) {
         return <PreLoader />;
     }
 
@@ -184,7 +169,7 @@ function FootballPredictionsByLeagueResults({
                 </div>
                 
                 <div className="sites-card">  
-                    <RenderData renderPredictions={renderPredictions} isMobile={isMobile} />
+                    <RenderData renderPredictions={renderPredictions} />
                     <br/>
                     <div className="desktop-container-resize mb-1">
                         <div className="col-sm-12 text-center bg-light pt-1">
