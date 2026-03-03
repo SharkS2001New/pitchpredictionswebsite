@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Adsense } from "@ctrl/react-adsense";
 import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpots-landing-page';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '' }) {
@@ -81,6 +80,34 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     return matchingSlug || '';
   };
 
+  // Determine if jackpot has started based on start_datetime_formatted
+  const hasJackpotStarted = (jackpot) => {
+    if (!jackpot.start_datetime_formatted) return false;
+    
+    const now = new Date();
+    const startDate = new Date(jackpot.start_datetime_formatted);
+    return now >= startDate;
+  };
+
+  // Determine if jackpot is completed based on completed_games and total_games
+  const isJackpotCompleted = (jackpot) => {
+    return jackpot.completed_games === jackpot.total_games && jackpot.total_games > 0;
+  };
+
+  // Get jackpot status text
+  const getJackpotStatus = (jackpot) => {
+    if (isJackpotCompleted(jackpot)) return 'Completed';
+    if (hasJackpotStarted(jackpot)) return 'In Progress';
+    return 'Not Started';
+  };
+
+  // Get status badge color
+  const getStatusBadgeColor = (jackpot) => {
+    if (isJackpotCompleted(jackpot)) return 'secondary';
+    if (hasJackpotStarted(jackpot)) return 'warning';
+    return 'success';
+  };
+
   const openShareModal = (jackpotName, slug) => {
     setShareData({
       name: jackpotName,
@@ -98,13 +125,22 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     if (!jackpot) return '';
     
     const name = jackpot.jackpot_name?.toLowerCase() || '';
-    const games = jackpot.numberOfGames || 0;
+    const games = jackpot.total_games || 0;
     const progress = jackpot.progress_percentage || 0;
-    const isProgressive = jackpot.is_progressive || false;
     const confidence = jackpot.avg_confidence || 0;
     const completedGames = jackpot.completed_games || 0;
+    const hasStarted = hasJackpotStarted(jackpot);
+    const isCompleted = isJackpotCompleted(jackpot);
     
     let analysis = `Analysis of ${games}-game jackpot selection. `;
+    
+    if (isCompleted) {
+      analysis += `This jackpot has concluded with ${completedGames} games completed. `;
+    } else if (hasStarted) {
+      analysis += `Currently in progress with ${completedGames} of ${games} games completed. `;
+    } else {
+      analysis += `Scheduled to begin on ${jackpot.start_datetime_formatted || 'soon'}. `;
+    }
     
     if (games >= 15) {
       analysis += `This extensive selection requires comprehensive match-by-match evaluation. `;
@@ -124,11 +160,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     
     analysis += `Our methodology combines statistical models with current team performance data. `;
     
-    if (isProgressive) {
-      analysis += `Progressive jackpots carry specific risk-reward considerations. `;
-    }
-    
-    if (progress > 0 && completedGames > 0) {
+    if (progress > 0 && completedGames > 0 && !isCompleted) {
       analysis += `With ${completedGames} games completed, early results provide additional data points. `;
     }
     
@@ -275,7 +307,11 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             slug: slug,
             displayName: jackpot.jackpot_name.includes('Predictions') 
               ? toSentenceCase(jackpot.jackpot_name)
-              : `${toSentenceCase(jackpot.jackpot_name)} Predictions`
+              : `${toSentenceCase(jackpot.jackpot_name)} Predictions`,
+            hasStarted: hasJackpotStarted(jackpot),
+            isCompleted: isJackpotCompleted(jackpot),
+            statusText: getJackpotStatus(jackpot),
+            statusColor: getStatusBadgeColor(jackpot)
           };
         })
         .filter(jackpot => jackpot.slug) // Only include jackpots that have matching slugs
@@ -323,18 +359,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
 
   return (
     <>
-      <Head>
-        <title>Jackpot Predictions 2026 | Football Jackpot Tips & Analysis | PitchPredictions</title>
-        <meta name="description" content="Expert football jackpot predictions for SportPesa, Betika, Mozzart, and more. Daily jackpot tips with E-E-A-T compliant analysis. Updated for 2026 season." />
-        <meta name="keywords" content="jackpot predictions, football jackpot tips, sportpesa mega jackpot, betika sababisha, mozzart jackpot, daily jackpot tips" />
-        {structuredData && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          />
-        )}
-      </Head>
-
       <div className="sites-card">
         {/* Search Bar */}
         <div className="container mb-4 mt-2">
@@ -405,13 +429,16 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                                 {jackpot.displayName}
                               </a>
                             </h3>
+                            <span className={`badge bg-${jackpot.statusColor} ms-2`}>
+                              {jackpot.statusText}
+                            </span>
                           </div>
                           
                           <div className="mb-3">
                             <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
                               <span className="badge bg-light text-dark border">
                                 <i className="bi bi-trophy me-1"></i>
-                                {jackpot.numberOfGames || 0} Games
+                                {jackpot.total_games || 0} Games
                               </span>
                               <span className="badge" style={{ 
                                 backgroundColor: jackpot.confidence_level === 'high' ? '#28a745' : 
@@ -425,18 +452,18 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             <div className="d-flex flex-wrap align-items-center gap-2">
                               <small className="text-muted">
                                 <i className="bi bi-calendar-event me-1"></i>
-                                {formatDateShort(jackpot.startDate)} - {formatDateShort(jackpot.endDate)}
+                                {formatDateShort(jackpot.start_date)} - {formatDateShort(jackpot.end_date)}
                               </small>
-                              
-                              {jackpot.is_progressive && (
-                                <span className="badge bg-warning text-dark">
-                                  <i className="bi bi-arrow-up-circle me-1"></i>Progressive
-                                </span>
-                              )}
                               
                               {jackpot.progress_percentage > 0 && (
                                 <span className="badge bg-info text-white">
                                   <i className="bi bi-graph-up me-1"></i>{jackpot.progress_percentage}% Complete
+                                </span>
+                              )}
+                              
+                              {jackpot.hasStarted && !jackpot.isCompleted && (
+                                <span className="badge bg-warning text-dark">
+                                  <i className="bi bi-play-circle me-1"></i>Started {formatTime(jackpot.start_datetime_formatted)}
                                 </span>
                               )}
                             </div>
@@ -460,7 +487,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                               
                               <div className="d-flex flex-column align-items-center">
                                 <span className="h6 mb-0">
-                                  {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.numberOfGames || 0}`}
+                                  {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.total_games || 0}`}
                                 </span>
                                 <small className="text-muted">
                                   {completedGames === 0 ? '' : 'games completed'}
@@ -561,13 +588,16 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             {jackpot.displayName}
                           </a>
                         </h3>
+                        <span className={`badge bg-${jackpot.statusColor} ms-2`}>
+                          {jackpot.statusText}
+                        </span>
                       </div>
                       
                       <div className="mb-3">
                         <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
                           <span className="badge bg-light text-dark border">
                             <i className="bi bi-trophy me-1"></i>
-                            {jackpot.numberOfGames || 0} Games
+                            {jackpot.total_games || 0} Games
                           </span>
                           <span className="badge" style={{ 
                             backgroundColor: jackpot.confidence_level === 'high' ? '#28a745' : 
@@ -581,12 +611,12 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                         <div className="d-flex flex-wrap align-items-center justify-content-between">
                           <small className="text-muted">
                             <i className="bi bi-calendar-event me-1"></i>
-                            {formatDateShort(jackpot.startDate)} - {formatDateShort(jackpot.endDate)}
+                            {formatDateShort(jackpot.start_date)} - {formatDateShort(jackpot.end_date)}
                           </small>
                           
-                          {jackpot.is_progressive && (
-                            <span className="badge bg-warning text-dark">
-                              <i className="bi bi-arrow-up-circle me-1"></i>Progressive
+                          {jackpot.progress_percentage > 0 && (
+                            <span className="badge bg-info text-white">
+                              <i className="bi bi-graph-up me-1"></i>{jackpot.progress_percentage}%
                             </span>
                           )}
                         </div>
@@ -606,10 +636,10 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                           
                           <div className="d-flex flex-column align-items-center">
                             <span className="h6 mb-0">
-                              {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.numberOfGames || 0}`}
+                              {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.total_games || 0}`}
                             </span>
                             <small className="text-muted">
-                              {completedGames === 0 ? '' : 'games completed'}
+                              {completedGames === 0 ? '' : 'games'}
                             </small>
                           </div>
                         </div>
@@ -885,6 +915,17 @@ const formatDateShort = (dateString) => {
     const options = { month: 'short', day: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);
+  } catch (e) {
+    return '';
+  }
+};
+
+// Helper function for time formatting
+const formatTime = (dateTimeString) => {
+  if (!dateTimeString) return '';
+  try {
+    const date = new Date(dateTimeString);
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   } catch (e) {
     return '';
   }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import FetchSearchResults from "../functions/search";
 import Link from "next/link";
+import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 
 // Regular function component - no forwardRef needed
 const SearchModal = ({ isOpen, onClose }) => {
@@ -33,7 +34,9 @@ const SearchModal = ({ isOpen, onClose }) => {
 
     // Load suggested teams from API
     const loadSuggestedTeams = async () => {
+        
         setIsLoadingSuggestions(true);
+
         try {
             // Get today's date in YYYY-MM-DD format
             const today = new Date();
@@ -53,20 +56,6 @@ const SearchModal = ({ isOpen, onClose }) => {
             console.error("Error loading suggestions:", error);
         } finally {
             setIsLoadingSuggestions(false);
-        }
-    };
-
-    // Format date to display time
-    const formatTime = (dateString) => {
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-            });
-        } catch {
-            return dateString;
         }
     };
 
@@ -170,6 +159,12 @@ const SearchModal = ({ isOpen, onClose }) => {
                             Teams
                         </button>
                         <button 
+                            className={`filter-tab ${activeFilter === "fixture" ? "active" : ""}`}
+                            onClick={() => setActiveFilter("fixture")}
+                        >
+                            Matches
+                        </button>
+                        <button 
                             className={`filter-tab ${activeFilter === "league" ? "active" : ""}`}
                             onClick={() => setActiveFilter("league")}
                         >
@@ -180,13 +175,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                             onClick={() => setActiveFilter("country")}
                         >
                             Countries
-                        </button>
-                        <button 
-                            className={`filter-tab ${activeFilter === "fixture" ? "active" : ""}`}
-                            onClick={() => setActiveFilter("fixture")}
-                        >
-                            Matches
-                        </button>
+                        </button>                      
                     </div>
                 )}
 
@@ -405,7 +394,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                         </p>
                     </div>
                 )}
-
+            
                 {/* Popular Suggestions */}
                 {search_query.length < 3 && (
                     <div className="suggestions-section">
@@ -427,7 +416,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                                         <div className="suggestion-name">{team.name}</div>
                                         <div className="suggestion-meta">
                                             <span>{team.league}</span>
-                                            <span className="suggestion-time">{team.match_time}</span>
+                                            <span className="suggestion-time">{DateTimeToUsersTimezone(team.match_time).split(' ')[1]}</span>
                                         </div>
                                     </a>
                                 ))}

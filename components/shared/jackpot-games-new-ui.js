@@ -19,6 +19,98 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
     );
   };
 
+  // Parse scores from JSON
+  const parseScores = (scoresJson) => {
+    try {
+      return JSON.parse(scoresJson) || {};
+    } catch (e) {
+      return {};
+    }
+  };
+
+  // Determine match winner
+  const getMatchWinner = (game) => {
+    if (!game.goals_home || !game.goals_away) return null;
+    
+    const homeGoals = parseInt(game.goals_home);
+    const awayGoals = parseInt(game.goals_away);
+    
+    if (homeGoals > awayGoals) return '1';
+    if (awayGoals > homeGoals) return '2';
+    if (homeGoals === awayGoals) return 'X';
+    return null;
+  };
+
+  // Check if tip was correct
+  const isTipCorrect = (game) => {
+    const winner = getMatchWinner(game);
+    return winner && winner === game.tip;
+  };
+
+  // Get status badge with score
+  const getStatusBadge = (game) => {
+    const scores = parseScores(game.scores);
+    const isFinished = ['FT', 'AET', 'PEN'].includes(game.status_short);
+    const isLive = ['1H', '2H', 'HT', 'LIVE', 'ET', 'P'].includes(game.status_short);
+    
+    if (isFinished) {
+      let scoreText = `${game.goals_home} - ${game.goals_away}`;
+      if (scores?.halftime) {
+        scoreText += ` (HT: ${scores.halftime.home}-${scores.halftime.away})`;
+      }
+      return (
+        <span className="badge bg-danger ms-1" title={scoreText}>
+          {game.status_long}: {game.goals_home}-{game.goals_away}
+        </span>
+      );
+    } else if (isLive) {
+      let statusText = game.status_long || game.status_short;
+      let scoreText = `${game.goals_home || 0} - ${game.goals_away || 0}`;
+      if (game.status_elapased) {
+        statusText += ` ${game.status_elapased}'`;
+      }
+      return (
+        <span className="badge bg-warning text-dark ms-1" title={`Live: ${scoreText}`}>
+          {statusText} {game.goals_home || 0}-{game.goals_away || 0}
+        </span>
+      );
+    } else {
+      return (
+        <span className={`badge bg-${getStatusColor(game.status_short)} ms-1`}>
+          {game.status_long || game.status_short}
+        </span>
+      );
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const statusColors = {
+      FT: 'danger',
+      AET: 'danger',
+      PST: 'warning',
+      PEN: 'danger',
+      CANC: 'secondary',
+      ABD: 'secondary',
+      SUSP: 'warning',
+      NS: 'success',
+      '1H': 'warning',
+      '2H': 'warning',
+      HT: 'warning',
+      LIVE: 'warning',
+      ET: 'warning',
+      P: 'warning'
+    };
+    return statusColors[status] || 'secondary';
+  };
+
+    // Helper to get user vote label
+  const getUserVoteLabel = (userVote) => {
+    if (userVote === '1') return 'Home';
+    if (userVote === 'X') return 'Draw';
+    if (userVote === '2') return 'Away';
+    return '';
+  };
+
   return (
     <div className="container my-4">
       {gamesData.map((game, index) => {
@@ -27,20 +119,9 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
         const userVote = selectedVotes[game.fixture_id]?.prediction;
         
         const isCompleted = ['FT', 'AET', 'PEN', 'PST', 'CANC', 'ABD', 'SUSP'].includes(game.status_short);
-        
-        const getStatusColor = (status) => {
-          const statusColors = {
-            FT: 'danger',
-            AET: 'danger',
-            PST: 'warning',
-            PEN: 'danger',
-            CANC: 'secondary',
-            ABD: 'secondary',
-            SUSP: 'warning',
-            NS: 'success'
-          };
-          return statusColors[status] || 'secondary';
-        };
+        const isLive = ['1H', '2H', 'HT', 'LIVE', 'ET', 'P'].includes(game.status_short);
+        const matchWinner = getMatchWinner(game);
+        const tipCorrect = isTipCorrect(game);
 
         const system = [
           { label: 'Home', value: Number(game.percent_pred_home.replace('%', '')), code: '1', key:'home' },
@@ -59,13 +140,14 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
 
         const renderVoteButton = (label, prediction, teamName, teamLogo) => {
             const isVoting = votingInProgress?.[game.fixture_id];
+            const isDisabled = isVoting || hasVoted || isCompleted || isLive;
             
             return (
                 <button
                     className="btn btn-sm flex-fill rounded-pill border border-primary bg-white d-flex align-items-center justify-content-center gap-2"
                     style={{ height: 28 }}
                     onClick={() => onVote(game.fixture_id, prediction)}
-                    disabled={isVoting || hasVoted || isCompleted} 
+                    disabled={isDisabled} 
                 >
                     {isVoting ? (
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -93,25 +175,36 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                     <TeamIcon name={game.away_team_name} logo={game.away_team_logo} size={20} />
                     <strong>{game.away_team_name}</strong>                 
                   </div>
-                  <small className="text-muted fw-bold">{DateTimeToUsersTimezone(game.date)} |  
-                    {game.status_short && (
-                      <span className={`badge bg-${getStatusColor(game.status_short)} ms-1`}>
-                        {game.status_long || game.status_short}
+                  
+                  <div className="d-flex align-items-center gap-2 flex-wrap">
+                    <small className="text-muted fw-bold">{DateTimeToUsersTimezone(game.date)}</small>
+                    {getStatusBadge(game)}
+                    
+                    {/* Show scores if available */}
+                    {/* {(isCompleted || isLive) && (
+                      <span className="fw-bold text-primary">
+                        Score: {game.goals_home || 0} - {game.goals_away || 0}
                       </span>
-                    )}</small>
+                    )}
+                    {isLive && (
+                      <span className="badge bg-warning text-dark ms-2">
+                        LIVE
+                      </span>
+                    )} */}
+                  </div>
                 </div>
 
                 <div className="d-flex align-items-center gap-2 mt-md-0 w-100">
                   <div className="d-flex gap-2 text-center flex-fill justify-content-md-center">
-                    <div className="border rounded px-2 py-1 bg-white shadow-sm">
+                    <div className={`border rounded px-2 py-1 bg-white shadow-sm ${matchWinner === '1' ? 'border-success border-2' : ''}`}>
                       <strong>1</strong><br/>
                       <span className="text-success fw-bold">{game.bets_home}</span>
                     </div>
-                    <div className="border rounded px-2 py-1 bg-white shadow-sm">
+                    <div className={`border rounded px-2 py-1 bg-white shadow-sm ${matchWinner === 'X' ? 'border-success border-2' : ''}`}>
                       <strong>X</strong><br/>
                       <span className="text-success fw-bold">{game.bets_draw}</span>
                     </div>
-                    <div className="border rounded px-2 py-1 bg-white shadow-sm">
+                    <div className={`border rounded px-2 py-1 bg-white shadow-sm ${matchWinner === '2' ? 'border-success border-2' : ''}`}>
                       <strong>2</strong><br/>
                       <span className="text-success fw-bold">{game.bets_away}</span>
                     </div>
@@ -119,8 +212,11 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
 
                   <div className="text-end ms-auto">
                     <small className="text-dark fw-bold">Our Prediction</small>
-                    <div className="fw-bold text-success">
+                    <div className={`fw-bold ${game.status_short == 'NS' ? 'text-success' : isCompleted && tipCorrect ? 'text-success' : isCompleted ? 'text-danger' : 'text-secondary'}`}>
                       {topSystem.label} - {topSystem.value}%
+                      {isCompleted && (
+                        <span className="ms-1">{tipCorrect ? '✓' : '✗'}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -129,8 +225,12 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
               <div className="card-body">
                 <div className="mb-1">
                   <div className="d-flex justify-content-between mb-2">
-                    <strong>
-                      {isCompleted ? 'Voting Results' : hasVoted ? `Thank you for voting!` : 'Who will win? (Cast Vote)'}
+                  <strong>
+                      {isCompleted 
+                        ? `Voting Results ${hasVoted ? `(You Voted: ${getUserVoteLabel(userVote)})` : ''}` 
+                        : hasVoted 
+                          ? `Thank you for voting! (You Voted: ${getUserVoteLabel(userVote)})` 
+                          : 'Who will win? (Cast Vote)'}
                     </strong>
                     <small style={{fontWeight: "bold", fontSize: "small"}}>Total Votes: {totalVotes}</small>
                   </div>
@@ -138,16 +238,25 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   {isCompleted || hasVoted ? (
                     <div className="d-flex gap-2 bg-light rounded-pill p-2">
                       {[
-                        { label: '1', pct: homePct, logo: game.home_team_logo, name: game.home_team_name },
-                        { label: 'X', pct: drawPct },
-                        { label: '2', pct: awayPct, logo: game.away_team_logo, name: game.away_team_name }
+                        { label: '1', pct: homePct, logo: game.home_team_logo, name: game.home_team_name, winner: matchWinner === '1' },
+                        { label: 'X', pct: drawPct, winner: matchWinner === 'X' },
+                        { label: '2', pct: awayPct, logo: game.away_team_logo, name: game.away_team_name, winner: matchWinner === '2' }
                       ].map((item, i) => {
                         const isUserVote = hasVoted && userVote === item.label;
+                        const isWinner = item.winner;
+                        
+                        let borderClass = 'border-light';
+                        if (isWinner) borderClass = 'border-success border-2';
+                        else if (item.pct === maxPct) borderClass = 'border-primary fw-bold shadow-sm';
+                        
                         return (
-                          <div key={i} className={`flex-fill d-flex align-items-center justify-content-between px-2 py-1 rounded-pill border bg-white ${item.pct === maxPct ? 'border-primary fw-bold shadow-sm' : 'border-light'} ${isUserVote ? 'border-success border-2' : ''}`}>
+                          <div key={i} className={`flex-fill d-flex align-items-center justify-content-between px-2 py-1 rounded-pill border bg-white ${borderClass} ${isUserVote ? 'border-success border-2' : ''}`}>
                             <div className="d-flex align-items-center gap-1">
                               {item.logo || item.name ? <TeamIcon name={item.name} logo={item.logo} size={16} /> : null}
                               <strong>{item.label}</strong>
+                              {isWinner && (
+                                <span className="badge bg-success ms-1">Winner</span>
+                              )}
                               {isUserVote && (
                                 <span className="badge bg-success ms-1">Your Vote</span>
                               )}
@@ -186,7 +295,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                <div className="desktop-container-resize">
                   <div className="text-center">
                     <Adsense
-                      client="ca-pub-5665711413000284"
+                      client="ca-pub-5665711413000284"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                       slot="4141567825"
                       style={{ display: "block" }}
                       layout="in-article"
