@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
+// pages/team/[team-details]/standings.js (or wherever this component is)
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import TeamDetailsTop from "../../../components/teamdetails/team_details_top";
 import PreLoader from "../../../components/includes/loader";
 import RenderData from "../../../components/shared/render_fixtures_data";
@@ -7,12 +8,10 @@ import SelectedMacthesPredDetails from "../../../components/shared/selected_matc
 import DataNotFoundPage from "../../../components/includes/datanotfound";
 import FiltersTeamDetails from "../../../components/teamdetails/filters-on-teams-page";
 import DisplayIndependentLeagueStandings from "../../../components/shared/standings_by_league";
-import fetchTableStandings from "../../../components/teamdetails/functions/fetch_table_standings";
-import fetchTeamsLast6Matches from "../../../components/teamdetails/functions/fetch_last_6_matches";
 import { Adsense } from "@ctrl/react-adsense";
 
 // =====================================================
-// ✅ SERVER SIDE - ONLY FETCHES TEAM TOP DATA
+// ✅ SERVER SIDE
 // =====================================================
 export async function getServerSideProps(context) {
   const { params } = context;
@@ -23,23 +22,19 @@ export async function getServerSideProps(context) {
 
   // Validate team ID
   if (isNaN(teamIdInteger) || teamIdInteger <= 0) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
+  };
+
   try {
-    // 🔥 ONLY FETCH TOP TEAM DATA - everything else stays client-side
+    // Fetch Top Team Data (required - blocks response)
     const topRes = await fetch(
       `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
-      {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        },
-        // Add timeout to prevent hanging
-        signal: AbortSignal.timeout(5000)
-      }
+      { headers, signal: AbortSignal.timeout(5000) }
     );
 
     if (!topRes.ok) {
@@ -48,86 +43,79 @@ export async function getServerSideProps(context) {
 
     const initialTeamsTopData = await topRes.json();
 
-    // Validate top data
     if (!initialTeamsTopData?.status || !initialTeamsTopData?.data?.length) {
-      return {
-        notFound: true,
-      };
+      return { notFound: true };
+    }
+
+    const teamData = initialTeamsTopData.data[0];
+    
+    // 🚀 Fetch last 6 matches and standings in parallel
+    const [last6Res, standingsRes] = await Promise.allSettled([
+      // Last 6 matches
+      fetch("https://api.pitchpredictions.com/api/fetch_teams_matches_both_sides", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          team_id: teamIdInteger,
+          fixture_date: teamData.unformated_date,
+        }),
+      }).then(res => res.json()),
+      
+      // Standings
+      fetch("https://api.pitchpredictions.com/api/fetch_team_standings", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          league_id: teamData.league_id,
+        }),
+      }).then(res => res.json())
+    ]);
+
+    // Process last 6 matches
+    let last6Data = [];
+    if (last6Res.status === 'fulfilled' && last6Res.value?.status === true) {
+      last6Data = last6Res.value.data || [];
+    }
+
+    // Process standings
+    let standingsData = [];
+    let standingsStatus = "error";
+    if (standingsRes.status === 'fulfilled' && standingsRes.value?.status === true) {
+      standingsData = standingsRes.value.data?.[0]?.standings_data || [];
+      standingsStatus = "success";
     }
 
     return {
       props: {
         initialTeamsTopData,
         teamIdInteger,
+        initialLast6Matches: last6Data,
+        initialStandings: standingsData,
+        standingsStatus,
       },
     };
   } catch (error) {
     console.error('SSR fetch error:', error);
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 }
 
 // =====================================================
 // ✅ COMPONENT
 // =====================================================
-function Teams({ initialTeamsTopData, teamIdInteger }) {
+function Teams({ 
+  initialTeamsTopData, 
+  teamIdInteger,
+  initialLast6Matches = [],
+  initialStandings = [],
+  standingsStatus = "error"
+}) {
   const router = useRouter();
   
   // SSR data - available immediately
-  const [teams_top_data, setTeamsTopData] = useState(
-    initialTeamsTopData?.data || []
-  );
-  
-  // Client-side data - will load later
-  const [table_standings, setTableStandings] = useState([]);
-  const [team_last6_matches, setTeamLast6Matches] = useState([]);
-  
-  const [endpointStatus1, setEndPointStatus1] = useState("");
-  const [isLoadingSecondary, setIsLoadingSecondary] = useState(true);
-
-  const team_matches_url = "https://api.pitchpredictions.com/api/fetch_teams_matches_both_sides";
-
-  // client-side fetch for all secondary data
-  useEffect(() => {
-    if (!teams_top_data.length) return;
-
-    const fetchAllSecondaryData = async () => {
-      setIsLoadingSecondary(true);
-      
-      try {
-        const teamData = teams_top_data[0];
-        
-        // Fetch both APIs in parallel for better performance
-        const [last6Response, standingsResponse] = await Promise.all([
-          fetchTeamsLast6Matches(team_matches_url, teamIdInteger, teamData.unformated_date),
-          fetchTableStandings(teamData.league_id)
-        ]);
-
-        // Process last 6 matches
-        if (last6Response?.status === true) {
-          setTeamLast6Matches(last6Response.data || []);
-        }
-
-        // Process standings
-        if (standingsResponse?.status === true) {
-          const standingsData = standingsResponse.data;
-          setTableStandings(standingsData[0]?.standings_data || []);
-          setEndPointStatus1("success");
-        } else {
-          setEndPointStatus1(standingsResponse?.message === "No data found" ? "no_data" : "error");
-        }
-      } catch (error) {
-        console.error('Error fetching secondary data:', error);
-        setEndPointStatus1("error");
-      } finally {
-        setIsLoadingSecondary(false);
-      }
-    };
-    
-    fetchAllSecondaryData();
-  }, [teamIdInteger, teams_top_data]);
+  const [teams_top_data] = useState(initialTeamsTopData?.data || []);
+  const [team_last6_matches] = useState(initialLast6Matches);
+  const [table_standings] = useState(initialStandings);
 
   // If no team data from SSR, show not found
   if (!teams_top_data.length) {
@@ -164,42 +152,7 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
   // Check data availability
   const hasStandings = table_standings.length > 0;
   const hasGeneralMatches = team_last6_matches.length > 0;
-  const hasError = endpointStatus1 === "error";
-  const hasNoData = endpointStatus1 === "no_data";
-
-  // Show loading state while fetching secondary data
-  if (isLoadingSecondary) {
-    return (
-      <>
-        {/* SSR Content - shows immediately */}
-        <div className="sites-card mb-2">
-          <TeamDetailsTop 
-            props={teamData} 
-            last_6_matches={team_last6_matches} 
-            team_id={teamIdInteger}
-          />
-          <div className="row">
-            <div className="text-center fw-bold">
-              <h2 className="sectionTitle">
-                <b>{getMatchStatus()}</b>
-              </h2>
-            </div>
-          </div>
-          <RenderData renderPredictions={renderPredictions} />
-          <FiltersTeamDetails 
-            url_filter={router.pathname.substring(1)} 
-            match_url={url_name} 
-            league_type={teamData.league_type}
-          />
-        </div>
-        
-        {/* Loading indicator for secondary data */}
-        <div className="sites-card">
-          <PreLoader />
-        </div>
-      </>
-    );
-  }
+  const hasError = standingsStatus === "error" && !hasStandings;
 
   // Error state
   if (hasError) {
@@ -239,8 +192,8 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
     );
   }
 
-  // No data state
-  if (hasNoData) {
+  // No standings data state
+  if (!hasStandings) {
     return (
       <>
         <div className="sites-card mb-2">
@@ -304,17 +257,13 @@ function Teams({ initialTeamsTopData, teamIdInteger }) {
         />
       </div>
 
-      {/* League Standings - Client-side Content */}
+      {/* League Standings - Server rendered */}
       <div className="sites-card">
-        {hasStandings ? (
-          <DisplayIndependentLeagueStandings 
-            props={table_standings} 
-            home_team_id={teamIdInteger} 
-            league_name={teamData.league_name} 
-          />
-        ) : (
-          <DataNotFoundPage props="League standings not available." />
-        )}
+        <DisplayIndependentLeagueStandings 
+          props={table_standings} 
+          home_team_id={teamIdInteger} 
+          league_name={teamData.league_name} 
+        />
         
         {/* AdSense at the bottom */}
         <br />

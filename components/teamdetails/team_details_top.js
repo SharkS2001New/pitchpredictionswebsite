@@ -58,7 +58,6 @@ function TeamDetailsTop(props) {
                     <div className="col-md-3 col-sm-0"></div>
                 </div>
                 <br />
-                {/* Add a break point spacing if the device size if mobile */}
             </React.Fragment>
         );
     } else {
