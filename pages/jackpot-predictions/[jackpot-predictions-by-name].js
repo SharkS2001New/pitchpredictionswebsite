@@ -11,7 +11,8 @@ function JackpotByNamePredictions({
     endpointStatus, 
     error,
     initialVoteStats,
-    jackpotApiName 
+    jackpotApiName,
+    isNotFound = false // Add this prop
 }) {         
     const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
@@ -307,11 +308,26 @@ function JackpotByNamePredictions({
         }
     };
 
-    // Handle error state
-    if (endpointStatus === "error" || error) {
+    // Show friendly message if jackpot is not found (404)
+    if (isNotFound) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
+                <div className="container text-center py-5">
+                    <div className="mb-4">
+                        <i className="bi bi-trophy" style={{ fontSize: '4rem', color: '#6c757d' }}></i>
+                    </div>
+                    <h2 className="h4 mb-3">Jackpot Not Available</h2>
+                    <p className="text-muted mb-4">
+                        This jackpot is either not currently active or hasn't been updated yet. 
+                        Please check back later or browse our other active jackpots.
+                    </p>
+                    <div className="mb-4">
+                        <a href="/jackpot-predictions" className="btn btn-primary">
+                            <i className="bi bi-arrow-left me-2"></i>
+                            View All Jackpots
+                        </a>
+                    </div>
+                </div>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -324,7 +340,24 @@ function JackpotByNamePredictions({
         );
     }
 
-    // Handle empty data state
+    // Handle error state (API errors, etc.)
+    if (endpointStatus === "error" || error) {
+        return (
+            <div className="sites-card">
+                <DataNotFoundPage props="This jackpot is currently not available. Please check back later." />
+                <br/>
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />         
+            </div>
+        );
+    }
+
+    // Handle empty data state (API returned no data)
     if (!gamesData || gamesData.length === 0) {
         return (
             <div className="sites-card">
@@ -396,9 +429,17 @@ export async function getServerSideProps(context) {
     const path = `jackpot-predictions/${jackpotSlug}`;
     const jackpotApiName = ReturnJackpotNameSavedInDB(path);
     
-    if (!jackpotApiName) {
+    // If jackpot name is "Unknown Jackpot", show friendly 404
+    if (!jackpotApiName || jackpotApiName === "Unknown Jackpot") {
         return {
-            notFound: true
+            props: {
+                initialGamesData: [],
+                endpointStatus: "not_found",
+                error: null,
+                initialVoteStats: {},
+                jackpotApiName: null,
+                isNotFound: true
+            }
         };
     }
     
@@ -414,16 +455,49 @@ export async function getServerSideProps(context) {
             { headers }
         );
 
+        // If API returns 404, show friendly message
+        if (response.status === 404) {
+            return {
+                props: {
+                    initialGamesData: [],
+                    endpointStatus: "not_found",
+                    error: null,
+                    initialVoteStats: {},
+                    jackpotApiName: jackpotApiName,
+                    isNotFound: true
+                }
+            };
+        }
+
         if (!response.ok) {
-            if (response.status === 404) {
-                return {
-                    notFound: true
-                };
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // For other errors, still show friendly message but with error status
+            return {
+                props: {
+                    initialGamesData: [],
+                    endpointStatus: "not_found",
+                    error: "This jackpot is currently not available",
+                    initialVoteStats: {},
+                    jackpotApiName: jackpotApiName,
+                    isNotFound: true
+                }
+            };
         }
 
         const data = await response.json();
+        
+        // If API returns false status or no data, show friendly message
+        if (!data.status || !data.data || data.data.length === 0) {
+            return {
+                props: {
+                    initialGamesData: [],
+                    endpointStatus: "not_found",
+                    error: null,
+                    initialVoteStats: {},
+                    jackpotApiName: jackpotApiName,
+                    isNotFound: true
+                }
+            };
+        }
         
         let formattedData = [];
         let voteStats = {};
@@ -486,23 +560,26 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 initialGamesData: formattedData,
-                endpointStatus: data.status === true ? "success" : "error",
-                error: data.status === true ? null : (data.message || "Failed to load jackpot fixtures"),
+                endpointStatus: "success",
+                error: null,
                 initialVoteStats: voteStats,
-                jackpotApiName: jackpotApiName
+                jackpotApiName: jackpotApiName,
+                isNotFound: false
             }
         };
 
     } catch (error) {
         console.error("Error fetching jackpot data:", error);
 
+        // Return friendly message instead of error
         return {
             props: {
                 initialGamesData: [],
-                endpointStatus: "error",
-                error: error.message || "Failed to load jackpot fixtures",
+                endpointStatus: "not_found",
+                error: "This jackpot is currently not available",
                 initialVoteStats: {},
-                jackpotApiName: jackpotApiName
+                jackpotApiName: jackpotApiName,
+                isNotFound: true
             }
         };
     }

@@ -15,6 +15,7 @@ export default function Home({
     endpointStatus, 
     error,
     baseUrl,
+    structuredData
 }) {
   const [allData, setAllData] = useState(initialData || []);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -107,6 +108,12 @@ export default function Home({
   
   return (
     <>
+      {/* Structured Data Script - Using @graph format */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       <div className="sites-card">
         <p className="text-center blink_me">Looking for Premium Football Predictions!!!&nbsp;</p>
         <p className="text-center">
@@ -148,6 +155,9 @@ export default function Home({
 
 export async function getServerSideProps() {
   const todaysDate = getFormattedCurrentDate();
+  const siteUrl = 'https://www.pitchpredictions.com';
+  const currentDate = new Date().toISOString().split('T')[0];
+  const currentDateTime = new Date().toISOString();
   
   const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
   const firstBatchUrl = `${baseUrl}&start_index=0&end_index=20`;
@@ -161,13 +171,114 @@ export async function getServerSideProps() {
     
     const data = await response.json();
     
+    // Create structured data in @graph format as requested
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": siteUrl,
+          "name": "PitchPredictions",
+          "url": siteUrl,
+          "logo": `${siteUrl}/pitch-predictions-logo.png`,
+          "description": "PitchPredictions provides free daily football predictions, expert tips, accumulator guides, jackpots, and betting insights based on team form, statistics, and performance analysis.",
+          "sameAs": [
+            "https://t.me/betsassuredkenya",
+            "https://wa.me/254111509962"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": siteUrl,
+          "url": siteUrl,
+          "name": "PitchPredictions",
+          "publisher": {
+            "@id": siteUrl
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": `${siteUrl}/?s={search_term_string}`,
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": siteUrl,
+          "url": siteUrl,
+          "name": "PitchPredictions – Accurate Football Predictions, Stats & Betting Insights",
+          "isPartOf": {
+            "@id": siteUrl
+          },
+          "about": {
+            "@id": `${siteUrl}/about-us`
+          },
+          "description": "PitchPredictions offers accurate daily football predictions, detailed match stats, accumulator tips, jackpots, and betting insights to help users make smarter betting decisions.",
+          "inLanguage": "en"
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is PitchPredictions?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PitchPredictions is a football prediction platform that provides accurate match forecasts, detailed statistics, and actionable betting insights for football fans and bettors worldwide."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How accurate are PitchPredictions forecasts?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our forecasts are backed by statistical models, historical data, and expert review. While no prediction is guaranteed, our methods consistently improve accuracy compared to random guessing."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What types of statistics are provided?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We provide team form, head-to-head results, goal trends, home/away performance, player availability, and tactical analysis for every match."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you provide betting insights?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. We offer value bets, odds analysis, match strategies, and expert tips to help users make smarter betting decisions."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are predictions free or paid?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PitchPredictions offers both free daily predictions and premium enhanced forecasts for users who want detailed statistics, advanced analysis, and exclusive betting insights."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which leagues are covered?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We cover major leagues worldwide including Premier League, La Liga, Serie A, Bundesliga, Ligue 1, UEFA competitions, World Cup matches, and selected leagues in Asia, Africa, and South America."
+              }
+            }
+          ]
+        }
+      ]
+    };
+
     if (data.status === true) {
       return {
         props: {
           initialData: data.data || [],
           endpointStatus: "success",
           error: null,
-          baseUrl: baseUrl
+          baseUrl: baseUrl,
+          structuredData: structuredData
         }
       };
     } else {
@@ -176,19 +287,60 @@ export async function getServerSideProps() {
           initialData: [],
           endpointStatus: "error",
           error: data.message || "API returned error",
-          baseUrl: baseUrl
+          baseUrl: baseUrl,
+          structuredData: structuredData
         }
       };
     }
   } catch (error) {
     console.error('Error fetching homepage predictions:', error);
     
+    // Create basic structured data even if API fails
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": siteUrl,
+          "name": "PitchPredictions",
+          "url": siteUrl,
+          "logo": `${siteUrl}/pitch-predictions-logo.png`,
+          "description": "PitchPredictions provides free daily football predictions, expert tips, accumulator guides, jackpots, and betting insights based on team form, statistics, and performance analysis.",
+          "sameAs": [
+            "https://t.me/betsassuredkenya",
+            "https://wa.me/254111509962"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": siteUrl,
+          "url": siteUrl,
+          "name": "PitchPredictions",
+          "publisher": {
+            "@id": siteUrl
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": siteUrl,
+          "url": siteUrl,
+          "name": "PitchPredictions – Accurate Football Predictions, Stats & Betting Insights",
+          "isPartOf": {
+            "@id": siteUrl
+          },
+          "description": "PitchPredictions offers accurate daily football predictions, detailed match stats, accumulator tips, jackpots, and betting insights.",
+          "inLanguage": "en"
+        }
+      ]
+    };
+    
     return {
       props: {
         initialData: [],
         endpointStatus: "error",
         error: error.message,
-        baseUrl: baseUrl
+        baseUrl: baseUrl,
+        structuredData: structuredData
       }
     };
   }

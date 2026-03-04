@@ -536,7 +536,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                           color: jackpot.confidence_level === 'high' ? 'white' : 
                                  jackpot.confidence_level === 'medium' ? 'black' : 'white'
                         }}>
-                          {jackpot.confidence_level?.toUpperCase() || 'MEDIUM'}
+                          {jackpot.confidence_level?.toUpperCase() || 'MEDIUM'} Confidence
                         </span>
                       </div>
                       
