@@ -1,4 +1,6 @@
 function ReturnJackpotNameSavedInDB(current_url) { 
+    console.log(current_url);
+
     if (current_url == 'jackpot-predictions/sportpesa-mega-jackpot-predictions') { 
         return "Sportpesa Mega Jackpot";
     } else if (current_url == 'jackpot-predictions/sportpesa-midweek-jackpot-predictions') {
@@ -7,8 +9,8 @@ function ReturnJackpotNameSavedInDB(current_url) {
         return "Betika Mega Jackpot";
     } else if (current_url == 'jackpot-predictions/betika-midweek-jackpot-predictions') {
         return "Betika Midweek Jackpot"; 
-    } else if (current_url == 'jackpot-predictions/betika-sababisha-jackpot-predictions') {
-        return "Betika Sababisha Jackpot";
+    // } else if (current_url == 'jackpot-predictions/betika-sababisha-jackpot-predictions') {
+    //     return "Betika Sababisha Jackpot";
     } else if (current_url == 'jackpot-predictions/odibet-laki-tatu-daily-jackpot-predictions') {
         return "Odibet Laki Tatu Jackpot";
     } else if (current_url == 'jackpot-predictions/mozzart-super-daily-jackpot-predictions') { 

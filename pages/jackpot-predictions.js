@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Adsense } from "@ctrl/react-adsense";
 import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpots-landing-page';
 import { useRouter } from 'next/router';
+import getJackpotNameFromSlug from '../components/functions/GetJackpotName';
+import ReturnSlugFromJackpotName from '../components/functions/getJackpotNameFromSlug';
 
 function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '' }) {
   const router = useRouter();
@@ -39,83 +41,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     return str.replace(/\b\w+/g, function(match) {
       return match.charAt(0).toUpperCase() + match.slice(1).toLowerCase();
     });
-  };
-
-  // Get jackpot name from slug (matches the existing slugs format)
-  const getJackpotNameFromSlug = (slug) => {
-    if (!slug) return '';
-    // Remove '-predictions' suffix if present
-    let nameWithoutPredictions = slug.replace(/-predictions$/, '');
-    // Convert hyphens to spaces and capitalize each word
-    return nameWithoutPredictions.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  // Improved find matching slug function
-  const findMatchingSlug = (jackpotName) => {
-    if (!jackpotName) return '';
-    
-    // Clean up the jackpot name
-    const cleanName = jackpotName.toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .trim();
-    
-    // Create multiple variations for matching
-    const nameVariations = [
-      // Original clean name
-      cleanName,
-      // With predictions suffix
-      cleanName + ' predictions',
-      // Hyphenated version
-      cleanName.replace(/\s+/g, '-'),
-      // Hyphenated with predictions
-      cleanName.replace(/\s+/g, '-') + '-predictions',
-      // Handle special cases
-      cleanName.replace(/bet/gi, 'bet').replace(/\s+/g, '-'),
-      // Remove "jackpot" for matching
-      cleanName.replace(/\s*jackpot\s*/i, '').trim(),
-      cleanName.replace(/\s*jackpot\s*/i, '').replace(/\s+/g, '-') + '-predictions',
-      // Handle country-specific variations
-      cleanName.replace(/tanzania/gi, 'tz'),
-      cleanName.replace(/kenya/gi, 'ke'),
-      cleanName.replace(/uganda/gi, 'ug'),
-      cleanName.replace(/nigeria/gi, 'ng'),
-      cleanName.replace(/ghana/gi, 'gh')
-    ];
-    
-    // Find matching slug
-    const matchingSlug = allSlugs.find(slug => {
-      const slugLower = slug.toLowerCase();
-      
-      // Check if any variation matches
-      return nameVariations.some(variation => {
-        if (!variation) return false;
-        
-        // Direct match
-        if (slugLower === variation) return true;
-        
-        // Slug contains variation
-        if (slugLower.includes(variation)) return true;
-        
-        // Variation contains slug's base name
-        const slugBase = slugLower.replace(/-predictions$/, '').replace(/-/g, ' ');
-        if (cleanName.includes(slugBase) || slugBase.includes(cleanName)) return true;
-        
-        return false;
-      });
-    });
-    
-    // If no match found, create a slug from the jackpot name
-    if (!matchingSlug) {
-      // Create a fallback slug
-      return cleanName
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, '-')
-        .toLowerCase() + '-predictions';
-    }
-    
-    return matchingSlug;
   };
 
   // Determine if jackpot has started based on start_datetime_formatted
@@ -312,7 +237,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     ? activeJackpots
         .filter(jackpot => jackpot && jackpot.jackpot_name)
         .map(jackpot => {
-          const slug = findMatchingSlug(jackpot.jackpot_name);
+          const slug = ReturnSlugFromJackpotName(jackpot.jackpot_name);
           return {
             ...jackpot,
             slug: slug,
@@ -810,17 +735,15 @@ export async function getServerSideProps({ req, query }) {
     'sportpesa-midweek-jackpot-predictions',
     'sportpesa-supa-jackpot-17-predictions-tz',
     'sportpesa-supa-jackpot-13-predictions-tz',
-    'betika-sababisha-jackpot-predictions',
     'betika-midweek-jackpot-predictions',
-    'betika-grand-jackpot-predictions',
     'betika-kitonga-jackpot-tz',
     'mozzart-super-grand-jackpot-predictions',
     'mozzart-super-daily-jackpot-predictions',
     'shabiki-jackpot-predictions',
     'odibet-laki-tatu-daily-jackpot-predictions',
     'sportybet-jackpot-predictions',
-    'betlion-daily-jp-jackpot-predictions',
-    'betlion-goliath-jackpot-predictions',
+    // 'betlion-daily-jp-jackpot-predictions',
+    // 'betlion-goliath-jackpot-predictions',
     'betpawa-pick13-jackpot-predictions-uganda',
     'betpawa-pick17-jackpot-predictions-uganda',
     'betpawa-pick13-jackpot-predictions-nigeria',

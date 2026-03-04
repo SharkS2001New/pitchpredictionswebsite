@@ -4,7 +4,7 @@ const getJackpotNameFromSlug = (slug) => {
       'sportpesa-midweek-jackpot-predictions': 'Sportpesa Midweek Jackpot Predictions',
       'sportpesa-supa-jackpot-17-predictions-tz': 'Sportpesa Tanzania Supa Jackpot 17 Predictions',
       'sportpesa-supa-jackpot-13-predictions-tz': 'Sportpesa Tanzania Supa Jackpot 13 Predictions',
-      'betika-sababisha-jackpot-predictions': 'Betika Sababisha Jackpot Predictions',
+      // 'betika-sababisha-jackpot-predictions': 'Betika Sababisha Jackpot Predictions',
       'betika-midweek-jackpot-predictions': 'Betika Midweek Jackpot Predictions',
       'betika-grand-jackpot-predictions': 'Betika Grand Jackpot Predictions',
       'betika-kitonga-jackpot-tz': 'Betika Kitonga Jackpot Tanzania',
