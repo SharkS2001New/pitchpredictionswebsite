@@ -170,6 +170,7 @@ function CustomDatePicker() {
                                 border: "none",
                                 fontWeight: "bold"
                             }}
+                            aria-label="Select match date"
                             >
                             {[...Array(getTotalDays(selectedDate))].map((_, i) => {
                                 const optionDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i + 1);

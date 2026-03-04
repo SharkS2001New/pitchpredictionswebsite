@@ -80,7 +80,7 @@ function Footer(){
 
         <div className="row">
             <div className="col-12 mb-0">
-                <h5 className="text-center mb-3">Our Partners & Sponsors</h5>
+                <h3 className="h5 text-center mb-3">Our Partners & Sponsors</h3>
                 <ul className="sponsors-list">
                   <li className="mb-0"><a target="_blank" href="https://childreninachangingclimate.org">Xoilac xem bong da</a></li>
                   <li className="mb-0"><a target="_blank" href="https://socolive55k.io">Socolive truc tiep bong da</a></li>

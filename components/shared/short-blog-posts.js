@@ -84,9 +84,9 @@ const ShortBlogPosts = () => {
           return (
             <div key={itemKey} className="col-md-6 col-12">
               <div className="post-item p-3 m-1">
-                <h6 className="post-title linkTxt3 mb-3">
+                <span className="h6 post-title linkTxt3 mb-3">
                   <a href={post.post_link || post.link || '#'}>{post.title || 'Untitled'}</a>
-                </h6>
+                </span>
                 <p className="post-date">{formatDate(post.post_date || post.date)}</p>
               </div>
             </div>

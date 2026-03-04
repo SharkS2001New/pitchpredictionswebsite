@@ -148,9 +148,8 @@ function App({ Component, pageProps }) {
         <meta property="og:image" content="https://www.pitchpredictions.com/pitch-predictions-ico.png" />
         <meta property="og:description" content={meta_content_data[1]} />
       </Head>
-
       <Navbar/>
-      <div style={{ backgroundColor: router.pathname.includes("auth") ? "white" : "#212830" }}>
+      <main style={{ backgroundColor: router.pathname.includes("auth") ? "white" : "#212830" }}>
         <div className={`container-mob  ${router.pathname.includes("auth") ? "desktop-container-resize-auth" : "desktop-container-resize"}`}>
           <div className="d-flex" id="wrapper">
           {!isAuthPage && <SideNavBar />}
@@ -225,8 +224,8 @@ function App({ Component, pageProps }) {
           </div>
           </div>
         </div>
-        <Footer/> 
-      </div>   
+      </main>   
+      <Footer/> 
     </React.Fragment>
   )  
 }

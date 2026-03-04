@@ -5,8 +5,6 @@ import SearchModal from "../shared/SearchModal";
 
 function Navbar(){
     const [user, setUser] = useState(null);
-    const [searchResults, setSearchResults] = useState([]);
-    const [search_query, setSearchQuery] = useState();
     const [noofMyMatches,setNumberOfMymatches] = useState(0);
     const [favMatchesUpdateCounter, setfavMatchesUpdateCounter] = useState(0);
     const [showSearchModal, setShowSearchModal] = useState(false);
@@ -143,7 +141,7 @@ function Navbar(){
                                         &nbsp;Dashboard&nbsp;
                                     </a>
                                     <button onClick={handleLogout}
-                                        className="btn btn-danger btn-sm p-1 me-3" style={{ fontWeight: 'bold' }}>
+                                        className="btn btn-danger btn-sm p-1 me-3" style={{ fontWeight: 'bold' }} aria-label="Toggle navigation">
                                         Logout
                                     </button>
                                 </>                  
@@ -169,22 +167,22 @@ function Navbar(){
                 <div className="container desktop-container-resize mb-2">
                     <div className="d-none d-xl-block d-lg-block mt-2" style={{height: "100%", width:"21%",display: "block"}}>
                         <a className="navbar-brand" href="/">
-                            <img src="/pitch-predictions-logo.png" style={{height:"100%", width:"100%"}} alt="logo"/>
+                            <img src="/pitch-predictions-logo.png" style={{height:"100%", width:"100%"}} alt="Pitch Predictions - Football Betting Tips and Match Predictions"/>
                         </a>
                     </div>
                     
                     <button className="btn btn-primary d-lg-none" aria-label="menu" id="sidebarToggle" onClick={openSidemenu} style={{backgroundColor: "#00000000",borderColor: "#ffffff1a"}}>
-                        <span className="navbar-toggler-icon" role="button" aria-label="Toggle navigation"></span>
+                        <span className="navbar-toggler-icon" aria-label="Toggle navigation"></span>
                     </button>
                     
                     <div className="d-lg-none" style={{height: "100%", width:"60%",objectFit: "contain"}}>
                         <a className="navbar-brand d-lg-none" href="/">
-                            <img src="/pitch-predictions-logo.png" height="100%" width="100%" alt="logo"/>
+                            <img src="/pitch-predictions-logo.png" height="100%" width="100%" alt="Pitch Predictions - Football Betting Tips and Match Predictions"/>
                         </a> 
                     </div>
 
-                    <button className="navbar-toggler" type="button" onClick={openSearchModal}>
-                        <i className="bi bi-search" role="button" aria-hidden="true"></i>
+                    <button className="navbar-toggler" type="button" onClick={openSearchModal} aria-label="Open search">
+                        <i className="bi bi-search" aria-hidden="true"></i>
                     </button>
 
                     {/**Navbar Links and Search - Keep original layout */}
@@ -228,7 +226,7 @@ function Navbar(){
                             style={{
                                 borderColor: "#ffffff1a",
                                 padding: "3px 16px"
-                            }}>
+                            }} aria-label="Open search">
                             <i className="bi bi-search me-1" aria-hidden="true"></i>
                             Search
                         </button>
