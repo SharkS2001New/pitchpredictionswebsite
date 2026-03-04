@@ -14,8 +14,7 @@ function SokafansPredictions({
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate,
-    popularTipsData 
+    todaysDate
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -136,7 +135,7 @@ function SokafansPredictions({
     // Render the page with data
     return (
         <div className="sites-card">
-            <PopularTips initialMatches={popularTipsData} />
+            <PopularTips/>
             
             <RenderData 
                 renderPredictions={renderPredictions}
@@ -218,14 +217,14 @@ export async function getServerSideProps() {
                 props: {
                     initialData: [],
                     endpointStatus: "error",
-                    error: data.message || "Failed to load sokafans predictions",
+                    error: data.message || "Failed to load competitor predictions",
                     baseUrl: baseUrl,
                     todaysDate: todaysDate
                 }
             };
         }
     } catch (error) {
-        console.error('Error fetching sokafans predictions:', error);
+        console.error('Error fetching competitor predictions:', error);
         
         return {
             props: {
