@@ -52,32 +52,70 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     ).join(' ');
   };
 
-  // Find matching slug from allSlugs based on jackpot name
+  // Improved find matching slug function
   const findMatchingSlug = (jackpotName) => {
     if (!jackpotName) return '';
     
-    // Clean up the jackpot name for matching
+    // Clean up the jackpot name
     const cleanName = jackpotName.toLowerCase()
-      .replace(/ predictions$/i, '')
       .replace(/[^\w\s]/g, '')
       .trim();
     
-    // Create variations for matching
+    // Create multiple variations for matching
     const nameVariations = [
+      // Original clean name
       cleanName,
+      // With predictions suffix
+      cleanName + ' predictions',
+      // Hyphenated version
       cleanName.replace(/\s+/g, '-'),
-      cleanName.replace(/\s+/g, '-') + '-predictions'
+      // Hyphenated with predictions
+      cleanName.replace(/\s+/g, '-') + '-predictions',
+      // Handle special cases
+      cleanName.replace(/bet/gi, 'bet').replace(/\s+/g, '-'),
+      // Remove "jackpot" for matching
+      cleanName.replace(/\s*jackpot\s*/i, '').trim(),
+      cleanName.replace(/\s*jackpot\s*/i, '').replace(/\s+/g, '-') + '-predictions',
+      // Handle country-specific variations
+      cleanName.replace(/tanzania/gi, 'tz'),
+      cleanName.replace(/kenya/gi, 'ke'),
+      cleanName.replace(/uganda/gi, 'ug'),
+      cleanName.replace(/nigeria/gi, 'ng'),
+      cleanName.replace(/ghana/gi, 'gh')
     ];
     
-    // Find matching slug in allSlugs
+    // Find matching slug
     const matchingSlug = allSlugs.find(slug => {
       const slugLower = slug.toLowerCase();
-      return nameVariations.some(variation => 
-        slugLower.includes(variation) || variation.includes(slugLower.replace(/-predictions$/, ''))
-      );
+      
+      // Check if any variation matches
+      return nameVariations.some(variation => {
+        if (!variation) return false;
+        
+        // Direct match
+        if (slugLower === variation) return true;
+        
+        // Slug contains variation
+        if (slugLower.includes(variation)) return true;
+        
+        // Variation contains slug's base name
+        const slugBase = slugLower.replace(/-predictions$/, '').replace(/-/g, ' ');
+        if (cleanName.includes(slugBase) || slugBase.includes(cleanName)) return true;
+        
+        return false;
+      });
     });
     
-    return matchingSlug || '';
+    // If no match found, create a slug from the jackpot name
+    if (!matchingSlug) {
+      // Create a fallback slug
+      return cleanName
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, '-')
+        .toLowerCase() + '-predictions';
+    }
+    
+    return matchingSlug;
   };
 
   // Determine if jackpot has started based on start_datetime_formatted
@@ -108,6 +146,36 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     return 'success';
   };
 
+  const formatStartTime = (dateTimeString) => {
+    if (!dateTimeString) return '';
+
+    try {
+      const date = new Date(dateTimeString);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const options = { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false // 👈 Forces 24-hour format
+      };
+
+      const timeStr = date.toLocaleTimeString('en-US', options);
+
+      if (date.toDateString() === now.toDateString()) {
+        return `Today at ${timeStr}`;
+      } else if (date.toDateString() === tomorrow.toDateString()) {
+        return `Tomorrow at ${timeStr}`;
+      } else {
+        return `${formatDateShort(dateTimeString)} at ${timeStr}`;
+      }
+    } catch (e) {
+      return dateTimeString;
+    }
+  };
+
   const openShareModal = (jackpotName, slug) => {
     setShareData({
       name: jackpotName,
@@ -118,63 +186,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
 
   const closeShareModal = () => {
     setShowShareModal(false);
-  };
-
-  // Generate SEO-friendly analysis
-  const generateEEATAnalysis = (jackpot) => {
-    if (!jackpot) return '';
-    
-    const name = jackpot.jackpot_name?.toLowerCase() || '';
-    const games = jackpot.total_games || 0;
-    const progress = jackpot.progress_percentage || 0;
-    const confidence = jackpot.avg_confidence || 0;
-    const completedGames = jackpot.completed_games || 0;
-    const hasStarted = hasJackpotStarted(jackpot);
-    const isCompleted = isJackpotCompleted(jackpot);
-    
-    let analysis = `Analysis of ${games}-game jackpot selection. `;
-    
-    if (isCompleted) {
-      analysis += `This jackpot has concluded with ${completedGames} games completed. `;
-    } else if (hasStarted) {
-      analysis += `Currently in progress with ${completedGames} of ${games} games completed. `;
-    } else {
-      analysis += `Scheduled to begin on ${jackpot.start_datetime_formatted || 'soon'}. `;
-    }
-    
-    if (games >= 15) {
-      analysis += `This extensive selection requires comprehensive match-by-match evaluation. `;
-    } else if (games >= 10) {
-      analysis += `Multiple fixtures demand careful cross-league analysis. `;
-    } else {
-      analysis += `Focused selection allows for detailed individual match assessment. `;
-    }
-    
-    if (confidence >= 70) {
-      analysis += `Historical data shows consistent patterns in ${games >= 15 ? 'larger jackpots' : 'this format'}. `;
-    } else if (confidence >= 50) {
-      analysis += `Mixed historical outcomes suggest selective value identification. `;
-    } else {
-      analysis += `Variable patterns indicate need for cautious selection strategy. `;
-    }
-    
-    analysis += `Our methodology combines statistical models with current team performance data. `;
-    
-    if (progress > 0 && completedGames > 0 && !isCompleted) {
-      analysis += `With ${completedGames} games completed, early results provide additional data points. `;
-    }
-    
-    if (name.includes('mega')) {
-      analysis += `Mega jackpots require perfect selections - each match demands individual assessment.`;
-    } else if (name.includes('daily')) {
-      analysis += `Daily formats benefit from up-to-date team news and recent form analysis.`;
-    } else if (name.includes('midweek')) {
-      analysis += `Midweek fixtures consider squad rotation and player recovery factors.`;
-    } else {
-      analysis += `Selection strategy focuses on matches with reliable performance data and clear patterns.`;
-    }
-    
-    return analysis;
   };
 
   const ShareModal = () => {
@@ -311,10 +322,12 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             hasStarted: hasJackpotStarted(jackpot),
             isCompleted: isJackpotCompleted(jackpot),
             statusText: getJackpotStatus(jackpot),
-            statusColor: getStatusBadgeColor(jackpot)
+            statusColor: getStatusBadgeColor(jackpot),
+            startTimeFormatted: !hasJackpotStarted(jackpot) ? formatStartTime(jackpot.start_datetime_formatted) : null,
+            endTimeFormatted: hasJackpotStarted(jackpot) && !isJackpotCompleted(jackpot) ? formatStartTime(jackpot.end_datetime_formatted) : null
           };
         })
-        .filter(jackpot => jackpot.slug) // Only include jackpots that have matching slugs
+        // Don't filter out jackpots without slugs - keep them with generated slugs
     : [];
 
   // Safely filter active jackpots by search term
@@ -400,7 +413,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             {!isMobile ? (
               <div className="row row-cols-1 row-cols-md-2 g-4">
                 {filteredActiveJackpots.map((jackpot, index) => {
-                  const analysis = jackpot.expert_analysis || generateEEATAnalysis(jackpot);
                   const accuracy = Math.round(jackpot.avg_confidence || 0);
                   const completedGames = jackpot.completed_games || 0;
                   
@@ -434,6 +446,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                             </span>
                           </div>
                           
+                          {/* Key Stats Row */}
                           <div className="mb-3">
                             <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
                               <span className="badge bg-light text-dark border">
@@ -442,97 +455,90 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                               </span>
                               <span className="badge" style={{ 
                                 backgroundColor: jackpot.confidence_level === 'high' ? '#28a745' : 
-                                             jackpot.confidence_level === 'medium' ? '#ffc107' : '#dc3545',
-                                color: jackpot.confidence_level === 'high' ? 'white' : 'black'
+                                               jackpot.confidence_level === 'medium' ? '#ffc107' : 
+                                               jackpot.confidence_level === 'low' ? '#dc3545' : '#6c757d',
+                                color: jackpot.confidence_level === 'high' ? 'white' : 
+                                       jackpot.confidence_level === 'medium' ? 'black' : 'white'
                               }}>
                                 {jackpot.confidence_level?.toUpperCase() || 'MEDIUM'} Confidence
                               </span>
+                              {accuracy > 0 && (
+                                <span className="badge bg-info text-white">
+                                  <i className="bi bi-graph-up me-1"></i>
+                                  {accuracy}% Accuracy
+                                </span>
+                              )}
                             </div>
                             
+                            {/* Date & Time Info - Updated */}
                             <div className="d-flex flex-wrap align-items-center gap-2">
                               <small className="text-muted">
                                 <i className="bi bi-calendar-event me-1"></i>
                                 {formatDateShort(jackpot.start_date)} - {formatDateShort(jackpot.end_date)}
                               </small>
                               
-                              {jackpot.progress_percentage > 0 && (
+                              {!jackpot.hasStarted && jackpot.startTimeFormatted && (
                                 <span className="badge bg-info text-white">
-                                  <i className="bi bi-graph-up me-1"></i>{jackpot.progress_percentage}% Complete
+                                  <i className="bi bi-clock me-1"></i>
+                                  Starts: {jackpot.startTimeFormatted}
                                 </span>
                               )}
                               
-                              {jackpot.hasStarted && !jackpot.isCompleted && (
+                              {jackpot.hasStarted && !jackpot.isCompleted && jackpot.endTimeFormatted && (
                                 <span className="badge bg-warning text-dark">
-                                  <i className="bi bi-play-circle me-1"></i>Started {formatTime(jackpot.start_datetime_formatted)}
+                                  <i className="bi bi-clock me-1"></i>
+                                  Ends: {jackpot.endTimeFormatted}
                                 </span>
                               )}
                             </div>
                           </div>
                           
-                          <div className="mb-3">
-                            <div className="d-flex flex-wrap align-items-center gap-2">
-                              <div className="d-flex flex-column align-items-center">
+                          {/* Stats Grid */}
+                          <div className="bg-light p-2 rounded mb-3">
+                            <div className="d-flex flex-wrap align-items-center justify-content-around">
+                              <div className="d-flex flex-column align-items-center px-2">
                                 <span className="h6 mb-0 text-primary">{jackpot.total_votes || 0}</span>
                                 <small className="text-muted">Total Votes</small>
                               </div>
                               
                               <div className="vr"></div>
                               
-                              <div className="d-flex flex-column align-items-center">
+                              <div className="d-flex flex-column align-items-center px-2">
                                 <span className="h6 mb-0 text-success">{accuracy}%</span>
-                                <small className="text-muted">Accuracy</small>
+                                <small className="text-muted">Confidence</small>
                               </div>
                               
                               <div className="vr"></div>
                               
-                              <div className="d-flex flex-column align-items-center">
+                              <div className="d-flex flex-column align-items-center px-2">
                                 <span className="h6 mb-0">
-                                  {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.total_games || 0}`}
+                                  {completedGames === 0 ? '0' : `${completedGames}/${jackpot.total_games || 0}`}
                                 </span>
-                                <small className="text-muted">
-                                  {completedGames === 0 ? '' : 'games completed'}
+                                <small className="text-muted">Games completed</small>
+                              </div>
+                            </div>
+                            
+                            {/* Progress Bar */}
+                            {jackpot.progress_percentage > 0 && (
+                              <div className="mt-2">
+                                <div className="progress" style={{ height: '4px' }}>
+                                  <div 
+                                    className="progress-bar bg-success" 
+                                    style={{ width: `${jackpot.progress_percentage}%` }}
+                                    aria-valuenow={jackpot.progress_percentage}
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100"
+                                  />
+                                </div>
+                                <small className="text-muted mt-1 d-block text-end">
+                                  {jackpot.progress_percentage}% Complete
                                 </small>
                               </div>
-                            </div>
+                            )}
                           </div>
                           
-                          <div className="mb-3">
-                            <button 
-                              className="btn btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center expert-analysis-btn"
-                              type="button"
-                              data-bs-toggle="collapse"
-                              data-bs-target={`#analysis-${jackpot.jackpot_tips_id || index}`}
-                              aria-expanded="false"
-                            >
-                              <span>
-                                <i className="bi bi-clipboard-data me-2" style={{ color: '#000' }}></i>
-                                <strong>Expert Analysis</strong>
-                              </span>
-                              <i className="bi bi-chevron-down" style={{ color: '#000' }}></i>
-                            </button>
-                            
-                            <div className="collapse mt-2" id={`analysis-${jackpot.jackpot_tips_id || index}`}>
-                              <div className="card card-body border-0 bg-light p-2">
-                                <div className="mb-2" style={{ color: '#000', fontSize: '0.9rem' }}>
-                                  <p className="mb-0">{analysis}</p>
-                                </div>
-                                <div className="border-top pt-2">
-                                  <div className="d-flex flex-wrap gap-2">
-                                    <small className="text-muted">
-                                      <i className="bi bi-shield-check text-success me-1"></i>
-                                      Expert Analysis
-                                    </small>
-                                    <small className="text-muted">
-                                      <i className="bi bi-graph-up text-info me-1"></i>
-                                      Statistical Models
-                                    </small>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="row g-2 mt-3">
+                          {/* Action Buttons */}
+                          <div className="row g-2 mt-2">
                             <div className="col-6">
                               <button 
                                 className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center"
@@ -547,6 +553,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                                 href={`/jackpot-predictions/${jackpot.slug}`}
                                 className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center"
                               >
+                                <i className="bi bi-eye me-1"></i>
                                 View Predictions
                               </a>
                             </div>
@@ -560,7 +567,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             ) : (
               // Mobile version
               filteredActiveJackpots.map((jackpot, index) => {
-                const analysis = jackpot.expert_analysis || generateEEATAnalysis(jackpot);
                 const accuracy = Math.round(jackpot.avg_confidence || 0);
                 const completedGames = jackpot.completed_games || 0;
                 
@@ -593,80 +599,66 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
                         </span>
                       </div>
                       
-                      <div className="mb-3">
-                        <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                          <span className="badge bg-light text-dark border">
-                            <i className="bi bi-trophy me-1"></i>
-                            {jackpot.total_games || 0} Games
-                          </span>
-                          <span className="badge" style={{ 
-                            backgroundColor: jackpot.confidence_level === 'high' ? '#28a745' : 
-                                         jackpot.confidence_level === 'medium' ? '#ffc107' : '#dc3545',
-                            color: jackpot.confidence_level === 'high' ? 'white' : 'black'
-                          }}>
-                            {jackpot.confidence_level?.toUpperCase() || 'MEDIUM'} Confidence
-                          </span>
-                        </div>
+                      {/* Badges Row */}
+                      <div className="d-flex flex-wrap gap-2 mb-2">
+                        <span className="badge bg-light text-dark border">
+                          {jackpot.total_games || 0} Games
+                        </span>
+                        <span className="badge" style={{ 
+                          backgroundColor: jackpot.confidence_level === 'high' ? '#28a745' : 
+                                         jackpot.confidence_level === 'medium' ? '#ffc107' : 
+                                         jackpot.confidence_level === 'low' ? '#dc3545' : '#6c757d',
+                          color: jackpot.confidence_level === 'high' ? 'white' : 
+                                 jackpot.confidence_level === 'medium' ? 'black' : 'white'
+                        }}>
+                          {jackpot.confidence_level?.toUpperCase() || 'MEDIUM'}
+                        </span>
+                      </div>
+                      
+                      {/* Date and Time - Updated */}
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <small className="text-muted">
+                          <i className="bi bi-calendar-event me-1"></i>
+                          {formatDateShort(jackpot.start_date)} - {formatDateShort(jackpot.end_date)}
+                        </small>
                         
-                        <div className="d-flex flex-wrap align-items-center justify-content-between">
-                          <small className="text-muted">
-                            <i className="bi bi-calendar-event me-1"></i>
-                            {formatDateShort(jackpot.start_date)} - {formatDateShort(jackpot.end_date)}
+                        {!jackpot.hasStarted && jackpot.startTimeFormatted && (
+                          <small className="text-info">
+                            <i className="bi bi-clock me-1"></i>
+                            {jackpot.startTimeFormatted}
                           </small>
-                          
-                          {jackpot.progress_percentage > 0 && (
-                            <span className="badge bg-info text-white">
-                              <i className="bi bi-graph-up me-1"></i>{jackpot.progress_percentage}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="mb-3">
-                        <div className="d-flex flex-wrap align-items-center justify-content-between">
-                          <div className="d-flex flex-column align-items-center">
-                            <span className="h6 mb-0 text-primary">{jackpot.total_votes || 0}</span>
-                            <small className="text-muted">Total Votes</small>
-                          </div>
-                          
-                          <div className="d-flex flex-column align-items-center">
-                            <span className="h6 mb-0 text-success">{accuracy}%</span>
-                            <small className="text-muted">Accuracy</small>
-                          </div>
-                          
-                          <div className="d-flex flex-column align-items-center">
-                            <span className="h6 mb-0">
-                              {completedGames === 0 ? 'Not Started' : `${completedGames} of ${jackpot.total_games || 0}`}
-                            </span>
-                            <small className="text-muted">
-                              {completedGames === 0 ? '' : 'games'}
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-3">
-                        <button 
-                          className="btn btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center expert-analysis-btn"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target={`#analysis-mobile-${jackpot.jackpot_tips_id || index}`}
-                        >
-                          <span>
-                            <i className="bi bi-clipboard-data me-2"></i>
-                            <strong>Expert Analysis</strong>
-                          </span>
-                          <i className="bi bi-chevron-down"></i>
-                        </button>
+                        )}
                         
-                        <div className="collapse mt-2" id={`analysis-mobile-${jackpot.jackpot_tips_id || index}`}>
-                          <div className="card card-body border-0 bg-light p-2">
-                            <p className="mb-0" style={{ fontSize: '0.9rem' }}>{analysis}</p>
+                        {jackpot.hasStarted && !jackpot.isCompleted && jackpot.endTimeFormatted && (
+                          <small className="text-warning">
+                            <i className="bi bi-clock me-1"></i>
+                            Ends {jackpot.endTimeFormatted}
+                          </small>
+                        )}
+                      </div>
+                      
+                      {/* Stats Row */}
+                      <div className="bg-light p-2 rounded mb-2">
+                        <div className="d-flex justify-content-around">
+                          <div className="text-center">
+                            <div className="fw-bold text-primary">{jackpot.total_votes || 0}</div>
+                            <small>Total Votes</small>
+                          </div>
+                          <div className="text-center">
+                            <div className="fw-bold text-success">{accuracy}%</div>
+                            <small>Confidence</small>
+                          </div>
+                          <div className="text-center">
+                            <div className="fw-bold">
+                              {completedGames}/{jackpot.total_games || 0}
+                            </div>
+                            <small>Games completed</small>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="row g-2 mt-3">
+                      {/* Action Buttons */}
+                      <div className="row g-2">
                         <div className="col-6">
                           <button 
                             className="btn btn-outline-secondary btn-sm w-100"
@@ -720,64 +712,57 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
               Other Jackpots ({filteredInactiveSlugs.length})
             </h2>
             
-            {filteredInactiveSlugs.length === 0 && searchTerm ? (
-              <div className="alert alert-info">
-                <i className="bi bi-info-circle me-2"></i>
-                No jackpots found matching "{searchTerm}". Try a different search term.
-              </div>
-            ) : (
-              <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                {filteredInactiveSlugs.map((slug, index) => {
-                  const jackpotName = getJackpotNameFromSlug(slug);
-                  const jackpotNameWithPredictions = jackpotName.includes('Predictions') 
-                    ? jackpotName 
-                    : `${jackpotName} Predictions`;
-                  const continuousNumber = filteredActiveJackpots.length + index + 1;
-                  
-                  return (
-                    <div key={slug} className="col">
-                      <div className="card h-100 border">
-                        <div className="card-body p-3 d-flex flex-column">
-                          <div className="d-flex justify-content-between align-items-start mb-2">
-                            <span className="badge bg-secondary">{continuousNumber}</span>
-                            <button 
-                              className="btn btn-sm btn-outline-secondary border-0 d-flex align-items-center"
-                              onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
-                            >
-                              <i className="bi bi-share me-1"></i>
-                              Share
-                            </button>
-                          </div>
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+              {filteredInactiveSlugs.map((slug, index) => {
+                const jackpotName = getJackpotNameFromSlug(slug);
+                const jackpotNameWithPredictions = jackpotName.includes('Predictions') 
+                  ? jackpotName 
+                  : `${jackpotName} Predictions`;
+                const continuousNumber = filteredActiveJackpots.length + index + 1;
+                
+                return (
+                  <div key={slug} className="col">
+                    <div className="card h-100 border">
+                      <div className="card-body p-3 d-flex flex-column">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <span className="badge bg-secondary">{continuousNumber}</span>
+                          <button 
+                            className="btn btn-sm btn-outline-secondary border-0 d-flex align-items-center"
+                            onClick={() => openShareModal(jackpotNameWithPredictions, slug)}
+                          >
+                            <i className="bi bi-share me-1"></i>
+                            Share
+                          </button>
+                        </div>
 
-                          <h3 className="h6 mb-3 flex-grow-1">
+                        <h3 className="h6 mb-3 flex-grow-1">
+                          <a 
+                            href={`/jackpot-predictions/${slug}`}
+                            className="text-decoration-none text-dark"
+                          >
+                            {jackpotNameWithPredictions}
+                          </a>
+                        </h3>
+                        
+                        <div className="mt-auto">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <small className="text-muted">
+                              <i className="bi bi-clock-history me-1"></i>
+                              Historical predictions
+                            </small>
                             <a 
                               href={`/jackpot-predictions/${slug}`}
-                              className="text-decoration-none text-dark"
-                            >
-                              {jackpotNameWithPredictions}
+                              className="btn btn-outline-primary btn-sm">
+                              View
                             </a>
-                          </h3>
-                          
-                          <div className="mt-auto">
-                            <div className="d-flex justify-content-between align-items-center">
-                              <small className="text-muted">
-                                <i className="bi bi-clock-history me-1"></i>
-                                Historical predictions
-                              </small>
-                              <a 
-                                href={`/jackpot-predictions/${slug}`}
-                                className="btn btn-outline-primary btn-sm">
-                                View
-                              </a>
-                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -803,16 +788,13 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
         {showShareModal && <ShareModal />}
       </div>
 
-      <style jsx>{`
-        .expert-analysis-btn:hover,
-        .expert-analysis-btn:focus {
-          color: #000 !important;
-        }
-        .expert-analysis-btn:hover i,
-        .expert-analysis-btn:focus i {
-          color: #000 !important;
-        }
-      `}</style>
+      {/* Add structured data script */}
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      )}
     </>
   );
 }
@@ -915,17 +897,6 @@ const formatDateShort = (dateString) => {
     const options = { month: 'short', day: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);
-  } catch (e) {
-    return '';
-  }
-};
-
-// Helper function for time formatting
-const formatTime = (dateTimeString) => {
-  if (!dateTimeString) return '';
-  try {
-    const date = new Date(dateTimeString);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   } catch (e) {
     return '';
   }
