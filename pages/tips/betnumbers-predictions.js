@@ -8,17 +8,20 @@ import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import BetnumbersPredictionContent from "../../components/seo-content/tips/betnumbers-predictions";
+import fs from 'fs';
+import path from 'path';
 
 function BetNumbersPredictions({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate
+    todaysDate,
+    cacheInfo // Add cacheInfo prop
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+    const [currentStartIndex, setCurrentStartIndex] = useState(20);
     const [hasMore, setHasMore] = useState(true);
     const [loadTrigger, setLoadTrigger] = useState(0);
 
@@ -29,9 +32,10 @@ function BetNumbersPredictions({
         setLoadingMore(true);
         const chunkSize = 50;
         const startIndex = currentStartIndex;
-        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400); // Using 400 as max from your code
+        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400);
         
         try {
+            // Always use API for "Show More" - no caching for chunks
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
             
             const response = await fetch(chunkUrl, {
@@ -43,11 +47,9 @@ function BetNumbersPredictions({
             const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-                // Append new data to existing data
                 setAllData(prevData => [...prevData, ...chunkData.data]);
                 setCurrentStartIndex(endIndex + 1);
                 
-                // Check if we've reached the maximum or got less than requested
                 if (endIndex >= 400 || chunkData.data.length < chunkSize) {
                     setHasMore(false);
                 }
@@ -61,24 +63,20 @@ function BetNumbersPredictions({
         }
     };
 
-    // Trigger data loading when loadTrigger changes
     useEffect(() => {
         if (loadTrigger > 0) {
             loadMoreData();
         }
     }, [loadTrigger]);
 
-    // Function to be called from child components
     const handleLoadMore = () => {
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
     if (!initialData && !error) {
         return <PreLoader />;
     }
 
-    // Format today's date for display
     const formatDisplayDate = (dateString) => {
         if (!dateString) return '';
         try {
@@ -90,7 +88,6 @@ function BetNumbersPredictions({
         }
     };
 
-    // Handle error state
     if (endpointStatus === "error" || error) {
         return (
             <div className="sites-card">
@@ -107,7 +104,6 @@ function BetNumbersPredictions({
         );
     }
     
-    // Process the data - Pass allData and load more props
     const renderPredictions = PagesMatchPredictionDetails({ 
         gamesData: allData,
         onLoadMore: handleLoadMore,
@@ -115,7 +111,6 @@ function BetNumbersPredictions({
         hasMore: hasMore
     });
     
-    // Handle empty data state
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
@@ -132,9 +127,8 @@ function BetNumbersPredictions({
         );
     }
     
-    // Render the page with data
     return (
-        <div className="sites-card">
+        <div className="sites-card">            
             <PopularTips/>
             
             <RenderData 
@@ -171,70 +165,156 @@ export async function getServerSideProps() {
     // Base URL for top winning predictions
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
-    const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+    // Cache setup - read from the same cache file as homepage
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `top-football-predictions-${todaysDate}.json`; // Same file as homepage
+    const cachePath = path.join(cacheDir, cacheFilename);
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
+            console.log('📁 Created cache directory');
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
+
+        // Check if we have a valid cache file
+        if (fs.existsSync(cachePath)) {
+            // Read the cache file
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
+            // Check if cache is still valid (3 minutes = 180000 ms)
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+                        
+            if (ageInMinutes <= 3) {
+                // ✅ Cache is valid - use it!
+                initialData = cache.data;
+                endpointStatus = "success";
+                error = null;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If we don't have valid cache data, fetch from API
+        if (initialData.length === 0) {
+            console.log('📡 [BetNumbers] Fetching fresh data from API...');
+            
+            const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(firstBatchUrl, {
+                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            
+            if (data.status === true && data.data) {
+                initialData = data.data;
+                
+                // Save to cache for next time
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    fixtureDate: todaysDate,
+                    data: initialData,
+                    count: initialData.length
+                };
+                
+                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: new Date().toISOString()
+                };
+            } else {
+                endpointStatus = "error";
+                error = data.message || "API returned error";
+            }
+        }
+
+        // Clean up old cache files (older than 3 minutes)
+        await cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error('Error in getServerSideProps [BetNumbers]:', err);
+        endpointStatus = "error";
+        error = err.message;
+        
+        // If cache exists but we had an error, use it as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                console.error('Fallback cache also failed:', fallbackErr);
+            }
+        }
+    }
+
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            todaysDate: todaysDate,
+            cacheInfo // Pass cache info to component
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 3 * 60 * 1000; // 3 minutes
+        
+        for (const file of files) {
+            if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
                 }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load competitor predictions",
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
-                }
-            };
+            }
         }
     } catch (error) {
-        console.error('Error fetching competitor predictions:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                todaysDate: todaysDate
-            }
-        };
+        console.error('Error cleaning up cache:', error);
     }
 }
 
