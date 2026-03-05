@@ -1,6 +1,8 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /auth/
+Disallow: /api/
 
 # Host
 Host: https://www.pitchpredictions.com
