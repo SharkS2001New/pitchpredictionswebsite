@@ -70,7 +70,7 @@ const PopularTips = () => {
     <React.Fragment>
       <div className="desktop-container-resize mb-0">
           <div className="col-sm-12 text-center bg-light pt-1">
-              <h2 className="sectionTitle">MUST WIN TEAMS TODAY | POPULAR BETS FOR TODAY</h2>
+              <h2 className="sectionTitle">UPCOMING POPULAR MATCHES</h2>
           </div>
       </div> 
       <div className="match-slider-container">

@@ -1012,10 +1012,10 @@ function MetaContent(){
                 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/must-win-teams-today")) { 
-        title = "Must Win Teams & 100% Safe Draws for Today";
-        meta_desc_content = "Get today's must win football teams and safe draw predictions. Our tips are backed by stats and expert data analysis to help you bet smarter.";
-        meta_keywords = "must win teams, safe draw prediction, football tips, accurate predictions";
-        page_title = "Must Win Teams for Today & Tomorrow";
+        title = "Must Win Football Teams Today – High-Confidence Match Picks";
+        meta_desc_content = "Explore today's must win football teams based on form, H2H records and team stats. Data-driven picks across major leagues — updated daily by Pitch Predictions.";
+        meta_keywords = "must win teams today, football must win tips, high confidence football predictions, strong football picks today, match winner tips, football form guide today";
+        page_title = "Must Win Football Teams Today";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);  
         
