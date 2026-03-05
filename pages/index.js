@@ -144,7 +144,7 @@ export default function Home({
         <ShortBlogPosts/>
         <br/>  
         <div className="">
-          <div className="container">
+          <div className="container-wide">
             <LandingPageContent/>
           </div>
         </div>
@@ -171,100 +171,195 @@ export async function getServerSideProps() {
     
     const data = await response.json();
     
-    // Create structured data in @graph format as requested
+    // Create structured data in @graph format with ALL schemas from the HTML head
     const structuredData = {
       "@context": "https://schema.org",
       "@graph": [
+        // 1. Organization
         {
           "@type": "Organization",
-          "@id": siteUrl,
-          "name": "PitchPredictions",
+          "@id": `${siteUrl}#organization`,
+          "name": "Pitch Predictions",
+          "alternateName": "PitchPredictions",
           "url": siteUrl,
-          "logo": `${siteUrl}/pitch-predictions-logo.png`,
-          "description": "PitchPredictions provides free daily football predictions, expert tips, accumulator guides, jackpots, and betting insights based on team form, statistics, and performance analysis.",
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${siteUrl}/pitch-predictions-logo.png`,
+            "width": 300,
+            "height": 60
+          },
+          "description": "Pitch Predictions is a free, data-driven football prediction platform covering 700+ leagues worldwide. We provide daily football tips, live scores, jackpot predictions, team comparisons and standings.",
+          "foundingDate": "2020",
+          "areaServed": ["GB", "KE", "NG", "GH", "ZA", "UG", "TZ"],
           "sameAs": [
-            "https://t.me/betsassuredkenya",
-            "https://wa.me/254111509962"
-          ]
+            "https://t.me/s/betsassuredkenya"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Support",
+            "url": `${siteUrl}/contactus`,
+            "availableLanguage": "English"
+          }
         },
+        
+        // 2. SportsOrganization
+        {
+          "@type": "SportsOrganization",
+          "name": "Pitch Predictions",
+          "url": siteUrl,
+          "sport": "Football",
+          "description": "Free football prediction and sports analytics platform covering 700+ leagues globally."
+        },
+        
+        // 3. WebSite with Sitelinks Searchbox
         {
           "@type": "WebSite",
-          "@id": siteUrl,
+          "@id": `${siteUrl}#website`,
+          "name": "Pitch Predictions",
+          "alternateName": "Free Football Predictions & Tips",
           "url": siteUrl,
-          "name": "PitchPredictions",
+          "description": "Free daily football predictions, tips, live scores and jackpot picks across 700+ leagues worldwide.",
+          "inLanguage": "en",
+          "copyrightYear": 2026,
           "publisher": {
-            "@id": siteUrl
+            "@type": "Organization",
+            "@id": `${siteUrl}#organization`
           },
           "potentialAction": {
             "@type": "SearchAction",
-            "target": `${siteUrl}/?s={search_term_string}`,
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+            },
             "query-input": "required name=search_term_string"
           }
         },
+        
+        // 4. WebPage
         {
           "@type": "WebPage",
-          "@id": siteUrl,
+          "@id": `${siteUrl}#webpage`,
+          "name": "Pitch Predictions – Free Football Tips & Match Predictions",
+          "description": "Get free, data-driven football predictions for today's matches across 700+ leagues. Expert tips, live scores, jackpot picks & standings — updated daily.",
           "url": siteUrl,
-          "name": "PitchPredictions – Accurate Football Predictions, Stats & Betting Insights",
           "isPartOf": {
-            "@id": siteUrl
+            "@type": "WebSite",
+            "@id": `${siteUrl}#website`
           },
           "about": {
-            "@id": `${siteUrl}/about-us`
+            "@type": "Thing",
+            "name": "Football Predictions"
           },
-          "description": "PitchPredictions offers accurate daily football predictions, detailed match stats, accumulator tips, jackpots, and betting insights to help users make smarter betting decisions.",
-          "inLanguage": "en"
+          "dateModified": currentDate,
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": siteUrl
+              }
+            ]
+          }
         },
+        
+        // 5. FAQPage
         {
           "@type": "FAQPage",
+          "@id": `${siteUrl}#faq`,
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "What is PitchPredictions?",
+              "name": "Are Pitch Predictions football tips free?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "PitchPredictions is a football prediction platform that provides accurate match forecasts, detailed statistics, and actionable betting insights for football fans and bettors worldwide."
+                "text": "Yes. All daily predictions, live scores, league standings, team comparisons and jackpot tips on Pitch Predictions are completely free. A premium subscription unlocks our highest-confidence exclusive tips and early-access picks."
               }
             },
             {
               "@type": "Question",
-              "name": "How accurate are PitchPredictions forecasts?",
+              "name": "How accurate are Pitch Predictions football tips?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Our forecasts are backed by statistical models, historical data, and expert review. While no prediction is guaranteed, our methods consistently improve accuracy compared to random guessing."
+                "text": "Our top-confidence predictions carry a 65%+ historical accuracy rate, calculated using a multi-factor model including current form, head-to-head records, team news, home/away performance, and betting market movements. No prediction is guaranteed — we provide analysis to inform, not to promise outcomes."
               }
             },
             {
               "@type": "Question",
-              "name": "What types of statistics are provided?",
+              "name": "Which football leagues does Pitch Predictions cover?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "We provide team form, head-to-head results, goal trends, home/away performance, player availability, and tactical analysis for every match."
+                "text": "Pitch Predictions covers over 700 football leagues worldwide including the English Premier League, La Liga, Bundesliga, Serie A, Ligue 1, UEFA Champions League, Europa League, Africa Cup of Nations, Sportpesa Mega Jackpot, Betika Jackpot and dozens of regional competitions across Africa, Asia, and the Americas."
               }
             },
             {
               "@type": "Question",
-              "name": "Do you provide betting insights?",
+              "name": "How often are the predictions updated?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. We offer value bets, odds analysis, match strategies, and expert tips to help users make smarter betting decisions."
+                "text": "Predictions are refreshed daily, with live match data updating in real-time throughout the day. Jackpot predictions are updated weekly before each jackpot deadline."
               }
             },
             {
               "@type": "Question",
-              "name": "Are predictions free or paid?",
+              "name": "Does Pitch Predictions cover jackpot predictions?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "PitchPredictions offers both free daily predictions and premium enhanced forecasts for users who want detailed statistics, advanced analysis, and exclusive betting insights."
+                "text": "Yes. Pitch Predictions provides dedicated jackpot prediction pages for Sportpesa Mega Jackpot, Betika Jackpot, Betpawa, and Mozzart — updated weekly with expert analysis for every selection on the coupon."
               }
             },
             {
               "@type": "Question",
-              "name": "Which leagues are covered?",
+              "name": "What types of football predictions does Pitch Predictions offer?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "We cover major leagues worldwide including Premier League, La Liga, Serie A, Bundesliga, Ligue 1, UEFA competitions, World Cup matches, and selected leagues in Asia, Africa, and South America."
+                "text": "We offer 1X2 match winner predictions, Over/Under goals tips (Over 2.5, Under 2.5), Both Teams to Score (BTTS/GG/NG) predictions, Correct Score tips, Asian Handicap picks, and jackpot predictions. Each tip comes with a confidence percentage and supporting statistical analysis."
               }
+            }
+          ]
+        },
+        
+        // 6. ItemList - Today's Top Predictions
+        {
+          "@type": "ItemList",
+          "@id": `${siteUrl}#top-predictions`,
+          "name": "Today's Top Football Predictions",
+          "description": "Expert football predictions for today's matches across major leagues worldwide.",
+          "url": `${siteUrl}/football-predictions-today`,
+          "numberOfItems": 3,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Premier League Predictions Today",
+              "url": `${siteUrl}/league/football-predictions-for-england/premier-league-39/fixtures`
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Champions League Predictions",
+              "url": `${siteUrl}/league/football-predictions-for-europe/champions-league/fixtures`
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Jackpot Predictions This Week",
+              "url": `${siteUrl}/jackpot-predictions`
+            }
+          ]
+        },
+        
+        // 7. BreadcrumbList (additional breadcrumb for homepage)
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${siteUrl}#breadcrumb`,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Football Predictions",
+              "item": siteUrl
             }
           ]
         }
@@ -301,32 +396,30 @@ export async function getServerSideProps() {
       "@graph": [
         {
           "@type": "Organization",
-          "@id": siteUrl,
-          "name": "PitchPredictions",
+          "@id": `${siteUrl}#organization`,
+          "name": "Pitch Predictions",
+          "alternateName": "PitchPredictions",
           "url": siteUrl,
           "logo": `${siteUrl}/pitch-predictions-logo.png`,
-          "description": "PitchPredictions provides free daily football predictions, expert tips, accumulator guides, jackpots, and betting insights based on team form, statistics, and performance analysis.",
-          "sameAs": [
-            "https://t.me/betsassuredkenya",
-            "https://wa.me/254111509962"
-          ]
+          "description": "Pitch Predictions is a free, data-driven football prediction platform covering 700+ leagues worldwide.",
+          "sameAs": ["https://t.me/s/betsassuredkenya"]
         },
         {
           "@type": "WebSite",
-          "@id": siteUrl,
+          "@id": `${siteUrl}#website`,
+          "name": "Pitch Predictions",
           "url": siteUrl,
-          "name": "PitchPredictions",
           "publisher": {
-            "@id": siteUrl
+            "@id": `${siteUrl}#organization`
           }
         },
         {
           "@type": "WebPage",
-          "@id": siteUrl,
+          "@id": `${siteUrl}#webpage`,
           "url": siteUrl,
-          "name": "PitchPredictions – Accurate Football Predictions, Stats & Betting Insights",
+          "name": "Pitch Predictions – Accurate Football Predictions, Stats & Betting Insights",
           "isPartOf": {
-            "@id": siteUrl
+            "@id": `${siteUrl}#website`
           },
           "description": "PitchPredictions offers accurate daily football predictions, detailed match stats, accumulator tips, jackpots, and betting insights.",
           "inLanguage": "en"

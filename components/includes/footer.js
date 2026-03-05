@@ -102,6 +102,25 @@ function Footer(){
         
         <hr className="my-3"/>
 
+        <div className="responsible-gambling text-center fixturesTextSize" style={{fontSize: "12px", lineHeight: "1.6"}}>
+          <strong>⚠️ Responsible Gambling:</strong> Pitch Predictions provides predictions and analysis 
+          for informational and entertainment purposes only. Betting involves financial risk — 
+          never bet more than you can afford to lose. Gambling can be addictive. 
+          If gambling is affecting you or someone you know, seek help at{" "}
+          <a 
+            href="https://www.begambleaware.org" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer"
+            className="text-warning"
+          >
+            BeGambleAware.org
+          </a>{" "}
+          or contact your national gambling helpline. You must be 18 years or older to use betting services. 
+          Pitch Predictions does not guarantee any prediction outcomes.
+        </div>
+
+        <hr className="my-3"/>
+
         {/* <!-- Section: Copyright --> */}
         <section className="p-3 pt-0 fixturesTextSize">
             <div className="row">

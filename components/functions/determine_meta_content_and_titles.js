@@ -1346,10 +1346,10 @@ function MetaContent(){
         
     } else if(current_url ===""){
         //Homepage url descriptions (route "/")
-        title = "Pitch Prediction | Trusted Football Tips & Match Insights";
-        meta_desc_content = "Discover accurate football betting tips, predictions, and in-depth match analysis on Pitch Prediction. Get expert insights on major leagues and fixtures to make smarter bets.";
-        meta_keywords = "football prediction, soccer tips, match analysis, football betting insights, free football predictions, today’s football tips, accurate soccer predictions, football fixtures";
-        page_title = "Today's Free Football Predictions, Tips & Stats";
+        title = "Pitch Predictions – Free Football Tips &amp; Match Predictions";
+        meta_desc_content = "Get free, data-driven football predictions for today's matches across 700+ leagues. Expert tips, live scores, jackpot picks &amp; standings — updated daily.";
+        meta_keywords = "football predictions, free football tips, football betting tips, today football predictions, match predictions, jackpot predictions, soccer predictions, premier league predictions, over 2.5 goals, BTTS tips";
+        page_title = "Free Football Predictions &amp; Tips — Data-Driven Picks for Every Match";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
     }

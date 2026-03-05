@@ -2187,3 +2187,9 @@ ins.adsbygoogle[data-ad-status=unfilled] {
   }
 }
 
+.responsible-gambling {
+  background: rgba(255, 193, 7, 0.08);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
