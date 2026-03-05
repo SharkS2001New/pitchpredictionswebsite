@@ -231,7 +231,6 @@ export async function getServerSideProps() {
         };
         
         fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
-        console.log(`💾 Saved ${initialData.length} items to cache: ${cacheFilename}`);
         
         cacheInfo = {
           fromCache: false,
@@ -264,9 +263,8 @@ export async function getServerSideProps() {
         };
         endpointStatus = "success";
         error = null;
-        console.log('🆘 Using cache as fallback due to API error');
       } catch (fallbackErr) {
-        console.error('Fallback cache also failed:', fallbackErr);
+        // console.error('Fallback cache also failed:', fallbackErr);
       }
     }
   }
@@ -303,7 +301,6 @@ async function cleanupOldCacheFiles(cacheDir) {
         
         if (fileAge > maxAge) {
           fs.unlinkSync(filePath);
-          console.log(`🗑️ Deleted old cache: ${file} (${Math.round(fileAge/1000/60)} minutes old)`);
         }
       }
     }
