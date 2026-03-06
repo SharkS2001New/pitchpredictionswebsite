@@ -1,3 +1,4 @@
+// components/shared/popular_tips_display.js
 import React, { useEffect, useState, useRef } from "react";
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 
@@ -5,27 +6,25 @@ const PopularTips = () => {
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cacheInfo, setCacheInfo] = useState(null);
   const sliderRef = useRef(null);
 
   const fetchMatches = async () => {
-    const startDate = new Date().toLocaleDateString("en-CA");
-    const endDate = new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("en-CA"); 
-
-    const apiUrl = `https://api.pitchpredictions.com/api/fetch_free_upcoming_matches?start_date=${startDate}&end_date=${endDate}`;
-
     try {
-      const response = await fetch(apiUrl, {
-        headers: {
-          Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        },
-      });
-
+      // Call our internal API route that handles caching
+      const response = await fetch('/api/popular-tips');
+      
       if (!response.ok) {
         throw new Error("Failed to fetch matches");
       }
 
       const data = await response.json();
-      setMatches(data.data);
+      setMatches(data.data || []);
+      setCacheInfo({
+        fromCache: data.fromCache,
+        generatedAt: data.generatedAt
+      });
+      
     } catch (err) {
       setError("Failed to fetch matches");
     } finally {
@@ -44,12 +43,12 @@ const PopularTips = () => {
   const getTip = (match) => {
     const { percent_pred_home, percent_pred_draw, percent_pred_away } = match;
     if (percent_pred_home > percent_pred_draw && percent_pred_home > percent_pred_away) {
-      return "1" + ",    " + percent_pred_home + " Win Probability"; // Home wins
+      return "1" + ",    " + percent_pred_home + " Win Probability";
     }
     if (percent_pred_draw > percent_pred_home && percent_pred_draw > percent_pred_away) {
-      return "X" + ",    "+ percent_pred_draw + " Win Probability"; // Draw wins
+      return "X" + ",    "+ percent_pred_draw + " Win Probability";
     }
-    return "2" + ",    "+ percent_pred_away + " Win Probability"; // Away wins
+    return "2" + ",    "+ percent_pred_away + " Win Probability";
   };
 
   const scrollLeft = () => {
@@ -71,6 +70,11 @@ const PopularTips = () => {
       <div className="desktop-container-resize mb-0">
           <div className="col-sm-12 text-center bg-light pt-1">
               <h2 className="sectionTitle">UPCOMING POPULAR MATCHES</h2>
+              {/* {cacheInfo && cacheInfo.fromCache && (
+                <div style={{ fontSize: '0.7rem', color: '#666' }}>
+                  ⚡ Cached: {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
+                </div>
+              )} */}
           </div>
       </div> 
       <div className="match-slider-container">

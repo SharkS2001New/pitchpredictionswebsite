@@ -1,31 +1,26 @@
+// components/shared/fixture_of_the_day.js
 import React, { useState, useEffect } from 'react';
 import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
 import ProbabilityResults from '../functions/determine_probability_results';
 import CheckiffixtureIsSelected from '../functions/CheckIfFixtureisSelected';
 import getFormattedCurrentDate from '../functions/GetTodaysDate';
-import OptionPickedFeaturedMatch from '../functions/OptionPickedFeaturedMatch'; // Import the function
+import OptionPickedFeaturedMatch from '../functions/OptionPickedFeaturedMatch';
 
 function FixtureOfTheDay() {
-  const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }; // This is the authorization header from the backend.sokapedia.com
-  const [gamesfixtures, setGames] = useState(null); // Start with null instead of empty array
+  const [gamesfixtures, setGames] = useState(null);
   const [endpointStatus, setEndPointStatus] = useState("");
-  const [isPrimaryResponse, setIsPrimaryResponse] = useState(false); // Track if the response is from the primary URL
+  const [isPrimaryResponse, setIsPrimaryResponse] = useState(false);
+  const [cacheInfo, setCacheInfo] = useState(null);
   const currentDate = getFormattedCurrentDate();
 
   const [iconColor, setIconColor] = useState("currentColor");
   const [iconPath, setIconPath] = useState("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z")
 
-  // Cache key based on current date (changes daily)
-  const cacheKey = `fixture_of_the_day_${currentDate}`;
-  const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
-
   useEffect(() => {
     loadFixtureData();
-  }, []); // Only run once on mount
+  }, []);
 
-  // Separate useEffect for handling star icon updates
   useEffect(() => {
-    // Only run this effect if gamesfixtures exists and has fixture_id
     if (gamesfixtures && gamesfixtures.fixture_id) {
       if (CheckiffixtureIsSelected(gamesfixtures.fixture_id)) {
         setIconColor("red");
@@ -35,137 +30,64 @@ function FixtureOfTheDay() {
         setIconPath("M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z");
       }
     }
-  }, [gamesfixtures]); // Only run when gamesfixtures changes
+  }, [gamesfixtures]);
 
-  // Function to load data (either from cache or API)
   const loadFixtureData = async () => {
     try {
-      // Check if we're on the client side
-      if (typeof window === 'undefined') {
-        await fetchFromAPI();
-        return;
+      // Call our internal API route that handles caching
+      const response = await fetch(`/api/fixture-of-the-day?date=${currentDate}`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch fixture");
       }
 
-      // Try to get cached data
-      const cachedData = localStorage.getItem(cacheKey);
+      const data = await response.json();
       
-      if (cachedData) {
-        const { timestamp, data, isPrimary, status } = JSON.parse(cachedData);
-        const now = new Date().getTime();
-        
-        // If cache is still valid (less than 1 hour old)
-        if (now - timestamp < CACHE_DURATION) {
-          setGames(data);
-          setIsPrimaryResponse(isPrimary);
-          setEndPointStatus(status);
-          return;
-        }
-      }
-      
-      // Cache expired or doesn't exist - fetch from API
-      await fetchFromAPI();
-      
-    } catch (error) {
-      console.error("Cache error:", error);
-      // If cache fails, fall back to API
-      await fetchFromAPI();
-    }
-  };
-
-  async function fetchFromAPI() {
-    try {
-      // Fetch fixtures from the primary URL
-      const primaryResponse = await fetch("https://api.pitchpredictions.com/api/match_of_the_day?fixture_date=" + currentDate, {
-        headers: headers
+      setGames(data.data);
+      setIsPrimaryResponse(data.isPrimary);
+      setEndPointStatus(data.status);
+      setCacheInfo({
+        fromCache: data.fromCache,
+        generatedAt: data.generatedAt
       });
-
-      const primaryData = await primaryResponse.json();
-
-      if (primaryData.status === true && primaryData.data && primaryData.data.length > 0) {
-        const data = primaryData.data[0];
-        setEndPointStatus(primaryData.message || "success");
-        setGames(data);
-        setIsPrimaryResponse(true);
-        
-        // Save to cache
-        saveToCache(data, true, "success");
-        
-        return data;
-      } else {
-        // If primary URL does not return a valid game, fetch from the alternative URL
-        const alternativeResponse = await fetch("https://api.pitchpredictions.com/api/auto_featured_match_of_the_day?fixture_date=" + currentDate, {
-          headers: headers
-        });
-
-        const alternativeData = await alternativeResponse.json();
-
-        if (alternativeData.status === true && alternativeData.data && alternativeData.data.length > 0) {
-          const data = alternativeData.data[0];
-          setEndPointStatus(alternativeData.message || "success");
-          setGames(data);
-          setIsPrimaryResponse(false);
-          
-          // Save to cache
-          saveToCache(data, false, "success");
-          
-          return data;
-        } else {
-          setEndPointStatus("No game available");
-          setGames(null); // Explicitly set to null when no game
-          // Cache the "no game" status too (with shorter cache maybe)
-          saveToCache(null, false, "No game available");
-        }
-      }
+      
     } catch (error) {
-      console.error(error);
+      console.error("Error loading fixture:", error);
       setEndPointStatus("error");
       setGames(null);
-    }
-  }
-
-  // Helper function to save data to cache
-  const saveToCache = (data, isPrimary, status) => {
-    try {
-      if (typeof window !== 'undefined') {
-        const cacheData = {
-          timestamp: new Date().getTime(),
-          data: data,
-          isPrimary: isPrimary,
-          status: status
-        };
-        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-      }
-    } catch (error) {
-      console.error("Failed to save to cache:", error);
     }
   };
 
   // Force refresh function (useful for admin/debugging)
   const refreshData = () => {
-    localStorage.removeItem(cacheKey);
-    fetchFromAPI();
+    fetch(`/api/fixture-of-the-day?date=${currentDate}&refresh=true`)
+      .then(response => response.json())
+      .then(data => {
+        setGames(data.data);
+        setIsPrimaryResponse(data.isPrimary);
+        setEndPointStatus(data.status);
+        setCacheInfo({
+          fromCache: data.fromCache,
+          generatedAt: data.generatedAt
+        });
+      })
+      .catch(error => console.error("Error refreshing:", error));
   };
 
   let probability_results = "";
 
-  // Only calculate probability if gamesfixtures exists
-  if (gamesfixtures && (endpointStatus === "success" || endpointStatus === "success (cached)")) {
-    // Call function to convert date time to users timezone
+  if (gamesfixtures && endpointStatus === "success") {
     const myNewDateString = gamesfixtures.date ? DateTimeToUsersTimezone(gamesfixtures.date) : "";
 
     if (isPrimaryResponse) {
-      // For primary response, use gamesfixtures.option_picked directly
       probability_results = ProbabilityResults(gamesfixtures, gamesfixtures.option_picked);
     } else {
-      // For alternative response, calculate optionPicked using OptionPickedFeaturedMatch
       let optionPicked = OptionPickedFeaturedMatch(
         gamesfixtures.percent_pred_home,
         gamesfixtures.percent_pred_draw,
         gamesfixtures.percent_pred_away,
         gamesfixtures.average_goals
       );
-
-      // Calculate probability results
       probability_results = ProbabilityResults(gamesfixtures, optionPicked);
     }
   }
@@ -178,13 +100,17 @@ function FixtureOfTheDay() {
         <div className="skeleton-row skeleton-row-shimmer"></div>
       </div>
     );
-  } else if (endpointStatus === "success" || endpointStatus === "success (cached)") {
-    // Guard clause to prevent rendering if gamesfixtures is null
+  } else if (endpointStatus === "success") {
     if (!gamesfixtures) {
       return (
         <div className="row" style={{ backgroundColor: "#202c3c", color: "white", cursor: "auto" }}>
           <div className="responsive-row" style={{ backgroundColor: "#202c3c", color: "white", marginTop: "10px" }}>
             <span style={{ fontSize: "15px", fontWeight: "bold", marginLeft: "10px" }}>Game of the Day</span>
+            {cacheInfo && cacheInfo.fromCache && (
+              <span style={{ fontSize: '0.7rem', color: '#999', marginLeft: '10px' }}>
+                ⚡ {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
+              </span>
+            )}
           </div>
           <div className="responsive-row" style={{ border: "none", color: "black", fontWeight: "bold", backgroundColor: "white", paddingBottom: "15px", height: "90px" }}>
             <div className="col" style={{ marginTop: "20px", textAlign: "center", fontSize: "16px" }}>
@@ -202,6 +128,12 @@ function FixtureOfTheDay() {
         <br />
         <div className="responsive-row" style={{ backgroundColor: "#202c3c", color: "white" }}>
           <span style={{ fontSize: "15px", fontWeight: "bold", marginTop: "5px", marginLeft: "10px" }}>Game of the Day</span>
+          {/* Optional: Uncomment if you want to show cache status
+          {cacheInfo && cacheInfo.fromCache && (
+            <span style={{ fontSize: '0.7rem', color: '#999', marginLeft: '10px' }}>
+              ⚡ {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
+            </span>
+          )} */}
         </div>
         <div className="responsive-row" style={{ border: "none", color: "black", fontWeight: "bold", backgroundColor: "white", paddingBottom: "15px", height: "100px" }}>
           <div className="responsive-cell team-link-standings mb-4" title={gamesfixtures.country_name || ''}>

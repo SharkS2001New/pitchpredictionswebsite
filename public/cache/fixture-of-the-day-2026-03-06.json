@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-03-06T00:45:43.640Z",
+  "date": "2026-03-06",
+  "data": {
+    "fixture_id": 1396458,
+    "country_name": "Portugal",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Portugal.svg",
+    "league_short_name": "PRL",
+    "league_name": "Primeira Liga",
+    "date": "03/06/2026 20:15",
+    "home_team_name": "Famalicao",
+    "away_team_name": "Arouca",
+    "percent_pred_home": "72%",
+    "percent_pred_draw": "13%",
+    "percent_pred_away": "15%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 2.7916666666666665,
+    "max_win_probability": "72%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

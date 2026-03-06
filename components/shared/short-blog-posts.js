@@ -1,3 +1,4 @@
+// components/shared/short-blog-posts.js
 import React, { useEffect, useState } from 'react';
 
 const ShortBlogPosts = () => {
@@ -5,23 +6,27 @@ const ShortBlogPosts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [cacheInfo, setCacheInfo] = useState(null);
 
   useEffect(() => {
     setMounted(true);
     
     const fetchPosts = async () => {
       try {
-        const response = await fetch('https://api.pitchpredictions.com/api/fetch_blog_posts', {
-          headers: {
-            Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
-          },
-        });
-
+        // Call our internal API route that handles caching
+        const response = await fetch('/api/blog-posts');
+        
         if (!response.ok) {
           throw new Error('Failed to fetch posts');
         }
+        
         const data = await response.json();
         setPosts(data.data || []);
+        setCacheInfo({
+          fromCache: data.fromCache,
+          generatedAt: data.generatedAt
+        });
+        
       } catch (err) {
         setError(err.message);
       } finally {
@@ -76,6 +81,12 @@ const ShortBlogPosts = () => {
   return (
     <div className="container-wide">
       <h2 className="sectionTitle text-center">Latest News - Blog</h2>
+      {/* Optional: Show cache status */}
+      {/* {cacheInfo && cacheInfo.fromCache && (
+        <div className="text-center" style={{ fontSize: '0.7rem', color: '#666', marginBottom: '10px' }}>
+          ⚡ Cached: {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
+        </div>
+      )} */}
       <div className="row">
         {posts.map((post) => {
           // Generate a reliable key

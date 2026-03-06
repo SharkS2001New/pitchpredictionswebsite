@@ -8,6 +8,8 @@ import RenderData from '../components/shared/render_fixtures_data';
 import { Adsense } from "@ctrl/react-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
 import OneXTwoContent from "../components/seo-content/mainpages/1x2-betting-tips";
+import fs from 'fs';
+import path from 'path';
 
 export default function Home({ 
     initialData, 
@@ -15,14 +17,14 @@ export default function Home({
     error,
     baseUrl,
     todaysDate,
+    cacheInfo
 }) {
   const [allData, setAllData] = useState(initialData || []);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+  const [currentStartIndex, setCurrentStartIndex] = useState(20);
   const [hasMore, setHasMore] = useState(true);
   const [loadTrigger, setLoadTrigger] = useState(0);
 
-  // Load more data when "Show More" is clicked
   const loadMoreData = async () => {
     if (loadingMore || !hasMore) return;
     
@@ -32,7 +34,7 @@ export default function Home({
     const endIndex = Math.min(currentStartIndex + chunkSize - 1, 850);
     
     try {
-      const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
+      const chunkUrl = `${baseUrl}&start_index=${startIndex}&end_index=${endIndex}`;
       
       const response = await fetch(chunkUrl, {
         headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
@@ -43,11 +45,9 @@ export default function Home({
       const chunkData = await response.json();
       
       if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-        // Append new data to existing data
         setAllData(prevData => [...prevData, ...chunkData.data]);
         setCurrentStartIndex(endIndex + 1);
         
-        // Check if we've reached the maximum or got less than requested
         if (endIndex >= 850 || chunkData.data.length < chunkSize) {
           setHasMore(false);
         }
@@ -61,24 +61,20 @@ export default function Home({
     }
   };
 
-  // Trigger data loading when loadTrigger changes
   useEffect(() => {
     if (loadTrigger > 0) {
       loadMoreData();
     }
   }, [loadTrigger]);
 
-  // Function to be called from child components
   const handleLoadMore = () => {
     setLoadTrigger(prev => prev + 1);
   };
 
-  // Show preloader while server is fetching data
   if (typeof window === 'undefined' || (!initialData && !error)) {
     return <PreLoader />;
   }
 
-  // Handle error state
   if (endpointStatus === "error" || error) {
     return (
       <div className="sites-card">
@@ -88,7 +84,6 @@ export default function Home({
     );
   }
   
-  // Process the data - Pass allData and load more props
   const renderPredictions = PagesMatchPredictionDetails({ 
     gamesData: allData,
     onLoadMore: handleLoadMore,
@@ -96,7 +91,6 @@ export default function Home({
     hasMore: hasMore
   });
   
-  // Handle empty data state
   if (renderPredictions.length === 0 && !loadingMore && !initialData) {
     return (
       <div className="sites-card">
@@ -106,7 +100,6 @@ export default function Home({
     );
   }
   
-  // Render the page with data
   return (
     <div className="sites-card">
       <PopularTips/>
@@ -153,44 +146,142 @@ export async function getServerSideProps() {
   const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
   const firstBatchUrl = `${baseUrl}&start_index=0&end_index=20`;
   
+  // Cache setup
+  const cacheDir = path.join(process.cwd(), 'public', 'cache');
+  const cacheFilename = `top-football-predictions-${todaysDate}.json`;
+  const cachePath = path.join(cacheDir, cacheFilename);
+  
+  let initialData = [];
+  let endpointStatus = "success";
+  let error = null;
+  let cacheInfo = {
+    fromCache: false,
+    generatedAt: null
+  };
+
   try {
-    const response = await fetch(firstBatchUrl, {
-      headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
-    });
+    // Create cache directory if it doesn't exist
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+
+    // Check if we have a valid cache file (3 minutes = 180000 ms)
+    if (fs.existsSync(cachePath)) {
+      const cacheContent = fs.readFileSync(cachePath, 'utf8');
+      const cache = JSON.parse(cacheContent);
+      
+      const cacheTime = new Date(cache.generatedAt).getTime();
+      const now = new Date().getTime();
+      const ageInMinutes = (now - cacheTime) / (1000 * 60);
+      
+      if (ageInMinutes <= 3) {
+        // Cache is valid - use it!
+        initialData = cache.data;
+        cacheInfo = {
+          fromCache: true,
+          generatedAt: cache.generatedAt
+        };
+      } else {
+        // Cache expired - delete it
+        fs.unlinkSync(cachePath);
+      }
+    }
+
+    // If no valid cache, fetch from API
+    if (initialData.length === 0) {
+      const response = await fetch(firstBatchUrl, {
+        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+      });
+      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      
+      if (data.status === true && data.data) {
+        initialData = data.data;
+        
+        // Save to cache
+        const cacheData = {
+          generatedAt: new Date().toISOString(),
+          fixtureDate: todaysDate,
+          data: initialData,
+          count: initialData.length
+        };
+        
+        // Atomic write for K3s
+        const tempPath = `${cachePath}.tmp.${Date.now()}`;
+        fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+        fs.renameSync(tempPath, cachePath);
+        
+        cacheInfo = {
+          fromCache: false,
+          generatedAt: cacheData.generatedAt
+        };
+      } else {
+        endpointStatus = "error";
+        error = data.message || "API returned error";
+      }
+    }
+
+    // Clean up old cache files
+    cleanupOldCacheFiles(cacheDir);
+
+  } catch (err) {
+    endpointStatus = "error";
+    error = err.message;
     
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    // If cache exists but API failed, use it as fallback
+    if (fs.existsSync(cachePath)) {
+      try {
+        const cacheContent = fs.readFileSync(cachePath, 'utf8');
+        const cache = JSON.parse(cacheContent);
+        initialData = cache.data;
+        cacheInfo = {
+          fromCache: true,
+          generatedAt: cache.generatedAt,
+          isFallback: true
+        };
+        endpointStatus = "success";
+        error = null;
+      } catch (fallbackErr) {
+        // Silent fail
+      }
+    }
+  }
+
+  return {
+    props: {
+      initialData,
+      endpointStatus,
+      error,
+      baseUrl: baseUrl,
+      todaysDate: todaysDate,
+      cacheInfo
+    }
+  };
+}
+
+// Helper function to clean up old cache files
+function cleanupOldCacheFiles(cacheDir) {
+  try {
+    if (!fs.existsSync(cacheDir)) return;
     
-    const data = await response.json();
+    const files = fs.readdirSync(cacheDir);
+    const now = new Date().getTime();
+    const maxAge = 3 * 60 * 1000; // 3 minutes
     
-    if (data.status === true) {
-      return {
-        props: {
-          initialData: data.data || [],
-          endpointStatus: "success",
-          error: null,
-          baseUrl: baseUrl
+    for (const file of files) {
+      if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
+        const filePath = path.join(cacheDir, file);
+        const stats = fs.statSync(filePath);
+        const fileAge = now - stats.mtimeMs;
+        
+        if (fileAge > maxAge) {
+          fs.unlinkSync(filePath);
         }
-      };
-    } else {
-      return {
-        props: {
-          initialData: [],
-          endpointStatus: "error",
-          error: data.message || "API returned error",
-          baseUrl: baseUrl
-        }
-      };
+      }
     }
   } catch (error) {
-    console.error('Error fetching homepage predictions:', error);
-    
-    return {
-      props: {
-        initialData: [],
-        endpointStatus: "error",
-        error: error.message,
-        baseUrl: baseUrl
-      }
-    };
+    console.error('Error cleaning up cache:', error);
   }
 }
