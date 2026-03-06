@@ -1,82 +1,92 @@
 export default function SokafansPredictionsContent() {
   return (
     <section className="seo-content">
+      <section>
+        <h2>What Is Sokafans?</h2>
+        <p>
+          Sokafans is a popular Kenyan football predictions platform that connects expert tipsters with bettors looking for well-researched daily tips and jackpot guidance. It is widely used across Kenya, Uganda, and Tanzania for its coverage of local and international football markets.
+        </p>
+        <p>
+          Pitch Predictions offers a free alternative to Sokafans with the same depth of coverage — providing daily tips, jackpot predictions, live scores, and match stats across 700+ leagues worldwide, including all major Kenyan bookmaker jackpots.
+        </p>
+      </section>
 
-      <h2>Sokafans Predictions – Accurate Football Tips & Jackpot Predictions</h2>
-      <p>
-        Sokafans offers <strong>reliable football betting tips and jackpot predictions</strong> from expert tipsters. The platform connects top analysts with bettors seeking 
-        <strong>accurate, well-researched predictions</strong>. Each tip is rated by the tipster’s success rate to give you confidence in your bets.
-      </p>
-      <p>
-        For free, high-quality predictions similar to Sokafans, visit 
-        <a href="https://www.pitchpredictions.com/" target="_blank" rel="noopener noreferrer">Pitch Predictions</a>. 
-        We cover multiple betting markets, including:
-      </p>
-      <ul>
-        <li>1x2 (Home/Draw/Away)</li>
-        <li>Double Chance</li>
-        <li>Over/Under 2.5 Goals</li>
-        <li><a href="https://www.pitchpredictions.com/football-predictions-today/predictions-both-to-score" target="_blank" rel="noopener noreferrer">Both Teams to Score (BTTS)</a></li>
-        <li>Halftime/Fulltime</li>
-        <li>Jackpot Predictions (Mega & Midweek)</li>
-      </ul>
+      <section>
+        <h2>Sokafans Tips Today — Free Daily Football Predictions</h2>
+        <p>
+          Pitch Predictions publishes free football tips every day that mirror the quality and scope of Sokafans predictions. Every tip is backed by statistical analysis covering:
+        </p>
 
-      <h3>Sokafans Tips Today Prediction</h3>
-      <p>
-        Looking for <strong>Sokafans tips today predictions</strong>? Pitch Predictions delivers a seamless, hassle-free betting experience. 
-        Our platform uses live football data to provide daily updated matches and expert analysis. Tips are based on:
-      </p>
-      <ul>
-        <li>Past team performance</li>
-        <li>Player statistics</li>
-        <li>Team tactics and strategies</li>
-      </ul>
-      <p>
-        We ensure bettors and football fans have the <strong>accurate predictions needed to maximize winning opportunities</strong>.
-      </p>
+        <h3>Past Team Performance</h3>
+        <p>We analyse each team's last 5–12 matches, tracking wins, losses, draws, goals scored, and goals conceded to identify the strongest selections for today.</p>
 
-      <h3>Sokafans Jackpot Prediction</h3>
-      <p>
-        Access all major <a href="https://www.pitchpredictions.com/jackpot-predictions" target="_blank" rel="noopener noreferrer">Sokafans Jackpot Predictions</a> on Pitch Predictions. 
-        We group <strong>42 jackpots</strong> from Kenyan and international bookmakers, carefully analyzed to give users the best chance of winning prizes and bonuses.
-      </p>
+        <h3>Head-to-Head Records</h3>
+        <p>Historical H2H data between today's opponents reveals dominant sides, typical scorelines, and goal-scoring trends that strongly influence the prediction.</p>
 
-      <h3>Sokafans Mega Jackpot Prediction</h3>
-      <p>
-        Dreaming of hitting the grand jackpot? Our 
-        <a href="https://www.pitchpredictions.com/jackpot-predictions/sportpesa-mega-jackpot-predictions" target="_blank" rel="noopener noreferrer">Sokafans Mega Jackpot Prediction</a> 
-        covers <strong>17 preselected games</strong> from top leagues worldwide. To qualify for bonuses, bettors must predict 12–16 games correctly. To win the grand prize, all 17 games must be correct.
-      </p>
-      <p>Other covered jackpots include:</p>
-      <ul>
-        <li>Sportpesa Midweek Jackpot</li>
-        <li><a href="https://www.pitchpredictions.com/jackpot-predictions/betika-midweek-jackpot-predictions" target="_blank" rel="noopener noreferrer">Betika Midweek Jackpot</a></li>
-      </ul>
-      <p>
-        Our mathematical prediction models ensure an <strong>80% chance of winning either a jackpot prize or bonus</strong>.
-      </p>
+        <h3>Home &amp; Away Form</h3>
+        <p>Teams perform differently at home versus away. We separate these records to give a more accurate probability for each fixture on today's card.</p>
 
-      <h3>Sokafans Midweek Jackpot Prediction</h3>
-      <p>
-        The <a href="https://www.pitchpredictions.com/jackpot-predictions/sportpesa-midweek-jackpot-predictions" target="_blank" rel="noopener noreferrer">Sokafans Midweek Jackpot Prediction</a> 
-        represents Sportpesa’s midweek jackpot. It includes <strong>13 preselected games</strong>, with a top prize of <strong>KSH 52,813,200</strong>. Predictions are computed using:
-      </p>
-      <ul>
-        <li>Head-to-head records</li>
-        <li>Last 12 matches’ performance</li>
-        <li>League standings</li>
-        <li>Home/away form</li>
-      </ul>
-      <p>
-        We provide <strong>Double Chance and Correct Score predictions</strong> to help bettors increase their chances of winning jackpot prizes or bonuses.
-      </p>
+        <h3>Player News &amp; Suspensions</h3>
+        <p>Injuries and suspensions can swing a match. We factor in all confirmed team news before publishing each day's tips.</p>
+      </section>
 
-      <h3>Why Choose Pitch Predictions?</h3>
-      <p>
-        Pitch Predictions is the <strong>go-to platform for free, accurate, and reliable football tips and jackpot predictions</strong>. 
-        Whether it’s midweek or weekend jackpots, our expert analysis and mathematically tested formulas ensure you stay ahead of the game.
-      </p>
+      <section>
+        <h2>Sokafans Jackpot Prediction — Mega &amp; Midweek</h2>
+        <p>
+          Pitch Predictions covers all major jackpots that Sokafans users follow. Our jackpot pages are updated weekly with detailed analysis for every game on the coupon.
+        </p>
 
+        <h3>Sokafans Mega Jackpot Prediction</h3>
+        <p>
+          The Sportpesa Mega Jackpot consists of 17 preselected games from top leagues worldwide. To qualify for bonus prizes, bettors need to predict 12–16 games correctly. A perfect 17/17 wins the grand prize. Our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Mega Jackpot predictions</a> provide 1X2, Double Chance, and Correct Score options for every game — analysed using head-to-head records, current form, league standings, and home/away data.
+        </p>
+
+        <h3>Sokafans Midweek Jackpot Prediction</h3>
+        <p>
+          The Sportpesa Midweek Jackpot features 13 preselected games. Our <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Midweek Jackpot predictions</a> are computed using the last 12 matches for each team, H2H history, and current league standings to identify the most probable outcomes across all 13 games.
+        </p>
+
+        <h3>Betika Midweek Jackpot Prediction</h3>
+        <p>
+          Pitch Predictions also covers the <a href="/jackpot-predictions/betika-midweek-jackpot-predictions">Betika Midweek Jackpot</a>, giving bettors free expert analysis for every game on the Betika coupon — updated every week before the jackpot deadline.
+        </p>
+      </section>
+
+      <section>
+        <h2>Prediction Markets Available</h2>
+        <p>Just like Sokafans, Pitch Predictions covers all the major betting markets you need:</p>
+
+        <h3>1X2 — Match Winner</h3>
+        <p>Home win (1), Draw (X), or Away win (2) — with a confidence percentage for every match today.</p>
+
+        <h3>Double Chance</h3>
+        <p>Cover two outcomes in one bet — 1X, 12, or X2 — ideal for games with an uncertain winner.</p>
+
+        <h3>Over / Under 2.5 Goals</h3>
+        <p>Goal-line predictions backed by each team's scoring and conceding averages across recent fixtures.</p>
+
+        <h3>Both Teams to Score — BTTS / GG / NG</h3>
+        <p>Will both sides score today? Built on defensive records and attacking output from the last 10 matches.</p>
+
+        <h3>HT/FT — Halftime / Fulltime</h3>
+        <p>High-reward combined bets predicting both the halftime result and the final outcome.</p>
+      </section>
+
+      <section>
+        <h2>Frequently Asked Questions</h2>
+
+        <h3>What is Sokafans?</h3>
+        <p>Sokafans is a Kenyan football predictions platform connecting tipsters with bettors. It provides daily tips, jackpot predictions, and match analysis for local and international leagues.</p>
+
+        <h3>Where can I find free Sokafans predictions today?</h3>
+        <p>Pitch Predictions provides free daily football tips and jackpot analysis covering all the same markets as Sokafans — updated every day across 700+ leagues worldwide.</p>
+
+        <h3>Does Pitch Predictions cover the Sokafans jackpot?</h3>
+        <p>Yes. We cover the Sportpesa Mega Jackpot (17 games), Sportpesa Midweek Jackpot (13 games), and Betika Midweek Jackpot — with full analysis for every coupon game, updated weekly.</p>
+
+        <h3>How are the jackpot predictions calculated?</h3>
+        <p>Our jackpot predictions are built using head-to-head records, the last 12 matches for each team, league standings, and home/away form. We offer 1X2, Double Chance, and Correct Score options to help bettors maximise their bonus chances.</p>
+      </section>
     </section>
   );
 }

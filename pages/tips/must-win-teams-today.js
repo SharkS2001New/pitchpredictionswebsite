@@ -1,4 +1,4 @@
-// pages/competitor-predictions.js
+// pages/must-win-teams-today.js
 import React, { useState, useEffect } from "react";
 import { Adsense } from "@ctrl/react-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
@@ -7,17 +7,18 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
+import MustWinTeamsTodayContent from "../../components/seo-content/tips/must-win-teams-today";
 import fs from 'fs';
 import path from 'path';
-import MustWinTeamsTodayContent from "../../components/seo-content/tips/must-win-teams-today";
 
-function CompetitorPredictions({ 
+function MustWinTeamsToday({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -112,7 +113,7 @@ function CompetitorPredictions({
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                <DataNotFoundPage props={`No must-win teams predictions available for ${formatDisplayDate(todaysDate)}`}/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -126,39 +127,49 @@ function CompetitorPredictions({
     }
     
     return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
+            <div className="sites-card">
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <MustWinTeamsTodayContent/>
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <MustWinTeamsTodayContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
@@ -225,7 +236,10 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                // Atomic write for K3s
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -233,7 +247,7 @@ export async function getServerSideProps() {
                 };
             } else {
                 endpointStatus = "error";
-                error = data.message || "Failed to load competitor predictions";
+                error = data.message || "Failed to load must-win teams predictions";
             }
         }
 
@@ -241,7 +255,7 @@ export async function getServerSideProps() {
         if (fs.existsSync(cacheDir)) {
             const files = fs.readdirSync(cacheDir);
             const now = new Date().getTime();
-            const maxAge = 3 * 60 * 1000;
+            const maxAge = 3 * 60 * 1000; // 3 minutes
             
             for (const file of files) {
                 if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
@@ -278,6 +292,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for must-win teams
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -285,9 +302,177 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
     };
 }
 
-export default CompetitorPredictions;
+// Helper function to create structured data for must-win teams
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for must-win teams
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/must-win-teams-today#webpage`,
+                "name": "Must-Win Football Teams Today – High-Confidence Match Picks",
+                "description": "Explore today's must-win football teams based on form, H2H records and team stats. Data-driven picks across major leagues — updated daily by Pitch Predictions.",
+                "url": `${siteUrl}/tips/must-win-teams-today`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Must-Win Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Football Tips",
+                            "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Must-Win Teams Today",
+                            "item": `${siteUrl}/tips/must-win-teams-today`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for must-win teams
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/must-win-teams-today#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What does 'must-win team' mean in football predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A must-win team is a side identified as having a strong statistical advantage in a given match — based on current form, head-to-head records, home/away performance, squad fitness and betting market data. It does not mean the outcome is certain, but the data supports that team as the more likely winner."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How does Pitch Predictions select must-win teams?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Each must-win selection is chosen using a multi-factor model that analyses: current league form (last 5–10 matches), head-to-head history, home and away win rates, goal scoring and conceding averages, key player availability, and odds movement. Only matches where multiple indicators align are listed."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are must-win football tips free on Pitch Predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All must-win team tips on this page are completely free. A premium subscription is available for early-access exclusive picks with higher confidence ratings."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How often is this page updated?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Must-win team selections are updated daily, typically by 9:00 AM GMT. You can also use the date navigation to browse picks for tomorrow and upcoming days."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What leagues are covered in must-win team predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "We cover must-win picks across 700+ leagues including the English Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Champions League, and major African and Asian competitions."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/must-win-teams-today#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Football Tips",
+                        "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Must-Win Teams Today",
+                        "item": `${siteUrl}/tips/must-win-teams-today`
+                    }
+                ]
+            },
+            
+            // 5. ItemList
+            {
+                "@type": "ItemList",
+                "@id": `${siteUrl}/tips/must-win-teams-today#itemlist`,
+                "name": "Must-Win Football Teams Today",
+                "description": "Today's high-confidence must-win football team selections across major leagues, chosen by form, head-to-head data and statistical analysis.",
+                "url": `${siteUrl}/tips/must-win-teams-today`,
+                "numberOfItems": 20,
+                "itemListOrder": "https://schema.org/ItemListOrderDescending"
+            },
+            
+            // 6. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
+}
+
+export default MustWinTeamsToday;

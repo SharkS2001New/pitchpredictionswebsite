@@ -17,10 +17,10 @@ function MetaContent(){
     //url value being passed on page each page load
     if(current_url == "football-predictions-today"){
 
-        title ="Today's Football Predictions, Soccer Tips and Match Stats.";
-        meta_desc_content = "Pitch Predictions offers statistics-based Today’s Football Predictions. Why wait? Join us now and make informed decisions on today's matches.";
+        title ="Today's Football Predictions – Free Tips & Stats";
+        meta_desc_content = "Free football predictions for today's matches. Expert 1X2, BTTS, Over/Under & correct score tips with stats across the Premier League, La Liga, Serie-A & 700+ leagues.";
         meta_keywords = "Today football prediction, soccer predictions today, soccer predictions for today , predictions for today matches, football tips today, today matches predictions, today soccer predictions, today soccer predictions, football predictions today, football today matches, football predictions for today";
-        page_title = "Today's Football Predictions and Tips";
+        page_title = "Today's Football Predictions – Free Tips & Stats";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
@@ -903,10 +903,10 @@ function MetaContent(){
     
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);                  
     } else if(current_url.includes("tips/sokafans")){
-        title = "Sokafans Predictions – Free Expert Football Tips & Jackpots";
-        meta_desc_content = "Stay ahead with daily Sokafans predictions on Pitch Predictions. Accurate 1X2, BTTS, and jackpot tips for Africa & America. Bet responsibly and make informed decisions.";
+        title = "Sokafans Predictions – Free Football Tips & Jackpot Picks";
+        meta_desc_content = "Looking for Sokafans predictions? Get free daily football tips, jackpot predictions &amp; match analysis on Pitch Predictions — covering Mega Jackpot, Midweek Jackpot & 700+ leagues.";
         meta_keywords = "sokafans, sokafans prediction, sokafans mega jackpot prediction, sokafans prediction today, sokafans tips, sokafans tips today prediction, sokafans free tips today, sokafans jackpot prediction, sokafans 100% sure tips";
-        page_title = "Sokafans Predictions – Daily Football Tips & Jackpot Guidance | Pitch Predictions";
+        page_title = "Sokafans Predictions – Free Football Tips & Jackpot Picks";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
     } else if (current_url.includes("tips/betensured-predictions")) {
@@ -931,10 +931,10 @@ function MetaContent(){
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sunpel")) {
-        title = "Sunpel Prediction and Mega Jackpot Tips";
-        meta_desc_content = "Get Sunpel predictions for today’s matches with free jackpot tips, mega jackpot picks, and smart BTTS insights designed to help you play with confidence.";
+        title = "Sunpel Predictions – Free Football Tips & Jackpot Picks";
+        meta_desc_content = "Looking for Sunpel predictions today? Get free football tips, jackpot predictions, BTTS, correct score & mega jackpot analysis on Pitch Predictions — updated daily.";
         meta_keywords = "sunpel, sunpel predictions today, sunpel football tips, sunpel jackpot tips, sunpel mega jackpot tips, sunpel btts tips";
-        page_title = "Free Sunpel Predictions Today";
+        page_title = "Sunpel Predictions – Free Football Tips & Jackpot Picks";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/1960tips")) { //New ones

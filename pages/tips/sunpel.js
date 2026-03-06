@@ -17,7 +17,8 @@ function CompetitorPredictions({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData  // Add structuredData prop
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -126,39 +127,49 @@ function CompetitorPredictions({
     }
     
     return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
+            <div className="sites-card">               
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <SunpelPredictionsContent/>
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <SunpelPredictionsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
@@ -225,7 +236,10 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                // Atomic write for K3s
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -278,6 +292,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for Sunpel page
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -285,8 +302,176 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
+    };
+}
+
+// Helper function to create structured data for Sunpel page
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for Sunpel predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/sunpel#webpage`,
+                "name": "Sunpel Predictions – Free Football Tips & Jackpot Picks",
+                "description": "Looking for Sunpel predictions today? Get free football tips, jackpot predictions, BTTS, correct score and mega jackpot analysis on Pitch Predictions — updated daily.",
+                "url": `${siteUrl}/tips/sunpel`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Sunpel Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Tips",
+                            "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Sunpel Predictions",
+                            "item": `${siteUrl}/tips/sunpel`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for Sunpel
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/sunpel#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is Sunpel?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Sunpel is a Kenyan football predictions platform offering daily tips, jackpot predictions, correct score tips, and BTTS picks. It covers major bookmaker jackpots including Sportpesa, Betika, Mozzart, and Odibet."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Where can I find free Sunpel predictions today?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pitch Predictions provides free daily football tips and jackpot predictions covering the same markets as Sunpel — including 1X2, BTTS, correct score, over/under goals, and all major Kenyan bookmaker jackpots. Updated every day."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Does Pitch Predictions cover Sunpel Mega Jackpot predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Pitch Predictions covers the Sportpesa Mega Jackpot (17 games, weekend), Sportpesa Midweek Jackpot (13 games), Betika Midweek Jackpot, Mozzart Super Daily Jackpot, and more — with full analysis for every game on the coupon, updated weekly."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What are Sunpel BTTS tips?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Sunpel BTTS (Both Teams to Score) tips predict matches where both sides are expected to find the net. Pitch Predictions provides free BTTS tips based on each team's recent scoring and defensive records across the last 10 matches."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is the Sportpesa Mega Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Sportpesa Mega Jackpot runs every weekend (Saturday–Sunday) with a grand prize of up to KES 360 million. It features 17 preselected games from top leagues worldwide. Bettors who correctly predict 12–16 games qualify for bonus prizes. A stake of KES 99 is required per entry."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList (standalone)
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/sunpel#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Tips",
+                        "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Sunpel Predictions",
+                        "item": `${siteUrl}/tips/sunpel`
+                    }
+                ]
+            },
+            
+            // 5. ItemList
+            {
+                "@type": "ItemList",
+                "@id": `${siteUrl}/tips/sunpel#itemlist`,
+                "name": "Sunpel Predictions Today",
+                "description": "Today's football predictions including 1X2, BTTS, correct score, and jackpot analysis for Kenyan and international leagues.",
+                "url": `${siteUrl}/tips/sunpel`,
+                "numberOfItems": 20,
+                "itemListOrder": "https://schema.org/ItemListOrderDescending"
+            },
+            
+            // 6. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
     };
 }
 

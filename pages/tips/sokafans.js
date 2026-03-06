@@ -17,7 +17,8 @@ function CompetitorPredictions({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData  // Add structuredData prop
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -126,39 +127,49 @@ function CompetitorPredictions({
     }
     
     return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
+            <div className="sites-card">                
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <SokafansPredictionsContent/>
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <SokafansPredictionsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
@@ -225,7 +236,10 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                // Atomic write for K3s
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -278,6 +292,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for Sokafans page
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -285,8 +302,168 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
+    };
+}
+
+// Helper function to create structured data for Sokafans page
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for Sokafans predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/sokafans#webpage`,
+                "name": "Sokafans Predictions Today – Free Football Tips & Jackpot Analysis",
+                "description": "Get free Sokafans-style football predictions and jackpot tips. Daily 1X2, BTTS, and jackpot analysis for Sportpesa Mega Jackpot, Betika, and more.",
+                "url": `${siteUrl}/tips/sokafans`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Sokafans Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Tips",
+                            "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Sokafans Predictions",
+                            "item": `${siteUrl}/tips/sokafans`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for Sokafans
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/sokafans#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is Sokafans?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Sokafans is a Kenyan football predictions and betting tips platform that connects tipsters with bettors. It provides daily football tips, jackpot predictions, and match analysis for leagues across Kenya and worldwide."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Where can I find free Sokafans predictions today?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pitch Predictions offers free daily football tips and jackpot predictions similar to Sokafans, covering the Sportpesa Mega Jackpot, Betika Midweek Jackpot, and 700+ leagues worldwide — updated every day."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Does Pitch Predictions cover Sokafans jackpot predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Pitch Predictions covers all major jackpots including the Sportpesa Mega Jackpot (17 games), Sportpesa Midweek Jackpot (13 games), and Betika Midweek Jackpot — with detailed analysis for every selection on the coupon."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How accurate are the jackpot predictions on Pitch Predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Our jackpot predictions are built using head-to-head records, last 12 match performance, league standings, and home/away form. We provide 1X2, Double Chance, and Correct Score options to help bettors increase their chances of winning bonus prizes."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList (standalone)
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/sokafans#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Tips",
+                        "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Sokafans Predictions",
+                        "item": `${siteUrl}/tips/sokafans`
+                    }
+                ]
+            },
+            
+            // 5. ItemList
+            {
+                "@type": "ItemList",
+                "@id": `${siteUrl}/tips/sokafans#itemlist`,
+                "name": "Sokafans Predictions Today",
+                "description": "Today's football predictions including 1X2, BTTS, and jackpot analysis for Kenyan and international leagues.",
+                "url": `${siteUrl}/tips/sokafans`,
+                "numberOfItems": 20,
+                "itemListOrder": "https://schema.org/ItemListOrderDescending"
+            },
+            
+            // 6. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
     };
 }
 
