@@ -7,6 +7,8 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
+import fs from 'fs';
+import path from 'path';
 import VictorPredictionsContent from "../../components/seo-content/tips/victor-predict";
 
 function CompetitorPredictions({ 
@@ -14,22 +16,22 @@ function CompetitorPredictions({
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate
+    todaysDate,
+    cacheInfo 
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+    const [currentStartIndex, setCurrentStartIndex] = useState(20);
     const [hasMore, setHasMore] = useState(true);
     const [loadTrigger, setLoadTrigger] = useState(0);
 
-    // Load more data when "Show More" is clicked
     const loadMoreData = async () => {
         if (loadingMore || !hasMore) return;
         
         setLoadingMore(true);
         const chunkSize = 50;
         const startIndex = currentStartIndex;
-        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400); // Using 400 as max from your code
+        const endIndex = Math.min(currentStartIndex + chunkSize - 1, 400);
         
         try {
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
@@ -43,11 +45,9 @@ function CompetitorPredictions({
             const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-                // Append new data to existing data
                 setAllData(prevData => [...prevData, ...chunkData.data]);
                 setCurrentStartIndex(endIndex + 1);
                 
-                // Check if we've reached the maximum or got less than requested
                 if (endIndex >= 400 || chunkData.data.length < chunkSize) {
                     setHasMore(false);
                 }
@@ -61,24 +61,20 @@ function CompetitorPredictions({
         }
     };
 
-    // Trigger data loading when loadTrigger changes
     useEffect(() => {
         if (loadTrigger > 0) {
             loadMoreData();
         }
     }, [loadTrigger]);
 
-    // Function to be called from child components
     const handleLoadMore = () => {
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
     if (!initialData && !error) {
         return <PreLoader />;
     }
 
-    // Format today's date for display
     const formatDisplayDate = (dateString) => {
         if (!dateString) return '';
         try {
@@ -90,7 +86,6 @@ function CompetitorPredictions({
         }
     };
 
-    // Handle error state
     if (endpointStatus === "error" || error) {
         return (
             <div className="sites-card">
@@ -107,7 +102,6 @@ function CompetitorPredictions({
         );
     }
     
-    // Process the data - Pass allData and load more props
     const renderPredictions = PagesMatchPredictionDetails({ 
         gamesData: allData,
         onLoadMore: handleLoadMore,
@@ -115,7 +109,6 @@ function CompetitorPredictions({
         hasMore: hasMore
     });
     
-    // Handle empty data state
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
@@ -132,7 +125,6 @@ function CompetitorPredictions({
         );
     }
     
-    // Render the page with data
     return (
         <div className="sites-card">
             <PopularTips/>
@@ -168,74 +160,134 @@ function CompetitorPredictions({
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
     
-    // Base URL for top winning predictions
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
-    const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `top-football-predictions-${todaysDate}.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
+
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
-                }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load competitor predictions",
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
-                }
-            };
-        }
-    } catch (error) {
-        console.error('Error fetching competitor predictions:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                todaysDate: todaysDate
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 3) {
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                fs.unlinkSync(cachePath);
             }
-        };
+        }
+
+        if (initialData.length === 0) {
+            const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(firstBatchUrl, {
+                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            
+            if (data.status === true && data.data) {
+                initialData = data.data;
+                
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    fixtureDate: todaysDate,
+                    data: initialData,
+                    count: initialData.length
+                };
+                
+                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: new Date().toISOString()
+                };
+            } else {
+                endpointStatus = "error";
+                error = data.message || "Failed to load competitor predictions";
+            }
+        }
+
+        // Clean up old cache files
+        if (fs.existsSync(cacheDir)) {
+            const files = fs.readdirSync(cacheDir);
+            const now = new Date().getTime();
+            const maxAge = 3 * 60 * 1000;
+            
+            for (const file of files) {
+                if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
+                    const filePath = path.join(cacheDir, file);
+                    const stats = fs.statSync(filePath);
+                    const fileAge = now - stats.mtimeMs;
+                    
+                    if (fileAge > maxAge) {
+                        fs.unlinkSync(filePath);
+                    }
+                }
+            }
+        }
+
+    } catch (err) {
+        endpointStatus = "error";
+        error = err.message;
+        
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                // Silent fail
+            }
+        }
     }
+
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            todaysDate: todaysDate,
+            cacheInfo
+        }
+    };
 }
 
 export default CompetitorPredictions;

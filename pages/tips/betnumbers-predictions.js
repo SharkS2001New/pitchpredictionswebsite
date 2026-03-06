@@ -212,9 +212,7 @@ export async function getServerSideProps() {
         }
 
         // If we don't have valid cache data, fetch from API
-        if (initialData.length === 0) {
-            console.log('📡 [BetNumbers] Fetching fresh data from API...');
-            
+        if (initialData.length === 0) {            
             const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
             
             const controller = new AbortController();
@@ -258,7 +256,6 @@ export async function getServerSideProps() {
         await cleanupOldCacheFiles(cacheDir);
 
     } catch (err) {
-        console.error('Error in getServerSideProps [BetNumbers]:', err);
         endpointStatus = "error";
         error = err.message;
         
@@ -276,7 +273,7 @@ export async function getServerSideProps() {
                 endpointStatus = "success";
                 error = null;
             } catch (fallbackErr) {
-                console.error('Fallback cache also failed:', fallbackErr);
+                // console.error('Fallback cache also failed:', fallbackErr);
             }
         }
     }

@@ -127,19 +127,6 @@ function CompetitorPredictions({
     
     return (
         <div className="sites-card">
-            {cacheInfo && (
-                <div className="cache-indicator text-center text-muted mb-2" style={{ fontSize: '0.8rem' }}>
-                    {cacheInfo.fromCache ? (
-                        <small>⚡ Using cached data from: {new Date(cacheInfo.generatedAt).toLocaleTimeString()}</small>
-                    ) : (
-                        <small>📡 Fresh data from API</small>
-                    )}
-                    {cacheInfo.isFallback && (
-                        <small> (fallback mode)</small>
-                    )}
-                </div>
-            )}
-            
             <PopularTips/>
             
             <RenderData 
