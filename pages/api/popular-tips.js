@@ -1,4 +1,4 @@
-// pages/api/popular-tips.js (this is a separate file!)
+// pages/api/popular-tips.js
 import fs from 'fs';
 import path from 'path';
 
@@ -8,17 +8,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const startDate = new Date().toLocaleDateString("en-CA");
-  const endDate = new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("en-CA");
+  // Use ISO dates (YYYY-MM-DD) instead of locale strings
+  const today = new Date();
+  const startDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+  
+  const endDateObj = new Date(today);
+  endDateObj.setDate(today.getDate() + 2);
+  const endDate = endDateObj.toISOString().split('T')[0]; // YYYY-MM-DD
   
   const cacheDir = path.join(process.cwd(), 'public', 'cache');
+  
+  // Filename will now be: popular-tips-2026-03-06-to-2026-03-08.json
   const cacheFilename = `popular-tips-${startDate}-to-${endDate}.json`;
   const cachePath = path.join(cacheDir, cacheFilename);
 
   try {
     // Create cache directory if it doesn't exist
     if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
+      fs.mkdirSync(cacheDir, { recursive: true, mode: 0o755 });
     }
 
     // Check if we have a valid cache file (3 hours = 10800000 ms)
@@ -37,6 +44,9 @@ export default async function handler(req, res) {
           generatedAt: cache.generatedAt,
           data: cache.data
         });
+      } else {
+        // Cache expired - delete it
+        fs.unlinkSync(cachePath);
       }
     }
 
@@ -66,6 +76,13 @@ export default async function handler(req, res) {
 
     // Save to cache (atomic write for K3s)
     const tempPath = `${cachePath}.tmp.${Date.now()}`;
+    
+    // Ensure the directory exists before writing temp file
+    const tempDir = path.dirname(tempPath);
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true, mode: 0o755 });
+    }
+    
     fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
     fs.renameSync(tempPath, cachePath);
 
