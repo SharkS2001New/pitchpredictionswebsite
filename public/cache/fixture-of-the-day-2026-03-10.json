@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-03-10T12:58:11.075Z",
+  "date": "2026-03-10",
+  "data": {
+    "fixture_id": 1528321,
+    "country_name": "Europe",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Europe.svg",
+    "league_short_name": "UCL",
+    "league_name": "UEFA Champions League",
+    "date": "03/10/2026 17:45",
+    "home_team_name": "Galatasaray",
+    "away_team_name": "Liverpool",
+    "percent_pred_home": "13%",
+    "percent_pred_draw": "13%",
+    "percent_pred_away": "74%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 3.3333333333333335,
+    "max_win_probability": "74%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

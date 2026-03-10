@@ -991,10 +991,10 @@ function MetaContent(){
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/direct-win-prediction")) { 
-        title = "Direct Win Prediction and 180 Tips for Today";  
-        meta_desc_content = "Get reliable direct win prediction and 180 tips for today’s matches. At PitchPredictions, we use accurate, mathematically computed data to help you bet smarter.";  
+        title = "Direct Win Predictions – Free Straight Win Football Tips Today | Pitch Predictions";  
+        meta_desc_content = "Get free direct win predictions for today's football matches. Straight win tips backed by form, H2H records &amp; squad news across the Premier League, Champions League &amp; 700+ leagues.";  
         meta_keywords = "Direct Win Prediction, 180 tips today, Best football prediction site, Sure bet tips, Football betting tips, Expert match predictions, Accurate football predictions, Today match prediction";  
-        page_title = "Direct Win Predictions and Sure Betting Tips";  
+        page_title = "Direct Win Predictions – Free Straight Win Football Tips Today";  
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/free-vip-tips-today")) { 
@@ -1087,10 +1087,10 @@ function MetaContent(){
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sure-tips")) { 
-        title = "Supatips Prediction Today and Sure Win Tips";  
-        meta_desc_content = "Get sure tips today with 100% sure tips today from SupaTips predictions. Access sure win tips, accurate football predictions, and daily betting insights to improve your success.";  
+        title = "Sure Tips Today – Free High-Confidence Football Predictions | Pitch Predictions";  
+        meta_desc_content = "Free sure tips for today's football matches. High-confidence predictions across the Premier League, Champions League &amp; 700+ leagues — backed by form, H2H &amp; squad data. Updated daily.";  
         meta_keywords = "sure tips today, 100% sure tips today, SupaTips predictions, sure win tips, accurate football predictions, daily betting insights";  
-        page_title = "Supatips Mega Jackpot Prediction";  
+        page_title = "Sure Tips Today – Free High-Confidence Football Predictions";  
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/take-the-risk")) { 

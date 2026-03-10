@@ -7,9 +7,10 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
-import SureTipsContent from "../../components/seo-content/tips/sure-tips";
+import DirectWinPredictionsContent from "../../components/seo-content/tips/direct-win-prediction";
 import fs from 'fs';
 import path from 'path';
+import Head from 'next/head';
 
 function CompetitorPredictions({ 
     initialData, 
@@ -126,34 +127,171 @@ function CompetitorPredictions({
     }
     
     return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
-            />
-            
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
+        <>
+            <Head>
+                {/* Organization Schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "Organization",
+                            "name": "Pitch Predictions",
+                            "url": "https://www.pitchpredictions.com",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://www.pitchpredictions.com/pitch-predictions-logo.png"
+                            },
+                            "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                            "sameAs": ["https://t.me/s/betsassuredkenya"],
+                            "contactPoint": {
+                                "@type": "ContactPoint",
+                                "contactType": "Customer Support",
+                                "url": "https://www.pitchpredictions.com/contactus"
+                            }
+                        })
+                    }}
+                />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <SureTipsContent/>
+                {/* BreadcrumbList Schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "BreadcrumbList",
+                            "itemListElement": [
+                                { 
+                                    "@type": "ListItem", 
+                                    "position": 1, 
+                                    "name": "Home", 
+                                    "item": "https://www.pitchpredictions.com/" 
+                                },
+                                { 
+                                    "@type": "ListItem", 
+                                    "position": 2, 
+                                    "name": "Tips", 
+                                    "item": "https://www.pitchpredictions.com/tips" 
+                                },
+                                { 
+                                    "@type": "ListItem", 
+                                    "position": 3, 
+                                    "name": "Direct Win Predictions", 
+                                    "item": "https://www.pitchpredictions.com/tips/direct-win-prediction" 
+                                }
+                            ]
+                        })
+                    }}
+                />
+
+                {/* FAQPage Schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "FAQPage",
+                            "mainEntity": [
+                                {
+                                    "@type": "Question",
+                                    "name": "What is a direct win prediction in football?",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "A direct win prediction — also called a straight win or 1/2 tip — means backing one team to win the match outright, with no draw included. It is the simplest and most popular football betting market, offering clear outcomes: either the predicted team wins or the tip loses."
+                                    }
+                                },
+                                {
+                                    "@type": "Question",
+                                    "name": "Are the direct win predictions on Pitch Predictions free?",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "Yes. All direct win predictions on Pitch Predictions are completely free. A premium subscription unlocks additional handpicked tips with deeper analysis from major leagues and tournaments."
+                                    }
+                                },
+                                {
+                                    "@type": "Question",
+                                    "name": "What is the difference between a direct win and a double chance bet?",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "A direct win (1 or 2) backs one team to win outright with no safety net. A double chance covers two outcomes — for example, 1X covers a home win or draw, reducing risk but also reducing odds. Direct win tips offer higher odds and are best suited for matches with a clear statistical favourite."
+                                    }
+                                },
+                                {
+                                    "@type": "Question",
+                                    "name": "Can I use direct win tips for accumulators?",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "Yes. Direct win predictions are ideal for building accumulator slips. Combining several high-confidence straight win tips from different leagues can significantly increase potential returns while keeping each individual selection statistically justified."
+                                    }
+                                },
+                                {
+                                    "@type": "Question",
+                                    "name": "How are direct win tips calculated on Pitch Predictions?",
+                                    "acceptedAnswer": {
+                                        "@type": "Answer",
+                                        "text": "Each direct win tip is generated using a multi-factor analysis covering recent form (last 5–10 matches), head-to-head records, home and away performance, player injuries and suspensions, squad depth, and betting market movement. Every tip carries a confidence percentage to indicate statistical strength."
+                                    }
+                                }
+                            ]
+                        })
+                    }}
+                />
+
+                {/* WebPage Schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebPage",
+                            "name": "Direct Win Predictions – Free Straight Win Football Tips Today",
+                            "description": "Free direct win predictions for today's football matches. Straight win tips backed by form, H2H records and squad news across 700+ leagues.",
+                            "url": "https://www.pitchpredictions.com/tips/direct-win-prediction",
+                            "isPartOf": { 
+                                "@type": "WebSite", 
+                                "name": "Pitch Predictions", 
+                                "url": "https://www.pitchpredictions.com" 
+                            },
+                            "about": { 
+                                "@type": "Thing", 
+                                "name": "Direct Win Football Predictions" 
+                            },
+                            "dateModified": new Date().toISOString().split('T')[0],
+                            "inLanguage": "en"
+                        })
+                    }}
+                />
+            </Head>
+
+            <div className="sites-card">
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />
+
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <DirectWinPredictionsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

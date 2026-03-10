@@ -17,7 +17,8 @@ function CompetitorPredictions({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -126,39 +127,49 @@ function CompetitorPredictions({
     }
     
     return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
+            <div className="sites-card">
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <DirectWinPredictionsContent/>
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <DirectWinPredictionsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     
@@ -225,7 +236,10 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                // Atomic write for K3s
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -241,7 +255,7 @@ export async function getServerSideProps() {
         if (fs.existsSync(cacheDir)) {
             const files = fs.readdirSync(cacheDir);
             const now = new Date().getTime();
-            const maxAge = 3 * 60 * 1000;
+            const maxAge = 3 * 60 * 1000; // 3 minutes
             
             for (const file of files) {
                 if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
@@ -278,6 +292,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for direct win predictions
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -285,8 +302,176 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
+    };
+}
+
+// Helper function to create structured data for direct win predictions
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for direct win predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/direct-win-prediction#webpage`,
+                "name": "Direct Win Predictions – Free Straight Win Football Tips Today",
+                "description": "Free direct win predictions for today's football matches. Straight win tips backed by form, H2H records and squad news across 700+ leagues.",
+                "url": `${siteUrl}/tips/direct-win-prediction`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Direct Win Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Football Tips",
+                            "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Direct Win Predictions",
+                            "item": `${siteUrl}/tips/direct-win-prediction`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for direct win predictions
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/direct-win-prediction#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is a direct win prediction in football?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A direct win prediction — also called a straight win or 1/2 tip — means backing one team to win the match outright, with no draw included. It is the simplest and most popular football betting market, offering clear outcomes: either the predicted team wins or the tip loses."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are the direct win predictions on Pitch Predictions free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All direct win predictions on Pitch Predictions are completely free. A premium subscription unlocks additional handpicked tips with deeper analysis from major leagues and tournaments."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is the difference between a direct win and a double chance bet?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A direct win (1 or 2) backs one team to win outright with no safety net. A double chance covers two outcomes — for example, 1X covers a home win or draw, reducing risk but also reducing odds. Direct win tips offer higher odds and are best suited for matches with a clear statistical favourite."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Can I use direct win tips for accumulators?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Direct win predictions are ideal for building accumulator slips. Combining several high-confidence straight win tips from different leagues can significantly increase potential returns while keeping each individual selection statistically justified."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How are direct win tips calculated on Pitch Predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Each direct win tip is generated using a multi-factor analysis covering recent form (last 5–10 matches), head-to-head records, home and away performance, player injuries and suspensions, squad depth, and betting market movement. Every tip carries a confidence percentage to indicate statistical strength."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/direct-win-prediction#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Football Tips",
+                        "item": `${siteUrl}/top-football-tips-and-predictions/today`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Direct Win Predictions",
+                        "item": `${siteUrl}/tips/direct-win-prediction`
+                    }
+                ]
+            },
+            
+            // 5. ItemList
+            {
+                "@type": "ItemList",
+                "@id": `${siteUrl}/tips/direct-win-prediction#itemlist`,
+                "name": "Direct Win Football Predictions Today",
+                "description": "Today's high-confidence direct win football selections across major leagues, chosen by form, head-to-head data and statistical analysis.",
+                "url": `${siteUrl}/tips/direct-win-prediction`,
+                "numberOfItems": 20,
+                "itemListOrder": "https://schema.org/ItemListOrderDescending"
+            },
+            
+            // 6. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
     };
 }
 
