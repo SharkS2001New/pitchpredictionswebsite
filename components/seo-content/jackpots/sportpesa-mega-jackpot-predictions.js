@@ -56,6 +56,15 @@ export default function SportpesaMegaJackpotContent() {
         <li><strong>Syndicate Voting Data:</strong> Deep insights from the largest betting groups.</li>
       </ul>
 
+      <p>
+        The online betting and casino ecosystem is supported by a wide range of technology providers
+        and gaming operators. Some companies focus on developing platforms and casino networks that
+        power many betting experiences. One example is &nbsp;
+        <a href="https://www.onlinecasinogroups.com/dmg-solutions-casinos/" rel="dofollow" style={{color:"blue"}}>
+          DMG Solutions B.V
+        </a>, which operates within the broader online casino industry.
+      </p>
+
       <h2>Sportpesa Mega Jackpot FAQs</h2>
 
       <p><strong>1. How does user voting boost my bets?</strong><br />
