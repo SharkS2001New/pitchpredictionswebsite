@@ -60,7 +60,7 @@ export default function SportpesaMegaJackpotContent() {
         The online betting and casino ecosystem is supported by a wide range of technology providers
         and gaming operators. Some companies focus on developing platforms and casino networks that
         power many betting experiences. One example is &nbsp;
-        <a href="https://www.onlinecasinogroups.com/dmg-solutions-casinos/" rel="dofollow" style={{color:"blue"}}>
+        <a href="https://www.onlinecasinogroups.com/dmg-solutions-casinos/" rel="dofollow" target="_blank" style={{color:"blue"}}>
           DMG Solutions B.V
         </a>, which operates within the broader online casino industry.
       </p>
