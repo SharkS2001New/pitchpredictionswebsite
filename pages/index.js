@@ -11,6 +11,7 @@ import ShortBlogPosts from "../components/shared/short-blog-posts";
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
 import fs from 'fs';
 import path from 'path';
+import GuzzBetHomepageBanner from "../components/shared/GuzzBetHomepageBanner";
 
 export default function Home({ 
     initialData, 
@@ -18,7 +19,6 @@ export default function Home({
     error,
     baseUrl,
     structuredData,
-    cacheInfo // New prop to show cache status
 }) {
   const [allData, setAllData] = useState(initialData || []);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -115,7 +115,10 @@ export default function Home({
           <a href="/auth/login" className="btn btn-danger btn-sm">Subscribe Now</a>
         </p>
         <PopularTips/>
-        
+
+        {/**Homepage banner */}
+        <GuzzBetHomepageBanner/>
+
         <RenderData 
           renderPredictions={renderPredictions} 
           onLoadMore={handleLoadMore}

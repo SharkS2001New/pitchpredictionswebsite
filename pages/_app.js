@@ -19,10 +19,10 @@ import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
 import Script from 'next/script';
-import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
 import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 import AfroPariClickUnderAds from '../components/shared/AfroPariClickUnderAds';
 import AfroPariClickPopupAds from '../components/shared/AfroPariClickPopupAds';
+import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -196,11 +196,8 @@ function App({ Component, pageProps }) {
                       </>
                     )}
 
-                    {/* GuzBet Catfish Banner */}
-                    {showAds && adVariant === '1XBET' && (
-                      <GuzBetCatfishBanner/>
-                    )}
-
+                  <GuzBetCatfishBanner/>
+                  
                   </div>    
                   {!isAuthPage && 
                   <div className="col-lg-3 d-none d-lg-block">
