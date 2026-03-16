@@ -22,7 +22,6 @@ import Script from 'next/script';
 import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
 import AfroPariClickUnderAds from '../components/shared/AfroPariClickUnderAds';
 import AfroPariClickPopupAds from '../components/shared/AfroPariClickPopupAds';
-import GuzBetCatfishBanner from '../components/shared/GuzBetCatfishBanner';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -195,8 +194,6 @@ function App({ Component, pageProps }) {
                         <AfroPariClickPopupAds />
                       </>
                     )}
-
-                  <GuzBetCatfishBanner/>
                   
                   </div>    
                   {!isAuthPage && 
