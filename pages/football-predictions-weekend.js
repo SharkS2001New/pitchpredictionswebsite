@@ -16,7 +16,8 @@ function WeekendFixtures({
     error,
     baseUrl,
     saturdayDate,
-    sundayDate
+    sundayDate,
+    structuredData
 }) {
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
@@ -101,17 +102,30 @@ function WeekendFixtures({
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
                 />
-            </div>
+                <div className="sites-card">
+                    <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+                
+                <div className="">
+                    <div className="container">
+                        <WeekendFootballPredictionsContent/>
+                    </div>
+                </div>
+            </>
         );
     }
     
@@ -126,62 +140,86 @@ function WeekendFixtures({
     // Handle empty data state
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={`No matches available for weekend ${formatWeekendRange()}`}/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+                
+                <div className="">
+                    <div className="container">
+                        <WeekendFootballPredictionsContent/>
+                    </div>
+                </div>
+            </>
+        );
+    }
+    
+    // Render the page with data
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
             <div className="sites-card">
-                <DataNotFoundPage props={`No matches available for weekend ${formatWeekendRange()}`}/>
+                <div className="container-fluid">
+                    <div className="row" style={{backgroundColor: "#edf3f5"}}>
+                        <div className="col-md-1 col-2"></div>
+                        <div className="col-md-10 col-12">
+                            <FilterWeekendOverallDoubleChanceUnderOverHTFTPred1x2 url_filter={router.pathname.substring(1)} />
+                        </div>
+                        <div className="col-md-1 col-1"></div>
+                    </div>
+                </div>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
                 <br/>
+                
                 <Adsense
                     client="ca-pub-5665711413000284"
                     slot="3850951453"
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />
-            </div>
-        );
-    }
-    
-    // Render the page with data
-    return (
-        <div className="sites-card">
-            <div className="container-fluid">
-                <div className="row" style={{backgroundColor: "#edf3f5"}}>
-                    <div className="col-md-1 col-2"></div>
-                    <div className="col-md-10 col-12">
-                        <FilterWeekendOverallDoubleChanceUnderOverHTFTPred1x2 url_filter={router.pathname.substring(1)} />
+                /> 
+                
+                <br/>   
+                
+                <div className="">
+                    <div className="container">
+                        <WeekendFootballPredictionsContent/>
                     </div>
-                    <div className="col-md-1 col-1"></div>
                 </div>
             </div>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
-            />
-            
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            /> 
-            
-            <br/>   
-            
-            <div className="">
-                <div className="container">
-                    <WeekendFootballPredictionsContent/>
-                </div>
-            </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     // Get weekend dates
     const weekendDates = DateofWeekend();
     const saturdayDate = weekendDates[0];
@@ -195,6 +233,10 @@ export async function getServerSideProps() {
     
     // Record start time to ensure minimum loading time if needed
     const startTime = Date.now();
+    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
     
     try {
         const controller = new AbortController();
@@ -226,43 +268,178 @@ export async function getServerSideProps() {
                 await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
             }
             
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    saturdayDate: saturdayDate,
-                    sundayDate: sundayDate
-                }
-            };
+            initialData = data.data || [];
+            endpointStatus = "success";
+            error = null;
         } else {
             // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load weekend predictions",
-                    baseUrl: baseUrl,
-                    saturdayDate: saturdayDate,
-                    sundayDate: sundayDate
-                }
-            };
+            endpointStatus = "error";
+            error = data.message || "Failed to load weekend predictions";
         }
-    } catch (error) {
-        console.error('Error fetching weekend predictions:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                saturdayDate: saturdayDate,
-                sundayDate: sundayDate
-            }
-        };
+    } catch (err) {
+        console.error('Error fetching weekend predictions:', err);
+        endpointStatus = "error";
+        error = err.message;
     }
+    
+    // Create structured data for weekend football predictions
+    const structuredData = createStructuredData(siteUrl, currentDate);
+    
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            saturdayDate: saturdayDate,
+            sundayDate: sundayDate,
+            structuredData
+        }
+    };
+}
+
+// Helper function to create structured data for weekend football predictions
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for weekend football predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/football-predictions-weekend#webpage`,
+                "name": "Weekend Football Predictions – Free Tips for Saturday & Sunday",
+                "description": "Free football predictions for this weekend's matches. Expert 1X2, BTTS, Over/Under and correct score tips for Saturday and Sunday fixtures across 700+ leagues.",
+                "url": `${siteUrl}/football-predictions-weekend`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Weekend Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Weekend Football Predictions",
+                            "item": `${siteUrl}/football-predictions-weekend`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for weekend football predictions
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/football-predictions-weekend#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "Are the weekend football predictions free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All weekend football predictions on Pitch Predictions are completely free — including 1X2, BTTS, Over/Under, Double Chance, and HT/FT tips for every Saturday and Sunday fixture. A premium subscription unlocks additional high-confidence picks with deeper analysis."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Which leagues have predictions this weekend?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pitch Predictions covers weekend fixtures across 700+ leagues, including the English Premier League, La Liga, Bundesliga, Serie A, Ligue 1, CAF Champions League, and dozens of European, African, Asian, and American competitions every Saturday and Sunday."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How early are weekend football predictions published?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Weekend predictions are typically available from Tuesday or Wednesday, at least 3–5 days before Saturday kickoffs. This gives you time to review each selection, check team news, and plan your bets in advance. Predictions are updated throughout the week as injury news and odds movements emerge."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What prediction markets are available for weekend fixtures?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Weekend predictions cover 1X2 (match winner), Double Chance, HT/FT (Half Time/Full Time), Over/Under 2.5 goals, Both Teams to Score (BTTS/GG/NG), and Correct Score markets — with a confidence percentage for every selection."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Does Pitch Predictions cover Sportpesa Mega Jackpot this weekend?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Pitch Predictions publishes free Sportpesa Mega Jackpot predictions every week covering all 17 preselected games. Expert 1X2 and Double Chance tips for every game are updated before the weekend deadline."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/football-predictions-weekend#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Weekend Football Predictions",
+                        "item": `${siteUrl}/football-predictions-weekend`
+                    }
+                ]
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
 }
 
 export default WeekendFixtures;

@@ -4,12 +4,16 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
+import fs from 'fs';
+import path from 'path';
 
 function SportpesaMegaJackpotPredictions({ 
     initialGamesData, 
     endpointStatus, 
     error,
-    initialVoteStats 
+    initialVoteStats,
+    structuredData,
+    cacheInfo 
 }) {         
     const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
@@ -303,31 +307,91 @@ function SportpesaMegaJackpotPredictions({
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
-                />   
-                <br/>   
-                <div className="">
-                    <div className="container">
-                       <SportpesaMegaJackpotContent/>
-                    </div>
-                </div>         
-            </div>
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />   
+                    <br/>   
+                    <div className="">
+                        <div className="container">
+                           <SportpesaMegaJackpotContent/>
+                        </div>
+                    </div>         
+                </div>
+            </>
         );
     }
 
     // Handle empty data state
     if (!gamesData || gamesData.length === 0) {
         return (
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props="No jackpot fixtures available at the moment." />
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />   
+                    <br/>   
+                    <div className="">
+                        <div className="container">
+                           <SportpesaMegaJackpotContent/>
+                        </div>
+                    </div>         
+                </div>
+            </>
+        );
+    }
+
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
             <div className="sites-card">
-                <DataNotFoundPage props="No jackpot fixtures available at the moment." />
+                {/* Premium Banner */}
+                <div className="premium-banner">
+                    <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
+                    <p className="text-center">
+                        <a href="/auth/login" className="btn btn-danger btn-sm">Buy Premium Jackpot Now</a>
+                    </p>
+                </div>
+
+                {/* Games Component */}
+                <JackpotGamesBootstrap 
+                    gamesData={gamesData} 
+                    selectedVotes={selectedVotes}
+                    voteStats={voteStats}
+                    onVote={handleVote}
+                    votingInProgress={votingInProgress} 
+                    refreshingStats={refreshingStats}
+                />
+
+                {/* Ads */}
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -335,156 +399,395 @@ function SportpesaMegaJackpotPredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />   
+                /> 
                 <br/>   
-                <div className="">
+
+                {/* SEO Content */}
+                <div className="seo-content-section">
                     <div className="container">
-                       <SportpesaMegaJackpotContent/>
+                        <SportpesaMegaJackpotContent/>
                     </div>
-                </div>         
-            </div>
-        );
-    }
-
-    return (
-        <div className="sites-card">
-            {/* Premium Banner */}
-            <div className="premium-banner">
-                <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
-                <p className="text-center">
-                    <a href="/auth/login" className="btn btn-danger btn-sm">Buy Premium Jackpot Now</a>
-                </p>
-            </div>
-
-            {/* Games Component */}
-            <JackpotGamesBootstrap 
-                gamesData={gamesData} 
-                selectedVotes={selectedVotes}
-                voteStats={voteStats}
-                onVote={handleVote}
-                votingInProgress={votingInProgress} 
-                refreshingStats={refreshingStats}
-            />
-
-            {/* Ads */}
-            <br/>
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            /> 
-            <br/>   
-
-            {/* SEO Content */}
-            <div className="seo-content-section">
-                <div className="container">
-                    <SportpesaMegaJackpotContent/>
                 </div>
-            </div>
 
-            <style jsx>{`  
-                .sites-card {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 10px;
-                }
-            `}</style>
-        </div>
+                <style jsx>{`  
+                    .sites-card {
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        background-color: white;
+                        padding: 10px;
+                    }
+                `}</style>
+            </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
 
-    try {
-        // Fetch jackpot fixtures
-        const response = await fetch(
-            "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Mega Jackpot",
-            { headers }
-        );
+    let initialGamesData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let initialVoteStats = {};
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // Cache setup
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `sportpesa-mega-jackpot-fixtures.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
+
+    try {
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
 
-        const data = await response.json();
-        
-        let formattedData = [];
-        let voteStats = {};
-        
-        if (data.status && data.data) {
-            formattedData = data.data.map(game => ({
-                ...game,
-                jackpot_id: game.jackpot_tips_id,
-                fixture_id: game.fixture_id,
-                game_id: game.id
-            }));
+        // Check if we have a valid cache file (5 minutes = 300000 ms)
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
+            
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 5) {
+                // ✅ Cache is valid - use it!
+                initialGamesData = cache.gamesData;
+                initialVoteStats = cache.voteStats;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
 
-            // Fetch initial vote stats for all fixtures
-            if (formattedData.length > 0) {
-                const jackpotId = formattedData[0]?.jackpot_tips_id;
-                const fixtureIds = formattedData.map(game => game.fixture_id);
+        // If no valid cache, fetch from API
+        if (initialGamesData.length === 0) {
+            // Fetch jackpot fixtures
+            const response = await fetch(
+                "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Mega Jackpot",
+                { headers }
+            );
 
-                try {
-                    const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
-                        },
-                        body: JSON.stringify({
-                            jackpot_id: jackpotId,
-                            fixture_ids: fixtureIds
-                        })
-                    });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-                    const statsResult = await statsResponse.json();
-                    
-                    if (statsResult.status && statsResult.data) {
-                        voteStats = statsResult.data;
+            const data = await response.json();
+            
+            if (data.status && data.data) {
+                initialGamesData = data.data.map(game => ({
+                    ...game,
+                    jackpot_id: game.jackpot_tips_id,
+                    fixture_id: game.fixture_id,
+                    game_id: game.id
+                }));
+
+                // Fetch initial vote stats for all fixtures
+                if (initialGamesData.length > 0) {
+                    const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+                    const fixtureIds = initialGamesData.map(game => game.fixture_id);
+
+                    try {
+                        const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                            },
+                            body: JSON.stringify({
+                                jackpot_id: jackpotId,
+                                fixture_ids: fixtureIds
+                            })
+                        });
+
+                        const statsResult = await statsResponse.json();
+                        
+                        if (statsResult.status && statsResult.data) {
+                            initialVoteStats = statsResult.data;
+                        }
+                    } catch (statsError) {
+                        console.error("Error fetching vote stats:", statsError);
+                        
+                        // Create empty stats for all fixtures
+                        fixtureIds.forEach(fixtureId => {
+                            initialVoteStats[fixtureId] = {
+                                stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
+                                percentages: { home: 0, draw: 0, away: 0 },
+                                community_prediction: null
+                            };
+                        });
                     }
-                } catch (statsError) {
-                    console.error("Error fetching vote stats:", statsError);
-                    
-                    // Create empty stats for all fixtures
-                    fixtureIds.forEach(fixtureId => {
-                        voteStats[fixtureId] = {
-                            stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
-                            percentages: { home: 0, draw: 0, away: 0 },
-                            community_prediction: null
-                        };
-                    });
+                }
+
+                // Save to cache
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    gamesData: initialGamesData,
+                    voteStats: initialVoteStats,
+                    count: initialGamesData.length
+                };
+                
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+            }
+
+            endpointStatus = data.status === true ? "success" : "error";
+            error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
+        }
+
+        // Clean up old cache files (older than 5 minutes)
+        await cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error("Error fetching jackpot data:", err);
+        endpointStatus = "error";
+        error = err.message || "Failed to load jackpot fixtures";
+        initialGamesData = [];
+        initialVoteStats = {};
+        
+        // If cache exists but API failed, use it as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialGamesData = cache.gamesData;
+                initialVoteStats = cache.voteStats;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                // Silent fail
+            }
+        }
+    }
+
+    // Create structured data for Sportpesa Mega Jackpot
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
+    return {
+        props: {
+            initialGamesData,
+            endpointStatus,
+            error,
+            initialVoteStats,
+            structuredData,
+            cacheInfo
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 5 * 60 * 1000; // 5 minutes
+        
+        for (const file of files) {
+            if (file === 'sportpesa-mega-jackpot-fixtures.json') {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
                 }
             }
         }
-
-        return {
-            props: {
-                initialGamesData: formattedData,
-                endpointStatus: data.status === true ? "success" : "error",
-                error: data.status === true ? null : (data.message || "Failed to load jackpot fixtures"),
-                initialVoteStats: voteStats
-            }
-        };
-
     } catch (error) {
-        console.error("Error fetching jackpot data:", error);
-
-        return {
-            props: {
-                initialGamesData: [],
-                endpointStatus: "error",
-                error: error.message || "Failed to load jackpot fixtures",
-                initialVoteStats: {}
-            }
-        };
+        console.error('Error cleaning up cache:', error);
     }
+}
+
+// Helper function to create structured data for Sportpesa Mega Jackpot
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues and jackpots worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for Sportpesa Mega Jackpot
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions#webpage`,
+                "name": "Sportpesa Mega Jackpot Predictions – Free Tips This Weekend",
+                "description": "Free Sportpesa Mega Jackpot predictions for all 17 games this weekend. Expert 1X2 and Double Chance tips backed by form, H2H and squad data — updated every week.",
+                "url": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Sportpesa Mega Jackpot Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Jackpot Predictions",
+                            "item": `${siteUrl}/jackpot-predictions`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Sportpesa Mega Jackpot Predictions",
+                            "item": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for Sportpesa Mega Jackpot
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is the Sportpesa Mega Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Sportpesa Mega Jackpot is a weekly football jackpot offered by Sportpesa Kenya. It features 17 preselected games from leagues around the world played every weekend (Saturday–Sunday). The grand prize is up to KSh 360 million for correctly predicting all 17 outcomes. Bonus prizes are awarded for 12, 13, 14, 15, and 16 correct predictions."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How do I win the Sportpesa Mega Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "To win the Sportpesa Mega Jackpot grand prize, you must correctly predict all 17 preselected games. Each game requires a 1X2 prediction — Home win (1), Draw (X), or Away win (2). Sportpesa also awards bonus prizes for 12, 13, 14, 15, or 16 correct predictions, making partial wins a realistic weekly target."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are the Sportpesa Mega Jackpot predictions on Pitch Predictions free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All Sportpesa Mega Jackpot predictions on Pitch Predictions are completely free. We publish expert 1X2 and Double Chance tips for all 17 jackpot games every week, backed by statistical analysis covering form, head-to-head records, and squad news. A premium subscription provides access to additional in-depth analysis."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How are the Sportpesa Mega Jackpot predictions calculated?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Our Mega Jackpot predictions are built using each team's last 12 match performance, head-to-head records, current league standings, and home and away form. We provide both 1X2 and Double Chance options for all 17 games to help bettors improve their chances of reaching bonus prize thresholds."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "When is the Sportpesa Mega Jackpot deadline?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Sportpesa Mega Jackpot deadline is before the kickoff of the first preselected game each weekend, typically Saturday afternoon. Pitch Predictions publishes predictions early in the week — well before the deadline — so you have time to review the analysis and submit your slip."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How much does it cost to enter the Sportpesa Mega Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Sportpesa Mega Jackpot requires a stake of KSh 99 per entry. You must predict the outcomes of all 17 preselected games on a single slip. Multiple entries are allowed, enabling bettors to cover different combinations across the 17 games."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Jackpot Predictions",
+                        "item": `${siteUrl}/jackpot-predictions`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Sportpesa Mega Jackpot Predictions",
+                        "item": `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions`
+                    }
+                ]
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
 }
 
 export default SportpesaMegaJackpotPredictions;

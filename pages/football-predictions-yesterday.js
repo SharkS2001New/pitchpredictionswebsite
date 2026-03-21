@@ -9,13 +9,16 @@ import DataNotFoundPage from "../components/includes/datanotfound";
 import getFormattedYesterdayDate from "../components/functions/GetYesterdaysDate";
 import FilterYesterdayOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions-yesterday/filter-pred1x2-ov-un-dc-ht-ft";
 import YesterdayFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-yesterday";
+import fs from 'fs';
+import path from 'path';
 
 function YesterdayFixtures({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
-    yesterdayDate 
+    yesterdayDate,
+    cacheInfo 
 }) {
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
@@ -186,75 +189,161 @@ export async function getServerSideProps() {
     // Base URL for yesterday's games
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_yesterday_games";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
-    const firstBatchUrl = `${baseUrl}?fixture_date=${yesterdayDate}&start_index=0&end_index=20`;
+    // Cache setup - create cache file for yesterday's predictions
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `yesterday-football-predictions-${yesterdayDate}.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
+
+        // Check if we have a valid cache file
+        if (fs.existsSync(cachePath)) {
+            // Read the cache file
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
+            // Check if cache is still valid (1 hour = 3600000 ms)
+            // Since yesterday's results don't change, we can cache longer
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 60) {
+                // ✅ Cache is valid - use it!
+                initialData = cache.data;
+                endpointStatus = "success";
+                error = null;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If we don't have valid cache data, fetch from API
+        if (initialData.length === 0) {
+            const firstBatchUrl = `${baseUrl}?fixture_date=${yesterdayDate}&start_index=0&end_index=20`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(firstBatchUrl, {
+                headers: { 
+                    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+                },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    yesterdayDate: yesterdayDate
+            const data = await response.json();
+            
+            // Check API response structure
+            if (data.status === true && data.data) {
+                initialData = data.data;
+                
+                // Save to cache for next time
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    fixtureDate: yesterdayDate,
+                    data: initialData,
+                    count: initialData.length
+                };
+                
+                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: new Date().toISOString()
+                };
+                endpointStatus = "success";
+                error = null;
+            } else {
+                endpointStatus = "error";
+                error = data.message || "Failed to load yesterday's predictions";
+            }
+        }
+
+        // Clean up old cache files (older than 1 hour)
+        await cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error('Error fetching yesterday\'s predictions:', err);
+        endpointStatus = "error";
+        error = err.message;
+        
+        // If cache exists but we had an error, use it as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                // Silent fail
+            }
+        }
+    }
+
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            yesterdayDate: yesterdayDate,
+            cacheInfo
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 60 * 60 * 1000; // 1 hour
+        
+        for (const file of files) {
+            if (file.startsWith('yesterday-football-predictions-') && file.endsWith('.json')) {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
                 }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load yesterday's predictions",
-                    baseUrl: baseUrl,
-                    yesterdayDate: yesterdayDate
-                }
-            };
+            }
         }
     } catch (error) {
-        console.error('Error fetching yesterday\'s predictions:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                yesterdayDate: yesterdayDate
-            }
-        };
+        console.error('Error cleaning up cache:', error);
     }
 }
 

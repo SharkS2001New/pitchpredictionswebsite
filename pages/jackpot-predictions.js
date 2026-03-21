@@ -5,8 +5,10 @@ import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpo
 import { useRouter } from 'next/router';
 import getJackpotNameFromSlug from '../components/functions/GetJackpotName';
 import ReturnSlugFromJackpotName from '../components/functions/getJackpotNameFromSlug';
+import fs from 'fs';
+import path from 'path';
 
-function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '' }) {
+function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '', structuredData, cacheInfo }) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(serverSearchTerm || '');
   const [showShareModal, setShowShareModal] = useState(false);
@@ -84,7 +86,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
       const options = { 
         hour: '2-digit', 
         minute: '2-digit',
-        hour12: false // 👈 Forces 24-hour format
+        hour12: false
       };
 
       const timeStr = date.toLocaleTimeString('en-US', options);
@@ -252,7 +254,6 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
             endTimeFormatted: hasJackpotStarted(jackpot) && !isJackpotCompleted(jackpot) ? formatStartTime(jackpot.end_datetime_formatted) : null
           };
         })
-        // Don't filter out jackpots without slugs - keep them with generated slugs
     : [];
 
   // Safely filter active jackpots by search term
@@ -283,20 +284,14 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     );
   });
 
-  // Create structured data for SEO
-  const structuredData = filteredActiveJackpots.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "itemListElement": filteredActiveJackpots.slice(0, 10).map((jackpot, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "url": `https://www.pitchpredictions.com/jackpot-predictions/${jackpot.slug}`,
-      "name": jackpot.displayName
-    }))
-  } : null;
-
   return (
     <>
+      {/* Structured Data Script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      
       <div className="sites-card">
         {/* Search Bar */}
         <div className="container mb-4 mt-2">
@@ -712,19 +707,14 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
         {/* Share Modal */}
         {showShareModal && <ShareModal />}
       </div>
-
-      {/* Add structured data script */}
-      {structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      )}
     </>
   );
 }
 
 export async function getServerSideProps({ req, query }) {
+  const siteUrl = 'https://www.pitchpredictions.com';
+  const currentDate = new Date().toISOString().split('T')[0];
+  
   const userAgent = req.headers['user-agent'] || '';
   const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
   const searchTerm = query.search || '';
@@ -742,8 +732,6 @@ export async function getServerSideProps({ req, query }) {
     'shabiki-jackpot-predictions',
     'odibet-laki-tatu-daily-jackpot-predictions',
     'sportybet-jackpot-predictions',
-    // 'betlion-daily-jp-jackpot-predictions',
-    // 'betlion-goliath-jackpot-predictions',
     'betpawa-pick13-jackpot-predictions-uganda',
     'betpawa-pick17-jackpot-predictions-uganda',
     'betpawa-pick13-jackpot-predictions-nigeria',
@@ -772,45 +760,119 @@ export async function getServerSideProps({ req, query }) {
     'betsafe-mita-tano-jackpot-predictions'
   ];
 
+  let activeJackpots = [];
+  let cacheInfo = {
+    fromCache: false,
+    generatedAt: null
+  };
+
+  // Cache setup
+  const cacheDir = path.join(process.cwd(), 'public', 'cache');
+  const cacheFilename = `active-jackpots.json`;
+  const cachePath = path.join(cacheDir, cacheFilename);
+
   try {
-    // Fetch active jackpots server-side
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
-    const response = await fetch('https://api.pitchpredictions.com/api/fetch_active_jackpots_enhanced', {
-      headers: { 
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
-        "User-Agent": userAgent
-      },
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    const data = await response.json();
-    
-    // Ensure we always return an array
-    let activeJackpots = data.status && Array.isArray(data.data) ? data.data : [];
-    
-    return {
-      props: {
-        activeJackpots,
-        allSlugs,
-        isBot,
-        serverSearchTerm: searchTerm
+    // Create cache directory if it doesn't exist
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+
+    // Check if we have a valid cache file (30 minutes = 1800000 ms)
+    if (fs.existsSync(cachePath)) {
+      const cacheContent = fs.readFileSync(cachePath, 'utf8');
+      const cache = JSON.parse(cacheContent);
+      
+      const cacheTime = new Date(cache.generatedAt).getTime();
+      const now = new Date().getTime();
+      const ageInMinutes = (now - cacheTime) / (1000 * 60);
+      
+      if (ageInMinutes <= 30) {
+        // ✅ Cache is valid - use it!
+        activeJackpots = cache.data;
+        cacheInfo = {
+          fromCache: true,
+          generatedAt: cache.generatedAt
+        };
+      } else {
+        // ❌ Cache expired - delete it
+        fs.unlinkSync(cachePath);
       }
-    };
+    }
+
+    // If no valid cache, fetch from API
+    if (activeJackpots.length === 0) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch('https://api.pitchpredictions.com/api/fetch_active_jackpots_enhanced', {
+        headers: { 
+          "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
+          "User-Agent": userAgent
+        },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      const data = await response.json();
+      
+      // Ensure we always return an array
+      activeJackpots = data.status && Array.isArray(data.data) ? data.data : [];
+      
+      // Save to cache
+      const cacheData = {
+        generatedAt: new Date().toISOString(),
+        data: activeJackpots,
+        count: activeJackpots.length
+      };
+      
+      // Atomic write
+      const tempPath = `${cachePath}.tmp.${Date.now()}`;
+      fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+      fs.renameSync(tempPath, cachePath);
+      
+      cacheInfo = {
+        fromCache: false,
+        generatedAt: cacheData.generatedAt
+      };
+    }
+
+    // Clean up old cache files (older than 30 minutes)
+    await cleanupOldCacheFiles(cacheDir);
+
   } catch (error) {
     console.error('Error fetching jackpots:', error);
-    return {
-      props: {
-        activeJackpots: [],
-        allSlugs,
-        isBot,
-        serverSearchTerm: searchTerm
+    
+    // If cache exists but API failed, use it as fallback
+    if (fs.existsSync(cachePath)) {
+      try {
+        const cacheContent = fs.readFileSync(cachePath, 'utf8');
+        const cache = JSON.parse(cacheContent);
+        activeJackpots = cache.data;
+        cacheInfo = {
+          fromCache: true,
+          generatedAt: cache.generatedAt,
+          isFallback: true
+        };
+      } catch (fallbackErr) {
+        // Silent fail
       }
-    };
+    }
   }
+  
+  // Create structured data for jackpot predictions landing page
+  const structuredData = createStructuredData(siteUrl, currentDate, activeJackpots);
+  
+  return {
+    props: {
+      activeJackpots,
+      allSlugs,
+      isBot,
+      serverSearchTerm: searchTerm,
+      structuredData,
+      cacheInfo
+    }
+  };
 }
 
 // Helper function for date formatting
@@ -824,5 +886,200 @@ const formatDateShort = (dateString) => {
     return '';
   }
 };
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+  try {
+    if (!fs.existsSync(cacheDir)) return;
+    
+    const files = fs.readdirSync(cacheDir);
+    const now = new Date().getTime();
+    const maxAge = 30 * 60 * 1000; // 30 minutes
+    
+    for (const file of files) {
+      if (file === 'active-jackpots.json') {
+        const filePath = path.join(cacheDir, file);
+        const stats = fs.statSync(filePath);
+        const fileAge = now - stats.mtimeMs;
+        
+        if (fileAge > maxAge) {
+          fs.unlinkSync(filePath);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error cleaning up cache:', error);
+  }
+}
+
+// Helper function to create structured data for jackpot predictions landing page
+function createStructuredData(siteUrl, currentDate, activeJackpots) {
+  // All jackpot slugs for complete list
+  const allJackpotItems = [
+    { position: 1, name: "Sportpesa Mega Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/sportpesa-mega-jackpot-predictions` },
+    { position: 2, name: "Sportpesa Midweek Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/sportpesa-midweek-jackpot-predictions` },
+    { position: 3, name: "Betika Midweek Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions` },
+    { position: 4, name: "Mozzart Super Daily Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/mozzart-super-daily-jackpot-predictions` },
+    { position: 5, name: "Mozzart Bet Grand Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/mozzart-super-grand-jackpot-predictions` },
+    { position: 6, name: "Sportybet Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/sportybet-jackpot-predictions` },
+    { position: 7, name: "Odibet Laki Tatu Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/odibet-laki-tatu-daily-jackpot-predictions` },
+    { position: 8, name: "Betpawa Pick 17 Kenya Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/betpawa-pick17-jackpot-predictions-kenya` },
+    { position: 9, name: "Betpawa Pick 13 Kenya Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/betpawa-pick13-jackpot-predictions-kenya` },
+    { position: 10, name: "Betway Jackpot Predictions Kenya", url: `${siteUrl}/jackpot-predictions/betway-jackpot-predictions-kenya` },
+    { position: 11, name: "Bet9ja Super9ja Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/bet9ja-super9ja-jackpot-predictions` },
+    { position: 12, name: "1xbet Toto 15 Jackpot Predictions", url: `${siteUrl}/jackpot-predictions/1xbet-toto-15-jackpot-predictions` }
+  ];
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      // 1. Organization
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}#organization`,
+        "name": "Pitch Predictions",
+        "url": siteUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${siteUrl}/pitch-predictions-logo.png`,
+          "width": 300,
+          "height": 60
+        },
+        "description": "Free, data-driven football prediction platform covering 700+ leagues and jackpots worldwide.",
+        "sameAs": ["https://t.me/s/betsassuredkenya"],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Customer Support",
+          "url": `${siteUrl}/contactus`
+        }
+      },
+      
+      // 2. WebPage for jackpot predictions
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}/jackpot-predictions#webpage`,
+        "name": "Jackpot Predictions – Free Football Jackpot Tips This Week",
+        "description": "Free jackpot predictions for Sportpesa Mega, Betika Midweek, Mozzart, Betpawa, Sportybet and more — expert tips for every game on every coupon, updated weekly.",
+        "url": `${siteUrl}/jackpot-predictions`,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": `${siteUrl}#website`
+        },
+        "about": {
+          "@type": "Thing",
+          "name": "Football Jackpot Predictions"
+        },
+        "dateModified": currentDate,
+        "inLanguage": "en",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": siteUrl
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Jackpot Predictions",
+              "item": `${siteUrl}/jackpot-predictions`
+            }
+          ]
+        }
+      },
+      
+      // 3. FAQPage for jackpot predictions
+      {
+        "@type": "FAQPage",
+        "@id": `${siteUrl}/jackpot-predictions#faq`,
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a football jackpot prediction?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A football jackpot prediction is an expert analysis for every preselected game in a bookmaker's jackpot coupon. Jackpots require bettors to correctly predict the outcomes of 8–18 games on a single slip to win the grand prize. Pitch Predictions publishes free 1X2 and Double Chance tips for every game on every active jackpot coupon."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which jackpots does Pitch Predictions cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pitch Predictions covers all major African and international bookmaker jackpots including the Sportpesa Mega Jackpot (17 games), Sportpesa Midweek Jackpot (13 games), Betika Midweek Jackpot (15 games), Mozzart Super Daily Jackpot, Mozzart Grand Jackpot, Sportybet Jackpot, Odibet Laki Tatu, Betpawa Pick 13 and Pick 17 across Kenya, Uganda, Tanzania, Nigeria, Ghana, Zambia and Cameroon, Betway Kenya and Uganda, Bet9ja Super9ja, and more."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are the jackpot predictions free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All jackpot predictions on Pitch Predictions are completely free. We publish expert 1X2 and Double Chance tips for every game on every active jackpot coupon, updated weekly before each deadline. A premium subscription provides access to additional in-depth analysis and bonus picks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are jackpot predictions calculated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every jackpot game is analysed using each team's recent form (last 12 matches), head-to-head records, current league standings, home and away performance, and squad availability. We also provide Double Chance alternatives for closely contested games to help bettors target bonus prize thresholds."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between a Mega Jackpot and a Midweek Jackpot?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A Mega Jackpot typically runs over the weekend (Saturday–Sunday) and features more games — usually 17 — with a larger grand prize. A Midweek Jackpot runs during the week with fewer games (typically 13–15) and a smaller but still substantial prize. Both require correctly predicting all preselected games to win the top prize."
+            }
+          }
+        ]
+      },
+      
+      // 4. BreadcrumbList
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${siteUrl}/jackpot-predictions#breadcrumb`,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": siteUrl
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Jackpot Predictions",
+            "item": `${siteUrl}/jackpot-predictions`
+          }
+        ]
+      },
+      
+      // 5. ItemList - all active jackpot pages for Google to index
+      {
+        "@type": "ItemList",
+        "@id": `${siteUrl}/jackpot-predictions#itemlist`,
+        "name": "Football Jackpot Predictions",
+        "description": "Free jackpot predictions for all major African and international bookmaker jackpots — updated weekly.",
+        "url": `${siteUrl}/jackpot-predictions`,
+        "itemListElement": allJackpotItems
+      },
+      
+      // 6. WebSite
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}#website`,
+        "name": "Pitch Predictions",
+        "url": siteUrl,
+        "publisher": {
+          "@id": `${siteUrl}#organization`
+        }
+      }
+    ]
+  };
+}
 
 export default JackpotPages;

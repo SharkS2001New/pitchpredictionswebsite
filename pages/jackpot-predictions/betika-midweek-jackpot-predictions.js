@@ -1,6 +1,5 @@
 // pages/jackpot/betika-midweek-jackpot-predictions.js
 import React, { useState, useEffect } from 'react';
-import PreLoader from "../../components/includes/loader";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
@@ -9,9 +8,10 @@ import BetikaMidweekJackpotContent from '../../components/seo-content/jackpots/b
 function BetikaMidweekJackpotPredictions({ 
     initialGamesData, 
     endpointStatus, 
-    error,
-    initialVoteStats 
-}) {         
+    error, 
+    initialVoteStats,
+    structuredData 
+}) {
     const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
     const [voteStats, setVoteStats] = useState(initialVoteStats || {});
@@ -36,7 +36,6 @@ function BetikaMidweekJackpotPredictions({
     const initializeDeviceId = async () => {
         try {
             let storedDeviceId = localStorage.getItem('persistent_device_id');
-            
             if (!storedDeviceId) {
                 // Create a persistent device ID
                 const components = [
@@ -46,7 +45,6 @@ function BetikaMidweekJackpotPredictions({
                     screen.height.toString(),
                     screen.colorDepth.toString()
                 ];
-                
                 const deviceString = components.join('|');
                 let hash = 0;
                 for (let i = 0; i < deviceString.length; i++) {
@@ -54,11 +52,9 @@ function BetikaMidweekJackpotPredictions({
                     hash = ((hash << 5) - hash) + char;
                     hash = hash & hash;
                 }
-                
                 storedDeviceId = `device_${Math.abs(hash).toString(36)}`;
                 localStorage.setItem('persistent_device_id', storedDeviceId);
             }
-            
             setDeviceId(storedDeviceId);
             return storedDeviceId;
         } catch (err) {
@@ -72,13 +68,12 @@ function BetikaMidweekJackpotPredictions({
 
     const checkExistingVotes = async () => {
         if (!deviceId || gamesData.length === 0) return;
-
+        
         try {
             const fixtureIds = gamesData.map(game => game.fixture_id);
             const jackpotId = gamesData[0]?.jackpot_tips_id;
-
             if (!jackpotId) return;
-
+            
             const response = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/check-multiple', {
                 method: 'POST',
                 headers: {
@@ -90,7 +85,7 @@ function BetikaMidweekJackpotPredictions({
                     fixture_ids: fixtureIds
                 })
             });
-
+            
             const result = await response.json();
             
             if (result.status && result.data) {
@@ -103,7 +98,6 @@ function BetikaMidweekJackpotPredictions({
                         };
                     }
                 });
-                
                 setSelectedVotes(newSelectedVotes);
                 localStorage.setItem('jackpot_selected_votes', JSON.stringify(newSelectedVotes));
             }
@@ -117,17 +111,14 @@ function BetikaMidweekJackpotPredictions({
             const savedVotes = localStorage.getItem('jackpot_selected_votes');
             if (savedVotes) {
                 const parsedVotes = JSON.parse(savedVotes);
-                
                 const currentJackpotId = gamesData[0]?.jackpot_tips_id;
                 const filteredVotes = {};
-                
                 Object.keys(parsedVotes).forEach(fixtureId => {
                     const game = gamesData.find(g => g.fixture_id == fixtureId);
                     if (game && game.jackpot_tips_id === currentJackpotId) {
                         filteredVotes[fixtureId] = parsedVotes[fixtureId];
                     }
                 });
-                
                 setSelectedVotes(filteredVotes);
             }
         } catch (err) {
@@ -139,42 +130,37 @@ function BetikaMidweekJackpotPredictions({
         if (!deviceId) {
             return;
         }
-
+        
         // Check if already voting for this fixture
         if (votingInProgress[fixtureId]) {
             return; // Already voting, ignore click
         }
-
+        
         try {
             const game = gamesData.find(g => g.fixture_id == fixtureId);
             if (!game) {
                 return;
             }
-
+            
             // Check if game is still votable (NS status only)
             if (game.status_short !== 'NS') {
                 return; // Silently return if game is completed
             }
-
+            
             // Set voting in progress for this fixture
             setVotingInProgress(prev => ({ ...prev, [fixtureId]: true }));
-
+            
             // Submit vote to server
             const success = await submitVoteToServer(game, fixtureId, prediction);
             
             if (success) {
-                const newVotes = {
-                    ...selectedVotes,
-                    [fixtureId]: {
-                        prediction,
-                        timestamp: Date.now()
-                    }
+                const newVotes = { 
+                    ...selectedVotes, 
+                    [fixtureId]: { prediction, timestamp: Date.now() } 
                 };
                 setSelectedVotes(newVotes);
                 localStorage.setItem('jackpot_selected_votes', JSON.stringify(newVotes));
-                
                 updateVoteStatsOptimistically(fixtureId, prediction);
-                
                 setTimeout(() => {
                     refreshVoteStats(fixtureId);
                 }, 500);
@@ -193,7 +179,7 @@ function BetikaMidweekJackpotPredictions({
 
     const updateVoteStatsOptimistically = (fixtureId, prediction) => {
         setVoteStats(prev => {
-            const currentStats = prev[fixtureId] || {
+            const currentStats = prev[fixtureId] || { 
                 stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
                 percentages: { home: 0, draw: 0, away: 0 }
             };
@@ -202,17 +188,20 @@ function BetikaMidweekJackpotPredictions({
             newStats.total_votes += 1;
             
             switch(prediction) {
-                case '1': newStats.home_votes += 1; break;
-                case 'X': newStats.draw_votes += 1; break;
-                case '2': newStats.away_votes += 1; break;
+                case '1':
+                    newStats.home_votes += 1;
+                    break;
+                case 'X':
+                    newStats.draw_votes += 1;
+                    break;
+                case '2':
+                    newStats.away_votes += 1;
+                    break;
             }
             
-            const homePercent = newStats.total_votes > 0 ? 
-                Math.round((newStats.home_votes / newStats.total_votes) * 100) : 0;
-            const drawPercent = newStats.total_votes > 0 ? 
-                Math.round((newStats.draw_votes / newStats.total_votes) * 100) : 0;
-            const awayPercent = newStats.total_votes > 0 ? 
-                Math.round((newStats.away_votes / newStats.total_votes) * 100) : 0;
+            const homePercent = newStats.total_votes > 0 ? Math.round((newStats.home_votes / newStats.total_votes) * 100) : 0;
+            const drawPercent = newStats.total_votes > 0 ? Math.round((newStats.draw_votes / newStats.total_votes) * 100) : 0;
+            const awayPercent = newStats.total_votes > 0 ? Math.round((newStats.away_votes / newStats.total_votes) * 100) : 0;
             
             return {
                 ...prev,
@@ -245,7 +234,7 @@ function BetikaMidweekJackpotPredictions({
             
             const game = gamesData.find(g => g.fixture_id == fixtureId);
             if (!game) return;
-
+            
             const response = await fetch(`https://api.pitchpredictions.com/api/jackpot/vote/stats/${game.jackpot_tips_id}/${fixtureId}`);
             const result = await response.json();
             
@@ -271,7 +260,7 @@ function BetikaMidweekJackpotPredictions({
             if (game.status_short !== 'NS') {
                 throw new Error(`Game ${game.home_team} vs ${game.away_team} is already completed (${game.status_short})`);
             }
-
+            
             const voteData = {
                 jackpot_id: game.jackpot_tips_id,
                 fixture_id: fixtureId,
@@ -280,7 +269,7 @@ function BetikaMidweekJackpotPredictions({
                 jackpot_name: game.jackpot_name || 'Betika Midweek Jackpot',
                 game_status: game.status_short
             };
-
+            
             const response = await fetch('https://api.pitchpredictions.com/api/jackpot/vote', {
                 method: 'POST',
                 headers: {
@@ -288,7 +277,7 @@ function BetikaMidweekJackpotPredictions({
                 },
                 body: JSON.stringify(voteData)
             });
-
+            
             const result = await response.json();
             
             if (result.status) {
@@ -304,31 +293,91 @@ function BetikaMidweekJackpotPredictions({
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
-                />   
-                <br/>   
-                <div className="">
-                    <div className="container">
-                        <BetikaMidweekJackpotContent/>
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                    <br/>
+                    <div className="">
+                        <div className="container">
+                            <BetikaMidweekJackpotContent/>
+                        </div>
                     </div>
-                </div>         
-            </div>
+                </div>
+            </>
         );
     }
 
     // Handle empty data state
     if (!gamesData || gamesData.length === 0) {
         return (
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props="No jackpot fixtures available at the moment." />
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                    <br/>
+                    <div className="">
+                        <div className="container">
+                            <BetikaMidweekJackpotContent/>
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
             <div className="sites-card">
-                <DataNotFoundPage props="No jackpot fixtures available at the moment." />
+                {/* Premium Banner */}
+                <div className="premium-banner">
+                    <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
+                    <p className="text-center">
+                        <a href="/auth/login" className="btn btn-danger btn-sm">Buy Premium Jackpot Now</a>
+                    </p>
+                </div>
+                
+                {/* Games Component */}
+                <JackpotGamesBootstrap 
+                    gamesData={gamesData}
+                    selectedVotes={selectedVotes}
+                    voteStats={voteStats}
+                    onVote={handleVote}
+                    votingInProgress={votingInProgress}
+                    refreshingStats={refreshingStats}
+                />
+                
+                {/* Ads */}
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -336,102 +385,69 @@ function BetikaMidweekJackpotPredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />   
-                <br/>   
-                <div className="">
+                />
+                <br/>
+                
+                {/* SEO Content */}
+                <div className="seo-content-section">
                     <div className="container">
                         <BetikaMidweekJackpotContent/>
                     </div>
-                </div>         
-            </div>
-        );
-    }
-
-    return (
-        <div className="sites-card">
-            {/* Premium Banner */}
-            <div className="premium-banner">
-                <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
-                <p className="text-center">
-                    <a href="/auth/login" className="btn btn-danger btn-sm">Buy Premium Jackpot Now</a>
-                </p>
-            </div>
-
-            {/* Games Component */}
-            <JackpotGamesBootstrap 
-                gamesData={gamesData} 
-                selectedVotes={selectedVotes}
-                voteStats={voteStats}
-                onVote={handleVote}
-                votingInProgress={votingInProgress}
-                refreshingStats={refreshingStats}
-            />
-
-            {/* Ads */}
-            <br/>
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            /> 
-            <br/>   
-
-            {/* SEO Content */}
-            <div className="seo-content-section">
-                <div className="container">
-                    <BetikaMidweekJackpotContent/>
                 </div>
+                
+                <style jsx>{`
+                    .sites-card {
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        background-color: white;
+                        padding: 10px;
+                    }
+                `}</style>
             </div>
-
-            <style jsx>{`  
-                .sites-card {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 10px;
-                }
-            `}</style>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
-
+    
+    let initialGamesData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let initialVoteStats = {};
+    
     try {
         // Fetch jackpot fixtures
         const response = await fetch(
             "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Betika Midweek Jackpot",
             { headers }
         );
-
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        
         const data = await response.json();
         
-        let formattedData = [];
-        let voteStats = {};
-        
         if (data.status && data.data) {
-            formattedData = data.data.map(game => ({
+            initialGamesData = data.data.map(game => ({
                 ...game,
                 jackpot_id: game.jackpot_tips_id,
                 fixture_id: game.fixture_id,
                 game_id: game.id
             }));
-
+            
             // Fetch initial vote stats for all fixtures
-            if (formattedData.length > 0) {
-                const jackpotId = formattedData[0]?.jackpot_tips_id;
-                const fixtureIds = formattedData.map(game => game.fixture_id);
-
+            if (initialGamesData.length > 0) {
+                const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+                const fixtureIds = initialGamesData.map(game => game.fixture_id);
+                
                 try {
                     const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
                         method: 'POST',
@@ -444,48 +460,214 @@ export async function getServerSideProps() {
                             fixture_ids: fixtureIds
                         })
                     });
-
+                    
                     const statsResult = await statsResponse.json();
                     
                     if (statsResult.status && statsResult.data) {
-                        voteStats = statsResult.data;
+                        initialVoteStats = statsResult.data;
                     }
                 } catch (statsError) {
                     console.error("Error fetching vote stats:", statsError);
-                    
                     // Create empty stats for all fixtures
                     fixtureIds.forEach(fixtureId => {
-                        voteStats[fixtureId] = {
-                            stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
-                            percentages: { home: 0, draw: 0, away: 0 },
+                        initialVoteStats[fixtureId] = {
+                            stats: {
+                                home_votes: 0,
+                                draw_votes: 0,
+                                away_votes: 0,
+                                total_votes: 0
+                            },
+                            percentages: {
+                                home: 0,
+                                draw: 0,
+                                away: 0
+                            },
                             community_prediction: null
                         };
                     });
                 }
             }
         }
-
-        return {
-            props: {
-                initialGamesData: formattedData,
-                endpointStatus: data.status === true ? "success" : "error",
-                error: data.status === true ? null : (data.message || "Failed to load jackpot fixtures"),
-                initialVoteStats: voteStats
-            }
-        };
-
-    } catch (error) {
-        console.error("Error fetching jackpot data:", error);
-
-        return {
-            props: {
-                initialGamesData: [],
-                endpointStatus: "error",
-                error: error.message || "Failed to load jackpot fixtures",
-                initialVoteStats: {}
-            }
-        };
+        
+        endpointStatus = data.status === true ? "success" : "error";
+        error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
+        
+    } catch (err) {
+        console.error("Error fetching jackpot data:", err);
+        endpointStatus = "error";
+        error = err.message || "Failed to load jackpot fixtures";
+        initialGamesData = [];
+        initialVoteStats = {};
     }
+    
+    // Create structured data for Betika Midweek Jackpot
+    const structuredData = createStructuredData(siteUrl, currentDate);
+    
+    return {
+        props: {
+            initialGamesData,
+            endpointStatus,
+            error,
+            initialVoteStats,
+            structuredData
+        }
+    };
+}
+
+// Helper function to create structured data for Betika Midweek Jackpot
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for Betika Midweek Jackpot
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions#webpage`,
+                "name": "Betika Midweek Jackpot Predictions – Free Tips This Week",
+                "description": "Free Betika Midweek Jackpot predictions for all 15 games this week. Expert 1X2 and Double Chance tips backed by form, H2H and squad data — updated every week.",
+                "url": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Betika Midweek Jackpot Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Jackpot Predictions",
+                            "item": `${siteUrl}/jackpot-predictions`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Betika Midweek Jackpot Predictions",
+                            "item": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for Betika Midweek Jackpot
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is the Betika Midweek Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Betika Midweek Jackpot is a weekly football betting jackpot offered by Betika Kenya. It features 15 preselected games from leagues around the world. The grand prize is KSh 15 million for correctly predicting all 15 games. Bonus prizes are awarded for 12, 13, or 14 correct predictions."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How do I win the Betika Midweek Jackpot?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "To win the Betika Midweek Jackpot grand prize of KSh 15 million, you must correctly predict all 15 preselected games. Predicting 12, 13, or 14 games correctly qualifies you for Betika's bonus prizes. Each game requires a 1X2 prediction — Home win (1), Draw (X), or Away win (2)."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are the Betika Midweek Jackpot predictions on Pitch Predictions free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All Betika Midweek Jackpot predictions on Pitch Predictions are completely free. We publish expert 1X2 and Double Chance tips for all 15 jackpot games every week, backed by statistical analysis. A premium subscription provides access to additional in-depth jackpot analysis."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How are the Betika Midweek Jackpot predictions calculated?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Our Betika Midweek Jackpot predictions are built using head-to-head records, each team's last 12 match performance, current league standings, and home and away form. We provide 1X2 and Double Chance options for every game to help bettors maximise their chances of hitting bonus thresholds."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "When is the Betika Midweek Jackpot deadline?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The Betika Midweek Jackpot deadline is typically before the kickoff of the first preselected game each midweek. Pitch Predictions publishes predictions early in the week — well before the deadline — so you have time to review the analysis and submit your slip."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Jackpot Predictions",
+                        "item": `${siteUrl}/jackpot-predictions`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Betika Midweek Jackpot Predictions",
+                        "item": `${siteUrl}/jackpot-predictions/betika-midweek-jackpot-predictions`
+                    }
+                ]
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
 }
 
 export default BetikaMidweekJackpotPredictions;

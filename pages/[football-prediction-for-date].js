@@ -7,13 +7,17 @@ import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../components/includes/datanotfound";
 import FilterByDateOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
+import fs from 'fs';
+import path from 'path';
 
 function FootballPredictionsByDate({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
-    filterDate 
+    filterDate,
+    cacheInfo,
+    structuredData
 }) {
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
@@ -93,17 +97,24 @@ function FootballPredictionsByDate({
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props={`We don't have any matches for ${formatDisplayDate(filterDate)} to show you right now, please try again later`}/>
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
-                /> 
-            </div>
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={`We don't have any matches for ${formatDisplayDate(filterDate)} to show you right now, please try again later`}/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    /> 
+                </div>
+            </>
         );
     }
     
@@ -118,9 +129,59 @@ function FootballPredictionsByDate({
     // Handle empty data state
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={`No matches available for ${formatDisplayDate(filterDate)}`}/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    /> 
+                </div>
+            </>
+        );
+    }
+    
+    // Render the page with data
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
             <div className="sites-card">
-                <DataNotFoundPage props={`No matches available for ${formatDisplayDate(filterDate)}`}/>
+                <div className="container-fluid">               
+                    <div className="row" style={{backgroundColor: "#edf3f5"}}>
+                        <div className="col-md-1 col-2"></div>
+                        <div className="col-md-10 col-12">
+                            <FilterByDateOverallDoubleChanceUnderOverHTFTPred1x2 
+                                url_filter="football-predictions" 
+                                filter_date={filterDate} 
+                            />
+                        </div>
+                        <div className="col-md-1 col-1"></div>
+                    </div>
+                </div>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
                 <br/>
+                
                 <Adsense
                     client="ca-pub-5665711413000284"
                     slot="3850951453"
@@ -128,49 +189,17 @@ function FootballPredictionsByDate({
                     layout="display"
                     format="auto"
                 /> 
+                
+                <br/> 
             </div>
-        );
-    }
-    
-    // Render the page with data
-    return (
-        <div className="sites-card">
-            <div className="container-fluid">               
-                <div className="row" style={{backgroundColor: "#edf3f5"}}>
-                    <div className="col-md-1 col-2"></div>
-                    <div className="col-md-10 col-12">
-                        <FilterByDateOverallDoubleChanceUnderOverHTFTPred1x2 
-                            url_filter="football-predictions" 
-                            filter_date={filterDate} 
-                        />
-                    </div>
-                    <div className="col-md-1 col-1"></div>
-                </div>
-            </div>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
-            />
-            
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            /> 
-            
-            <br/> 
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps({ params, query }) {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     // Get filter_date from params (dynamic route) or query
     const filterDate = params?.filter_date || query.filter_date || '';
     
@@ -183,76 +212,292 @@ export async function getServerSideProps({ params, query }) {
     // Base URL for fetching fixtures by date
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_fixtures_by_date";
     
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
-    const firstBatchUrl = `${baseUrl}?fixture_date=${filterDate}&start_index=0&end_index=20`;
+    // Cache setup - create cache file for specific date
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `date-football-predictions-${filterDate}.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
+
+        // Check if we have a valid cache file
+        if (fs.existsSync(cachePath)) {
+            // Read the cache file
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
+            // Check if cache is still valid (1 hour = 3600000 ms)
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 60) {
+                // ✅ Cache is valid - use it!
+                initialData = cache.data;
+                endpointStatus = "success";
+                error = null;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If we don't have valid cache data, fetch from API
+        if (initialData.length === 0) {
+            const firstBatchUrl = `${baseUrl}?fixture_date=${filterDate}&start_index=0&end_index=20`;
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(firstBatchUrl, {
+                headers: { 
+                    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+                },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    filterDate: filterDate
+            const data = await response.json();
+            
+            // Check API response structure
+            if (data.status === true && data.data) {
+                initialData = data.data;
+                
+                // Save to cache for next time
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    fixtureDate: filterDate,
+                    data: initialData,
+                    count: initialData.length
+                };
+                
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+                endpointStatus = "success";
+                error = null;
+            } else {
+                endpointStatus = "error";
+                error = data.message || "Failed to load predictions";
+            }
+        }
+
+        // Clean up old cache files (older than 1 hour)
+        await cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error('Error fetching predictions by date:', err);
+        endpointStatus = "error";
+        error = err.message;
+        
+        // If cache exists but we had an error, use it as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                // Silent fail
+            }
+        }
+    }
+
+    // Create structured data for date-specific predictions
+    const structuredData = createStructuredData(siteUrl, currentDate, filterDate);
+
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            filterDate: filterDate,
+            cacheInfo,
+            structuredData
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 60 * 60 * 1000; // 1 hour
+        
+        for (const file of files) {
+            if (file.startsWith('date-football-predictions-') && file.endsWith('.json')) {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
                 }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load predictions",
-                    baseUrl: baseUrl,
-                    filterDate: filterDate
-                }
-            };
+            }
         }
     } catch (error) {
-        console.error('Error fetching predictions by date:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                filterDate: filterDate
-            }
-        };
+        console.error('Error cleaning up cache:', error);
     }
+}
+
+// Helper function to create structured data for date-specific predictions
+function createStructuredData(siteUrl, currentDate, filterDate) {
+    const formattedDate = new Date(filterDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for date-specific predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/football-predictions/${filterDate}#webpage`,
+                "name": `Football Predictions for ${formattedDate} – Free Tips & Analysis`,
+                "description": `Free football predictions for matches on ${formattedDate}. Expert 1X2, BTTS, Over/Under, and Double Chance tips across 700+ leagues — updated daily.`,
+                "url": `${siteUrl}/football-predictions/${filterDate}`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": `Football Predictions for ${formattedDate}`
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Football Predictions",
+                            "item": `${siteUrl}/football-predictions`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": formattedDate,
+                            "item": `${siteUrl}/football-predictions/${filterDate}`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/football-predictions/${filterDate}#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Football Predictions",
+                        "item": `${siteUrl}/football-predictions`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": formattedDate,
+                        "item": `${siteUrl}/football-predictions/${filterDate}`
+                    }
+                ]
+            },
+            
+            // 4. ItemList for date-specific predictions
+            {
+                "@type": "ItemList",
+                "@id": `${siteUrl}/football-predictions/${filterDate}#itemlist`,
+                "name": `Football Predictions for ${formattedDate}`,
+                "description": `Today's top football predictions for matches on ${formattedDate} across 700+ leagues.`,
+                "url": `${siteUrl}/football-predictions/${filterDate}`,
+                "itemListOrder": "https://schema.org/ItemListOrderDescending"
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
 }
 
 export default FootballPredictionsByDate;

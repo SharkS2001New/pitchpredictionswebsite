@@ -9,6 +9,7 @@ import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import fs from 'fs';
 import path from 'path';
+import AccumulatorTipsContent from "../../components/seo-content/tips/accumulator-tips";
 
 function CompetitorPredictions({ 
     initialData, 
@@ -16,7 +17,8 @@ function CompetitorPredictions({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData 
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -87,17 +89,24 @@ function CompetitorPredictions({
 
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
                 />
-            </div>
+                <div className="sites-card">
+                    <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+            </>
         );
     }
     
@@ -110,9 +119,47 @@ function CompetitorPredictions({
     
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={`No accumulator predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+            </>
+        );
+    }
+    
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
+            <div className="sites-card">            
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
                 <br/>
+                
                 <Adsense
                     client="ca-pub-5665711413000284"
                     slot="3850951453"
@@ -120,35 +167,23 @@ function CompetitorPredictions({
                     layout="display"
                     format="auto"
                 />
+
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <AccumulatorTipsContent/>
+                    </div>
+                </div>
             </div>
-        );
-    }
-    
-    return (
-        <div className="sites-card">            
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
-            />
-            
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     const todaysDate = getFormattedCurrentDate();
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
@@ -224,7 +259,7 @@ export async function getServerSideProps() {
                 };
             } else {
                 endpointStatus = "error";
-                error = data.message || "Failed to load competitor predictions";
+                error = data.message || "Failed to load accumulator predictions";
             }
         }
 
@@ -269,6 +304,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for accumulator tips
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -276,8 +314,165 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
+    };
+}
+
+// Helper function to create structured data for accumulator tips
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for accumulator tips
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/accumulator-tips#webpage`,
+                "name": "Accumulator Tips Today – Free Football Acca Predictions",
+                "description": "Free football accumulator tips for today. Data-driven acca predictions across the Premier League, Champions League and 700+ leagues — updated daily.",
+                "url": `${siteUrl}/tips/accumulator-tips`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Football Accumulator Tips"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Tips",
+                            "item": `${siteUrl}/tips`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Accumulator Tips",
+                            "item": `${siteUrl}/tips/accumulator-tips`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for accumulator tips
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/accumulator-tips#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is a football accumulator?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A football accumulator — also called an acca — is a single bet that combines two or more individual selections. All selections must win for the accumulator to pay out. The odds of each selection are multiplied together, meaning the potential return increases significantly with each added leg. A 4-fold accumulator with four selections at odds of 2.00 each returns 16x the stake if all four win."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "How many selections should I put in a football accumulator?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Most experienced bettors recommend 4 to 6 selections for a balanced accumulator. Fewer legs (2-3) reduce the potential return, while too many legs (8+) significantly reduce the probability of all selections winning. A 4-6 fold acca offers a practical balance between odds boost and realistic chance of success when each leg is backed by solid statistical analysis."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are the accumulator tips on Pitch Predictions free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. All accumulator tips on Pitch Predictions are completely free. Every day we publish high-confidence predictions across 700+ leagues that are well-suited for building accumulator slips. A premium subscription provides access to additional handpicked tips with deeper analysis."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What makes a good accumulator selection?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A strong accumulator selection is backed by multiple aligned statistical factors — strong recent form, a favourable head-to-head record, clear home or away advantage, no key injuries, and odds that reflect the true probability of the outcome. Each leg should be independently justified, not added just to inflate the potential return."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What types of bets work best in football accumulators?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "1X2 match winner bets, Both Teams to Score (BTTS), and Over/Under 2.5 goals are the most common markets used in football accumulators. Over 2.5 goals and BTTS selections are particularly popular because they can add value to the combined odds without relying on a single team to win outright."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/accumulator-tips#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Tips",
+                        "item": `${siteUrl}/tips`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Accumulator Tips",
+                        "item": `${siteUrl}/tips/accumulator-tips`
+                    }
+                ]
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
     };
 }
 

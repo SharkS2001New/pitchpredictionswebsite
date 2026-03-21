@@ -17,7 +17,8 @@ function CompetitorPredictions({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo 
+    cacheInfo,
+    structuredData 
 }){     
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -88,17 +89,24 @@ function CompetitorPredictions({
 
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
-                <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
                 />
-            </div>
+                <div className="sites-card">
+                    <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+            </>
         );
     }
     
@@ -111,9 +119,47 @@ function CompetitorPredictions({
     
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
+            <>
+                {/* Structured Data Script */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+                />
+                <div className="sites-card">
+                    <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                    <br/>
+                    <Adsense
+                        client="ca-pub-5665711413000284"
+                        slot="3850951453"
+                        style={{ display: "block" }}
+                        layout="display"
+                        format="auto"
+                    />
+                </div>
+            </>
+        );
+    }
+    
+    return (
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            
             <div className="sites-card">
-                <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                <PopularTips/>
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
                 <br/>
+                
                 <Adsense
                     client="ca-pub-5665711413000284"
                     slot="3850951453"
@@ -121,43 +167,23 @@ function CompetitorPredictions({
                     layout="display"
                     format="auto"
                 />
-            </div>
-        );
-    }
-    
-    return (
-        <div className="sites-card">
-            <PopularTips/>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
-            />
-            
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
 
-            <br/>   
-                        
-            <div className="">
-                <div className="container">
-                    <MwanasokaTipsContent/>
+                <br/>   
+                            
+                <div className="">
+                    <div className="container">
+                        <MwanasokaTipsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
     const todaysDate = getFormattedCurrentDate();
     
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
@@ -278,6 +304,9 @@ export async function getServerSideProps() {
         }
     }
 
+    // Create structured data for Mwanasoka predictions
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
     return {
         props: {
             initialData,
@@ -285,8 +314,165 @@ export async function getServerSideProps() {
             error,
             baseUrl: baseUrl,
             todaysDate: todaysDate,
-            cacheInfo
+            cacheInfo,
+            structuredData
         }
+    };
+}
+
+// Helper function to create structured data for Mwanasoka predictions
+function createStructuredData(siteUrl, currentDate) {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            // 1. Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`,
+                    "width": 300,
+                    "height": 60
+                },
+                "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide.",
+                "sameAs": ["https://t.me/s/betsassuredkenya"],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "url": `${siteUrl}/contactus`
+                }
+            },
+            
+            // 2. WebPage for Mwanasoka predictions
+            {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/tips/mwanasoka#webpage`,
+                "name": "Mwanasoka Predictions – Free Daily Football Tips & Jackpot Picks",
+                "description": "Looking for Mwanasoka predictions today? Get free daily football tips, jackpot predictions, BTTS, GG, correct score and over/under picks on Pitch Predictions — updated daily.",
+                "url": `${siteUrl}/tips/mwanasoka`,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": `${siteUrl}#website`
+                },
+                "about": {
+                    "@type": "Thing",
+                    "name": "Mwanasoka Football Predictions"
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": siteUrl
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Tips",
+                            "item": `${siteUrl}/tips`
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Mwanasoka Predictions",
+                            "item": `${siteUrl}/tips/mwanasoka`
+                        }
+                    ]
+                }
+            },
+            
+            // 3. FAQPage for Mwanasoka predictions
+            {
+                "@type": "FAQPage",
+                "@id": `${siteUrl}/tips/mwanasoka#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is Mwanasoka?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Mwanasoka is a popular East African football predictions platform providing daily tips, jackpot predictions, GG/BTTS picks, correct score tips, and over/under predictions. It is widely followed in Kenya and Tanzania for its coverage of local and international football markets."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Where can I find free Mwanasoka predictions today?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pitch Predictions provides free daily football tips covering all the same markets as Mwanasoka — including 1X2, BTTS/GG, over/under 2.5, correct score, double chance, HT/FT, and jackpot predictions. Updated every day across 700+ leagues worldwide."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What are Mwanasoka GG tips?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Mwanasoka GG tips (Goal-Goal) predict matches where both teams are expected to score at least one goal. Pitch Predictions provides free GG and NG (No Goal) tips based on each team's recent scoring output, defensive record, and head-to-head goal-scoring history."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Does Pitch Predictions cover Mwanasoka jackpot predictions?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Pitch Predictions covers all major jackpots associated with Mwanasoka — including the Sportpesa Mega Jackpot (17 games), Sportpesa Midweek Jackpot (13 games), Betika Midweek Jackpot, and more. Full 1X2 and Double Chance analysis is published for every game on every coupon, updated weekly."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What prediction markets does Mwanasoka cover?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Mwanasoka covers 1X2 (match winner), Double Chance, Both Teams to Score (BTTS/GG/NG), Over/Under 2.5 goals, Correct Score, HT/FT (Half Time/Full Time), and jackpot predictions. Pitch Predictions provides free tips across all of these markets every day."
+                        }
+                    }
+                ]
+            },
+            
+            // 4. BreadcrumbList
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${siteUrl}/tips/mwanasoka#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Tips",
+                        "item": `${siteUrl}/tips`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Mwanasoka Predictions",
+                        "item": `${siteUrl}/tips/mwanasoka`
+                    }
+                ]
+            },
+            
+            // 5. WebSite
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
     };
 }
 

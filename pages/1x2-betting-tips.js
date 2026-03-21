@@ -17,7 +17,8 @@ export default function Home({
     error,
     baseUrl,
     todaysDate,
-    cacheInfo
+    cacheInfo,
+    structuredData
 }) {
   const [allData, setAllData] = useState(initialData || []);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -77,10 +78,17 @@ export default function Home({
 
   if (endpointStatus === "error" || error) {
     return (
-      <div className="sites-card">
-        <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
-        <br/>
-      </div>
+      <>
+        {/* Structured Data Script */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <div className="sites-card">
+          <DataNotFoundPage props="We don't have any matches to show you right now, please try again later"/>
+          <br/>
+        </div>
+      </>
     );
   }
   
@@ -93,54 +101,71 @@ export default function Home({
   
   if (renderPredictions.length === 0 && !loadingMore && !initialData) {
     return (
-      <div className="sites-card">
-        <DataNotFoundPage props="No matches available for today"/>
-        <br/>
-      </div>
+      <>
+        {/* Structured Data Script */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <div className="sites-card">
+          <DataNotFoundPage props="No matches available for today"/>
+          <br/>
+        </div>
+      </>
     );
   }
   
   return (
-    <div className="sites-card">
-      <PopularTips/>
-      
-      <RenderData 
-        renderPredictions={renderPredictions}
-        onLoadMore={handleLoadMore}
-        isLoadingMore={loadingMore}
-        hasMore={hasMore}
+    <>
+      {/* Structured Data Script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       
-      <br/>
-      
-      <div className="text-center">
-        <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">
-          Football Predictions for Today
-        </a>
-      </div>
-      
-      <br/>
-      
-      <Adsense
-        client="ca-pub-5665711413000284"
-        slot="3850951453"
-        style={{ display: "block" }}
-        layout="display"
-        format="auto"
-      />
-      
-      <br/>  
-      
-      <div className="">
-        <div className="container">
-          <OneXTwoContent/>
+      <div className="sites-card">
+        <PopularTips/>
+        
+        <RenderData 
+          renderPredictions={renderPredictions}
+          onLoadMore={handleLoadMore}
+          isLoadingMore={loadingMore}
+          hasMore={hasMore}
+        />
+        
+        <br/>
+        
+        <div className="text-center">
+          <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">
+            Football Predictions for Today
+          </a>
+        </div>
+        
+        <br/>
+        
+        <Adsense
+          client="ca-pub-5665711413000284"
+          slot="3850951453"
+          style={{ display: "block" }}
+          layout="display"
+          format="auto"
+        />
+        
+        <br/>  
+        
+        <div className="">
+          <div className="container">
+            <OneXTwoContent/>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export async function getServerSideProps() {
+  const siteUrl = 'https://www.pitchpredictions.com';
+  const currentDate = new Date().toISOString().split('T')[0];
   const todaysDate = getFormattedCurrentDate();
   
   const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
@@ -249,6 +274,9 @@ export async function getServerSideProps() {
     }
   }
 
+  // Create structured data for homepage
+  const structuredData = createStructuredData(siteUrl, currentDate);
+
   return {
     props: {
       initialData,
@@ -256,7 +284,8 @@ export async function getServerSideProps() {
       error,
       baseUrl: baseUrl,
       todaysDate: todaysDate,
-      cacheInfo
+      cacheInfo,
+      structuredData
     }
   };
 }
@@ -284,4 +313,94 @@ function cleanupOldCacheFiles(cacheDir) {
   } catch (error) {
     console.error('Error cleaning up cache:', error);
   }
+}
+
+// Helper function to create structured data for homepage
+function createStructuredData(siteUrl, currentDate) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      // 1. Organization
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}#organization`,
+        "name": "Pitch Predictions",
+        "url": siteUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${siteUrl}/pitch-predictions-logo.png`,
+          "width": 300,
+          "height": 60
+        },
+        "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide. Get expert 1X2, BTTS, Over/Under, and Double Chance tips updated daily.",
+        "sameAs": ["https://t.me/s/betsassuredkenya"],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Customer Support",
+          "url": `${siteUrl}/contactus`
+        }
+      },
+      
+      // 2. WebPage for homepage
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}#webpage`,
+        "name": "Pitch Predictions – Free Football Predictions & Betting Tips",
+        "description": "Free football predictions for today's matches across 700+ leagues. Expert 1X2, BTTS, Over/Under, and Double Chance tips with confidence percentages — updated daily.",
+        "url": siteUrl,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": `${siteUrl}#website`
+        },
+        "about": {
+          "@type": "Thing",
+          "name": "Football Predictions"
+        },
+        "dateModified": currentDate,
+        "inLanguage": "en",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": siteUrl
+            }
+          ]
+        }
+      },
+      
+      // 3. WebSite
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}#website`,
+        "name": "Pitch Predictions",
+        "url": siteUrl,
+        "description": "Free, data-driven football prediction platform covering 700+ leagues worldwide. Get expert 1X2, BTTS, Over/Under, and Double Chance tips updated daily.",
+        "publisher": {
+          "@id": `${siteUrl}#organization`
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      
+      // 4. ItemList for today's top predictions
+      {
+        "@type": "ItemList",
+        "@id": `${siteUrl}#itemlist`,
+        "name": "Today's Top Football Predictions",
+        "description": "Highest confidence football predictions for today's matches across 700+ leagues.",
+        "url": siteUrl,
+        "itemListOrder": "https://schema.org/ItemListOrderDescending",
+        "numberOfItems": 20
+      }
+    ]
+  };
 }

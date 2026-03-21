@@ -367,10 +367,10 @@ function MetaContent(){
     
     } else if(current_url == "football-predictions-weekend"){
 
-        title ="Weekend Football Predictions, Tips, Stats and Fixtures";
-        meta_desc_content = "Get free football predictions for the weekend on Pitch Predictions. The football tips are for all fixtures in over 1000 leagues.";
+        title ="Weekend Football Predictions – Free Tips for Saturday & Sunday | Pitch Predictions";
+        meta_desc_content = "Free football predictions for this weekend's matches. Expert 1X2, BTTS, Over/Under &amp; correct score tips for Saturday & Sunday fixtures across 700+ leagues — updated weekly.";
         meta_keywords = "Football predictions for the weekend, weekend football predictions, weekend sure predictions, weekend football fixtures predictions, weekend soccer predictions, weekend prediction correct score, weekend football fixtures predictions, weekend football tips, football prediction weekend, premier league predictions this weekend";
-        page_title = "Weekend Football Predictions and Tips";
+        page_title = "Weekend Football Predictions – Free Tips for Saturday & Sunday";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
@@ -924,10 +924,10 @@ function MetaContent(){
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/mwanasoka")) {
-        title = "Mwanasoka Football Predictions and Free Betting Tips";
-        meta_desc_content = "Get Mwanasoka football predictions and betting tips for today’s matches. Access daily insights, jackpot picks, GG tips, and expert analysis to make smarter betting choices.";
+        title = "Mwanasoka Predictions – Free Daily Football Tips & Jackpot Picks | Pitch Predictions";
+        meta_desc_content = "Looking for Mwanasoka predictions today? Get free daily football tips, jackpot predictions, BTTS, GG, correct score &amp; over/under picks on Pitch Predictions — updated daily.";
         meta_keywords = "mwanasoka tips, mwanasoka football predictions, mwanasoka daily tips, mwanasoka free tips, mwanasoka jackpot predictions, mwanasoka mega jackpot tips, mwanasoka gg tips, mwanasoka predictions today";
-        page_title = "Mwanasoka Daily Predictions and Expert Football Tips";
+        page_title = "Mwanasoka Predictions – Free Daily Football Tips & Jackpot Picks";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sunpel")) {
@@ -1235,10 +1235,10 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url.includes("tips/accumulator-tips")){
-        title = "Accumulator Tips for Today";
-        meta_desc_content = "Get football accumulator tips for today’s matches. These selections are designed to help you combine games with better balance and control.";
+        title = "Accumulator Tips Today – Free Football Acca Predictions | Pitch Predictions";
+        meta_desc_content = "Free football accumulator tips for today. Data-driven acca predictions across the Premier League, Champions League & 700+ leagues — build your winning slip with high-confidence selections.";
         meta_keywords = "accumulator tips, accumulator tips today, sure accumulator tips, football accumulator tips";
-        page_title = "Football Accumulator Tips Today";
+        page_title = "Accumulator Tips Today – Free Football Acca Predictions";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
@@ -1251,18 +1251,18 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url ==="jackpot-predictions"){
-        title = "All Upcoming Jackpot Predictions - Free Sure Tips & Bonus Wins";
-        meta_desc_content = "Get the most accurate Jackpot predictions for Sportpesa, Betika, Betpawa & Mozzart. Unlock winning Mega & Midweek jackpot tips, expert analysis, and bonus-winning strategies for this weekend.";
+        title = "Jackpot Predictions – Free Football Jackpot Tips This Week | Pitch Predictions";
+        meta_desc_content = "Free jackpot predictions for Sportpesa Mega, Betika Midweek, Mozzart, Betpawa, Sportybet &amp; more. Expert 1X2 &amp; Double Chance tips for every game on every coupon — updated weekly.";
         meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips";
-        page_title = "All Jackpot Predictions, Tips and Bonuses this Week";
+        page_title = "Jackpot Predictions – Free Football Jackpot Tips This Week";
 
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-mega-jackpot-predictions") {
-        title = " Sportpesa Mega Jackpot Prediction - 17 Games Today | Vote & Win";
-        meta_desc_content = " Win big with accurate Sportpesa Mega Jackpot predictions. Solve the 17-game puzzle with expert data and our new Community Voting feature. See who others are backing today!";
+        title = "Sportpesa Mega Jackpot Predictions – Free Tips This Weekend | Pitch Predictions";
+        meta_desc_content = "Free Sportpesa Mega Jackpot predictions for all 17 games this weekend. Expert 1X2 &amp; Double Chance tips backed by form, H2H &amp; squad data — updated every week before the deadline.";
         meta_keywords = "SportPesa Mega Jackpot tips, SportPesa predictions, Mega Jackpot analysis, football jackpot tips, SportPesa betting advice";
-        page_title = "Sportpesa Mega Jackpot Prediction – 17 Games Today";
+        page_title = "Sportpesa Mega Jackpot Predictions – Free Tips This Weekend";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
@@ -1275,10 +1275,10 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-midweek-jackpot-predictions") {
-        title = "Free SportPesa Midweek Jackpot Predictions & Tips";
-        meta_desc_content = "Get SportPesa Midweek Jackpot predictions and free betting tips. Expert insights and match stats to boost your chances of winning this week.";
+        title = "Sportpesa Midweek Jackpot Predictions – Free Tips This Week | Pitch Predictions";
+        meta_desc_content = "Free Sportpesa Midweek Jackpot predictions for all 13 games this week. Expert 1X2 &amp; Double Chance tips backed by form, H2H &amp; squad data — updated every week before the deadline.";
         meta_keywords = "SportPesa Midweek Jackpot tips, Midweek Jackpot predictions, football betting insights, SportPesa stats, accurate predictions";
-        page_title = "SportPesa Midweek Jackpot Tips and Prediction";
+        page_title = "Sportpesa Midweek Jackpot Predictions – Free Tips This Week";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title); 
 
@@ -1291,10 +1291,10 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title); 
 
     } else if (current_url == "jackpot-predictions/betika-midweek-jackpot-predictions") { 
-        title = "15M Betika Midweek Jackpot Predictions";
-        meta_desc_content = "Get Betika Midweek Jackpot predictions with free expert tips and detailed match analysis. Improve your betting decisions with accurate stats from Pitch Predictions.";
+        title = "Betika Midweek Jackpot Predictions – Free Tips This Week | Pitch Predictions";
+        meta_desc_content = "Free Betika Midweek Jackpot predictions for all 15 games this week. Expert 1X2 &amp; Double Chance tips backed by form, H2H &amp; squad data — updated every week before the deadline.";
         meta_keywords = "Betika Midweek Jackpot tips, Betika predictions, Midweek Jackpot stats, accurate Betika tips, football analysis";
-        page_title = "Free Betika Midweek Jackpot Prediction and Tips";
+        page_title = "Betika Midweek Jackpot Predictions – Free Tips This Week";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if(current_url ==="jackpot-predictions/[jackpot-predictions-by-name]"){

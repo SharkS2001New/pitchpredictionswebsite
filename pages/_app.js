@@ -185,7 +185,7 @@ function App({ Component, pageProps }) {
                       </>
                     )}
 
-                    {showAds && adVariant === 'AFROPARI' && (
+                    {showAds && (
                       <>
                         {/* AfroPari Click under ads */}
                         <AfroPariClickUnderAds />
