@@ -19,6 +19,12 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
     );
   };
 
+  // Helper function to safely parse percentage values
+  const safeParsePercentage = (value) => {
+    if (!value || typeof value !== 'string') return 0;
+    return Number(value.replace('%', ''));
+  };
+
   // Parse scores from JSON
   const parseScores = (scoresJson) => {
     try {
@@ -103,7 +109,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
     return statusColors[status] || 'secondary';
   };
 
-    // Helper to get user vote label
+  // Helper to get user vote label
   const getUserVoteLabel = (userVote) => {
     if (userVote === '1') return 'Home';
     if (userVote === 'X') return 'Draw';
@@ -123,10 +129,11 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
         const matchWinner = getMatchWinner(game);
         const tipCorrect = isTipCorrect(game);
 
+        // Fixed: Safe parsing of percentage values
         const system = [
-          { label: 'Home', value: Number(game.percent_pred_home.replace('%', '')), code: '1', key:'home' },
-          { label: 'Draw', value: Number(game.percent_pred_draw.replace('%', '')), code: 'X', key:'draw' },
-          { label: 'Away', value: Number(game.percent_pred_away.replace('%', '')), code: '2', key:'away' }
+          { label: 'Home', value: safeParsePercentage(game.percent_pred_home), code: '1', key:'home' },
+          { label: 'Draw', value: safeParsePercentage(game.percent_pred_draw), code: 'X', key:'draw' },
+          { label: 'Away', value: safeParsePercentage(game.percent_pred_away), code: '2', key:'away' }
         ];
         const topSystem = system.reduce((a,b) => b.value > a.value ? b : a);
 
@@ -179,18 +186,6 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   <div className="d-flex align-items-center gap-2 flex-wrap">
                     <small className="text-muted fw-bold">{DateTimeToUsersTimezone(game.date)}</small>
                     {getStatusBadge(game)}
-                    
-                    {/* Show scores if available */}
-                    {/* {(isCompleted || isLive) && (
-                      <span className="fw-bold text-primary">
-                        Score: {game.goals_home || 0} - {game.goals_away || 0}
-                      </span>
-                    )}
-                    {isLive && (
-                      <span className="badge bg-warning text-dark ms-2">
-                        LIVE
-                      </span>
-                    )} */}
                   </div>
                 </div>
 

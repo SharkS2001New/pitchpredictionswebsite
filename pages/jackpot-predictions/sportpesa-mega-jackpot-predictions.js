@@ -12,8 +12,7 @@ function SportpesaMegaJackpotPredictions({
     endpointStatus, 
     error,
     initialVoteStats,
-    structuredData,
-    cacheInfo 
+    structuredData
 }) {         
     const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
