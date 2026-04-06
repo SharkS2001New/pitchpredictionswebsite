@@ -84,6 +84,14 @@ function Footer(){
                 <ul className="sponsors-list">
                   <li className="mb-0"><a target="_blank" href="https://childreninachangingclimate.org">Xoilac xem bong da</a></li>
                   <li className="mb-0"><a target="_blank" href="https://socolive55k.io">Socolive truc tiep bong da</a></li>
+
+                  {/**Renewed every month on 06, first added 06-04-2026 */}
+                  <li className="mb-0"><a target="_blank" href="https://colatvttbd.net/">trực tiếp bóng đá hôm nay</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvttbd.com/">xoilac</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilac-live.org/">trực tiếp bóng đá hôm nay</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://cakhiatvttbd.com/">cakhia tv</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://trangcadobongda.lat/">https://trangcadobongda.lat/</a></li>
+
                   {/**Partners links */}
                   <li className="mb-0"><a target="_blank" href="https://www.bettingtips.co.ke">Betting tips</a></li>
                   <li className="mb-0"><a target="_blank" href="https://www.feedinco.com">Feedinco Betting tips</a></li>
