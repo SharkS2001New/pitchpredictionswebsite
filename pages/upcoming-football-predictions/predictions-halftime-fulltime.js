@@ -9,7 +9,6 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterUpcomingOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/upcoming-football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
-import UpcomingFootballPredictionsContent from "../../components/seo-content/mainpages/upcoming-football-predictions";
 import fs from 'fs';
 import path from 'path';
 
@@ -159,14 +158,6 @@ function UpcomingFixtures({
                 layout="display"
                 format="auto"
             /> 
-            
-            <br/>   
-            
-            <div className="">
-                <div className="container">
-                    <UpcomingFootballPredictionsContent/>
-                </div>
-            </div>
         </div>
     );
 }
