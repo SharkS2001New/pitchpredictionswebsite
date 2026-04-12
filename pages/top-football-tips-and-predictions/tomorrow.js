@@ -17,8 +17,7 @@ function TopFootballFixturesTomorrow({
     endpointStatus, 
     error,
     baseUrl,
-    tomorrowsDate,
-    cacheInfo
+    tomorrowsDate
 }){     
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);

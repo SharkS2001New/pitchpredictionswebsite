@@ -17,8 +17,7 @@ function TopFootballFixturesToday({
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate,
-    cacheInfo
+    todaysDate
 }){     
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
