@@ -1,4 +1,4 @@
-// pages/double-chance-predictions.js
+// pages/football-predictions-today.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
@@ -9,23 +9,25 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
-import DoubleChancePredictionsContent from "../../components/seo-content/mainpages/double-chance-predictions";
+import TodayFootballPredictionsContent from "../../components/seo-content/mainpages/football-predictions-today";
+import fs from 'fs';
+import path from 'path';
 
 function TodaysFixtures({ 
     initialData, 
     endpointStatus, 
     error,
     baseUrl,
-    todaysDate 
-}){     
+    todaysDate,
+    structuredData,
+}) {
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
+    const [currentStartIndex, setCurrentStartIndex] = useState(20);
     const [hasMore, setHasMore] = useState(true);
     const [loadTrigger, setLoadTrigger] = useState(0);
 
-    // Load more data when "Show More" is clicked
     const loadMoreData = async () => {
         if (loadingMore || !hasMore) return;
         
@@ -46,11 +48,9 @@ function TodaysFixtures({
             const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-                // Append new data to existing data
                 setAllData(prevData => [...prevData, ...chunkData.data]);
                 setCurrentStartIndex(endIndex + 1);
                 
-                // Check if we've reached the maximum or got less than requested
                 if (endIndex >= 850 || chunkData.data.length < chunkSize) {
                     setHasMore(false);
                 }
@@ -64,36 +64,20 @@ function TodaysFixtures({
         }
     };
 
-    // Trigger data loading when loadTrigger changes
     useEffect(() => {
         if (loadTrigger > 0) {
             loadMoreData();
         }
     }, [loadTrigger]);
 
-    // Function to be called from child components
     const handleLoadMore = () => {
         setLoadTrigger(prev => prev + 1);
     };
 
-    // Show preloader while server is fetching data
     if (!initialData && !error) {
         return <PreLoader />;
     }
 
-    // Format today's date for display
-    const formatDisplayDate = (dateString) => {
-        if (!dateString) return '';
-        try {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', options);
-        } catch (e) {
-            return dateString;
-        }
-    };
-
-    // Handle error state
     if (endpointStatus === "error" || error) {
         return (
             <div className="sites-card">
@@ -110,7 +94,6 @@ function TodaysFixtures({
         );
     }
     
-    // Process the data - Pass allData and load more props
     const renderPredictions = PagesMatchPredictionDetails({ 
         gamesData: allData,
         onLoadMore: handleLoadMore,
@@ -118,11 +101,10 @@ function TodaysFixtures({
         hasMore: hasMore
     });
     
-    // Handle empty data state
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No double chance predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                <DataNotFoundPage props="No matches available for today"/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -135,119 +117,331 @@ function TodaysFixtures({
         );
     }
     
-    // Render the page with data
     return (
-        <div className="sites-card">
-            <div className="container-fluid">                  
-                <div className="row" style={{backgroundColor: "#edf3f5"}}>
-                    <div className="col-md-3 col-2"></div>
-                    <div className="col-md-7 col-12">
-                        <FilterTodaysMatchesLiveUpcomingFinished url_filter={router.pathname.substring(1)} />
-                    </div>
-                    <div className="col-md-2 col-1"></div>
-                </div>
-                <div className="row" style={{backgroundColor: "#edf3f5"}}>
-                    <div className="col-md-1 col-2"></div>
-                    <div className="col-md-10 col-12">
-                        <FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 url_filter={router.pathname.substring(1)} />
-                    </div>
-                    <div className="col-md-1 col-1"></div>
-                </div>
-            </div>
-            
-            <RenderData 
-                renderPredictions={renderPredictions}
-                onLoadMore={handleLoadMore}
-                isLoadingMore={loadingMore}
-                hasMore={hasMore}
+        <>
+            {/* Structured Data Script */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             
-            <br/>
-            
-            <Adsense
-                client="ca-pub-5665711413000284"
-                slot="3850951453"
-                style={{ display: "block" }}
-                layout="display"
-                format="auto"
-            />
-            
-            <br/>   
-            
-            <div className="">
-                <div className="container">
-                    <DoubleChancePredictionsContent/>
+            <div className="sites-card">                
+                <p className="text-center blink_me">Looking for Premium Football Predictions!!!&nbsp;</p>
+                <p className="text-center">
+                    <a href="/auth/login" className="btn btn-danger btn-sm">Subscribe Now</a>
+                </p>
+                
+                <div className="container-fluid">                                 
+                    <div className="row" style={{backgroundColor: "#edf3f5"}}>
+                        <div className="col-md-3 col-2"></div>
+                        <div className="col-md-7 col-12">
+                            <FilterTodaysMatchesLiveUpcomingFinished url_filter={router.pathname.substring(1)} />
+                        </div>
+                        <div className="col-md-2 col-1"></div>
+                    </div>
+                    <div className="row" style={{backgroundColor: "#edf3f5"}}>
+                        <div className="col-md-1 col-2"></div>
+                        <div className="col-md-10 col-12">
+                            <FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 url_filter={router.pathname.substring(1)} />
+                        </div>
+                        <div className="col-md-1 col-1"></div>
+                    </div>
+                </div>              
+                
+                <RenderData 
+                    renderPredictions={renderPredictions}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={loadingMore}
+                    hasMore={hasMore}
+                />
+                
+                <br/>
+                
+                <Adsense
+                    client="ca-pub-5665711413000284"
+                    slot="3850951453"
+                    style={{ display: "block" }}
+                    layout="display"
+                    format="auto"
+                /> 
+                
+                <br/>   
+                
+                <div className="">
+                    <div className="container">
+                        <TodayFootballPredictionsContent/>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
+    const siteUrl = 'https://www.pitchpredictions.com';
+    const currentDate = new Date().toISOString().split('T')[0];
     
     // Base URL for today's games
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
-    
-    // First batch: ONLY fetch 0-20 records on server (NO full batch)
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
+    // Cache setup
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `todays-predictions-${todaysDate}.json`; // Specific cache for today's page
+    const cachePath = path.join(cacheDir, cacheFilename);
+    
+    let initialData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            return {
-                props: {
-                    initialData: data.data || [],
-                    endpointStatus: "success",
-                    error: null,
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
+
+        // Check if we have a valid cache file (2 minutes = 120000 ms)
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
+            
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 2) { // 2 minutes max
+                // Cache is valid - use it!
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If no valid cache, fetch from API
+        if (initialData.length === 0) {
+            const response = await fetch(firstBatchUrl, {
+                headers: { 
+                    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
                 }
-            };
-        } else {
-            // API returned status: false
-            return {
-                props: {
-                    initialData: [],
-                    endpointStatus: "error",
-                    error: data.message || "Failed to load today's games",
-                    baseUrl: baseUrl,
-                    todaysDate: todaysDate
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.status === true && data.data) {
+                initialData = data.data || [];
+                
+                // Save to cache (atomic write for K3s)
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    fixtureDate: todaysDate,
+                    data: initialData,
+                    count: initialData.length
+                };
+                
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+            } else {
+                endpointStatus = "error";
+                error = data.message || "Failed to load today's predictions";
+            }
+        }
+
+        // Clean up old cache files (older than 2 minutes)
+        cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error('Error fetching today\'s predictions:', err);
+        endpointStatus = "error";
+        error = err.message;
+        
+        // If cache exists but API failed, use it as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.data;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                // Silent fail
+            }
+        }
+    }
+
+    // Create structured data
+    const structuredData = createStructuredData(siteUrl, currentDate);
+
+    return {
+        props: {
+            initialData,
+            endpointStatus,
+            error,
+            baseUrl: baseUrl,
+            todaysDate: todaysDate,
+            structuredData,
+            cacheInfo
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 2 * 60 * 1000; // 2 minutes
+        
+        for (const file of files) {
+            if (file.startsWith('todays-predictions-') && file.endsWith('.json')) {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
                 }
-            };
+            }
         }
     } catch (error) {
-        console.error('Error fetching today\'s games:', error);
-        
-        return {
-            props: {
-                initialData: [],
-                endpointStatus: "error",
-                error: error.message,
-                baseUrl: baseUrl,
-                todaysDate: todaysDate
-            }
-        };
+        console.error('Error cleaning up cache:', error);
     }
+}
+
+function createStructuredData(siteUrl, currentDate) {
+    const pageUrl = `${siteUrl}/football-predictions-today/double-chance-predictions`;
+
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+
+            // Organization
+            {
+                "@type": "Organization",
+                "@id": `${siteUrl}#organization`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/pitch-predictions-logo.png`
+                }
+            },
+
+            // WebPage
+            {
+                "@type": "WebPage",
+                "@id": `${pageUrl}#webpage`,
+                "name": "Double Chance Predictions Today – 1X, X2 & 12 Tips",
+                "description": "Today's double chance predictions (1X, X2, 12) with expert football analysis. Free daily tips across top leagues worldwide.",
+                "url": pageUrl,
+                "isPartOf": {
+                    "@id": `${siteUrl}#website`
+                },
+                "dateModified": currentDate,
+                "inLanguage": "en",
+                "about": {
+                    "@type": "Thing",
+                    "name": "Double Chance Football Predictions"
+                }
+            },
+
+            // FAQ
+            {
+                "@type": "FAQPage",
+                "@id": `${pageUrl}#faq`,
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What is a double chance prediction?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Double chance predictions cover two outcomes: 1X, X2, or 12, making them safer than single-result bets."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Are double chance predictions for today free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, all double chance predictions are provided free with optional premium picks for higher confidence."
+                        }
+                    }
+                ]
+            },
+
+            // Breadcrumb (VERY IMPORTANT for this URL)
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${pageUrl}#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": siteUrl
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Football Predictions Today",
+                        "item": `${siteUrl}/football-predictions-today`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Double Chance Predictions",
+                        "item": pageUrl
+                    }
+                ]
+            },
+
+            // ItemList
+            {
+                "@type": "ItemList",
+                "@id": `${pageUrl}#itemlist`,
+                "name": "Double Chance Predictions Today",
+                "url": pageUrl,
+                "numberOfItems": 20
+            },
+
+            // Website
+            {
+                "@type": "WebSite",
+                "@id": `${siteUrl}#website`,
+                "name": "Pitch Predictions",
+                "url": siteUrl,
+                "publisher": {
+                    "@id": `${siteUrl}#organization`
+                }
+            }
+        ]
+    };
 }
 
 export default TodaysFixtures;

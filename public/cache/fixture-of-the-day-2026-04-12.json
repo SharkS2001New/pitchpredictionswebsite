@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-12T10:39:47.413Z",
+  "date": "2026-04-12",
+  "data": {
+    "fixture_id": 1396493,
+    "country_name": "Portugal",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Portugal.svg",
+    "league_short_name": "PRL",
+    "league_name": "Primeira Liga",
+    "date": "04/12/2026 19:30",
+    "home_team_name": "Estoril",
+    "away_team_name": "FC Porto",
+    "percent_pred_home": "18%",
+    "percent_pred_draw": "16%",
+    "percent_pred_away": "66%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 2.9272727272727272,
+    "max_win_probability": "66%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

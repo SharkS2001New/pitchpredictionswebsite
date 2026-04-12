@@ -20,7 +20,6 @@ function TodaysFixtures({
     baseUrl,
     todaysDate,
     structuredData,
-    cacheInfo  // Add cacheInfo prop
 }) {
     const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
