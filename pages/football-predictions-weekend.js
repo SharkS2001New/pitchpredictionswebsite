@@ -9,6 +9,8 @@ import PagesMatchPredictionDetails from "../components/shared/pages_match_predic
 import DataNotFoundPage from "../components/includes/datanotfound";
 import FilterWeekendOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions-weekend/filter-pred1x2-ov-un-dc-ht-ft";
 import WeekendFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-weekend";
+import fs from 'fs';
+import path from 'path';
 
 function WeekendFixtures({ 
     initialData, 
@@ -231,55 +233,136 @@ export async function getServerSideProps() {
     // First batch: ONLY fetch 0-20 records on server (NO full batch)
     const firstBatchUrl = `${baseUrl}?saturday_date=${saturdayDate}&sunday_date=${sundayDate}&start_index=0&end_index=20`;
     
-    // Record start time to ensure minimum loading time if needed
-    const startTime = Date.now();
-    
     let initialData = [];
     let endpointStatus = "success";
     let error = null;
-    
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
+    // Cache setup
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `weekend-football-predictions-${saturdayDate}-${sundayDate}.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
+
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        // Fetch first batch only
-        const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        // Check API response structure
-        if (data.status === true) {
-            // Calculate elapsed time
-            const elapsedTime = Date.now() - startTime;
+
+        // Check if we have a valid cache file for fixtures only (30 minutes = 1,800,000 ms)
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            // If fetch was too fast, add a small delay to show preloader (optional)
-            if (elapsedTime < 500) {
-                await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 30) {
+                // ✅ Cache is valid - use cached fixtures
+                initialData = cache.initialData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If no valid cache, fetch from API
+        if (initialData.length === 0) {            
+            // Record start time to ensure minimum loading time if needed
+            const startTime = Date.now();
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            // Fetch first batch only
+            const response = await fetch(firstBatchUrl, {
+                headers: { 
+                    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+                },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            initialData = data.data || [];
-            endpointStatus = "success";
-            error = null;
-        } else {
-            // API returned status: false
-            endpointStatus = "error";
-            error = data.message || "Failed to load weekend predictions";
+            const data = await response.json();
+            
+            // Check API response structure
+            if (data.status === true) {
+                // Calculate elapsed time
+                const elapsedTime = Date.now() - startTime;
+                
+                // If fetch was too fast, add a small delay to show preloader (optional)
+                if (elapsedTime < 500) {
+                    await new Promise(resolve => setTimeout(resolve, 500 - elapsedTime));
+                }
+                
+                initialData = data.data || [];
+                endpointStatus = "success";
+                error = null;
+
+                // Save fixtures to cache
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    initialData: initialData,
+                    saturdayDate: saturdayDate,
+                    sundayDate: sundayDate,
+                    count: initialData.length
+                };
+                
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+                
+            } else {
+                // API returned status: false
+                endpointStatus = "error";
+                error = data.message || "Failed to load weekend predictions";
+            }
         }
+
+        // Clean up old cache files (older than 30 minutes)
+        await cleanupOldCacheFiles(cacheDir, saturdayDate, sundayDate);
+
     } catch (err) {
-        console.error('Error fetching weekend predictions:', err);
         endpointStatus = "error";
         error = err.message;
+        initialData = [];
+        
+        // If cache exists but API failed, use cached fixtures as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialData = cache.initialData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+            } catch (fallbackErr) {
+                console.error('Fallback error for weekend fixtures:', fallbackErr);
+            }
+        }
     }
     
     // Create structured data for weekend football predictions
@@ -289,13 +372,44 @@ export async function getServerSideProps() {
         props: {
             initialData,
             endpointStatus,
-            error,
+            error: error || null,
             baseUrl: baseUrl,
             saturdayDate: saturdayDate,
             sundayDate: sundayDate,
-            structuredData
+            structuredData,
+            cacheInfo
         }
     };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir, currentSaturday, currentSunday) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 30 * 60 * 1000; // 30 minutes
+        
+        for (const file of files) {
+            // Clean up weekend fixture cache files that are older than 30 minutes
+            if (file.startsWith('weekend-football-predictions-') && file.endsWith('.json')) {
+                // Don't delete the current weekend's cache file
+                const currentCacheFile = `weekend-football-predictions-${currentSaturday}-${currentSunday}.json`;
+                if (file === currentCacheFile) continue;
+                
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error cleaning up weekend cache:', error);
+    }
 }
 
 // Helper function to create structured data for weekend football predictions

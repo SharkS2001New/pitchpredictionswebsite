@@ -775,6 +775,7 @@ export async function getServerSideProps({ req, query }) {
     // Create cache directory if it doesn't exist
     if (!fs.existsSync(cacheDir)) {
       fs.mkdirSync(cacheDir, { recursive: true });
+      console.log('Created cache directory for jackpots');
     }
 
     // Check if we have a valid cache file (30 minutes = 1800000 ms)
@@ -793,14 +794,18 @@ export async function getServerSideProps({ req, query }) {
           fromCache: true,
           generatedAt: cache.generatedAt
         };
+        console.log(`Using cached active jackpots (${activeJackpots.length} active) from ${cache.generatedAt} (${ageInMinutes.toFixed(1)} minutes old)`);
       } else {
         // ❌ Cache expired - delete it
         fs.unlinkSync(cachePath);
+        console.log(`Active jackpots cache expired (${ageInMinutes.toFixed(1)} minutes old), deleting...`);
       }
     }
 
     // If no valid cache, fetch from API
     if (activeJackpots.length === 0) {
+      console.log('Fetching fresh active jackpots from API...');
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
@@ -814,10 +819,16 @@ export async function getServerSideProps({ req, query }) {
       
       clearTimeout(timeoutId);
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       // Ensure we always return an array
       activeJackpots = data.status && Array.isArray(data.data) ? data.data : [];
+      
+      console.log(`Fetched ${activeJackpots.length} active jackpots from API`);
       
       // Save to cache
       const cacheData = {
@@ -835,13 +846,15 @@ export async function getServerSideProps({ req, query }) {
         fromCache: false,
         generatedAt: cacheData.generatedAt
       };
+      
+      console.log(`Cached active jackpots (${activeJackpots.length} active) - valid for 30 minutes`);
     }
 
     // Clean up old cache files (older than 30 minutes)
     await cleanupOldCacheFiles(cacheDir);
 
   } catch (error) {
-    console.error('Error fetching jackpots:', error);
+    console.error('Error fetching active jackpots:', error);
     
     // If cache exists but API failed, use it as fallback
     if (fs.existsSync(cachePath)) {
@@ -854,8 +867,9 @@ export async function getServerSideProps({ req, query }) {
           generatedAt: cache.generatedAt,
           isFallback: true
         };
+        console.log(`Using cached active jackpots as fallback (${activeJackpots.length} active) - API failed`);
       } catch (fallbackErr) {
-        // Silent fail
+        console.error('Fallback error for active jackpots:', fallbackErr);
       }
     }
   }
@@ -875,18 +889,6 @@ export async function getServerSideProps({ req, query }) {
   };
 }
 
-// Helper function for date formatting
-const formatDateShort = (dateString) => {
-  if (!dateString) return '';
-  try {
-    const options = { month: 'short', day: 'numeric' };
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', options);
-  } catch (e) {
-    return '';
-  }
-};
-
 // Helper function to clean up old cache files
 async function cleanupOldCacheFiles(cacheDir) {
   try {
@@ -904,6 +906,7 @@ async function cleanupOldCacheFiles(cacheDir) {
         
         if (fileAge > maxAge) {
           fs.unlinkSync(filePath);
+          console.log(`Cleaned up old active jackpots cache file (${(fileAge / 60000).toFixed(1)} minutes old)`);
         }
       }
     }
@@ -911,6 +914,18 @@ async function cleanupOldCacheFiles(cacheDir) {
     console.error('Error cleaning up cache:', error);
   }
 }
+
+// Helper function for date formatting
+const formatDateShort = (dateString) => {
+  if (!dateString) return '';
+  try {
+    const options = { month: 'short', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+  } catch (e) {
+    return '';
+  }
+};
 
 // Helper function to create structured data for jackpot predictions landing page
 function createStructuredData(siteUrl, currentDate, activeJackpots) {

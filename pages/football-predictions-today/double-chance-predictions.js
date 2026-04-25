@@ -308,7 +308,7 @@ function cleanupOldCacheFiles(cacheDir) {
         
         const files = fs.readdirSync(cacheDir);
         const now = new Date().getTime();
-        const maxAge = 2 * 60 * 1000; // 2 minutes
+        const maxAge = 5 * 60 * 1000; // 5 minutes
         
         for (const file of files) {
             if (file.startsWith('todays-predictions-') && file.endsWith('.json')) {

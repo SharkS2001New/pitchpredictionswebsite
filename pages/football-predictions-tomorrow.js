@@ -322,7 +322,7 @@ async function cleanupOldCacheFiles(cacheDir) {
         
         const files = fs.readdirSync(cacheDir);
         const now = new Date().getTime();
-        const maxAge = 60 * 60 * 1000; // 1 hour (changed from 3 minutes)
+        const maxAge = 60 * 60 * 1000; // 1 hour 
         
         for (const file of files) {
             if (file.startsWith('tomorrow-football-predictions-') && file.endsWith('.json')) {
