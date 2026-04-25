@@ -1012,10 +1012,10 @@ function MetaContent(){
                 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);        
     } else if (current_url.includes("tips/must-win-teams-today")) { 
-        title = "Must Win Football Teams Today – High-Confidence Match Picks";
-        meta_desc_content = "Explore today's must win football teams based on form, H2H records and team stats. Data-driven picks across major leagues — updated daily by Pitch Predictions.";
+        title = "Must Win Football Teams Today – High Confidence Picks";
+        meta_desc_content = "Explore today's must win football teams using form, H2H records, and key stats. Get high-confidence, data-driven picks updated daily by Pitch Predictions.";
         meta_keywords = "must win teams today, football must win tips, high confidence football predictions, strong football picks today, match winner tips, football form guide today";
-        page_title = "Must Win Football Teams Today";
+        page_title = "Must Win Teams for Today & Tomorrow";
         
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);  
         
@@ -1080,10 +1080,10 @@ function MetaContent(){
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/solo-prediction")) { 
-        title = "Solo Prediction Today | Accurate Football Tips & Betting Insights";  
-        meta_desc_content = "Get the best solo predictions today for football matches. Boost your betting accuracy with expert analysis and high-probability picks from SoloBet.";  
-        meta_keywords = "Solo prediction today, SoloBet prediction, Solo predictions today, Zolo prediction, football predictions, betting tips, accurate match predictions, solo football tips";  
-        page_title = "SoloBet Predictions & Football Tips Today";  
+        title = "Solo Prediction Today – Data-Driven Football Pick";
+        meta_desc_content = "Find today’s solo prediction using team form, H2H stats, and match context. Get a data-driven football pick to support smarter betting decisions.";
+        meta_keywords = "solo prediction today, solo prediction for today, football predictions, betting tips";
+        page_title = "Solo Prediction Today";
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/sure-tips")) { 

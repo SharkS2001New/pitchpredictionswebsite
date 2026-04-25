@@ -4,6 +4,8 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import BetikaMidweekJackpotContent from '../../components/seo-content/jackpots/betika-midweek-jackpot-predictions';
+import fs from 'fs';
+import path from 'path';
 
 function BetikaMidweekJackpotPredictions({ 
     initialGamesData, 
@@ -421,54 +423,116 @@ export async function getServerSideProps() {
     let endpointStatus = "success";
     let error = null;
     let initialVoteStats = {};
-    
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
+    // Cache setup
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `betika-midweek-jackpot-fixtures.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
+
     try {
-        // Fetch jackpot fixtures
-        const response = await fetch(
-            "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Betika Midweek Jackpot",
-            { headers }
-        );
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
-        
-        const data = await response.json();
-        
-        if (data.status && data.data) {
-            initialGamesData = data.data.map(game => ({
-                ...game,
-                jackpot_id: game.jackpot_tips_id,
-                fixture_id: game.fixture_id,
-                game_id: game.id
-            }));
+
+        // Check if we have a valid cache file for fixtures only (30 minutes = 1,800,000 ms)
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
             
-            // Fetch initial vote stats for all fixtures
-            if (initialGamesData.length > 0) {
-                const jackpotId = initialGamesData[0]?.jackpot_tips_id;
-                const fixtureIds = initialGamesData.map(game => game.fixture_id);
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 30) {
+                // ✅ Cache is valid - use cached fixtures
+                initialGamesData = cache.gamesData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
+        }
+
+        // If no valid cache, fetch fixtures from API
+        if (initialGamesData.length === 0) {
+            console.log('Fetching fresh Betika midweek fixtures from API...');
+            
+            // Fetch jackpot fixtures
+            const response = await fetch(
+                "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Betika Midweek Jackpot",
+                { headers }
+            );
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.status && data.data) {
+                initialGamesData = data.data.map(game => ({
+                    ...game,
+                    jackpot_id: game.jackpot_tips_id,
+                    fixture_id: game.fixture_id,
+                    game_id: game.id
+                }));
+
+                // Save fixtures to cache (without vote stats)
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    gamesData: initialGamesData,
+                    count: initialGamesData.length
+                };
                 
-                try {
-                    const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
-                        },
-                        body: JSON.stringify({
-                            jackpot_id: jackpotId,
-                            fixture_ids: fixtureIds
-                        })
-                    });
-                    
-                    const statsResult = await statsResponse.json();
-                    
-                    if (statsResult.status && statsResult.data) {
-                        initialVoteStats = statsResult.data;
-                    }
-                } catch (statsError) {
-                    console.error("Error fetching vote stats:", statsError);
-                    // Create empty stats for all fixtures
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+                
+            }
+            
+            endpointStatus = data.status === true ? "success" : "error";
+            error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
+        }
+
+        // ALWAYS fetch live vote stats (don't cache these)
+        if (initialGamesData.length > 0) {
+            console.log('Fetching live vote stats for Betika midweek jackpot...');
+            const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+            const fixtureIds = initialGamesData.map(game => game.fixture_id);
+
+            try {
+                const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                    },
+                    body: JSON.stringify({
+                        jackpot_id: jackpotId,
+                        fixture_ids: fixtureIds
+                    })
+                });
+                
+                const statsResult = await statsResponse.json();
+                
+                if (statsResult.status && statsResult.data) {
+                    initialVoteStats = statsResult.data;
+                } else {
+                    // Create empty stats if fetch fails
                     fixtureIds.forEach(fixtureId => {
                         initialVoteStats[fixtureId] = {
                             stats: {
@@ -486,18 +550,83 @@ export async function getServerSideProps() {
                         };
                     });
                 }
+            } catch (statsError) {                
+                // Create empty stats for all fixtures on error
+                fixtureIds.forEach(fixtureId => {
+                    initialVoteStats[fixtureId] = {
+                        stats: {
+                            home_votes: 0,
+                            draw_votes: 0,
+                            away_votes: 0,
+                            total_votes: 0
+                        },
+                        percentages: {
+                            home: 0,
+                            draw: 0,
+                            away: 0
+                        },
+                        community_prediction: null
+                    };
+                });
             }
         }
-        
-        endpointStatus = data.status === true ? "success" : "error";
-        error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
-        
+
+        // Clean up old cache files (older than 30 minutes)
+        await cleanupOldCacheFiles(cacheDir);
+
     } catch (err) {
-        console.error("Error fetching jackpot data:", err);
+        console.error("Error fetching Betika midweek jackpot data:", err);
         endpointStatus = "error";
         error = err.message || "Failed to load jackpot fixtures";
         initialGamesData = [];
         initialVoteStats = {};
+        
+        // If cache exists but API failed, use cached fixtures as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialGamesData = cache.gamesData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+                
+                // Still try to get live vote stats even if fixtures are from cache
+                if (initialGamesData.length > 0) {
+                    try {
+                        const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+                        const fixtureIds = initialGamesData.map(game => game.fixture_id);
+                        
+                        const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                            },
+                            body: JSON.stringify({
+                                jackpot_id: jackpotId,
+                                fixture_ids: fixtureIds
+                            })
+                        });
+
+                        const statsResult = await statsResponse.json();
+                        
+                        if (statsResult.status && statsResult.data) {
+                            initialVoteStats = statsResult.data;
+                            console.log('Live vote stats fetched successfully for Betika midweek jackpot (fallback mode)');
+                        }
+                    } catch (voteStatsError) {
+                        console.error("Error fetching vote stats in fallback mode for Betika midweek jackpot:", voteStatsError);
+                    }
+                }
+            } catch (fallbackErr) {
+                console.error('Fallback error for Betika midweek jackpot:', fallbackErr);
+            }
+        }
     }
     
     // Create structured data for Betika Midweek Jackpot
@@ -509,9 +638,35 @@ export async function getServerSideProps() {
             endpointStatus,
             error,
             initialVoteStats,
-            structuredData
+            structuredData,
+            cacheInfo
         }
     };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 30 * 60 * 1000; // 30 minutes
+        
+        for (const file of files) {
+            if (file === 'betika-midweek-jackpot-fixtures.json') {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error cleaning up Betika midweek cache:', error);
+    }
 }
 
 // Helper function to create structured data for Betika Midweek Jackpot

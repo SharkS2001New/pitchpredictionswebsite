@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-25T12:41:10.899Z",
+  "date": "2026-04-25",
+  "data": {
+    "fixture_id": 1381145,
+    "country_name": "Netherlands",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Netherlands.svg",
+    "league_short_name": "ERE",
+    "league_name": "Eredivisie",
+    "date": "04/25/2026 19:00",
+    "home_team_name": "Twente",
+    "away_team_name": "NEC Nijmegen",
+    "percent_pred_home": "71%",
+    "percent_pred_draw": "19%",
+    "percent_pred_away": "10%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 3.3833333333333333,
+    "max_win_probability": "71%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

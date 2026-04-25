@@ -47,10 +47,24 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
     return null;
   };
 
-  // Check if tip was correct
+  // Get system prediction based on highest percentage
+  const getSystemPrediction = (game) => {
+    const homePct = safeParsePercentage(game.percent_pred_home);
+    const drawPct = safeParsePercentage(game.percent_pred_draw);
+    const awayPct = safeParsePercentage(game.percent_pred_away);
+    
+    if (homePct >= drawPct && homePct >= awayPct) return '1';
+    if (drawPct >= homePct && drawPct >= awayPct) return 'X';
+    if (awayPct >= homePct && awayPct >= drawPct) return '2';
+    
+    return null;
+  };
+
+  // Check if tip was correct using percentage-based prediction
   const isTipCorrect = (game) => {
     const winner = getMatchWinner(game);
-    return winner && winner === game.tip;
+    const prediction = getSystemPrediction(game);
+    return winner && prediction && winner === prediction;
   };
 
   // Get status badge with score

@@ -5,6 +5,8 @@ import { Adsense } from "@ctrl/react-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
 import { useRouter } from 'next/router';
+import fs from 'fs';
+import path from 'path';
 
 function JackpotByNamePredictions({ 
     initialGamesData, 
@@ -425,9 +427,9 @@ export async function getServerSideProps(context) {
         };
     }
     
-    // Use the same function to get jackpot name from URL path
-    const path = `jackpot-predictions/${jackpotSlug}`;
-    const jackpotApiName = ReturnJackpotNameSavedInDB(path);
+    // FIXED: Rename this variable to avoid conflict with 'path' module
+    const urlPath = `jackpot-predictions/${jackpotSlug}`;
+    const jackpotApiName = ReturnJackpotNameSavedInDB(urlPath);
     
     // If jackpot name is "Unknown Jackpot", show friendly 404
     if (!jackpotApiName || jackpotApiName === "Unknown Jackpot") {
@@ -448,128 +450,246 @@ export async function getServerSideProps(context) {
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
 
+    let initialGamesData = [];
+    let endpointStatus = "success";
+    let error = null;
+    let initialVoteStats = {};
+    let cacheInfo = {
+        fromCache: false,
+        generatedAt: null
+    };
+
+    // Create a safe filename from jackpot name for caching
+    const safeJackpotName = jackpotApiName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const cacheDir = path.join(process.cwd(), 'public', 'cache');
+    const cacheFilename = `${safeJackpotName}-fixtures.json`;
+    const cachePath = path.join(cacheDir, cacheFilename);
+
     try {
-        // Fetch jackpot fixtures
-        const response = await fetch(
-            `https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=${encodeURIComponent(jackpotApiName)}`,
-            { headers }
-        );
-
-        // If API returns 404, show friendly message
-        if (response.status === 404) {
-            return {
-                props: {
-                    initialGamesData: [],
-                    endpointStatus: "not_found",
-                    error: null,
-                    initialVoteStats: {},
-                    jackpotApiName: jackpotApiName,
-                    isNotFound: true
-                }
-            };
+        // Create cache directory if it doesn't exist
+        if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir, { recursive: true });
         }
 
-        if (!response.ok) {
-            // For other errors, still show friendly message but with error status
-            return {
-                props: {
-                    initialGamesData: [],
-                    endpointStatus: "not_found",
-                    error: "This jackpot is currently not available",
-                    initialVoteStats: {},
-                    jackpotApiName: jackpotApiName,
-                    isNotFound: true
-                }
-            };
+        // Check if we have a valid cache file for fixtures only (30 minutes = 1,800,000 ms)
+        if (fs.existsSync(cachePath)) {
+            const cacheContent = fs.readFileSync(cachePath, 'utf8');
+            const cache = JSON.parse(cacheContent);
+            
+            const cacheTime = new Date(cache.generatedAt).getTime();
+            const now = new Date().getTime();
+            const ageInMinutes = (now - cacheTime) / (1000 * 60);
+            
+            if (ageInMinutes <= 30) {
+                // ✅ Cache is valid - use cached fixtures
+                initialGamesData = cache.gamesData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt
+                };
+            } else {
+                // ❌ Cache expired - delete it
+                fs.unlinkSync(cachePath);
+            }
         }
 
-        const data = await response.json();
-        
-        // If API returns false status or no data, show friendly message
-        if (!data.status || !data.data || data.data.length === 0) {
-            return {
-                props: {
-                    initialGamesData: [],
-                    endpointStatus: "not_found",
-                    error: null,
-                    initialVoteStats: {},
-                    jackpotApiName: jackpotApiName,
-                    isNotFound: true
-                }
-            };
-        }
-        
-        let formattedData = [];
-        let voteStats = {};
-        
-        if (data.status && data.data && data.data.length > 0) {
-            formattedData = data.data.map(game => ({
-                ...game,
-                jackpot_id: game.jackpot_tips_id,
-                fixture_id: game.fixture_id,
-                game_id: game.id,
-                // Add helper properties for UI
-                home_team_name: game.home_team_name,
-                away_team_name: game.away_team_name,
-                percent_pred_home: game.percent_pred_home || "0%",
-                percent_pred_draw: game.percent_pred_draw || "0%",
-                percent_pred_away: game.percent_pred_away || "0%",
-                bets_home: game.bets_home || "1.00",
-                bets_draw: game.bets_draw || "1.00",
-                bets_away: game.bets_away || "1.00"
-            }));
+        // If no valid cache, fetch fixtures from API
+        if (initialGamesData.length === 0) {            
+            // Fetch jackpot fixtures
+            const response = await fetch(
+                `https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=${encodeURIComponent(jackpotApiName)}`,
+                { headers }
+            );
 
-            // Fetch initial vote stats for all fixtures
-            if (formattedData.length > 0) {
-                const jackpotId = formattedData[0]?.jackpot_tips_id;
-                const fixtureIds = formattedData.map(game => game.fixture_id);
-
-                try {
-                    const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
-                        },
-                        body: JSON.stringify({
-                            jackpot_id: jackpotId,
-                            fixture_ids: fixtureIds
-                        })
-                    });
-
-                    const statsResult = await statsResponse.json();
-                    
-                    if (statsResult.status && statsResult.data) {
-                        voteStats = statsResult.data;
+            // If API returns 404, show friendly message
+            if (response.status === 404) {
+                return {
+                    props: {
+                        initialGamesData: [],
+                        endpointStatus: "not_found",
+                        error: null,
+                        initialVoteStats: {},
+                        jackpotApiName: jackpotApiName,
+                        isNotFound: true
                     }
-                } catch (statsError) {
-                    console.error("Error fetching vote stats:", statsError);
-                    
-                    // Create empty stats for all fixtures
+                };
+            }
+
+            if (!response.ok) {
+                // For other errors, still show friendly message but with error status
+                return {
+                    props: {
+                        initialGamesData: [],
+                        endpointStatus: "not_found",
+                        error: "This jackpot is currently not available",
+                        initialVoteStats: {},
+                        jackpotApiName: jackpotApiName,
+                        isNotFound: true
+                    }
+                };
+            }
+
+            const data = await response.json();
+            
+            // If API returns false status or no data, show friendly message
+            if (!data.status || !data.data || data.data.length === 0) {
+                return {
+                    props: {
+                        initialGamesData: [],
+                        endpointStatus: "not_found",
+                        error: null,
+                        initialVoteStats: {},
+                        jackpotApiName: jackpotApiName,
+                        isNotFound: true
+                    }
+                };
+            }
+            
+            if (data.status && data.data && data.data.length > 0) {
+                initialGamesData = data.data.map(game => ({
+                    ...game,
+                    jackpot_id: game.jackpot_tips_id,
+                    fixture_id: game.fixture_id,
+                    game_id: game.id,
+                    // Add helper properties for UI
+                    home_team_name: game.home_team_name,
+                    away_team_name: game.away_team_name,
+                    percent_pred_home: game.percent_pred_home || "0%",
+                    percent_pred_draw: game.percent_pred_draw || "0%",
+                    percent_pred_away: game.percent_pred_away || "0%",
+                    bets_home: game.bets_home || "1.00",
+                    bets_draw: game.bets_draw || "1.00",
+                    bets_away: game.bets_away || "1.00"
+                }));
+
+                // Save fixtures to cache (without vote stats)
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    gamesData: initialGamesData,
+                    count: initialGamesData.length,
+                    jackpotName: jackpotApiName
+                };
+                
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+                
+            }
+        }
+
+        // ALWAYS fetch live vote stats (don't cache these)
+        if (initialGamesData.length > 0) {
+            console.log(`Fetching live vote stats for "${jackpotApiName}"...`);
+            const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+            const fixtureIds = initialGamesData.map(game => game.fixture_id);
+
+            try {
+                const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                    },
+                    body: JSON.stringify({
+                        jackpot_id: jackpotId,
+                        fixture_ids: fixtureIds
+                    })
+                });
+
+                const statsResult = await statsResponse.json();
+                
+                if (statsResult.status && statsResult.data) {
+                    initialVoteStats = statsResult.data;
+                } else {
+                    // Create empty stats if fetch fails
                     fixtureIds.forEach(fixtureId => {
-                        voteStats[fixtureId] = {
+                        initialVoteStats[fixtureId] = {
                             stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
                             percentages: { home: 0, draw: 0, away: 0 },
                             community_prediction: null
                         };
                     });
                 }
+            } catch (statsError) {                
+                // Create empty stats for all fixtures on error
+                fixtureIds.forEach(fixtureId => {
+                    initialVoteStats[fixtureId] = {
+                        stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
+                        percentages: { home: 0, draw: 0, away: 0 },
+                        community_prediction: null
+                    };
+                });
             }
         }
 
-        return {
-            props: {
-                initialGamesData: formattedData,
-                endpointStatus: "success",
-                error: null,
-                initialVoteStats: voteStats,
-                jackpotApiName: jackpotApiName,
-                isNotFound: false
-            }
-        };
+        // Clean up old cache files (older than 30 minutes)
+        await cleanupOldCacheFiles(cacheDir, safeJackpotName);
+
+        endpointStatus = "success";
+        error = null;
 
     } catch (error) {
-        console.error("Error fetching jackpot data:", error);
+        // If cache exists but API failed, use cached fixtures as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialGamesData = cache.gamesData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                
+                // Still try to get live vote stats even if fixtures are from cache
+                if (initialGamesData.length > 0) {
+                    try {
+                        const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+                        const fixtureIds = initialGamesData.map(game => game.fixture_id);
+                        
+                        const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                            },
+                            body: JSON.stringify({
+                                jackpot_id: jackpotId,
+                                fixture_ids: fixtureIds
+                            })
+                        });
+
+                        const statsResult = await statsResponse.json();
+                        
+                        if (statsResult.status && statsResult.data) {
+                            initialVoteStats = statsResult.data;
+                        }
+                    } catch (voteStatsError) {
+                        console.error(`Error fetching vote stats in fallback mode for "${jackpotApiName}":`, voteStatsError);
+                    }
+                }
+                
+                return {
+                    props: {
+                        initialGamesData,
+                        endpointStatus: "success",
+                        error: null,
+                        initialVoteStats,
+                        jackpotApiName: jackpotApiName,
+                        isNotFound: false,
+                        cacheInfo
+                    }
+                };
+            } catch (fallbackErr) {
+                console.error(`Fallback error for "${jackpotApiName}":`, fallbackErr);
+            }
+        }
 
         // Return friendly message instead of error
         return {
@@ -582,6 +702,44 @@ export async function getServerSideProps(context) {
                 isNotFound: true
             }
         };
+    }
+    
+    return {
+        props: {
+            initialGamesData,
+            endpointStatus,
+            error,
+            initialVoteStats,
+            jackpotApiName: jackpotApiName,
+            isNotFound: false,
+            cacheInfo
+        }
+    };
+}
+
+// Helper function to clean up old cache files
+async function cleanupOldCacheFiles(cacheDir, currentJackpotName) {
+    try {
+        if (!fs.existsSync(cacheDir)) return;
+        
+        const files = fs.readdirSync(cacheDir);
+        const now = new Date().getTime();
+        const maxAge = 30 * 60 * 1000; // 30 minutes
+        
+        for (const file of files) {
+            // Only clean up files that end with '-fixtures.json' and aren't the current one
+            if (file.endsWith('-fixtures.json') && !file.includes(currentJackpotName)) {
+                const filePath = path.join(cacheDir, file);
+                const stats = fs.statSync(filePath);
+                const fileAge = now - stats.mtimeMs;
+                
+                if (fileAge > maxAge) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error cleaning up cache:', error);
     }
 }
 

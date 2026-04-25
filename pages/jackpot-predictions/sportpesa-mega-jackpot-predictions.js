@@ -450,7 +450,7 @@ export async function getServerSideProps() {
             fs.mkdirSync(cacheDir, { recursive: true });
         }
 
-        // Check if we have a valid cache file (5 minutes = 300000 ms)
+        // Check if we have a valid cache file for fixtures only (30 minutes = 1,800,000 ms)
         if (fs.existsSync(cachePath)) {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
             const cache = JSON.parse(cacheContent);
@@ -459,10 +459,9 @@ export async function getServerSideProps() {
             const now = new Date().getTime();
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
             
-            if (ageInMinutes <= 5) {
-                // ✅ Cache is valid - use it!
+            if (ageInMinutes <= 30) {
+                // ✅ Cache is valid - use cached fixtures
                 initialGamesData = cache.gamesData;
-                initialVoteStats = cache.voteStats;
                 cacheInfo = {
                     fromCache: true,
                     generatedAt: cache.generatedAt
@@ -473,8 +472,10 @@ export async function getServerSideProps() {
             }
         }
 
-        // If no valid cache, fetch from API
+        // If no valid cache, fetch fixtures from API
         if (initialGamesData.length === 0) {
+            console.log('Fetching fresh fixtures from API...');
+            
             // Fetch jackpot fixtures
             const response = await fetch(
                 "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Mega Jackpot",
@@ -495,12 +496,104 @@ export async function getServerSideProps() {
                     game_id: game.id
                 }));
 
-                // Fetch initial vote stats for all fixtures
-                if (initialGamesData.length > 0) {
-                    const jackpotId = initialGamesData[0]?.jackpot_tips_id;
-                    const fixtureIds = initialGamesData.map(game => game.fixture_id);
+                // Save fixtures to cache (without vote stats)
+                const cacheData = {
+                    generatedAt: new Date().toISOString(),
+                    gamesData: initialGamesData,
+                    count: initialGamesData.length
+                };
+                
+                // Atomic write
+                const tempPath = `${cachePath}.tmp.${Date.now()}`;
+                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+                fs.renameSync(tempPath, cachePath);
+                
+                cacheInfo = {
+                    fromCache: false,
+                    generatedAt: cacheData.generatedAt
+                };
+                
+            }
 
+            endpointStatus = data.status === true ? "success" : "error";
+            error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
+        }
+
+        // ALWAYS fetch live vote stats (don't cache these)
+        if (initialGamesData.length > 0) {
+            console.log('Fetching live vote stats...');
+            const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+            const fixtureIds = initialGamesData.map(game => game.fixture_id);
+
+            try {
+                const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                    },
+                    body: JSON.stringify({
+                        jackpot_id: jackpotId,
+                        fixture_ids: fixtureIds
+                    })
+                });
+
+                const statsResult = await statsResponse.json();
+                
+                if (statsResult.status && statsResult.data) {
+                    initialVoteStats = statsResult.data;
+                } else {
+                    // Create empty stats if fetch fails
+                    fixtureIds.forEach(fixtureId => {
+                        initialVoteStats[fixtureId] = {
+                            stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
+                            percentages: { home: 0, draw: 0, away: 0 },
+                            community_prediction: null
+                        };
+                    });
+                }
+            } catch (statsError) {                
+                // Create empty stats for all fixtures on error
+                fixtureIds.forEach(fixtureId => {
+                    initialVoteStats[fixtureId] = {
+                        stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
+                        percentages: { home: 0, draw: 0, away: 0 },
+                        community_prediction: null
+                    };
+                });
+            }
+        }
+
+        // Clean up old cache files (older than 30 minutes)
+        await cleanupOldCacheFiles(cacheDir);
+
+    } catch (err) {
+        console.error("Error fetching jackpot data:", err);
+        endpointStatus = "error";
+        error = err.message || "Failed to load jackpot fixtures";
+        initialGamesData = [];
+        initialVoteStats = {};
+        
+        // If cache exists but API failed, use cached fixtures as fallback
+        if (fs.existsSync(cachePath)) {
+            try {
+                const cacheContent = fs.readFileSync(cachePath, 'utf8');
+                const cache = JSON.parse(cacheContent);
+                initialGamesData = cache.gamesData;
+                cacheInfo = {
+                    fromCache: true,
+                    generatedAt: cache.generatedAt,
+                    isFallback: true
+                };
+                endpointStatus = "success";
+                error = null;
+                
+                // Still try to get live vote stats even if fixtures are from cache
+                if (initialGamesData.length > 0) {
                     try {
+                        const jackpotId = initialGamesData[0]?.jackpot_tips_id;
+                        const fixtureIds = initialGamesData.map(game => game.fixture_id);
+                        
                         const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
                             method: 'POST',
                             headers: {
@@ -517,70 +610,14 @@ export async function getServerSideProps() {
                         
                         if (statsResult.status && statsResult.data) {
                             initialVoteStats = statsResult.data;
+                            console.log('Live vote stats fetched successfully (fallback mode)');
                         }
-                    } catch (statsError) {
-                        console.error("Error fetching vote stats:", statsError);
-                        
-                        // Create empty stats for all fixtures
-                        fixtureIds.forEach(fixtureId => {
-                            initialVoteStats[fixtureId] = {
-                                stats: { home_votes: 0, draw_votes: 0, away_votes: 0, total_votes: 0 },
-                                percentages: { home: 0, draw: 0, away: 0 },
-                                community_prediction: null
-                            };
-                        });
+                    } catch (voteStatsError) {
+                        console.error("Error fetching vote stats in fallback mode:", voteStatsError);
                     }
                 }
-
-                // Save to cache
-                const cacheData = {
-                    generatedAt: new Date().toISOString(),
-                    gamesData: initialGamesData,
-                    voteStats: initialVoteStats,
-                    count: initialGamesData.length
-                };
-                
-                // Atomic write
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
-                
-                cacheInfo = {
-                    fromCache: false,
-                    generatedAt: cacheData.generatedAt
-                };
-            }
-
-            endpointStatus = data.status === true ? "success" : "error";
-            error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
-        }
-
-        // Clean up old cache files (older than 5 minutes)
-        await cleanupOldCacheFiles(cacheDir);
-
-    } catch (err) {
-        console.error("Error fetching jackpot data:", err);
-        endpointStatus = "error";
-        error = err.message || "Failed to load jackpot fixtures";
-        initialGamesData = [];
-        initialVoteStats = {};
-        
-        // If cache exists but API failed, use it as fallback
-        if (fs.existsSync(cachePath)) {
-            try {
-                const cacheContent = fs.readFileSync(cachePath, 'utf8');
-                const cache = JSON.parse(cacheContent);
-                initialGamesData = cache.gamesData;
-                initialVoteStats = cache.voteStats;
-                cacheInfo = {
-                    fromCache: true,
-                    generatedAt: cache.generatedAt,
-                    isFallback: true
-                };
-                endpointStatus = "success";
-                error = null;
             } catch (fallbackErr) {
-                // Silent fail
+                console.error('Fallback error:', fallbackErr);
             }
         }
     }
@@ -607,7 +644,7 @@ async function cleanupOldCacheFiles(cacheDir) {
         
         const files = fs.readdirSync(cacheDir);
         const now = new Date().getTime();
-        const maxAge = 5 * 60 * 1000; // 5 minutes
+        const maxAge = 30 * 60 * 1000; // 30 minutes
         
         for (const file of files) {
             if (file === 'sportpesa-mega-jackpot-fixtures.json') {
