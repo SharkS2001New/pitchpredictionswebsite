@@ -164,14 +164,6 @@ function TodaysFixtures({
                     layout="display"
                     format="auto"
                 /> 
-                
-                <br/>   
-                
-                <div className="">
-                    <div className="container">
-                        <TodayFootballPredictionsContent/>
-                    </div>
-                </div>
             </div>
         </>
     );
