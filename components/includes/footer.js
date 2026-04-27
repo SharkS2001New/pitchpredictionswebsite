@@ -91,6 +91,7 @@ function Footer(){
                   <li className="mb-0"><a target="_blank" href="https://xoilac-live.org/">trực tiếp bóng đá hôm nay</a></li>
                   <li className="mb-0"><a target="_blank" href="https://cakhiatvttbd.com/">cakhia tv</a></li>
                   <li className="mb-0"><a target="_blank" href="https://trangcadobongda.lat/">https://trangcadobongda.lat/</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://1agame.io/">1Agame</a></li>
 
                   {/**Partners links */}
                   <li className="mb-0"><a target="_blank" href="https://www.bettingtips.co.ke">Betting tips</a></li>
