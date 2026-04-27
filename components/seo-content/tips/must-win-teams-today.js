@@ -6,62 +6,6 @@ export default function MustWinTeamsTodayContent() {
     year: 'numeric',
   });
 
-  // FAQ structured data for Google rich results
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'What does "must-win team" mean in football predictions?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'A must-win team is a side our analysts identify as having a strong statistical and motivational edge in a given match. These must win teams today predictions are based on current form, head-to-head records, home/away performance, squad availability and betting market data. It does not mean the outcome is certain — it means the data and context consistently support one side over the other.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Are must win teams today sure wins?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'No football prediction is ever a guaranteed sure win. However, must win teams today sure wins refer to selections where multiple independent factors — form, motivation, H2H, odds movement — all point to the same outcome. These high-confidence picks offer a stronger basis for betting decisions than general tips.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'How does Pitch Predictions select must-win teams?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Each must win teams today prediction passes through a six-factor model: recent league form, H2H records, home/away win rates, squad fitness, betting line movement, and match importance (relegation battles, title races, cup qualifiers). We only publish teams where at least four of these six factors align in the same direction.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Are the must-win tips free?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes, completely free. All must-win team selections on this page are available at no cost. A premium tier is available for early-access picks and higher-confidence exclusive tips.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'How often is this page updated?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Must-win team selections are updated each morning, typically by 9:00 AM GMT. The page is refreshed daily to reflect the latest team news, injury updates and fixture context.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Which leagues are covered?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'We cover must-win picks across 700+ leagues including the Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Champions League, Europa League, and major African and Asian competitions including SportPesa and Betika jackpot fixtures.',
-        },
-      },
-    ],
-  };
-
   return (
     <div
       id="seo-content"
@@ -71,11 +15,6 @@ export default function MustWinTeamsTodayContent() {
         padding: '0 10px 10px',
       }}
     >
-      {/* FAQ Schema injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
 
       {/* ── FRESHNESS TIMESTAMP ── */}
       <p
