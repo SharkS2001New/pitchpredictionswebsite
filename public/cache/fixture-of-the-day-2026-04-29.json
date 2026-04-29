@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-29T13:31:12.804Z",
+  "date": "2026-04-29",
+  "data": {
+    "fixture_id": 1540842,
+    "country_name": "Europe",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Europe.svg",
+    "league_short_name": "UCL",
+    "league_name": "UEFA Champions League",
+    "date": "04/29/2026 19:00",
+    "home_team_name": "Atletico Madrid",
+    "away_team_name": "Arsenal",
+    "percent_pred_home": "27%",
+    "percent_pred_draw": "34%",
+    "percent_pred_away": "40%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 3.5384615384615383,
+    "max_win_probability": "40%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

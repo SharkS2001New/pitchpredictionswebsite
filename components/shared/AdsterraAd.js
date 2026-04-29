@@ -1,22 +1,14 @@
-import { useEffect } from 'react';
+import Script from 'next/script';
 
 const AdsterraAd = () => {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = '//pl25562030.profitablecpmrate.com/23/c6/99/23c6999750507ae026e9a271af24ea8d.js'; 
-    script.type = 'text/javascript';
-    script.async = true;
-
-    // Append the script to the ad container
-    document.getElementById('ad-container')?.appendChild(script);
-
-    return () => {
-      // Cleanup the script if the component unmounts
-      document.getElementById('ad-container')?.removeChild(script);
-    };
-  }, []);
-
-  return <div id="ad-container" style={{ minHeight: '100%', width: '100%' }} />;
+  return (
+    <div style={{ width: '100%', minHeight: '100%' }}>
+      <Script
+        src="https://pl25562030.profitablecpmratenetwork.com/23/c6/99/23c6999750507ae026e9a271af24ea8d.js"
+        strategy="afterInteractive"
+      />
+    </div>
+  );
 };
 
 export default AdsterraAd;

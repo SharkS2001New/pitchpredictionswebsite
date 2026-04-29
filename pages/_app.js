@@ -18,10 +18,11 @@ import SideNavBar from '../components/includes/sidenav';
 import MyCalendar from '../components/includes/Calendar';
 import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
 import { Adsense } from "@ctrl/react-adsense";
-import Script from 'next/script';
-import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
-import AfroPariClickUnderAds from '../components/shared/AfroPariClickUnderAds';
-import AfroPariClickPopupAds from '../components/shared/AfroPariClickPopupAds';
+// import Script from 'next/script';
+// import O1XBetClickUnderAds from '../components/shared/O1XBetClickUnderAds';
+// import AfroPariClickUnderAds from '../components/shared/AfroPariClickUnderAds';
+// import AfroPariClickPopupAds from '../components/shared/AfroPariClickPopupAds';
+import AdsterraAd from '../components/shared/AdsterraAd';
 
 function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
@@ -171,29 +172,24 @@ function App({ Component, pageProps }) {
                       <Component {...pageProps} />
                     </div>
 
-                    {/* Conditional rendering of ads based on rotation - only when on client */}
-                    {showAds && adVariant === '1XBET' && (
+                    {/* Conditional rendering of ads based on rotation - only when on client//&& adVariant === '1XBET'  */}
+                    {/* {showAds && (
                       <>
-                        {/* 1xBet Click under ads */}
-                        <O1XBetClickUnderAds />
-                        
-                        {/* 1xBet Popup (Taifa Bet) */}
-                        <Script
-                          src="https://tafatips.com/tafatips-popup-ads.js"
-                          strategy="afterInteractive"
-                        />
+                        <O1XBetClickUnderAds />                        
                       </>
-                    )}
+                    )} */}
 
                     {showAds && (
+                      <AdsterraAd/>
+                    )}
+
+                    {/* {showAds && (
                       <>
-                        {/* AfroPari Click under ads */}
                         <AfroPariClickUnderAds />
                         
-                        {/* AfroPari Popup */}
                         <AfroPariClickPopupAds />
                       </>
-                    )}
+                    )} */}
                                     
                   </div>    
                   {!isAuthPage && 
