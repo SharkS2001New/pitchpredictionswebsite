@@ -28,7 +28,8 @@
     "nookies": "^2.5.2",
     "react-bootstrap": "^2.7.2",
     "react-calendar": "^4.2.1",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "swr": "^2.4.1"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.1.2",

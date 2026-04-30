@@ -1,17 +1,41 @@
-import { useState } from "react";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import PreLoader from "../components/includes/loader";
 
-export default function Blogs({ initialBlogs, error }) {
-  const [blogs] = useState(initialBlogs || []);
-  const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 10;
+const fetcher = async (url) => {
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+  };
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error('Failed to fetch');
+  return res.json();
+};
 
-  // Pagination logic
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
+export default function Blogs() {
+  const router = useRouter();
+  const page = router.query.page || 1;
+  const category = router.query.category || 'ALL';
+  
+  const { data, error, isLoading, isValidating } = useSWR(
+    `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true,
+      dedupingInterval: 60000,
+    }
+  );
 
-  // Handle error state
+  const handlePageChange = (newPage) => {
+    if (newPage === parseInt(page)) return;
+    router.push({
+      pathname: '/blog',
+      query: { ...router.query, page: newPage }
+    }, undefined, { shallow: true });
+  };
+
   if (error) {
     return (
       <div className="blogs-page">
@@ -24,6 +48,23 @@ export default function Blogs({ initialBlogs, error }) {
     );
   }
 
+  if (isLoading && !data) {
+    return (
+      <div className="blogs-page">
+        <div className="container">
+          <PreLoader />
+        </div>
+      </div>
+    );
+  }
+
+  const blogs = data?.data || [];
+  const pageInfo = {
+    currentPage: data?.current_page || 1,
+    lastPage: data?.last_page || 1,
+    total: data?.total || 0
+  };
+
   return (
     <div className="blogs-page">
       <div className="container">
@@ -34,14 +75,14 @@ export default function Blogs({ initialBlogs, error }) {
         ) : (
           <>
             <div className="row g-4">
-              {currentBlogs.map((blog) => (
+              {blogs.map((blog) => (
                 <div key={blog.id} className="col-12 col-lg-6">
                   <div className="blog-card">
                     <div className="blog-content">
                       <small className="blog-category mb-3">
-                        {blog.category?.blogs_category_title
-                          ? blog.category.blogs_category_title.charAt(0).toUpperCase() + 
-                            blog.category.blogs_category_title.slice(1).toLowerCase()
+                        {blog.category?.name
+                          ? blog.category.name.charAt(0).toUpperCase() + 
+                            blog.category.name.slice(1).toLowerCase()
                           : "Articles"}
                       </small>
 
@@ -51,7 +92,7 @@ export default function Blogs({ initialBlogs, error }) {
 
                       <div className="blog-meta mt-3">
                         {blog.user?.name || "Admin"} &nbsp;/&nbsp;
-                        {new Date(blog.published_at).toLocaleDateString("en-US", {
+                        {new Date(blog.published_at || blog.created_at).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -82,7 +123,7 @@ export default function Blogs({ initialBlogs, error }) {
 
                       <div className="blog-social">
                         <span>
-                          <i className="bi bi-clock"></i> {blog.read_time} Minutes
+                          <i className="bi bi-clock"></i> {blog.read_time || 5} Minutes
                         </span>
                       </div>
                     </div>
@@ -92,17 +133,47 @@ export default function Blogs({ initialBlogs, error }) {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {pageInfo.lastPage > 1 && (
               <div className="pagination-container">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                <button
+                  className="page-btn"
+                  onClick={() => handlePageChange(pageInfo.currentPage - 1)}
+                  disabled={pageInfo.currentPage === 1 || isLoading}
+                >
+                  ← Previous
+                </button>
+                
+                {Array.from({ length: Math.min(5, pageInfo.lastPage) }, (_, i) => {
+                  let pageNum;
+                  if (pageInfo.lastPage <= 5) {
+                    pageNum = i + 1;
+                  } else if (pageInfo.currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (pageInfo.currentPage >= pageInfo.lastPage - 2) {
+                    pageNum = pageInfo.lastPage - 4 + i;
+                  } else {
+                    pageNum = pageInfo.currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      className={`page-btn ${pageInfo.currentPage === pageNum ? "active" : ""}`}
+                      onClick={() => handlePageChange(pageNum)}
+                      disabled={isLoading}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                
+                <button
+                  className="page-btn"
+                  onClick={() => handlePageChange(pageInfo.currentPage + 1)}
+                  disabled={pageInfo.currentPage === pageInfo.lastPage || isLoading}
+                >
+                  Next →
+                </button>
               </div>
             )}
           </>
@@ -110,39 +181,4 @@ export default function Blogs({ initialBlogs, error }) {
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-  const headers = {
-    "Content-type": "application/json; charset=UTF-8",
-    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-  };
-
-  try {
-    const response = await fetch("https://api.pitchpredictions.com/api/blog", {
-      headers: headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return {
-      props: {
-        initialBlogs: data.data || [],
-        error: null
-      }
-    };
-  } catch (error) {
-    console.error("Error fetching blogs:", error);
-    
-    return {
-      props: {
-        initialBlogs: [],
-        error: error.message || "Failed to load blogs"
-      }
-    };
-  }
 }

@@ -2,16 +2,15 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import PreLoader from "../../components/includes/loader";
 
-export default function BlogPage({ blog, error, slug: propSlug }) {
+export default function BlogPage({ blog, error }) {
   const router = useRouter();
-  const { slug } = router.query;
 
-  // Handle loading state (only for client-side navigation)
+  // Handle loading state for fallback (if using ISR)
   if (router.isFallback) {
     return <PreLoader />;
   }
 
-  // ❌ Show error
+  // Show error
   if (error) {
     return (
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
@@ -23,7 +22,7 @@ export default function BlogPage({ blog, error, slug: propSlug }) {
     );
   }
 
-  // 🚫 Blog not found
+  // Blog not found
   if (!blog) {
     return (
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
@@ -35,66 +34,72 @@ export default function BlogPage({ blog, error, slug: propSlug }) {
     );
   }
 
-  // 🏷️ Format category
+  // Format category (use correct field name)
   const category =
-    blog.category?.blogs_category_title
+    blog.category?.name ||
+    blog.category?.blogs_category_title ||
+    (blog.category?.blogs_category_title
       ? blog.category.blogs_category_title.charAt(0).toUpperCase() +
         blog.category.blogs_category_title.slice(1).toLowerCase()
-      : "Articles";
+      : "Articles");
 
-  // 🖼️ Optimize images: add lazy loading + async decoding
+  // Optimize images: add lazy loading + async decoding
   const optimizedContent = blog.content?.replace(
     /<img /g,
     '<img loading="lazy" decoding="async" style="max-width:100%;height:auto;" '
   ) || '';
 
-  // 🧠 Meta title & description
+  // Meta title & description
   const metaTitle = `${blog.title} | Pitch Predictions`;
   const metaDescription =
     blog.meta_description ||
-    (blog.content
-      ? blog.content.replace(/<[^>]+>/g, "").slice(0, 160) + "..."
-      : "Read the latest football analysis and predictions from Pitch Predictions.");
+    (blog.excerpt ||
+      (blog.content
+        ? blog.content.replace(/<[^>]+>/g, "").slice(0, 160) + "..."
+        : "Read the latest football analysis and predictions from Pitch Predictions."));
 
-  // Canonical URL
-  const canonicalUrl = `https://www.pitchpredictions.com/blog/${slug || propSlug}`;
+  // Canonical URL - USE THE CORRECT DOMAIN
+  const canonicalUrl = `https://www.pitchpredictions.com/blog/${router.query.slug}`;
+
+  // Get featured image - check multiple possible field names
+  const featuredImage = blog.image || blog.featured_image || blog.og_image || null;
 
   return (
     <>
       <Head>
-        {/* 🔹 Basic SEO Meta Tags */}
+        {/* Basic SEO Meta Tags */}
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={canonicalUrl} />
 
-        {/* 🔹 Open Graph / Facebook */}
+        {/* Open Graph / Facebook */}
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDescription} />
-        {blog.image && (
-          <meta property="og:image" content={blog.image} />
+        {featuredImage && (
+          <meta property="og:image" content={featuredImage} />
         )}
         <meta property="og:type" content="article" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:site_name" content="Pitch Predictions" />
 
-        {/* 🔹 Twitter Meta */}
+        {/* Twitter Meta */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDescription} />
-        {blog.image && (
-          <meta name="twitter:image" content={blog.image} />
+        {featuredImage && (
+          <meta name="twitter:image" content={featuredImage} />
         )}
         <meta name="twitter:site" content="@pitchpredictions" />
 
-        {/* 🔹 Article Meta */}
-        <meta property="article:published_time" content={blog.created_at} />
+        {/* Article Meta */}
+        <meta property="article:published_time" content={blog.created_at || blog.published_at} />
         {blog.updated_at && (
           <meta property="article:modified_time" content={blog.updated_at} />
         )}
-        <meta property="article:author" content={blog.author || "Admin"} />
-        {blog.category?.blogs_category_title && (
-          <meta property="article:section" content={blog.category.blogs_category_title} />
+        <meta property="article:author" content={blog.author || blog.user?.name || "Admin"} />
+        {category !== "Articles" && (
+          <meta property="article:section" content={category} />
         )}
       </Head>
 
@@ -176,14 +181,14 @@ export default function BlogPage({ blog, error, slug: propSlug }) {
             color: "#666",
           }}
         >
-          {category}
+          Category: {category}
         </small>
 
         {/* Featured Image */}
-        {blog.image && (
+        {featuredImage && (
           <div style={{ marginBottom: "2rem", textAlign: "center" }}>
             <img 
-              src={blog.image} 
+              src={featuredImage} 
               alt={blog.title}
               style={{ maxWidth: "100%", height: "auto", borderRadius: "8px" }}
               loading="lazy"
@@ -236,12 +241,14 @@ export async function getServerSideProps(context) {
     }
 
     const data = await response.json();
+    
+    // Handle different API response formats
+    const blogData = data.data || data;
 
     return {
       props: {
-        blog: data.data || data, // Handle both response formats
+        blog: blogData,
         error: null,
-        slug: slug
       },
     };
   } catch (error) {
@@ -251,7 +258,6 @@ export async function getServerSideProps(context) {
       props: {
         blog: null,
         error: error.message || "Failed to load blog",
-        slug: slug
       },
     };
   }
