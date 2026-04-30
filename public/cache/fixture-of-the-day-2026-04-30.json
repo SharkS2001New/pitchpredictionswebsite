@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-04-30T12:39:36.089Z",
+  "date": "2026-04-30",
+  "data": {
+    "fixture_id": 1540879,
+    "country_name": "Europe",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Europe.svg",
+    "league_short_name": "UEC",
+    "league_name": "UEFA Europa Conference League",
+    "date": "04/30/2026 19:00",
+    "home_team_name": "Rayo Vallecano",
+    "away_team_name": "Strasbourg",
+    "percent_pred_home": "37%",
+    "percent_pred_draw": "34%",
+    "percent_pred_away": "31%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 2.875,
+    "max_win_probability": "37%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

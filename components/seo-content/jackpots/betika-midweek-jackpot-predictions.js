@@ -4,7 +4,7 @@ export default function BetikaMidweekJackpotContent() {
       <section>
         <h2>What Is the Betika Midweek Jackpot?</h2>
         <p>
-          The <strong>Betika Midweek Jackpot</strong> is a weekly football jackpot offered by Betika Kenya, one of the country's most popular sports betting platforms. It features <strong>15 preselected games</strong> from leagues across Europe and beyond, with a grand prize of <strong>KSh 15 million</strong> for correctly predicting all 15 outcomes.
+          The <strong>Betika Midweek Jackpot</strong> is a weekly football jackpot offered by Betika Kenya, <a href="https://mybettingsites.com/ke" target="_blank" style={{color:"#0000EE;"}}>one of the country's most popular sports betting platforms</a>. It features <strong>15 preselected games</strong> from leagues across Europe and beyond, with a grand prize of <strong>KSh 15 million</strong> for correctly predicting all 15 outcomes.
         </p>
         <p>
           Predicting 12, 13, or 14 games correctly qualifies bettors for Betika's bonus prize tiers — making the Midweek Jackpot one of the most accessible jackpots in Kenya, with multiple levels of reward. The jackpot runs every week, with a deadline before the kickoff of the first preselected game.
