@@ -1,35 +1,65 @@
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import PreLoader from "../components/includes/loader";
 
-const fetcher = async (url) => {
-  const headers = {
-    "Content-type": "application/json; charset=UTF-8",
-    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-  };
-  const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error('Failed to fetch');
-  return res.json();
-};
-
-export default function Blogs() {
+export default function Blogs({ initialBlogs, initialPageInfo, error: initialError }) {
   const router = useRouter();
-  const page = router.query.page || 1;
-  const category = router.query.category || 'ALL';
-  
-  const { data, error, isLoading, isValidating } = useSWR(
-    `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      keepPreviousData: true,
-      dedupingInterval: 60000,
+  const [blogs, setBlogs] = useState(initialBlogs || []);
+  const [pageInfo, setPageInfo] = useState(initialPageInfo || { currentPage: 1, lastPage: 1, total: 0 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(initialError);
+
+  // Fetch data when page changes in URL (client-side)
+  useEffect(() => {
+    if (!router.isReady) return;
+    
+    const page = parseInt(router.query.page) || 1;
+    const category = router.query.category || 'ALL';
+    
+    // Skip if this is the initial load (data already from server)
+    if (page === pageInfo.currentPage && blogs.length > 0 && !loading) {
+      return;
     }
-  );
+    
+    const fetchPageData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const headers = {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+        };
+        
+        const response = await fetch(
+          `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
+          { headers }
+        );
+        
+        if (!response.ok) throw new Error('Failed to fetch blogs');
+        
+        const data = await response.json();
+        
+        setBlogs(data.data || []);
+        setPageInfo({
+          currentPage: data.current_page || 1,
+          lastPage: data.last_page || 1,
+          total: data.total || 0
+        });
+      } catch (err) {
+        console.error("Error fetching page:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPageData();
+  }, [router.query.page, router.query.category, router.isReady]);
 
   const handlePageChange = (newPage) => {
-    if (newPage === parseInt(page)) return;
+    if (newPage === pageInfo.currentPage || loading) return;
+    
     router.push({
       pathname: '/blog',
       query: { ...router.query, page: newPage }
@@ -42,13 +72,20 @@ export default function Blogs() {
         <div className="container">
           <div className="no-blogs">
             <p>Error loading blogs. Please try again later.</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="btn btn-primary mt-3"
+            >
+              Retry
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  if (isLoading && !data) {
+  // Show loader only on initial load (first visit)
+  if (loading && blogs.length === 0) {
     return (
       <div className="blogs-page">
         <div className="container">
@@ -58,16 +95,19 @@ export default function Blogs() {
     );
   }
 
-  const blogs = data?.data || [];
-  const pageInfo = {
-    currentPage: data?.current_page || 1,
-    lastPage: data?.last_page || 1,
-    total: data?.total || 0
-  };
-
   return (
     <div className="blogs-page">
       <div className="container">
+        {/* Show mini loader indicator when navigating between pages */}
+        {loading && (
+          <div className="page-transition-loader">
+            <div className="spinner-border spinner-border-sm text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <span className="ms-2">Loading page {pageInfo.currentPage}...</span>
+          </div>
+        )}
+        
         {!blogs || blogs.length === 0 ? (
           <div className="no-blogs">
             <p>No blogs available.</p>
@@ -138,11 +178,26 @@ export default function Blogs() {
                 <button
                   className="page-btn"
                   onClick={() => handlePageChange(pageInfo.currentPage - 1)}
-                  disabled={pageInfo.currentPage === 1 || isLoading}
+                  disabled={pageInfo.currentPage === 1 || loading}
                 >
                   ← Previous
                 </button>
                 
+                {/* Show first page */}
+                {pageInfo.currentPage > 3 && (
+                  <>
+                    <button
+                      className="page-btn"
+                      onClick={() => handlePageChange(1)}
+                      disabled={loading}
+                    >
+                      1
+                    </button>
+                    {pageInfo.currentPage > 4 && <span className="page-dots">...</span>}
+                  </>
+                )}
+                
+                {/* Show pages around current */}
                 {Array.from({ length: Math.min(5, pageInfo.lastPage) }, (_, i) => {
                   let pageNum;
                   if (pageInfo.lastPage <= 5) {
@@ -160,17 +215,31 @@ export default function Blogs() {
                       key={pageNum}
                       className={`page-btn ${pageInfo.currentPage === pageNum ? "active" : ""}`}
                       onClick={() => handlePageChange(pageNum)}
-                      disabled={isLoading}
+                      disabled={loading}
                     >
                       {pageNum}
                     </button>
                   );
                 })}
                 
+                {/* Show last page */}
+                {pageInfo.currentPage < pageInfo.lastPage - 2 && (
+                  <>
+                    {pageInfo.currentPage < pageInfo.lastPage - 3 && <span className="page-dots">...</span>}
+                    <button
+                      className="page-btn"
+                      onClick={() => handlePageChange(pageInfo.lastPage)}
+                      disabled={loading}
+                    >
+                      {pageInfo.lastPage}
+                    </button>
+                  </>
+                )}
+                
                 <button
                   className="page-btn"
                   onClick={() => handlePageChange(pageInfo.currentPage + 1)}
-                  disabled={pageInfo.currentPage === pageInfo.lastPage || isLoading}
+                  disabled={pageInfo.currentPage === pageInfo.lastPage || loading}
                 >
                   Next →
                 </button>
@@ -179,6 +248,76 @@ export default function Blogs() {
           </>
         )}
       </div>
+      
+      <style jsx>{`
+        .page-transition-loader {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: white;
+          padding: 8px 16px;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+        .page-dots {
+          padding: 8px 4px;
+          color: #666;
+        }
+      `}</style>
     </div>
   );
+}
+
+export async function getServerSideProps({ query }) {
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+  };
+
+  const page = query.page || 1;
+  const category = query.category || 'ALL';
+
+  try {
+    const response = await fetch(
+      `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
+      { headers }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return {
+      props: {
+        initialBlogs: data.data || [],
+        initialPageInfo: {
+          currentPage: data.current_page || 1,
+          lastPage: data.last_page || 1,
+          total: data.total || 0
+        },
+        error: null
+      }
+    };
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    
+    return {
+      props: {
+        initialBlogs: [],
+        initialPageInfo: {
+          currentPage: 1,
+          lastPage: 1,
+          total: 0
+        },
+        error: error.message || "Failed to load blogs"
+      }
+    };
+  }
 }
