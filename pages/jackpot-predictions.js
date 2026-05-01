@@ -700,9 +700,9 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
         </div>
 
         {/* SEO Content Section */}
-        <div className="container">
+        {/* <div className="container">
           <JackpotPredictionsContent/>
-        </div>
+        </div> */}
 
         {/* Share Modal */}
         {showShareModal && <ShareModal />}
@@ -775,7 +775,6 @@ export async function getServerSideProps({ req, query }) {
     // Create cache directory if it doesn't exist
     if (!fs.existsSync(cacheDir)) {
       fs.mkdirSync(cacheDir, { recursive: true });
-      console.log('Created cache directory for jackpots');
     }
 
     // Check if we have a valid cache file (30 minutes = 1800000 ms)
@@ -794,18 +793,14 @@ export async function getServerSideProps({ req, query }) {
           fromCache: true,
           generatedAt: cache.generatedAt
         };
-        console.log(`Using cached active jackpots (${activeJackpots.length} active) from ${cache.generatedAt} (${ageInMinutes.toFixed(1)} minutes old)`);
       } else {
         // ❌ Cache expired - delete it
         fs.unlinkSync(cachePath);
-        console.log(`Active jackpots cache expired (${ageInMinutes.toFixed(1)} minutes old), deleting...`);
       }
     }
 
     // If no valid cache, fetch from API
-    if (activeJackpots.length === 0) {
-      console.log('Fetching fresh active jackpots from API...');
-      
+    if (activeJackpots.length === 0) {      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
@@ -827,9 +822,7 @@ export async function getServerSideProps({ req, query }) {
       
       // Ensure we always return an array
       activeJackpots = data.status && Array.isArray(data.data) ? data.data : [];
-      
-      console.log(`Fetched ${activeJackpots.length} active jackpots from API`);
-      
+            
       // Save to cache
       const cacheData = {
         generatedAt: new Date().toISOString(),
@@ -847,15 +840,12 @@ export async function getServerSideProps({ req, query }) {
         generatedAt: cacheData.generatedAt
       };
       
-      console.log(`Cached active jackpots (${activeJackpots.length} active) - valid for 30 minutes`);
     }
 
     // Clean up old cache files (older than 30 minutes)
     await cleanupOldCacheFiles(cacheDir);
 
-  } catch (error) {
-    console.error('Error fetching active jackpots:', error);
-    
+  } catch (error) {    
     // If cache exists but API failed, use it as fallback
     if (fs.existsSync(cachePath)) {
       try {
@@ -867,7 +857,6 @@ export async function getServerSideProps({ req, query }) {
           generatedAt: cache.generatedAt,
           isFallback: true
         };
-        console.log(`Using cached active jackpots as fallback (${activeJackpots.length} active) - API failed`);
       } catch (fallbackErr) {
         console.error('Fallback error for active jackpots:', fallbackErr);
       }
@@ -906,7 +895,6 @@ async function cleanupOldCacheFiles(cacheDir) {
         
         if (fileAge > maxAge) {
           fs.unlinkSync(filePath);
-          console.log(`Cleaned up old active jackpots cache file (${(fileAge / 60000).toFixed(1)} minutes old)`);
         }
       }
     }

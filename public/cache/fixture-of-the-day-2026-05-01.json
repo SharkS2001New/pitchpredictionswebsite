@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-05-01T16:43:11.195Z",
+  "date": "2026-05-01",
+  "data": {
+    "fixture_id": 1379315,
+    "country_name": "England",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/England.svg",
+    "league_short_name": "EPL",
+    "league_name": "Premier League",
+    "date": "05/01/2026 19:00",
+    "home_team_name": "Leeds",
+    "away_team_name": "Burnley",
+    "percent_pred_home": "77%",
+    "percent_pred_draw": "11%",
+    "percent_pred_away": "12%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 2.8970588235294117,
+    "max_win_probability": "77%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

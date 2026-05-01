@@ -1251,11 +1251,11 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if(current_url ==="jackpot-predictions"){
-        title = "Jackpot Predictions – Free Football Jackpot Tips This Week | Pitch Predictions";
-        meta_desc_content = "Free jackpot predictions for Sportpesa Mega, Betika Midweek, Mozzart, Betpawa, Sportybet &amp; more. Expert 1X2 &amp; Double Chance tips for every game on every coupon — updated weekly.";
-        meta_keywords = "jackpot predictions, free jackpot tips, SportPesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips";
-        page_title = "Jackpot Predictions – Free Football Jackpot Tips This Week";
-
+        title = "Free Jackpot Prediction and Weekly Bonus Tips";
+        meta_desc_content ="Get accurate jackpot predictions — free, data-driven tips for SportPesa, Betika, and other bookmakers to boost your winning chances and earn bonus rewards"
+        meta_keywords = "Jackpot predictions, free jackpot tips, Sportpesa jackpot predictions, Betika jackpot predictions, accurate betting tips, midweek jackpot tips, mega jackpot predictions, today's jackpot tips, Sportpesa mega jackpot analysis";
+        page_title = "Jackpot Tips and Predictions This Week";
+        
         meta_content_array.push(title,meta_desc_content,meta_keywords,page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-mega-jackpot-predictions") {
