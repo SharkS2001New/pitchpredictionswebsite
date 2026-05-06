@@ -38,24 +38,6 @@ export default function Document() {
         <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js" integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" async crossOrigin="true"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" async crossOrigin="true"></script>
       
-      {/* 1XBet Script  */}
-        {/* <Script
-            id="ftd-agency-script"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function(w,d,o,g,r,a,m){
-                    var cid='zone_1653336562';
-                    w[r]=w[r]||function(){(w[r+'l']=w[r+'l']||[]).push(arguments)};
-                    function e(b,w,r){if((w[r+'h']=b.pop())&&!w.ABN){
-                        var a=d.createElement(o),p=d.getElementsByTagName(o)[0];a.async=1;
-                        a.src='https://cdn.'+w[r+'h']+'/libs/e.js';a.onerror=function(){e(g,w,r)};
-                        p.parentNode.insertBefore(a,p)}}e(g,w,r);
-                    w[r](cid,{id:1653336562,domain:w[r+'h']});
-                })(window,document,'script',['ftd.agency'],'ABNS');
-              `,
-            }}
-          /> */}
           {/* Clever Core Script  */}
           <Script
             id="clever-core"
@@ -85,30 +67,6 @@ export default function Document() {
               `,
             }}
           />
-
-          {/* <Script
-            id="ftd-agency-script-1334364742"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function(w,d,o,g,r,a,m){
-                    var cid='zone_1334364742';
-                    w[r]=w[r]||function(){(w[r+'l']=w[r+'l']||[]).push(arguments)};
-                    function e(b,w,r){
-                        if((w[r+'h']=b.pop())&&!w.ABN){
-                            var a=d.createElement(o),p=d.getElementsByTagName(o)[0];
-                            a.async=1;
-                            a.src='https://cdn.'+w[r+'h']+'/libs/e.js';
-                            a.onerror=function(){e(g,w,r)};
-                            p.parentNode.insertBefore(a,p);
-                        }
-                    }
-                    e(g,w,r);
-                    w[r](cid,{id:1334364742,domain:w[r+'h']});
-                })(window,document,'script',['ftd.agency'],'ABNS');
-              `,
-            }}
-          /> */}
       </body>
     </Html>
   )

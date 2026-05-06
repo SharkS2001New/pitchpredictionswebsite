@@ -88,7 +88,7 @@ function Footer(){
                   {/**Renewed every month on 06, first added 06-04-2026 */}
                   <li className="mb-0"><a target="_blank" href="https://colatvttbd.net/">trực tiếp bóng đá hôm nay</a></li>
                   <li className="mb-0"><a target="_blank" href="https://xoilactvttbd.com/">xoilac</a></li>
-                  <li className="mb-0"><a target="_blank" href="https://xoilac-live.org/">trực tiếp bóng đá hôm nay</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilac-tv.icu">trực tiếp bóng đá hôm nay</a></li>
                   <li className="mb-0"><a target="_blank" href="https://cakhiatvttbd.com/">cakhia tv</a></li>
                   <li className="mb-0"><a target="_blank" href="https://trangcadobongda.lat/">https://trangcadobongda.lat/</a></li>
                   <li className="mb-0"><a target="_blank" href="https://1agame.io/">1Agame</a></li>
