@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-05-15T11:10:38.930Z",
+  "date": "2026-05-15",
+  "data": {
+    "fixture_id": 1544662,
+    "country_name": "Scotland",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Scotland.svg",
+    "league_short_name": "PRE",
+    "league_name": "Premiership",
+    "date": "05/15/2026 18:45",
+    "home_team_name": "Partick",
+    "away_team_name": "Dunfermline",
+    "percent_pred_home": "62%",
+    "percent_pred_draw": "19%",
+    "percent_pred_away": "19%",
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": 1.25,
+    "max_win_probability": "62%"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

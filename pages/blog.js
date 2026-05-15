@@ -100,14 +100,37 @@ export default function Blogs({ initialBlogs, initialPageInfo, error: initialErr
       <div className="container">
         {/* Show mini loader indicator when navigating between pages */}
         {loading && (
-          <div className="page-transition-loader">
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '20px 30px',
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontSize: '16px',
+            fontWeight: 500
+          }}>
             <div className="spinner-border spinner-border-sm text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
-            <span className="ms-2">Loading page {pageInfo.currentPage}...</span>
+            <span>Loading page {pageInfo.currentPage}...</span>
           </div>
-        )}
-        
+        </div>
+      )}
         {!blogs || blogs.length === 0 ? (
           <div className="no-blogs">
             <p>No blogs available.</p>
