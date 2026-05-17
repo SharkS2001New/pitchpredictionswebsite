@@ -5,7 +5,7 @@ import path from 'path';
 export default async function handler(req, res) {
   // Only allow POST or DELETE methods for security
   if (req.method !== 'POST' && req.method !== 'DELETE') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed, i will change this to Get request' });
   }
 
   // Add authentication for security
