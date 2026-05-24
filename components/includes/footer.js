@@ -82,7 +82,8 @@ function Footer(){
             <div className="col-12 mb-0">
                 <h3 className="h5 text-center mb-3">Our Partners & Sponsors</h3>
                 <ul className="sponsors-list">
-                  <li className="mb-0"><a target="_blank" href="https://www.ericbauman.com/">Socolive TV</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://www.ericbauman.com/">Socolive TV</a></li>  {/**Renewed every three months, first added 16-05-2026 */}
+                  <li className="mb-0"><a target="_blank" href="https://bsidefilm.com/">Jalalive Tv</a></li>  {/**Renewed every three months, first added 24-05-2026 */}
 
                   {/**Renewed every month on 06, first added 06-04-2026 */}
                   <li className="mb-0"><a target="_blank" href="https://colatvttbd.net/">trực tiếp bóng đá hôm nay</a></li>
