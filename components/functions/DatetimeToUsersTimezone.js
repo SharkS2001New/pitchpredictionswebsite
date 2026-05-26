@@ -1,35 +1,51 @@
 function DateTimeToUsersTimezone(original_date_given) {
-     const date = new Date(original_date_given);
- 
-     // Get the user's current timezone
-     const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
- 
-     // Get the offset from UTC in minutes
-     const offsetInMinutes = new Date().getTimezoneOffset();
-     
-     // Calculate the hours part of the timezone offset
-     const offsetInHours = Math.floor(-offsetInMinutes / 60);
- 
-     // Calculate the remaining minutes after extracting the hours
-     const extraMinutes = Math.abs(offsetInMinutes % 60);
-  
-     // Adjust the date by adding the computed time difference
-     date.setHours(date.getHours() + offsetInHours);
-     date.setMinutes(date.getMinutes() + extraMinutes);
- 
-     const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: usersTimeZone };
- 
-     const inputDateString = date.toLocaleString('en-US', options);
- 
-     // Convert to the desired format (dd/mm/yyyy H:mm)
-     const inputDate = new Date(inputDateString);
- 
-     const options1 = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
- 
-     const myNewDateString = inputDate.toLocaleDateString('en-GB', options1).replace(',', '');
- 
-     return myNewDateString;
- }
- 
- export default DateTimeToUsersTimezone;
- 
+    if (!original_date_given) return "Date not available";
+    
+    try {
+        // Parse the ISO date string
+        const date = new Date(original_date_given);
+        
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return "Invalid date";
+        }
+        
+        // Get user's timezone
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        // Format options
+        const options = {
+            day: '2-digit',
+            month: '2-digit', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: userTimeZone
+        };
+        
+        // Format using Intl.DateTimeFormat
+        const formatter = new Intl.DateTimeFormat('en-GB', options);
+        const parts = formatter.formatToParts(date);
+        
+        // Extract the parts
+        const day = parts.find(p => p.type === 'day')?.value;
+        const month = parts.find(p => p.type === 'month')?.value;
+        const year = parts.find(p => p.type === 'year')?.value;
+        let hour = parts.find(p => p.type === 'hour')?.value;
+        const minute = parts.find(p => p.type === 'minute')?.value;
+        
+        // Remove leading zero from hour
+        if (hour && hour.startsWith('0') && hour.length > 1) {
+            hour = hour.substring(1);
+        }
+        
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+        
+    } catch (error) {
+        console.error('Error converting date:', error);
+        return "Date error";
+    }
+}
+
+export default DateTimeToUsersTimezone;

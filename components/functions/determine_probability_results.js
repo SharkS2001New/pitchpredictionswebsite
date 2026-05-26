@@ -1,95 +1,87 @@
-function ProbabilityResults(game_details,winning_team){
+function ProbabilityResults(game_details, winning_team){
     var probability_results = "";
     
-    //Determine if prediction was right or wrong
-    if(game_details.status_short == "NS" || game_details.status_short == "HT" || game_details.status_short == "2H" || game_details.status_short == "1H" || game_details.status_short == "INT" || game_details.status_short == "ET" || game_details.status_short == "TBD" || game_details.status_short == "LIVE" || game_details.status_short == "BT" || game_details.status_short == "ABD"){
+    // Get data from new API structure
+    const statusShort = game_details.match?.status || game_details.status_short;
+    const homeScore = game_details.score?.home ?? game_details.goals_home;
+    const awayScore = game_details.score?.away ?? game_details.goals_away;
+    
+    // Determine if prediction was right or wrong
+    if(statusShort === "NS" || statusShort === "HT" || statusShort === "2H" || statusShort === "1H" || 
+       statusShort === "INT" || statusShort === "ET" || statusShort === "TBD" || statusShort === "LIVE" || 
+       statusShort === "BT" || statusShort === "ABD"){
 
         probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"#ffb400"}}>{winning_team}</span>;
 
-    }else if(game_details.status_short === "CANC" || game_details.status_short == "PST"){
+    } else if(statusShort === "CANC" || statusShort === "PST"){
 
         probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"#ffb400",color:"white",fontWeight:"bold",textTransform:"lowercase"}}>{winning_team}</span>;
 
-    }else if(game_details.status_short === "FT" || game_details.status_short === "AWD" || game_details.status_short === "P" || game_details.status_short === "ET" || game_details.status_short==="PEN" || game_details.status_short ==="AET"){
+    } else if(statusShort === "FT" || statusShort === "AWD" || statusShort === "P" || statusShort === "ET" || 
+              statusShort === "PEN" || statusShort === "AET"){
         
-        if(winning_team == 1 && game_details.goals_home > game_details.goals_away){
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        }else if(winning_team == 2 && game_details.goals_away > game_details.goals_home){
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        }else if(winning_team == "Under2.5" &&  (parseInt(game_details.goals_home) + parseInt(game_details.goals_away)) <= 3){
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        } else if(winning_team == "Over2.5" &&  (parseInt(game_details.goals_home) + parseInt(game_details.goals_away)) >= 3){
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
+        // Check if scores exist
+        if (homeScore !== null && homeScore !== undefined && awayScore !== null && awayScore !== undefined) {
+            const totalGoals = parseInt(homeScore) + parseInt(awayScore);
             
-        }else if(winning_team == 1 && game_details.goals_home < game_details.goals_away){
+            // 1X2 predictions
+            if(winning_team === 1 && homeScore > awayScore){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            } else if(winning_team === 2 && awayScore > homeScore){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-        }else if(winning_team == 1  && game_details.goals_home == game_details.goals_away){
+            } else if(winning_team === 'X' && awayScore === homeScore){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            } else if(winning_team === 1 && (homeScore < awayScore || homeScore === awayScore)){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
 
-        }else if(winning_team == 2 && game_details.goals_away < game_details.goals_home){
+            } else if(winning_team === 2 && (awayScore < homeScore || awayScore === homeScore)){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            } else if(winning_team === 'X' && awayScore !== homeScore){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            
+            // Double Chance predictions
+            } else if (winning_team === '1X' && (homeScore > awayScore || homeScore === awayScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-        }else if(winning_team == 2 && game_details.goals_away == game_details.goals_home){
+            } else if (winning_team === '12' && (homeScore > awayScore || awayScore > homeScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            } else if (winning_team === 'X2' && (awayScore > homeScore || homeScore === awayScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-        }else if(winning_team == 'X' && game_details.goals_away == game_details.goals_home){
+            } else if (winning_team === '1X' && !(homeScore > awayScore || homeScore === awayScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
+            } else if (winning_team === '12' && !(homeScore > awayScore || awayScore > homeScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
 
-        }else if(winning_team == 'X' && game_details.goals_away != game_details.goals_home){
+            } else if (winning_team === 'X2' && !(awayScore > homeScore || homeScore === awayScore)) {
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            
+            // Over/Under predictions
+            } else if(winning_team === "Under2.5" && totalGoals <= 2){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
-        
-        }else if(winning_team == "Under2.5" &&  (parseInt(game_details.goals_home) + parseInt(game_details.goals_away)) >= 3){
+            } else if(winning_team === "Over2.5" && totalGoals >= 3){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
 
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            } else if(winning_team === "Under2.5" && totalGoals >= 3){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
 
-        } else if(winning_team == "Over2.5" &&  (parseInt(game_details.goals_home) + parseInt(game_details.goals_away)) < 3){
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
-                
-        //Green
-        }else if (winning_team === '1X' && (game_details.goals_home > game_details.goals_away || game_details.goals_home === game_details.goals_away)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        } else if (winning_team === '12' && (game_details.goals_home > game_details.goals_away || game_details.goals_away > game_details.goals_home)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        } else if (winning_team === 'X2' && (game_details.goals_home === game_details.goals_away || game_details.goals_home > game_details.goals_away)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"green"}}>{winning_team}</span>;
-
-        //Red
-        }else if (winning_team === '1X' && !(game_details.goals_home > game_details.goals_away || game_details.goals_home === game_details.goals_away)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
-
-        } else if (winning_team === '12' && !(game_details.goals_home > game_details.goals_away || game_details.goals_away > game_details.goals_home)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
-
-        } else if (winning_team === 'X2' && !(game_details.goals_home === game_details.goals_away || game_details.goals_home > game_details.goals_away)) {
-
-            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
-
-        } 
+            } else if(winning_team === "Over2.5" && totalGoals <= 2){
+                probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"white",border:"1px solid",borderColor:"red",color:"red"}}>{winning_team}</span>;
+            }
+        } else {
+            // Scores not available yet
+            probability_results = <span className="number-circle rounded-square" style={{backgroundColor:"#ffb400"}}>{winning_team}</span>;
+        }
     }
 
     return probability_results;
 }
 
-export default ProbabilityResults
+export default ProbabilityResults;

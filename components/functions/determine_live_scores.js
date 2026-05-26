@@ -1,52 +1,60 @@
 import React from "react";
 import DateTimeToUsersTimezone from "./DatetimeToUsersTimezone";
 
-function DetermineLiveScores(game_details) {
+function DetermineLiveScores(game_details, isMobile) {
     var livescores = "";
     var livestatus = "";
       
     var live_scores_data_array = []; 
 
-    const myNewTimeZoneDate = DateTimeToUsersTimezone(game_details.date).split(' ')[1];
+    // Get data from new API structure
+    const matchDateTime = game_details.match?.datetime || game_details.date;
+    const statusShort = game_details.match?.status || game_details.status_short;
+    const statusLong = game_details.match?.status_long || game_details.status_long;
+    const elapsed = game_details.match?.elapsed || game_details.status_elapased;
+    const homeScore = game_details.score?.home ?? game_details.goals_home;
+    const awayScore = game_details.score?.away ?? game_details.goals_away;
+
+    const myNewTimeZoneDate = DateTimeToUsersTimezone(matchDateTime).split(' ')[1];
   
-    if (["NS", "CANC", "TBD"].includes(game_details.status_short)) {
-      if(game_details.status_short ==="NS"){
-        livestatus =<span style={{ color: "black" }}>{myNewTimeZoneDate}</span>;
+    if (["NS", "CANC", "TBD"].includes(statusShort)) {
+      if(statusShort === "NS"){
+        livestatus = <span style={{ color: "black" }}>{myNewTimeZoneDate}</span>;
         livescores = <><br/><span style={{ color: "black" }}>-</span></>;
-      }else{
+      } else {
         livestatus = (
           <>
             <br />
-            <span className="hide-on-desktop" style={{ color: "black" }}>{game_details.status_short}</span>
-            <span className="hide-on-mobile" style={{ color: "black" }}>{game_details.status_long}</span>
+            <span className="hide-on-desktop" style={{ color: "black" }}>{statusShort}</span>
+            <span className="hide-on-mobile" style={{ color: "black" }}>{statusLong}</span>
           </>
         );
         livescores = <span style={{ color: "black" }}>-</span>;
       }
       live_scores_data_array.push(livestatus, livescores);
       
-    } else if (["FT", "AWD", "AET", "PEN", "WO", "ABD"].includes(game_details.status_short)) {
-      if (["FT", "ABD"].includes(game_details.status_short)) {
+    } else if (["FT", "AWD", "AET", "PEN", "WO", "ABD"].includes(statusShort)) {
+      if (["FT", "ABD"].includes(statusShort)) {
         livestatus = (
           <span style={{ color: "black", border: "All" }}>
-            <span className="hide-on-desktop">{game_details.status_short}</span>
-            <span className="hide-on-mobile">{game_details.status_long}</span>
+            <span className="hide-on-desktop">{statusShort}</span>
+            <span className="hide-on-mobile">{statusLong}</span>
           </span>
         );
       } else {
         livestatus = (
           <span style={{ whiteSpace: "pre-wrap" }}>
-            {game_details.status_short !== null && (
+            {statusShort !== null && (
               <>
               <br/>
                 <span style={{ color: "black", border: "All", textTransform: "capitalize" }}>
-                  <span className="hide-on-desktop">{game_details.status_short}</span>
+                  <span className="hide-on-desktop">{statusShort}</span>
                   <span className="hide-on-mobile">
-                    {game_details.status_short === "PEN" ? "After Penalties" : 
-                     game_details.status_short === "AET" ? "After Extra Time" : 
-                     game_details.status_short === "WO" ? "Walk Over" : 
-                     game_details.status_short === "ABD" ? "Match Abandoned" : 
-                     game_details.status_long}
+                    {statusShort === "PEN" ? "After Penalties" : 
+                     statusShort === "AET" ? "After Extra Time" : 
+                     statusShort === "WO" ? "Walk Over" : 
+                     statusShort === "ABD" ? "Match Abandoned" : 
+                     statusLong}
                   </span>
                 </span><br />
               </>
@@ -58,75 +66,74 @@ function DetermineLiveScores(game_details) {
       livescores = (
         <React.Fragment>
           <br/>
-         <span
-          className="scores-card"
-          id="fulltimeGoals"
-          style={{
-            color: game_details.status_short === "FT" || game_details.status_short === "AWD" ? "black" : "#B11111",
-            borderColor: game_details.status_short === "FT" || game_details.status_short === "AWD" ? "black" : "#B11111"
-          }}
-        >
-          {game_details.goals_home ? `${game_details.goals_home} - ${game_details.goals_away}` : null}
-        </span>
+          <span
+            className="scores-card"
+            id="fulltimeGoals"
+            style={{
+              color: statusShort === "FT" || statusShort === "AWD" ? "black" : "#B11111",
+              borderColor: statusShort === "FT" || statusShort === "AWD" ? "black" : "#B11111"
+            }}
+          >
+            {homeScore !== null && homeScore !== undefined ? `${homeScore} - ${awayScore}` : null}
+          </span>
         </React.Fragment>
-       
       );
   
       live_scores_data_array.push(livestatus, livescores);
       
-    } else if (["2H", "1H", "INT", "HT", "LIVE"].includes(game_details.status_short)) {
+    } else if (["2H", "1H", "INT", "HT", "LIVE"].includes(statusShort)) {
         livestatus = (
             <span style={{ color: "#B11111", fontWeight: "bold", border: "none" }}>
               <span className="hide-on-desktop">
-                {game_details.status_short === "HT" || game_details.status_elapased === null || game_details.status_elapased === ""
-                  ? game_details.status_short
-                  : game_details.status_elapased}
+                {statusShort === "HT" || elapsed === null || elapsed === ""
+                  ? statusShort
+                  : elapsed}
               </span>
               <span className="hide-on-mobile">
-                {game_details.status_short === "HT" || game_details.status_elapased === null || game_details.status_elapased === ""
-                  ? game_details.status_long
-                  : game_details.status_elapased}
+                {statusShort === "HT" || elapsed === null || elapsed === ""
+                  ? statusLong
+                  : elapsed}
               </span>
-              {game_details.status_short !== "HT" && game_details.status_elapased !== null && game_details.status_elapased !== "" && 
+              {statusShort !== "HT" && elapsed !== null && elapsed !== "" && 
                 <span className="blink_text" style={{ color: "#B11111" }}>'</span>
               }
             </span>
           );
           
         livescores = (
-        <><br/>
-        <span
-          className="scores-card"
-          id="fulltimeGoals"
-          style={{
-            fontWeight: "bold",
-            border: "1px solid #B11111",
-            color: "#B11111"
-          }}
-        >          
-          {game_details.goals_home ? `${game_details.goals_home} - ${game_details.goals_away}` : null}
-        </span>
-        </>
-      );
+          <><br/>
+            <span
+              className="scores-card"
+              id="fulltimeGoals"
+              style={{
+                fontWeight: "bold",
+                border: "1px solid #B11111",
+                color: "#B11111"
+              }}
+            >          
+              {homeScore !== null && homeScore !== undefined ? `${homeScore} - ${awayScore}` : null}
+            </span>
+          </>
+        );
   
-      live_scores_data_array.push(livestatus, livescores);
+        live_scores_data_array.push(livestatus, livescores);
 
-    } else if (["ET", "PE", "BT", "P"].includes(game_details.status_short)) {
+    } else if (["ET", "PE", "BT", "P"].includes(statusShort)) {
       livestatus = (
         <span style={{ color: "#B11111", fontWeight: "bold", border: "none", marginBottom: "10px" }}>
           <span className="hide-on-desktop">
-            {game_details.status_elapased === null || game_details.status_elapased === "" 
-              ? game_details.status_short 
-              : <>{game_details.status_short}<br/> {game_details.status_elapased}</>
+            {elapsed === null || elapsed === "" 
+              ? statusShort 
+              : <>{statusShort}<br/> {elapsed}</>
             }
           </span>
           <span className="hide-on-mobile">
-            {game_details.status_elapased === null || game_details.status_elapased === "" 
-              ? game_details.status_long 
-              : <>{game_details.status_long}<br/> {game_details.status_elapased}</>
+            {elapsed === null || elapsed === "" 
+              ? statusLong 
+              : <>{statusLong}<br/> {elapsed}</>
             }
           </span>
-          {game_details.status_elapased !== null && game_details.status_elapased !== "" && 
+          {elapsed !== null && elapsed !== "" && 
             <span className="blink_text" style={{ color: "#B11111" }}>'</span>
           }
         </span>
@@ -142,7 +149,7 @@ function DetermineLiveScores(game_details) {
             color: "#B11111"
           }}
         >
-          {game_details.goals_home ? `${game_details.goals_home} - ${game_details.goals_away}` : null}
+          {homeScore !== null && homeScore !== undefined ? `${homeScore} - ${awayScore}` : null}
         </span>
       );
   

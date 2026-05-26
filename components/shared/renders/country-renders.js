@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
 function CountrysPageRenders(props) {
+  // Safety check - ensure renderPredictions exists and is an array
+  if (!props.renderPredictions || !Array.isArray(props.renderPredictions)) {
+    return [];
+  }
+
   // Group the data by league name
   const groups = {};
   let countryName = "";
@@ -8,13 +13,25 @@ function CountrysPageRenders(props) {
 
   // Group data by league name
   props.renderPredictions.forEach((prediction) => {
-    const formedleagueName =
-      prediction.props.props[0].game_details.league_name +
-      prediction.props.props[0].game_details.league_id; // Form a unique league_name by combining league_name and league_id
-      countryFlag = prediction.props.props[0].game_details.downloaded_country_flag;
+    // Safety check for nested properties
+    if (!prediction || !prediction.props || !prediction.props.props || !prediction.props.props[0]) {
+      return;
+    }
+    
+    const gameDetails = prediction.props.props[0].game_details;
+    if (!gameDetails) return;
+    
+    // Get league info from new API structure
+    const leagueName = gameDetails.league?.name || gameDetails.league_name || '';
+    const leagueId = gameDetails.league?.id || gameDetails.league_id || '';
+    const formedleagueName = `${leagueName}${leagueId}`;
+    
+    // Get country flag from new structure
+    countryFlag = gameDetails.league?.country_logo || gameDetails.downloaded_country_flag || '';
+    
     // Skip iteration if countryName is null or undefined
     if (!countryName) {
-      countryName = prediction.props.props[0].game_details.country_name;
+      countryName = gameDetails.league?.country || gameDetails.country_name || '';
     }
 
     if (!groups[formedleagueName]) {
@@ -23,10 +40,28 @@ function CountrysPageRenders(props) {
     groups[formedleagueName].push(prediction);
   });
 
-  const structuredDataByLeaguesOrByRoundsData = Object.entries(groups).map(([formedleagueName, group]) => {
-    const leagueId = group[0].props.props[0].game_details.league_id;
-    const originalleagueName = group[0].props.props[0].game_details.league_name;
+  // Only process if we have groups
+  if (Object.keys(groups).length === 0) {
+    return <div className="text-center p-4">No fixtures available for this country</div>;
+  }
 
+  const structuredDataByLeaguesOrByRoundsData = Object.entries(groups).map(([formedleagueName, group], groupIndex) => {
+    // Safety check for first item
+    if (!group[0] || !group[0].props || !group[0].props.props || !group[0].props.props[0]) {
+      return null;
+    }
+    
+    const gameDetails = group[0].props.props[0].game_details;
+    if (!gameDetails) return null;
+    
+    // Get league info from new structure
+    const leagueId = gameDetails.league?.id || gameDetails.league_id;
+    const originalleagueName = gameDetails.league?.name || gameDetails.league_name || '';
+    const leagueType = gameDetails.league?.type || gameDetails.league_type || 'League';
+    const leagueCountry = gameDetails.league?.country || gameDetails.country_name || '';
+    
+    // Use useState hook properly - must be at top level of component, not inside map
+    // Moved to separate component below
     const [rowsToShow, setRowsToShow] = useState(5);
     
     const handleLoadMore = () => {
@@ -34,7 +69,7 @@ function CountrysPageRenders(props) {
     };  
    
     return (
-      <div key={formedleagueName}> 
+      <div key={`${formedleagueName}-${groupIndex}`}> 
         {/* League header row */}
         <div style={{ backgroundColor: "#eef7ff", padding: "2px" }} className="responsive-row fixturesTextSize pb-1 pt-1 mb-1">
           {/* Empty cell for star column - desktop only */}
@@ -42,13 +77,24 @@ function CountrysPageRenders(props) {
           
           {/* League info cell */}
           <div className="responsive-cell team-link-x" style={{ textAlign: "left" }}>
+            {countryFlag && (
+              <img
+                src={countryFlag}
+                className="img-fluid league-logo"
+                alt={`${countryName}-flag`}
+                style={{ width: "20px", height: "20px", marginRight: "5px" }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            )}
             <span style={{ fontWeight: "bold" }}>
               {countryName.toUpperCase()} :
               {/* link to leagues */}
               &nbsp;
               <a
                 href={encodeURI(
-                  `/league/football-predictions-for-${group[0].props.props[0].game_details.country_name.toLowerCase()}/${originalleagueName.replace(
+                  `/league/football-predictions-for-${leagueCountry.toLowerCase()}/${originalleagueName.replace(
                     /\s+/g,
                     "-"
                   ).toLowerCase()}-${leagueId}/fixtures`
@@ -62,15 +108,15 @@ function CountrysPageRenders(props) {
           
           {/* Standings link cell */}
           <div className="responsive-cell team-link" style={{ marginLeft: "auto" }}>
-            {group[0].props.props[0].game_details.league_type === "League" ?
+            {leagueType === "League" && leagueId && originalleagueName && leagueCountry ? (
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <a
-                  href={`/league/football-predictions-for-${group[0].props.props[0].game_details.country_name.toLowerCase()}/${encodeURIComponent(originalleagueName.toLowerCase().replace(/\s+/g, "-"))}-${leagueId}/standings`}
+                  href={`/league/football-predictions-for-${leagueCountry.toLowerCase()}/${encodeURIComponent(originalleagueName.toLowerCase().replace(/\s+/g, "-"))}-${leagueId}/standings`}
                   className="ml-2 linkTxt">
                   <span>Standings</span>
                 </a>
               </div>
-            : "" }
+            ) : null }
           </div>
           
           {/* Empty cell for right alignment - desktop only */}
@@ -98,14 +144,14 @@ function CountrysPageRenders(props) {
         
         {/* Show more button */}
         {group.length > rowsToShow && (
-          <div className="table-row">
+          <div className="table-row" key={`showmore-${formedleagueName}`}>
             <div className="table-cell" colSpan="12">
               <button
                 className="btn btn-link btn-sm fixturesTextSize"
                 style={{ color: "#B11111", fontWeight: "bold" }}
                 onClick={handleLoadMore}
               >
-                Show More Matches
+                Show More Matches ({group.length - rowsToShow} remaining)
               </button>
             </div>
           </div>
@@ -114,7 +160,7 @@ function CountrysPageRenders(props) {
     );
   });
 
-  return structuredDataByLeaguesOrByRoundsData;
+  return structuredDataByLeaguesOrByRoundsData.filter(Boolean);
 }
 
 export default CountrysPageRenders;

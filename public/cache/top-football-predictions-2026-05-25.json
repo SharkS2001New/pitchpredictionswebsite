@@ -1,0 +1,1253 @@
+{
+  "generatedAt": "2026-05-26T23:19:40.708Z",
+  "fixtureDate": "2026-05-25",
+  "data": [
+    {
+      "fixture_id": 1521943,
+      "home_team": {
+        "id": 3811,
+        "name": "South Melbourne",
+        "logo": "https://media.api-sports.io/football/teams/3811.png"
+      },
+      "away_team": {
+        "id": 3798,
+        "name": "Avondale",
+        "logo": "https://media.api-sports.io/football/teams/3798.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T09:30:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 4,
+        "half_time": {
+          "home": 0,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (11% home, 12% draw, 77% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 19 goals scored and 21 conceded across 13 matches, while the away side has produced 29 goals and conceded 19 across 13 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 49% and average goals of 3.38.",
+        "avg_goals": 3.38,
+        "1x2": {
+          "home": 11,
+          "draw": 12,
+          "away": 77
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 89
+        },
+        "half_time": {
+          "home": 20,
+          "draw": 10,
+          "away": 70
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 49
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 65
+        }
+      },
+      "odds": {
+        "home": 16,
+        "draw": 9.2,
+        "away": 1.08,
+        "double_chance": {
+          "home_draw": "3.65",
+          "home_away": "1.05",
+          "draw_away": "1.01"
+        },
+        "over_under": {
+          "over_2_5": 1.22,
+          "under_2_5": 3.85
+        },
+        "btts": {
+          "yes": 1.85,
+          "no": 1.8
+        }
+      },
+      "league": {
+        "id": 195,
+        "name": "Victoria NPL",
+        "short_name": "VIC",
+        "logo": "https://www.pitchpredictions.com/images/leagues/Victoria NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1538260,
+      "home_team": {
+        "id": 4676,
+        "name": "Kolding IF",
+        "logo": "https://media.api-sports.io/football/teams/4676.png"
+      },
+      "away_team": {
+        "id": 6026,
+        "name": "Hillerød",
+        "logo": "https://media.api-sports.io/football/teams/6026.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T11:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 3,
+        "away": 0,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (11% home, 19% draw, 70% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 34 goals scored and 39 conceded across 30 matches, while the away side has produced 40 goals and conceded 39 across 30 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 55% and average goals of 2.53.",
+        "avg_goals": 2.53,
+        "1x2": {
+          "home": 11,
+          "draw": 19,
+          "away": 70
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 89
+        },
+        "half_time": {
+          "home": 57,
+          "draw": 15,
+          "away": 28
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 55
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 50
+        }
+      },
+      "odds": {
+        "home": 3.4,
+        "draw": 3.55,
+        "away": 1.94,
+        "double_chance": {
+          "home_draw": "1.80",
+          "home_away": "1.22",
+          "draw_away": "1.28"
+        },
+        "over_under": {
+          "over_2_5": 1.8,
+          "under_2_5": 1.95
+        },
+        "btts": {
+          "yes": 1.65,
+          "no": 2.05
+        }
+      },
+      "league": {
+        "id": 120,
+        "name": "1. Division",
+        "short_name": "1D",
+        "logo": "https://www.pitchpredictions.com/images/leagues/1. Division.jpg",
+        "country": "Denmark",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Denmark.svg"
+      }
+    },
+    {
+      "fixture_id": 1506474,
+      "home_team": {
+        "id": 701,
+        "name": "KI Klaksvik",
+        "logo": "https://media.api-sports.io/football/teams/701.png"
+      },
+      "away_team": {
+        "id": 4184,
+        "name": "AB",
+        "logo": "https://media.api-sports.io/football/teams/4184.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T14:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "1H",
+        "status_long": "First Half",
+        "elapsed": 17
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (64% home, 11% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 21 goals scored and 6 conceded across 10 matches, while the away side has produced 13 goals and conceded 16 across 10 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 44% and average goals of 2.8.",
+        "avg_goals": 2.8,
+        "1x2": {
+          "home": 64,
+          "draw": 11,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 89
+        },
+        "half_time": {
+          "home": 64,
+          "draw": 22,
+          "away": 14
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 44
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 55
+        }
+      },
+      "odds": {
+        "home": 1.12,
+        "draw": 6.75,
+        "away": 17,
+        "double_chance": {
+          "home_draw": "1.01",
+          "home_away": "1.05",
+          "draw_away": "3.70"
+        },
+        "over_under": {
+          "over_2_5": 1.38,
+          "under_2_5": 2.88
+        },
+        "btts": {
+          "yes": 2.1,
+          "no": 1.62
+        }
+      },
+      "league": {
+        "id": 367,
+        "name": "Meistaradeildin",
+        "short_name": "MEI",
+        "logo": "https://www.pitchpredictions.com/images/leagues/Meistaradeildin.jpg",
+        "country": "Faroe-Islands",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Faroe-Islands.svg"
+      }
+    },
+    {
+      "fixture_id": 1506475,
+      "home_team": {
+        "id": 4177,
+        "name": "EB  Streymur",
+        "logo": "https://media.api-sports.io/football/teams/4177.png"
+      },
+      "away_team": {
+        "id": 682,
+        "name": "NSI Runavik",
+        "logo": "https://media.api-sports.io/football/teams/682.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T14:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "1H",
+        "status_long": "First Half",
+        "elapsed": 17
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (21% home, 18% draw, 61% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 10 goals scored and 16 conceded across 10 matches, while the away side has produced 20 goals and conceded 10 across 10 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 52% and average goals of 2.8.",
+        "avg_goals": 2.8,
+        "1x2": {
+          "home": 21,
+          "draw": 18,
+          "away": 61
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 82
+        },
+        "half_time": {
+          "home": 22,
+          "draw": 20,
+          "away": 58
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 52
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 55
+        }
+      },
+      "odds": {
+        "home": 12,
+        "draw": 6,
+        "away": 1.18,
+        "double_chance": {
+          "home_draw": "3.80",
+          "home_away": "1.05",
+          "draw_away": "1.01"
+        },
+        "over_under": {
+          "over_2_5": 1.3,
+          "under_2_5": 3.3
+        },
+        "btts": {
+          "yes": 1.73,
+          "no": 1.91
+        }
+      },
+      "league": {
+        "id": 367,
+        "name": "Meistaradeildin",
+        "short_name": "MEI",
+        "logo": "https://www.pitchpredictions.com/images/leagues/Meistaradeildin.jpg",
+        "country": "Faroe-Islands",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Faroe-Islands.svg"
+      }
+    },
+    {
+      "fixture_id": 1506477,
+      "home_team": {
+        "id": 580,
+        "name": "Vikingur Gota",
+        "logo": "https://media.api-sports.io/football/teams/580.png"
+      },
+      "away_team": {
+        "id": 4191,
+        "name": "Skála",
+        "logo": "https://media.api-sports.io/football/teams/4191.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T14:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "1H",
+        "status_long": "First Half",
+        "elapsed": 16
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (80% home, 10% draw, 10% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 12 goals scored and 8 conceded across 10 matches, while the away side has produced 8 goals and conceded 12 across 10 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 53% and average goals of 2.",
+        "avg_goals": 2,
+        "1x2": {
+          "home": 80,
+          "draw": 10,
+          "away": 10
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 55,
+          "draw": 10,
+          "away": 35
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 53
+        },
+        "over_under_2_5": {
+          "prediction": "Under 2.5",
+          "probability": 59
+        }
+      },
+      "odds": {
+        "home": 1.48,
+        "draw": 4.1,
+        "away": 5.6,
+        "double_chance": {
+          "home_draw": "1.07",
+          "home_away": "1.15",
+          "draw_away": "2.50"
+        },
+        "over_under": {
+          "over_2_5": 1.65,
+          "under_2_5": 2.15
+        },
+        "btts": {
+          "yes": 1.73,
+          "no": 1.93
+        }
+      },
+      "league": {
+        "id": 367,
+        "name": "Meistaradeildin",
+        "short_name": "MEI",
+        "logo": "https://www.pitchpredictions.com/images/leagues/Meistaradeildin.jpg",
+        "country": "Faroe-Islands",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Faroe-Islands.svg"
+      }
+    },
+    {
+      "fixture_id": 1496069,
+      "home_team": {
+        "id": 7028,
+        "name": "Sotra",
+        "logo": "https://media.api-sports.io/football/teams/7028.png"
+      },
+      "away_team": {
+        "id": 16217,
+        "name": "Bjarg",
+        "logo": "https://media.api-sports.io/football/teams/16217.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T12:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 2,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (71% home, 12% draw, 17% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 20 goals scored and 4 conceded across 7 matches, while the away side has produced 12 goals and conceded 14 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 61% and average goals of 3.57.",
+        "avg_goals": 3.57,
+        "1x2": {
+          "home": 71,
+          "draw": 12,
+          "away": 17
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 88
+        },
+        "half_time": {
+          "home": 65,
+          "draw": 18,
+          "away": 17
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 61
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 69
+        }
+      },
+      "odds": {
+        "home": 1.53,
+        "draw": 4,
+        "away": 5,
+        "double_chance": {
+          "home_draw": "1.11",
+          "home_away": "1.15",
+          "draw_away": "2.35"
+        },
+        "over_under": {
+          "over_2_5": 1.45,
+          "under_2_5": 2.55
+        },
+        "btts": {
+          "yes": 1.5,
+          "no": 2.3
+        }
+      },
+      "league": {
+        "id": 473,
+        "name": "2. Division Group 1",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/2. Division Group 1.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1496064,
+      "home_team": {
+        "id": 6970,
+        "name": "Brattvåg",
+        "logo": "https://media.api-sports.io/football/teams/6970.png"
+      },
+      "away_team": {
+        "id": 2161,
+        "name": "Notodden",
+        "logo": "https://media.api-sports.io/football/teams/2161.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T13:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "2H",
+        "status_long": "Second Half",
+        "elapsed": 61
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (75% home, 15% draw, 10% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 17 goals scored and 5 conceded across 7 matches, while the away side has produced 12 goals and conceded 7 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 57% and average goals of 2.93.",
+        "avg_goals": 2.93,
+        "1x2": {
+          "home": 75,
+          "draw": 15,
+          "away": 10
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 70,
+          "draw": 17,
+          "away": 13
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 57
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 57
+        }
+      },
+      "odds": {
+        "home": 1.5,
+        "draw": 4.1,
+        "away": 5.25,
+        "double_chance": {
+          "home_draw": "1.10",
+          "home_away": "1.15",
+          "draw_away": "2.40"
+        },
+        "over_under": {
+          "over_2_5": 1.55,
+          "under_2_5": 2.35
+        },
+        "btts": {
+          "yes": 1.6,
+          "no": 2.1
+        }
+      },
+      "league": {
+        "id": 473,
+        "name": "2. Division Group 1",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/2. Division Group 1.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1496246,
+      "home_team": {
+        "id": 6978,
+        "name": "Eidsvold",
+        "logo": "https://media.api-sports.io/football/teams/6978.png"
+      },
+      "away_team": {
+        "id": 16229,
+        "name": "Rana",
+        "logo": "https://media.api-sports.io/football/teams/16229.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T12:30:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "2H",
+        "status_long": "Second Half",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 4,
+        "away": 1,
+        "half_time": {
+          "home": 3,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (66% home, 20% draw, 14% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 15 goals scored and 4 conceded across 7 matches, while the away side has produced 8 goals and conceded 10 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 56% and average goals of 2.64.",
+        "avg_goals": 2.64,
+        "1x2": {
+          "home": 66,
+          "draw": 20,
+          "away": 14
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 86
+        },
+        "half_time": {
+          "home": 56,
+          "draw": 11,
+          "away": 33
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 56
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 52
+        }
+      },
+      "odds": {
+        "home": 1.33,
+        "draw": 5,
+        "away": 7,
+        "double_chance": {
+          "home_draw": "1.04",
+          "home_away": "1.10",
+          "draw_away": "3.10"
+        },
+        "over_under": {
+          "over_2_5": 1.4,
+          "under_2_5": 2.75
+        },
+        "btts": {
+          "yes": 1.62,
+          "no": 2.1
+        }
+      },
+      "league": {
+        "id": 474,
+        "name": "2. Division Group 2",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/2. Division Group 2.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1496249,
+      "home_team": {
+        "id": 7008,
+        "name": "Lørenskog",
+        "logo": "https://media.api-sports.io/football/teams/7008.png"
+      },
+      "away_team": {
+        "id": 2145,
+        "name": "Levanger",
+        "logo": "https://media.api-sports.io/football/teams/2145.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T14:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "1H",
+        "status_long": "First Half",
+        "elapsed": 17
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (74% home, 11% draw, 15% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 12 goals scored and 9 conceded across 7 matches, while the away side has produced 15 goals and conceded 10 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 61% and average goals of 3.29.",
+        "avg_goals": 3.29,
+        "1x2": {
+          "home": 74,
+          "draw": 11,
+          "away": 15
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 89
+        },
+        "half_time": {
+          "home": 71,
+          "draw": 18,
+          "away": 11
+        },
+        "both_teams_to_score": {
+          "prediction": "yes",
+          "probability": 61
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 64
+        }
+      },
+      "odds": {
+        "home": 1.95,
+        "draw": 3.65,
+        "away": 3.2,
+        "double_chance": {
+          "home_draw": "1.25",
+          "home_away": "1.20",
+          "draw_away": "1.77"
+        },
+        "over_under": {
+          "over_2_5": 1.57,
+          "under_2_5": 2.3
+        },
+        "btts": {
+          "yes": 1.48,
+          "no": 2.35
+        }
+      },
+      "league": {
+        "id": 474,
+        "name": "2. Division Group 2",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/2. Division Group 2.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1496434,
+      "home_team": {
+        "id": 10114,
+        "name": "Vålerenga II",
+        "logo": "https://media.api-sports.io/football/teams/10114.png"
+      },
+      "away_team": {
+        "id": 6995,
+        "name": "Heming",
+        "logo": "https://media.api-sports.io/football/teams/6995.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T12:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 6,
+        "half_time": {
+          "home": 0,
+          "away": 3
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (16% home, 10% draw, 74% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 15 goals scored and 23 conceded across 7 matches, while the away side has produced 14 goals and conceded 10 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 0% and average goals of 4.43.",
+        "avg_goals": 4.43,
+        "1x2": {
+          "home": 16,
+          "draw": 10,
+          "away": 74
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 50,
+          "draw": 21,
+          "away": 29
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 0
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 84
+        }
+      },
+      "odds": {
+        "home": 3.65,
+        "draw": 4.2,
+        "away": 1.64,
+        "double_chance": {
+          "home_draw": "2.10",
+          "home_away": "1.12",
+          "draw_away": "1.25"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 774,
+        "name": "3. Division Girone 1",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/3. Division Girone 1.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1496616,
+      "home_team": {
+        "id": 12864,
+        "name": "Strindheim",
+        "logo": "https://media.api-sports.io/football/teams/12864.png"
+      },
+      "away_team": {
+        "id": 7014,
+        "name": "Nardo",
+        "logo": "https://media.api-sports.io/football/teams/7014.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T12:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 4,
+        "away": 1,
+        "half_time": {
+          "home": 2,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (72% home, 16% draw, 12% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 16 goals scored and 15 conceded across 7 matches, while the away side has produced 15 goals and conceded 15 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 0% and average goals of 4.36.",
+        "avg_goals": 4.36,
+        "1x2": {
+          "home": 72,
+          "draw": 16,
+          "away": 12
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 88
+        },
+        "half_time": {
+          "home": 53,
+          "draw": 19,
+          "away": 28
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 0
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 83
+        }
+      },
+      "odds": {
+        "home": 1.64,
+        "draw": 4,
+        "away": 3.85,
+        "double_chance": {
+          "home_draw": "1.15",
+          "home_away": "1.14",
+          "draw_away": "2.10"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 775,
+        "name": "3. Division Girone 2",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/3. Division Girone 2.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1497340,
+      "home_team": {
+        "id": 6986,
+        "name": "Fram",
+        "logo": "https://media.api-sports.io/football/teams/6986.png"
+      },
+      "away_team": {
+        "id": 27278,
+        "name": "Raelingen",
+        "logo": "https://media.api-sports.io/football/teams/27278.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T13:00:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "2H",
+        "status_long": "Second Half",
+        "elapsed": 56
+      },
+      "score": {
+        "home": 3,
+        "away": 0,
+        "half_time": {
+          "home": 2,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (74% home, 10% draw, 16% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 8 goals scored and 18 conceded across 7 matches, while the away side has produced 18 goals and conceded 17 across 7 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 0% and average goals of 4.36.",
+        "avg_goals": 4.36,
+        "1x2": {
+          "home": 74,
+          "draw": 10,
+          "away": 16
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 63,
+          "draw": 16,
+          "away": 21
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 0
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 83
+        }
+      },
+      "odds": {
+        "home": 1.9,
+        "draw": 4.33,
+        "away": 2.75,
+        "double_chance": {
+          "home_draw": "1.36",
+          "home_away": "1.14",
+          "draw_away": "1.80"
+        },
+        "over_under": {
+          "over_2_5": 1.14,
+          "under_2_5": 5
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 779,
+        "name": "3. Division Girone 6",
+        "short_name": "DIV",
+        "logo": "https://www.pitchpredictions.com/images/leagues/3. Division Girone 6.jpg",
+        "country": "Norway",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Norway.svg"
+      }
+    },
+    {
+      "fixture_id": 1510345,
+      "home_team": {
+        "id": 7098,
+        "name": "Paju Citizen",
+        "logo": "https://media.api-sports.io/football/teams/7098.png"
+      },
+      "away_team": {
+        "id": 7078,
+        "name": "Gimpo Citizen",
+        "logo": "https://media.api-sports.io/football/teams/7078.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T07:30:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 1,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (10% home, 18% draw, 72% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 14 goals scored and 14 conceded across 11 matches, while the away side has produced 14 goals and conceded 11 across 11 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 48% and average goals of 2.41.",
+        "avg_goals": 2.41,
+        "1x2": {
+          "home": 10,
+          "draw": 18,
+          "away": 72
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 57,
+          "draw": 19,
+          "away": 24
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 48
+        },
+        "over_under_2_5": {
+          "prediction": "Over 2.5",
+          "probability": 48
+        }
+      },
+      "odds": {
+        "home": 4.1,
+        "draw": 3.2,
+        "away": 1.9,
+        "double_chance": {
+          "home_draw": "1.85",
+          "home_away": "1.28",
+          "draw_away": "1.22"
+        },
+        "over_under": {
+          "over_2_5": 2.15,
+          "under_2_5": 1.65
+        },
+        "btts": {
+          "yes": 1.9,
+          "no": 1.75
+        }
+      },
+      "league": {
+        "id": 293,
+        "name": "K League 2",
+        "short_name": "KL2",
+        "logo": "https://www.pitchpredictions.com/images/leagues/K League 2.jpg",
+        "country": "South-Korea",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/South-Korea.svg"
+      }
+    },
+    {
+      "fixture_id": 1510346,
+      "home_team": {
+        "id": 2765,
+        "name": "Suwon Bluewings",
+        "logo": "https://media.api-sports.io/football/teams/2765.png"
+      },
+      "away_team": {
+        "id": 7060,
+        "name": "Cheonan City",
+        "logo": "https://media.api-sports.io/football/teams/7060.png"
+      },
+      "match": {
+        "datetime": "2026-05-25T07:30:00+00:00",
+        "unformatted_date": "2026-05-25",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 3,
+        "away": 2,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (72% home, 15% draw, 13% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 14 goals scored and 7 conceded across 11 matches, while the away side has produced 11 goals and conceded 10 across 11 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 47% and average goals of 1.91.",
+        "avg_goals": 1.91,
+        "1x2": {
+          "home": 72,
+          "draw": 15,
+          "away": 13
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 87
+        },
+        "half_time": {
+          "home": 56,
+          "draw": 15,
+          "away": 29
+        },
+        "both_teams_to_score": {
+          "prediction": "no",
+          "probability": 47
+        },
+        "over_under_2_5": {
+          "prediction": "Under 2.5",
+          "probability": 61
+        }
+      },
+      "odds": {
+        "home": 1.5,
+        "draw": 3.85,
+        "away": 6,
+        "double_chance": {
+          "home_draw": "1.08",
+          "home_away": "1.18",
+          "draw_away": "2.45"
+        },
+        "over_under": {
+          "over_2_5": 1.9,
+          "under_2_5": 1.85
+        },
+        "btts": {
+          "yes": 1.93,
+          "no": 1.73
+        }
+      },
+      "league": {
+        "id": 293,
+        "name": "K League 2",
+        "short_name": "KL2",
+        "logo": "https://www.pitchpredictions.com/images/leagues/K League 2.jpg",
+        "country": "South-Korea",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/South-Korea.svg"
+      }
+    }
+  ],
+  "count": 14
+}

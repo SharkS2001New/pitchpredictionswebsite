@@ -1,79 +1,83 @@
 function DoubleChanceProbabilityResults(game_details, winning_team, url) {
-    let probability_results = "";
-  
-    // Determine if prediction was right or wrong
-    if (game_details.status_short === "NS" || game_details.status_short === "HT" || game_details.status_short === "2H" || game_details.status_short === "1H" || game_details.status_short === "INT" ||
-      game_details.status_short === "TBD" || game_details.status_short === "LIVE" || game_details.status_short === "BT" || game_details.status_short === "ABD") {
+  let probability_results = "";
+
+  // Get status from new API structure
+  const statusShort = game_details.match?.status || game_details.status_short;
+  const goalsHome = game_details.score?.home ?? game_details.goals_home;
+  const goalsAway = game_details.score?.away ?? game_details.goals_away;
+
+  // Determine if prediction was right or wrong
+  if (statusShort === "NS" || statusShort === "HT" || statusShort === "2H" || statusShort === "1H" || statusShort === "INT" ||
+      statusShort === "TBD" || statusShort === "LIVE" || statusShort === "BT" || statusShort === "ABD") {
+    probability_results = (
+      <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
+        {winning_team}
+      </span>
+    );
+  } else if (statusShort === "CANC" || statusShort === "PST") {
+    probability_results = (
+      <span
+        className="number-circle rounded-square"
+        style={{
+          backgroundColor: "#ffb400",
+          color: "black",
+          fontWeight: "bold",
+          fontSize: "12px",
+          textTransform: "lowercase",
+        }}
+      >
+        {statusShort}
+      </span>
+    );
+  } else if (statusShort === "FT" || statusShort === "AWD" || statusShort === "PEN" || statusShort === "AET") {
+    if (Number.isInteger(parseInt(goalsHome)) && Number.isInteger(parseInt(goalsAway))) {
+      if (
+        (winning_team === "1X" &&
+          (parseInt(goalsHome) >= parseInt(goalsAway) ||
+            parseInt(goalsHome) === parseInt(goalsAway))) ||
+        (winning_team === "X2" &&
+          (parseInt(goalsAway) >= parseInt(goalsHome) ||
+            parseInt(goalsHome) === parseInt(goalsAway))) ||
+        (winning_team === "12" && parseInt(goalsHome) !== parseInt(goalsAway))
+      ) {
+        probability_results = (
+          <span className="number-circle rounded-square" style={{ backgroundColor: "green" }}>
+            {winning_team}
+          </span>
+        );
+      } else if (
+        (winning_team === "1X" &&
+          parseInt(goalsHome) < parseInt(goalsAway) &&
+          parseInt(goalsAway) !== parseInt(goalsHome)) ||
+        (winning_team === "X2" &&
+          parseInt(goalsAway) < parseInt(goalsHome) &&
+          parseInt(goalsAway) !== parseInt(goalsHome)) ||
+        (winning_team === "12" && parseInt(goalsAway) === parseInt(goalsHome))
+      ) {
+        probability_results = (
+          <span
+            className="number-circle rounded-square"
+            style={{
+              backgroundColor: "white",
+              border: "2px solid",
+              borderColor: url && url.includes("jackpots") ? "black" : "red",
+              color: url && url.includes("jackpots") ? "black" : "red",
+            }}
+          >
+            {winning_team}
+          </span>
+        );
+      }
+    } else {
       probability_results = (
         <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
           {winning_team}
         </span>
       );
-    } else if (game_details.status_short === "CANC" || game_details.status_short === "PST") {
-      probability_results = (
-        <span
-          className="number-circle rounded-square"
-          style={{
-            backgroundColor: "#ffb400",
-            color: "black",
-            fontWeight: "bold",
-            fontSize: "12px",
-            textTransform: "lowercase",
-          }}
-        >
-          {game_details.status_short}
-        </span>
-      );
-    } else if (game_details.status_short === "FT" || game_details.status_short === "AWD" || game_details.status_short === "PEN" || game_details.status_short === "AET") {
-      if (Number.isInteger(parseInt(game_details.goals_home)) && Number.isInteger(parseInt(game_details.goals_away))) {
-        if (
-          (winning_team === "1X" &&
-            (parseInt(game_details.goals_home) >= parseInt(game_details.goals_away) ||
-              parseInt(game_details.goals_home) === parseInt(game_details.goals_away))) ||
-          (winning_team === "X2" &&
-            (parseInt(game_details.goals_away) >= parseInt(game_details.goals_home) ||
-              parseInt(game_details.goals_home) === parseInt(game_details.goals_away))) ||
-          (winning_team === "12" && parseInt(game_details.goals_home) !== parseInt(game_details.goals_away))
-        ) {
-          probability_results = (
-            <span className="number-circle rounded-square" style={{ backgroundColor: "green" }}>
-              {winning_team}
-            </span>
-          );
-        } else if (
-          (winning_team === "1X" &&
-            parseInt(game_details.goals_home) < parseInt(game_details.goals_away) &&
-            parseInt(game_details.goals_away) !== parseInt(game_details.goals_home)) ||
-          (winning_team === "X2" &&
-            parseInt(game_details.goals_away) < parseInt(game_details.goals_home) &&
-            parseInt(game_details.goals_away) !== parseInt(game_details.goals_home)) ||
-          (winning_team === "12" && parseInt(game_details.goals_away) === parseInt(game_details.goals_home))
-        ) {
-          probability_results = (
-            <span
-              className="number-circle rounded-square"
-              style={{
-                backgroundColor: "white",
-                border: "2px solid",
-                borderColor: url.includes("jackpots") ? "black" : "red",
-                color: url.includes("jackpots") ? "black" : "red",
-              }}
-            >
-              {winning_team}
-            </span>
-          );
-        }
-      } else {
-        probability_results = (
-          <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
-            {winning_team}
-          </span>
-        );
-      }
     }
-  
-    return probability_results;
   }
-  
-  export default DoubleChanceProbabilityResults;
-   
+
+  return probability_results;
+}
+
+export default DoubleChanceProbabilityResults;
