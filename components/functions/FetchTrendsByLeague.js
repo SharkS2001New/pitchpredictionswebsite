@@ -5,7 +5,7 @@ async function FetchTrendsByLeague(league_id) {
     }
 
     try {
-        const response = await fetch("https://api.pitchpredictions.com/api/fetch_trends_data_by_league_id?league_id="+league_id, {
+        const response = await fetch("https://develop.pitchpredictions.com/api/fetch_trends_data_by_league_id?league_id="+league_id, {
             headers: headers
         });
         

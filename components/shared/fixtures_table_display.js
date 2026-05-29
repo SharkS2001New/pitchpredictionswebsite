@@ -115,70 +115,26 @@ function FixturesTableDisplay(props, key) {
         return "-";
     }
     
-    // Get display prediction, probability, and winning odd based on route
-    let displayPrediction = "";
-    let displayProbability = "";
-    let winningOdd = null; // This will be used to highlight the correct odds column
-    
-    if (router.pathname.substring(1).includes("double-chance-predictions")) {
-        displayPrediction = doubleChance?.type || "-";
-        displayProbability = doubleChance?.probability ? `${doubleChance.probability}%` : "-";
-        
-        // Set winning odd based on double chance prediction type for highlighting
-        if (doubleChance?.type === "1X") winningOdd = "1X";
-        else if (doubleChance?.type === "X2") winningOdd = "X2";
-        else if (doubleChance?.type === "12") winningOdd = "12";
-        
-    } else if (router.pathname.substring(1).includes("predictions-under-over")) {
-        displayPrediction = overUnder?.prediction || "-";
-        displayProbability = overUnder?.probability ? `${overUnder.probability}%` : "-";
-        
-        // Set winning odd based on over/under prediction
-        if (overUnder?.prediction === "Over 2.5") winningOdd = "Over2.5";
-        else if (overUnder?.prediction === "Under 2.5") winningOdd = "Under2.5";
-        
-    } else if (router.pathname.substring(1).includes("predictions-both-to-score")) {
-        displayPrediction = btts?.prediction?.toUpperCase() || "-";
-        displayProbability = btts?.probability ? `${btts.probability}%` : "-";
-        
-        // Set winning odd based on BTTS prediction
-        if (btts?.prediction === "yes") winningOdd = "BTTS_Yes";
-        else if (btts?.prediction === "no") winningOdd = "BTTS_No";
-        
-    } else if (router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-        displayPrediction = halfTime ? getHighestProbabilityTeam(halfTime) : "-";
-        displayProbability = halfTime ? `${Math.max(halfTime.home || 0, halfTime.draw || 0, halfTime.away || 0)}%` : "-";
-        
-    } else {
-        // Default 1x2 prediction - has popup
-        displayPrediction = getHighestProbabilityTeam(prediction1x2);
-        displayProbability = prediction1x2 ? `${Math.max(prediction1x2.home || 0, prediction1x2.draw || 0, prediction1x2.away || 0)}%` : "-";
-        
-        // Set winning odd for 1x2 highlighting
-        if (displayPrediction === "1") winningOdd = "1";
-        else if (displayPrediction === "X") winningOdd = "X";
-        else if (displayPrediction === "2") winningOdd = "2";
+    // Helper function to get the winning probability value
+    function getWinningProbabilityValue(probs, winningTeam) {
+        if (!probs) return 0;
+        if (winningTeam === "1") return probs.home || 0;
+        if (winningTeam === "X") return probs.draw || 0;
+        if (winningTeam === "2") return probs.away || 0;
+        return 0;
     }
-
-    // For landing page special logic
-    const isLandingPage = router.pathname.substring(1) === "" || 
-                          router.pathname.substring(1).includes("tips/") || 
-                          router.pathname.substring(1) === "top-football-tips-and-predictions/today" ||
-                          router.pathname.substring(1) === "top-football-tips-and-predictions/yesterday" || 
-                          router.pathname.substring(1) === "top-football-tips-and-predictions/tomorrow";
     
-    let finalDisplayPrediction = displayPrediction;
-    let finalDisplayProbability = displayProbability;
-    let finalWinningOdd = winningOdd;
+    const currentRoute = router.pathname.substring(1);
+    const isDoubleChance = currentRoute.includes("double-chance-predictions");
+    const isUnderOver = currentRoute.includes("predictions-under-over");
+    const isBTTS = currentRoute.includes("predictions-both-to-score");
+    const isHalftimeFulltime = currentRoute.includes("predictions-halftime-fulltime");
+    const isAccumulator = currentRoute === "" || 
+                          currentRoute.includes("tips/") || 
+                          currentRoute === "top-football-tips-and-predictions/today" ||
+                          currentRoute === "top-football-tips-and-predictions/yesterday" || 
+                          currentRoute === "top-football-tips-and-predictions/tomorrow";
     
-    if (isLandingPage && avgGoals !== "-" && (avgGoals < 2.0 || avgGoals > 3.0)) {
-        finalDisplayPrediction = overUnder?.prediction || "-";
-        finalDisplayProbability = overUnder?.probability ? `${overUnder.probability}%` : "-";
-        // Update winning odd for landing page over/under
-        if (overUnder?.prediction === "Over 2.5") finalWinningOdd = "Over2.5";
-        else if (overUnder?.prediction === "Under 2.5") finalWinningOdd = "Under2.5";
-    }
-
     // Get odds from API
     const homeOdds = game.odds?.home;
     const drawOdds = game.odds?.draw;
@@ -186,6 +142,112 @@ function FixturesTableDisplay(props, key) {
     const doubleChanceOdds = game.odds?.double_chance;
     const overUnderOdds = game.odds?.over_under;
     const bttsOdds = game.odds?.btts;
+    const htFtOdds = game.odds?.ht_ft;
+    
+    // For accumulator/landing page - smart prediction selection
+    let finalDisplayPrediction = "";
+    let finalDisplayProbability = "";
+    let finalWinningOdd = null;
+    let finalOddsToShow = {};
+    let showPopup = false;
+    
+    if (isAccumulator) {
+        // Get 1x2 data
+        const winningTeam = getHighestProbabilityTeam(prediction1x2);
+        const winningProb = getWinningProbabilityValue(prediction1x2, winningTeam);
+        
+        // Check BTTS Yes odds
+        const bttsYesOdds = bttsOdds?.yes ? parseFloat(bttsOdds.yes) : null;
+        const isBTTSFavorable = bttsYesOdds && bttsYesOdds < 1.40 && btts?.prediction === "yes";
+        
+        // Check if avg goals is extreme
+        const isAvgGoalsExtreme = avgGoals !== "-" && (avgGoals < 2.0 || avgGoals > 3.0);
+        
+        // Check if winning probability is low (less than 50%)
+        const isWinningProbLow = winningProb < 50;
+        
+        // Decision tree for accumulator predictions
+        if (isBTTSFavorable) {
+            // Show BTTS prediction
+            finalDisplayPrediction = "YES";
+            finalDisplayProbability = btts?.probability ? `${btts.probability}%` : "-";
+            finalWinningOdd = "BTTS_Yes";
+            finalOddsToShow = { option1: bttsOdds?.yes, option2: bttsOdds?.no };
+            showPopup = false;
+        } else if (isAvgGoalsExtreme) {
+            // Show Over/Under 2.5 prediction
+            finalDisplayPrediction = overUnder?.prediction || "-";
+            finalDisplayProbability = overUnder?.probability ? `${overUnder.probability}%` : "-";
+            if (overUnder?.prediction === "Over 2.5" || overUnder?.prediction === "Ov2.5") {
+                finalWinningOdd = "Over2.5";
+                finalOddsToShow = { option1: overUnderOdds?.over_2_5, option2: overUnderOdds?.under_2_5 };
+            } else if (overUnder?.prediction === "Under 2.5" || overUnder?.prediction === "Un2.5") {
+                finalWinningOdd = "Under2.5";
+                finalOddsToShow = { option1: overUnderOdds?.over_2_5, option2: overUnderOdds?.under_2_5 };
+            }
+            showPopup = false;
+        } else if (isWinningProbLow) {
+            // Show Double Chance prediction
+            finalDisplayPrediction = doubleChance?.type || "-";
+            finalDisplayProbability = doubleChance?.probability ? `${doubleChance.probability}%` : "-";
+            if (doubleChance?.type === "1X") {
+                finalWinningOdd = "1X";
+                finalOddsToShow = { option1: doubleChanceOdds?.home_draw, option2: doubleChanceOdds?.draw_away, option3: doubleChanceOdds?.home_away };
+            } else if (doubleChance?.type === "X2") {
+                finalWinningOdd = "X2";
+                finalOddsToShow = { option1: doubleChanceOdds?.home_draw, option2: doubleChanceOdds?.draw_away, option3: doubleChanceOdds?.home_away };
+            } else if (doubleChance?.type === "12") {
+                finalWinningOdd = "12";
+                finalOddsToShow = { option1: doubleChanceOdds?.home_draw, option2: doubleChanceOdds?.draw_away, option3: doubleChanceOdds?.home_away };
+            }
+            showPopup = false;
+        } else {
+            // Show 1X2 prediction
+            finalDisplayPrediction = winningTeam;
+            finalDisplayProbability = `${winningProb}%`;
+            if (winningTeam === "1") finalWinningOdd = "1";
+            else if (winningTeam === "X") finalWinningOdd = "X";
+            else if (winningTeam === "2") finalWinningOdd = "2";
+            finalOddsToShow = { option1: homeOdds, option2: drawOdds, option3: awayOdds };
+            showPopup = true;
+        }
+    } else if (isDoubleChance) {
+        finalDisplayPrediction = doubleChance?.type || "-";
+        finalDisplayProbability = doubleChance?.probability ? `${doubleChance.probability}%` : "-";
+        if (doubleChance?.type === "1X") finalWinningOdd = "1X";
+        else if (doubleChance?.type === "X2") finalWinningOdd = "X2";
+        else if (doubleChance?.type === "12") finalWinningOdd = "12";
+        finalOddsToShow = { option1: doubleChanceOdds?.home_draw, option2: doubleChanceOdds?.draw_away, option3: doubleChanceOdds?.home_away };
+        showPopup = false;
+    } else if (isUnderOver) {
+        finalDisplayPrediction = overUnder?.prediction || "-";
+        finalDisplayProbability = overUnder?.probability ? `${overUnder.probability}%` : "-";
+        if (overUnder?.prediction === "Over 2.5" || overUnder?.prediction === "Ov2.5") finalWinningOdd = "Over2.5";
+        else if (overUnder?.prediction === "Under 2.5" || overUnder?.prediction === "Un2.5") finalWinningOdd = "Under2.5";
+        finalOddsToShow = { option1: overUnderOdds?.over_2_5, option2: overUnderOdds?.under_2_5 };
+        showPopup = false;
+    } else if (isBTTS) {
+        finalDisplayPrediction = btts?.prediction?.toUpperCase() || "-";
+        finalDisplayProbability = btts?.probability ? `${btts.probability}%` : "-";
+        if (btts?.prediction === "yes") finalWinningOdd = "BTTS_Yes";
+        else if (btts?.prediction === "no") finalWinningOdd = "BTTS_No";
+        finalOddsToShow = { option1: bttsOdds?.yes, option2: bttsOdds?.no };
+        showPopup = false;
+    } else if (isHalftimeFulltime) {
+        finalDisplayPrediction = halfTime ? getHighestProbabilityTeam(halfTime) : "-";
+        finalDisplayProbability = halfTime ? `${Math.max(halfTime.home || 0, halfTime.draw || 0, halfTime.away || 0)}%` : "-";
+        finalOddsToShow = { option1: htFtOdds?.ht_home, option2: htFtOdds?.ht_draw, option3: htFtOdds?.ht_away };
+        showPopup = false;
+    } else {
+        // Regular 1x2 page
+        finalDisplayPrediction = getHighestProbabilityTeam(prediction1x2);
+        finalDisplayProbability = prediction1x2 ? `${Math.max(prediction1x2.home || 0, prediction1x2.draw || 0, prediction1x2.away || 0)}%` : "-";
+        if (finalDisplayPrediction === "1") finalWinningOdd = "1";
+        else if (finalDisplayPrediction === "X") finalWinningOdd = "X";
+        else if (finalDisplayPrediction === "2") finalWinningOdd = "2";
+        finalOddsToShow = { option1: homeOdds, option2: drawOdds, option3: awayOdds };
+        showPopup = true;
+    }
 
     // Function to check if an odd should be highlighted
     const shouldHighlightOdd = (oddType, value) => {
@@ -204,9 +266,9 @@ function FixturesTableDisplay(props, key) {
                 return oddType === "draw_away" && value === doubleChanceOdds?.draw_away;
             case "12":
                 return oddType === "home_away" && value === doubleChanceOdds?.home_away;
-            case "Over 2.5":
+            case "Over2.5":
                 return oddType === "over" && value === overUnderOdds?.over_2_5;
-            case "Under 2.5":
+            case "Under2.5":
                 return oddType === "under" && value === overUnderOdds?.under_2_5;
             case "BTTS_Yes":
                 return oddType === "btts_yes" && value === bttsOdds?.yes;
@@ -237,7 +299,6 @@ function FixturesTableDisplay(props, key) {
 
     const shouldUseClientStyles = mounted && typeof window !== 'undefined';
     
-    // Get team names safely
     const homeTeamName = game.home_team?.name || '';
     const awayTeamName = game.away_team?.name || '';
     const matchStatus = game.match?.status || '';
@@ -254,7 +315,7 @@ function FixturesTableDisplay(props, key) {
             
             {/* Team names and date */}
             <div className="responsive-cell team-link" style={{ textAlign: "left", fontWeight:"bold", whiteSpace: "pre-wrap" }} title={toottiptitle}>                
-                {router.pathname.substring(1) !== "match/[match-details]" ?
+                {currentRoute !== "match/[match-details]" ?
                 <a href={'/match/football-predictions-' + url_name + "/matches"}>
                     <div className="teamNameLink">
                         <span>{homeTeamName}</span><br/>
@@ -275,124 +336,156 @@ function FixturesTableDisplay(props, key) {
                 }
             </div> 
             
-            {/* Desktop odds - Show different odds based on route */}
+            {/* Desktop odds */}
             <div className="responsive-cell team-link-y hide-on-mobile" title="Odds">
                 <br/>
-                {router.pathname.substring(1).includes("double-chance-predictions") ? (
-                    // Show Double Chance odds
+                {isDoubleChance || (isAccumulator && finalWinningOdd && ["1X", "X2", "12"].includes(finalWinningOdd)) ? (
+                    // Double Chance odds
                     <>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home_draw", doubleChanceOdds?.home_draw)) : {}}>
-                            &nbsp;&nbsp;{doubleChanceOdds?.home_draw || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home_draw", finalOddsToShow.option1)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option1 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("draw_away", doubleChanceOdds?.draw_away)) : {}}>
-                            &nbsp;&nbsp;{doubleChanceOdds?.draw_away || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("draw_away", finalOddsToShow.option2)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option2 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home_away", doubleChanceOdds?.home_away)) : {}}>
-                            &nbsp;&nbsp;{doubleChanceOdds?.home_away || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home_away", finalOddsToShow.option3)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option3 || "-"} &nbsp;&nbsp;
                         </span>
                     </>
-                ) : router.pathname.substring(1).includes("predictions-under-over") ? (
-                    // Show Over/Under odds
+                ) : isUnderOver || (isAccumulator && finalWinningOdd && ["Over2.5", "Under2.5"].includes(finalWinningOdd)) ? (
+                    // Over/Under odds
                     <>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("over", overUnderOdds?.over_2_5)) : {}}>
-                            &nbsp;&nbsp;O {overUnderOdds?.over_2_5 || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("over", finalOddsToShow.option1)) : {}}>
+                            &nbsp;&nbsp; {finalOddsToShow.option1 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("under", overUnderOdds?.under_2_5)) : {}}>
-                            &nbsp;&nbsp;U {overUnderOdds?.under_2_5 || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("under", finalOddsToShow.option2)) : {}}>
+                            &nbsp;&nbsp; {finalOddsToShow.option2 || "-"} &nbsp;&nbsp;
                         </span>
                     </>
-                ) : router.pathname.substring(1).includes("predictions-both-to-score") ? (
-                    // Show BTTS odds
+                ) : isBTTS || (isAccumulator && finalWinningOdd && ["BTTS_Yes", "BTTS_No"].includes(finalWinningOdd)) ? (
+                    // BTTS odds
                     <>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("btts_yes", bttsOdds?.yes)) : {}}>
-                            &nbsp;&nbsp;YES {bttsOdds?.yes || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("btts_yes", finalOddsToShow.option1)) : {}}>
+                            &nbsp;&nbsp; {finalOddsToShow.option1 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("btts_no", bttsOdds?.no)) : {}}>
-                            &nbsp;&nbsp;NO {bttsOdds?.no || "-"} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("btts_no", finalOddsToShow.option2)) : {}}>
+                            &nbsp;&nbsp; {finalOddsToShow.option2 || "-"} &nbsp;&nbsp;
+                        </span>
+                    </>
+                ) : isHalftimeFulltime ? (
+                    // HT/FT odds
+                    <>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "1") : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option1 || "-"} &nbsp;&nbsp;
+                        </span>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "X") : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option2 || "-"} &nbsp;&nbsp;
+                        </span>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "2") : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option3 || "-"} &nbsp;&nbsp;
                         </span>
                     </>
                 ) : (
-                    // Show 1X2 odds
+                    // 1X2 odds
                     <>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home", homeOdds)) : {}}>
-                            &nbsp;&nbsp;{homeOdds === null ? "-" : homeOdds} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("home", finalOddsToShow.option1)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option1 === null ? "-" : finalOddsToShow.option1} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("draw", drawOdds)) : {}}>
-                            &nbsp;&nbsp;{drawOdds === null ? "-" : drawOdds} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("draw", finalOddsToShow.option2)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option2 === null ? "-" : finalOddsToShow.option2} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("away", awayOdds)) : {}}>
-                            &nbsp;&nbsp;{awayOdds === null || awayOdds === "-" ? "-" : awayOdds} &nbsp;&nbsp;
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(shouldHighlightOdd("away", finalOddsToShow.option3)) : {}}>
+                            &nbsp;&nbsp;{finalOddsToShow.option3 === null || finalOddsToShow.option3 === "-" ? "-" : finalOddsToShow.option3} &nbsp;&nbsp;
                         </span>
                     </>
                 )}
             </div>
             
-            {/* Mobile odds */}
+            {/* Mobile odds - simplified version */}
             <div className="responsive-cell team-link-probability hide-on-desktop" title="Odds"> 
                 <div className="row fixturesTextSize">
-                    {router.pathname.substring(1).includes("double-chance-predictions") ? (
-                        // Double Chance mobile odds
+                    {isDoubleChance || (isAccumulator && finalWinningOdd && ["1X", "X2", "12"].includes(finalWinningOdd)) ? (
+                        // Double Chance mobile
                         <>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("home_draw", doubleChanceOdds?.home_draw) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;{doubleChanceOdds?.home_draw || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("home_draw", finalOddsToShow.option1) ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option1 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("draw_away", doubleChanceOdds?.draw_away) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;{doubleChanceOdds?.draw_away || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("draw_away", finalOddsToShow.option2) ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option2 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("home_away", doubleChanceOdds?.home_away) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;{doubleChanceOdds?.home_away || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("home_away", finalOddsToShow.option3) ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option3 || "-"}&nbsp;
                                 </span>
                             </div>
                         </>
-                    ) : router.pathname.substring(1).includes("predictions-under-over") ? (
-                        // Over/Under mobile odds
+                    ) : isUnderOver || (isAccumulator && finalWinningOdd && ["Over2.5", "Under2.5"].includes(finalWinningOdd)) ? (
+                        // Over/Under mobile
                         <>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("over", overUnderOdds?.over_2_5) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;O {overUnderOdds?.over_2_5 || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("over", finalOddsToShow.option1) ? "1px solid green" : ""} : {}}>
+                                    &nbsp; {finalOddsToShow.option1 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("under", overUnderOdds?.under_2_5) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;U {overUnderOdds?.under_2_5 || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("under", finalOddsToShow.option2) ? "1px solid green" : ""} : {}}>
+                                    &nbsp; {finalOddsToShow.option2 || "-"}&nbsp;
                                 </span>
                             </div>
                         </>
-                    ) : router.pathname.substring(1).includes("predictions-both-to-score") ? (
-                        // BTTS mobile odds
+                    ) : isBTTS || (isAccumulator && finalWinningOdd && ["BTTS_Yes", "BTTS_No"].includes(finalWinningOdd)) ? (
+                        // BTTS mobile
                         <>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("btts_yes", bttsOdds?.yes) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;YES {bttsOdds?.yes || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("btts_yes", finalOddsToShow.option1) ? "1px solid green" : ""} : {}}>
+                                    &nbsp; {finalOddsToShow.option1 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("btts_no", bttsOdds?.no) ? "1px solid green" : ""} : {}}>
-                                    &nbsp;NO {bttsOdds?.no || "-"}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: shouldHighlightOdd("btts_no", finalOddsToShow.option2) ? "1px solid green" : ""} : {}}>
+                                    &nbsp; {finalOddsToShow.option2 || "-"}&nbsp;
+                                </span>
+                            </div>
+                        </>
+                    ) : isHalftimeFulltime ? (
+                        // HT/FT mobile
+                        <>
+                            <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "1" ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option1 || "-"}&nbsp;
+                                </span>
+                            </div>
+                            <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "X" ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option2 || "-"}&nbsp;
+                                </span>
+                            </div>
+                            <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "2" ? "1px solid green" : ""} : {}}>
+                                    &nbsp;{finalOddsToShow.option3 || "-"}&nbsp;
                                 </span>
                             </div>
                         </>
                     ) : (
-                        // 1X2 mobile odds
+                        // 1X2 mobile
                         <>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.home > game.score.away && shouldHighlightOdd("home", homeOdds)) ? "1px solid green" : "" : (shouldHighlightOdd("home", homeOdds) ? "1px solid green" : "")} : {}}>
-                                    &nbsp;{homeOdds === null ? "-" : homeOdds}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.home > game.score.away && shouldHighlightOdd("home", finalOddsToShow.option1)) ? "1px solid green" : "" : (shouldHighlightOdd("home", finalOddsToShow.option1) ? "1px solid green" : "")} : {}}>
+                                    &nbsp;{finalOddsToShow.option1 === null ? "-" : finalOddsToShow.option1}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.home === game.score.away && shouldHighlightOdd("draw", drawOdds)) ? "1px solid green" : "" : (shouldHighlightOdd("draw", drawOdds) ? "1px solid green" : "")} : {}}>
-                                    &nbsp;{drawOdds === null ? "-" : drawOdds}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.home === game.score.away && shouldHighlightOdd("draw", finalOddsToShow.option2)) ? "1px solid green" : "" : (shouldHighlightOdd("draw", finalOddsToShow.option2) ? "1px solid green" : "")} : {}}>
+                                    &nbsp;{finalOddsToShow.option2 === null ? "-" : finalOddsToShow.option2}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.away > game.score.home && shouldHighlightOdd("away", awayOdds)) ? "1px solid green" : "" : (shouldHighlightOdd("away", awayOdds) ? "1px solid green" : "")} : {}}>
-                                    &nbsp;{awayOdds === null || awayOdds === "-" ? "-" : awayOdds}&nbsp;
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: game.score?.home != null ? (game.score.away > game.score.home && shouldHighlightOdd("away", finalOddsToShow.option3)) ? "1px solid green" : "" : (shouldHighlightOdd("away", finalOddsToShow.option3) ? "1px solid green" : "")} : {}}>
+                                    &nbsp;{finalOddsToShow.option3 === null || finalOddsToShow.option3 === "-" ? "-" : finalOddsToShow.option3}&nbsp;
                                 </span>
                             </div>
                         </>
@@ -412,7 +505,7 @@ function FixturesTableDisplay(props, key) {
             {/* Desktop prediction */}
             <div className="responsive-cell hide-on-mobile" title="Prediction">
                 <br/>
-                {router.pathname.substring(1).includes("predictions-halftime-fulltime") && halfTime ?
+                {isHalftimeFulltime && halfTime ?
                     <><span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
                         {getHighestProbabilityTeam(halfTime)}
                     </span> &nbsp;|&nbsp;</>
@@ -426,7 +519,7 @@ function FixturesTableDisplay(props, key) {
             {/* Mobile prediction */}
             <div className="responsive-cell team-link-standings hide-on-desktop" title="Prediction" style={{fontWeight:"bold", textAlign: "center"}}>
                 <br/>
-                {router.pathname.substring(1).includes("predictions-halftime-fulltime") && halfTime ?
+                {isHalftimeFulltime && halfTime ?
                     <><span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
                         {getHighestProbabilityTeam(halfTime)}
                     </span>&nbsp;|&nbsp;</>
@@ -436,7 +529,6 @@ function FixturesTableDisplay(props, key) {
                     {finalDisplayPrediction}
                 </span>
                 <br/><br/>
-                {/* Winning Probability % for mobile */}
                 <span style={{fontWeight: "bold"}} className="hide-on-desktop">
                     {finalDisplayProbability}
                 </span>
@@ -444,9 +536,7 @@ function FixturesTableDisplay(props, key) {
             
             {/* Desktop winning probability */}
             <div className="responsive-cell hide-on-mobile" title="Winning Probability" style={{fontWeight:"bold"}}>
-                {!router.pathname.substring(1).includes("double-chance-predictions") && 
-                 !router.pathname.substring(1).includes("predictions-under-over") && 
-                 !router.pathname.substring(1).includes("predictions-both-to-score") ? (
+                {showPopup ? (
                     <span className="predictionHoverEffect">
                         <PopupProbabilityTooltip 
                             home_team_name={homeTeamName} 

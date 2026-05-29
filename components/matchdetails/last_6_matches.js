@@ -41,11 +41,10 @@ function Last6Matches({
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
 
-    const last_6matches_leagues_url = "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues";
+    const last_6matches_leagues_url = "https://develop.pitchpredictions.com/api/fetch_last_6_matches_leagues";
 
     useEffect(() => {
         if (router.isReady && mounted) {
-            // Check stored league IDs
             const storedHomeLeague = typeof window !== 'undefined' ? localStorage.getItem("active_league_id_home") : null;
             const storedAwayLeague = typeof window !== 'undefined' ? localStorage.getItem("active_league_id_away") : null;
             
@@ -57,11 +56,10 @@ function Last6Matches({
                 setActiveLeagueIdAway(storedAwayLeague);
             }
 
-            // Fetch leagues data if not provided via props
-            if (initialHomeLeagues.length === 0) {
+            if (initialHomeLeagues.length === 0 && home_team_id) {
                 fetchHomeLast6MatchesLeagues();
             }
-            if (initialAwayLeagues.length === 0) {
+            if (initialAwayLeagues.length === 0 && away_team_id) {
                 fetchAwayLast6MatchesLeagues();
             }
         }
@@ -118,7 +116,7 @@ function Last6Matches({
     const filterHomeMatchesByLeagues = async (leagueId) => {
         setLoading1(true);
         try {
-            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+            const response = await fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
                 method: 'POST',
                 body: JSON.stringify({ 
                     home_team_id, 
@@ -146,7 +144,7 @@ function Last6Matches({
     const filterAwayMatchesByLeagues = async (leagueId) => {
         setLoading2(true);
         try {
-            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+            const response = await fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
                 method: 'POST',
                 body: JSON.stringify({ 
                     home_team_id: away_team_id, 
@@ -183,22 +181,31 @@ function Last6Matches({
         setActiveLeagueIdAway("all");
     };
 
+    // Parse scores safely
+    const parseScores = (scoresJson) => {
+        if (!scoresJson) return { halftime: { home: '-', away: '-' } };
+        try {
+            return JSON.parse(scoresJson);
+        } catch {
+            return { halftime: { home: '-', away: '-' } };
+        }
+    };
+
     // Build home matches list
     const home_team_matches_array = [];
     if (home_team_matches.length > 0) {
         home_team_matches.slice(0, homeTeamNum).forEach((match, index) => {
             const url_name = encodeURIComponent(
-                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
-            // Determine styles based on team IDs
             const homeTeamStyle = {};
             const awayTeamStyle = {};
+            const scores = parseScores(match.scores);
             
             if (mounted) {
-                // Only apply conditional styles after mount
                 if (home_team_id === match.home_team_id) {
                     homeTeamStyle.fontWeight = "bold";
                 }
@@ -208,22 +215,24 @@ function Last6Matches({
             }
 
             home_team_matches_array.push(
-                <React.Fragment key={index}>
+                <React.Fragment key={match.fixture_id || index}>
                     <a href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                         <div className="responsive-row fixturesTextSize matchDetailsLink">
                             <div className="responsive-cell team-link-probability">
-                                {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                                {match.date ? DateTimeToUsersTimezone(match.date).split(' ')[0] : '-'}
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                    <img
-                                        src={match.downloaded_league_logo}
-                                        className="league_image_logo"
-                                        alt={match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
-                                        style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
-                                        loading="lazy"
-                                    />
-                                    <span>{match.league_short_name}</span>
+                                    {match.downloaded_league_logo && (
+                                        <img
+                                            src={match.downloaded_league_logo}
+                                            className="league_image_logo"
+                                            alt={match.league_name ? match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions" : "league"}
+                                            style={{ backgroundColor: "whitesmoke", marginRight: "10px", width: "20px", height: "20px" }}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <span>{match.league_short_name || match.league_name}</span>
                                 </div>
                             </div>
                             <div className="responsive-cell team-link" style={{ textAlign: "left" }}>
@@ -235,9 +244,9 @@ function Last6Matches({
                                 </div>
                             </div>
                             <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
-                                <span>{match.goals_home} - {match.goals_away}</span>
+                                <span>{match.goals_home !== undefined ? `${match.goals_home} - ${match.goals_away}` : '-'}</span>
                                 <br />
-                                <span>({JSON.parse(match.scores).halftime.home} - {JSON.parse(match.scores).halftime.away})</span>
+                                <span>({scores.halftime.home} - {scores.halftime.away})</span>
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 {ComputedWinDrawings(home_team_id, match.home_team_id, match.away_team_id, match.goals_home, match.goals_away, index)}
@@ -254,17 +263,16 @@ function Last6Matches({
     if (away_team_matches.length > 0) {
         away_team_matches.slice(0, awayTeamNum).forEach((match, index) => {
             const url_name = encodeURIComponent(
-                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
-            // Determine styles based on team IDs
             const homeTeamStyle = {};
             const awayTeamStyle = {};
+            const scores = parseScores(match.scores);
             
             if (mounted) {
-                // Only apply conditional styles after mount
                 if (away_team_id === match.home_team_id) {
                     homeTeamStyle.fontWeight = "bold";
                 }
@@ -274,22 +282,24 @@ function Last6Matches({
             }
 
             away_team_matches_array.push(
-                <React.Fragment key={index}>
+                <React.Fragment key={match.fixture_id || index}>
                     <a href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                         <div className="responsive-row fixturesTextSize matchDetailsLink">
                             <div className="responsive-cell team-link-probability">
-                                {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                                {match.date ? DateTimeToUsersTimezone(match.date).split(' ')[0] : '-'}
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                    <img
-                                        src={match.downloaded_league_logo}
-                                        className="league_image_logo"
-                                        alt={match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
-                                        style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
-                                        loading="lazy"
-                                    />
-                                    <span>{match.league_short_name}</span>
+                                    {match.downloaded_league_logo && (
+                                        <img
+                                            src={match.downloaded_league_logo}
+                                            className="league_image_logo"
+                                            alt={match.league_name ? match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions" : "league"}
+                                            style={{ backgroundColor: "whitesmoke", marginRight: "10px", width: "20px", height: "20px" }}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <span>{match.league_short_name || match.league_name}</span>
                                 </div>
                             </div>
                             <div className="responsive-cell team-link" style={{ textAlign: "left" }}>
@@ -301,9 +311,9 @@ function Last6Matches({
                                 </div>
                             </div>
                             <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
-                                <span>{match.goals_home} - {match.goals_away}</span>
+                                <span>{match.goals_home !== undefined ? `${match.goals_home} - ${match.goals_away}` : '-'}</span>
                                 <br />
-                                <span>({JSON.parse(match.scores).halftime.home} - {JSON.parse(match.scores).halftime.away})</span>
+                                <span>({scores.halftime.home} - {scores.halftime.away})</span>
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 {ComputedWinDrawings(away_team_id, match.home_team_id, match.away_team_id, match.goals_home, match.goals_away, index)}
@@ -317,12 +327,12 @@ function Last6Matches({
 
     // Build home leagues filter
     const homeLeaguesDisplay = [];
-    if (home_team_last6_matches_leagues.length > 1) {
+    if (home_team_last6_matches_leagues.length > 0) {
         home_team_last6_matches_leagues.forEach((league, index) => {
             const isActive = league.league_id == activeLeagueIdHome;
             homeLeaguesDisplay.push(
-                <li key={index} className="nav-item" 
-                    style={{ color: 'white', backgroundColor: isActive ? '#eb4d68' : 'transparent' }}
+                <li key={league.league_id || index} className="nav-item" 
+                    style={{ color: 'white', backgroundColor: isActive ? '#eb4d68' : 'transparent', cursor: "pointer" }}
                     onClick={() => filterHomeMatchesByLeagues(league.league_id)}>
                     <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
                 </li>
@@ -332,12 +342,12 @@ function Last6Matches({
 
     // Build away leagues filter
     const awayLeaguesDisplay = [];
-    if (away_team_last6_matches_leagues.length > 1) {
+    if (away_team_last6_matches_leagues.length > 0) {
         away_team_last6_matches_leagues.forEach((league, index) => {
             const isActive = league.league_id == activeLeagueIdAway;
             awayLeaguesDisplay.push(
-                <li key={index} className="nav-item"
-                    style={{ color: "white", backgroundColor: isActive ? '#eb4d68' : 'transparent' }}
+                <li key={league.league_id || index} className="nav-item"
+                    style={{ color: "white", backgroundColor: isActive ? '#eb4d68' : 'transparent', cursor: "pointer" }}
                     onClick={() => filterAwayMatchesByLeagues(league.league_id)}>
                     <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
                 </li>
@@ -370,15 +380,15 @@ function Last6Matches({
             {home_team_matches.length > 0 && (
                 <div className="col-md-12 mb-2">
                     <div className="text-center fw-bold sectionTitle">
-                        <span>LAST MATCHES: {home_team.toUpperCase()}</span>
+                        <span>LAST MATCHES: {home_team?.toUpperCase() || 'HOME TEAM'}</span>
                     </div>
                     
-                    {home_team_last6_matches_leagues.length > 1 && (
+                    {homeLeaguesDisplay.length > 1 && (
                         <div className="responsive-row header matchdetailsheader">
                             <div className="flex-grow-1 w-100 o-hidden">
                                 <ul className="nav nav-fill position-relative flex-nowrap">
                                     <li className="nav-item" 
-                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdHome == "all" ? "#eb4d68" : "" }}
+                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdHome == "all" ? "#eb4d68" : "", cursor: "pointer" }}
                                         onClick={allHomeFixtures}>
                                         <a className="nav-link link-light last6mhovereffects">All</a>
                                     </li>
@@ -424,15 +434,15 @@ function Last6Matches({
             {away_team_matches.length > 0 && (
                 <div className="col-md-12 mb-2">
                     <div className="text-center fw-bold sectionTitle">
-                        <span>LAST MATCHES: {away_team.toUpperCase()}</span>
+                        <span>LAST MATCHES: {away_team?.toUpperCase() || 'AWAY TEAM'}</span>
                     </div>
                     
-                    {away_team_last6_matches_leagues.length > 1 && (
+                    {awayLeaguesDisplay.length > 1 && (
                         <div className="responsive-row header matchdetailsheader">
                             <div className="flex-grow-1 w-100 o-hidden">
                                 <ul className="nav scrollable nav-fill position-relative flex-nowrap">
                                     <li className="nav-item"
-                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdAway == "all" ? "#eb4d68" : "" }}
+                                        style={{ textAlign: "left", maxWidth: "15%", backgroundColor: activeLeagueIdAway == "all" ? "#eb4d68" : "", cursor: "pointer" }}
                                         onClick={allAwayFixtures}>
                                         <a className="nav-link link-light last6mhovereffects">All</a>
                                     </li>

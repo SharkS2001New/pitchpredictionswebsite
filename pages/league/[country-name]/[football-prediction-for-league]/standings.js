@@ -114,7 +114,7 @@ function FootballPredictionsByLeagueStandings() {
   }, [router.isReady, leagueInfo.valid, leagueInfo.leagueId]);
 
   async function fetchTableStandings(leagueId) {
-    const response = await fetch("https://api.pitchpredictions.com/api/fetch_team_standings", {
+    const response = await fetch("https://develop.pitchpredictions.com/api/fetch_team_standings", {
       method: 'POST',
       body: JSON.stringify({ league_id: leagueId }),
       headers: headers,

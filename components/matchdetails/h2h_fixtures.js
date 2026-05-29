@@ -108,6 +108,8 @@ function H2HFixturesData({
                          h2h_match_details[0].countDraws + 
                          h2h_match_details[0].countAwayTeamWins;
             
+            if (total === 0) return { home: "0%", draw: "0%", away: "0%" };
+            
             return {
                 home: Math.round((h2h_match_details[0].countHometeamWins / total) * 100) + "%",
                 draw: Math.round((h2h_match_details[0].countDraws / total) * 100) + "%",
@@ -125,17 +127,15 @@ function H2HFixturesData({
     if (h2h_match_details.length > 0) {
         h2h_match_details.slice(0, postNum).forEach((match, index) => {
             const url_name = encodeURIComponent(
-                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
-            // Determine styles based on match results
             const homeTeamStyle = {};
             const awayTeamStyle = {};
             
             if (mounted) {
-                // Only apply dynamic styles after mount
                 if (match.ft_goals_home > match.ft_goals_away) {
                     homeTeamStyle.color = "black";
                     homeTeamStyle.fontWeight = "bold";
@@ -147,40 +147,38 @@ function H2HFixturesData({
             }
 
             h2hmatchdetailslist.push(
-                <React.Fragment key={index}>
+                <React.Fragment key={match.fixture_id || index}>
                     <a href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                         <div className="responsive-row fixturesTextSize matchDetailsLink">
                             <div className="responsive-cell team-link-probability">
-                                {DateTimeToUsersTimezone(match.match_date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                                {match.match_date ? DateTimeToUsersTimezone(match.match_date).split(' ')[0] : '-'}
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                    <img
-                                        src={match.downloaded_league_logo}
-                                        className="h2h_image_logo"
-                                        alt={match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions"}
-                                        style={{ backgroundColor: "whitesmoke", marginRight: "10px" }}
-                                        loading="lazy"
-                                    />
-                                    <span>{match.league_short_name}</span>
+                                    {match.downloaded_league_logo && (
+                                        <img
+                                            src={match.downloaded_league_logo}
+                                            className="h2h_image_logo"
+                                            alt={match.league_name ? match.league_name.replace(/\s+/g, "-").toLowerCase() + "-football-predictions" : "league"}
+                                            style={{ backgroundColor: "whitesmoke", marginRight: "10px", width: "20px", height: "20px" }}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <span>{match.league_short_name || match.league_name}</span>
                                 </div>
                             </div>
                             <div className="responsive-cell team-link" style={{ textAlign: "left" }}>
-                                <div style={{ 
-                                    whiteSpace: "pre-wrap",
-                                    ...homeTeamStyle 
-                                }}>
+                                <div style={{ whiteSpace: "pre-wrap", ...homeTeamStyle }}>
                                     {match.home_team_name}
                                 </div>
-                                <div style={{ 
-                                    whiteSpace: "pre-wrap",
-                                    ...awayTeamStyle 
-                                }}>
+                                <div style={{ whiteSpace: "pre-wrap", ...awayTeamStyle }}>
                                     {match.away_team_name}
                                 </div>
                             </div>
                             <div className="responsive-cell" style={{ textAlign: "center" }}>
-                                {match.ft_goals_home}-{match.ft_goals_away}
+                                {match.ft_goals_home !== undefined && match.ft_goals_away !== undefined 
+                                    ? `${match.ft_goals_home}-${match.ft_goals_away}` 
+                                    : '-'}
                             </div>
                         </div>
                     </a>
@@ -189,17 +187,15 @@ function H2HFixturesData({
         });
     }
 
-    if (h2h_leagues_data.length > 1) {
+    if (h2h_leagues_data.length > 0) {
         h2h_leagues_data.forEach((league, index) => {
             const isActive = league.league_id == activeLeagueIdH2H;
             leaguesdisplayList.push(
-                <React.Fragment key={index}>
-                    <li className="nav-item ullinks" 
-                        style={{ color: "white", backgroundColor: isActive ? '#eb4d68' : 'transparent' }} 
-                        onClick={() => filterByLeagues(league.league_id)}>
-                        <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
-                    </li>
-                </React.Fragment>
+                <li className="nav-item ullinks" key={league.league_id || index}
+                    style={{ color: "white", backgroundColor: isActive ? '#eb4d68' : 'transparent', cursor: "pointer" }} 
+                    onClick={() => filterByLeagues(league.league_id)}>
+                    <a className="nav-link link-light last6mhovereffects">{league.league_name}</a>
+                </li>
             );
         });
     }
@@ -222,12 +218,34 @@ function H2HFixturesData({
                 <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
             </div>
             
-            {h2h_leagues_data.length > 1 && (
+            {/* H2H Stats Summary */}
+            <div className="row text-center mb-3">
+                <div className="col-4">
+                    <div className="card p-2">
+                        <h5>{percentages.home}</h5>
+                        <small>Home Wins</small>
+                    </div>
+                </div>
+                <div className="col-4">
+                    <div className="card p-2">
+                        <h5>{percentages.draw}</h5>
+                        <small>Draws</small>
+                    </div>
+                </div>
+                <div className="col-4">
+                    <div className="card p-2">
+                        <h5>{percentages.away}</h5>
+                        <small>Away Wins</small>
+                    </div>
+                </div>
+            </div>
+            
+            {leaguesdisplayList.length > 1 && (
                 <div className="responsive-row header matchdetailsheader">
                     <div className="flex-grow-1 w-100 o-hidden">
                         <ul className="nav nav-fill position-relative flex-nowrap myUlLinks">
                             <li className="nav-item ullinks" 
-                                style={{ textAlign: "left", maxWidth: "20%", backgroundColor: activeLeagueIdH2H == "all" ? "#eb4d68" : "" }}>
+                                style={{ textAlign: "left", maxWidth: "20%", backgroundColor: activeLeagueIdH2H == "all" ? "#eb4d68" : "", cursor: "pointer" }}>
                                 <a onClick={allFixturesFilter} className="nav-link link-light last6mhovereffects">All</a>
                             </li>
                             {leaguesdisplayList}

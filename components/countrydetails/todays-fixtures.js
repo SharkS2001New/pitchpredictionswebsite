@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import WinningTeamAndOdd from '../functions/determine_winning_team_and_odd';
-import ProbabilityResults from '../functions/determine_probability_results';
 import DetermineLiveScores from '../functions/determine_live_scores';
-import ComputeFixtureAverage from '../functions/ComputefixtureAverage';
 import FixturesTableDisplay from '../shared/fixtures_table_display';
 import CountrysPageRenders from '../shared/renders/country-renders';
 import { Adsense } from '@ctrl/react-adsense';
@@ -13,79 +10,54 @@ function TodaysFixturesByCountry(props) {
     var predictionsList = [];
 
     for (let i = 0; i < props.todays_matches.length; i++) {
-        let winning_team = "";
-        let winning_odd = 0;
+        const fixture = props.todays_matches[i];
 
-        let home_odd = "";
-        let draw_odd = "";
-        let away_odd = "";
+        // Safely extract halftime, extratime, penalty data from new API structure
+        const halftimeData = fixture.score?.half_time;
+        const halftime_data = (halftimeData?.home !== null && halftimeData?.home !== undefined && 
+                               halftimeData?.away !== null && halftimeData?.away !== undefined)
+            ? `(${halftimeData.home} - ${halftimeData.away})` 
+            : "";
+        
+        const extratimeData = fixture.score?.extra_time;
+        const extratime_data = (extratimeData?.home !== null && extratimeData?.home !== undefined && 
+                                 extratimeData?.away !== null && extratimeData?.away !== undefined)
+            ? `${extratimeData.home} - ${extratimeData.away}`
+            : "";
+        
+        const penaltyData = fixture.score?.penalties;
+        const penalty_data = (penaltyData?.home !== null && penaltyData?.home !== undefined && 
+                              penaltyData?.away !== null && penaltyData?.away !== undefined)
+            ? `${penaltyData.home} - ${penaltyData.away}`
+            : "";
 
-        if (props.todays_matches[i].percent_pred_home != null) {
-            home_odd = props.todays_matches[i]["percent_pred_home"].slice(0, -1);
-            draw_odd = props.todays_matches[i]["percent_pred_draw"].slice(0, -1);
-            away_odd = props.todays_matches[i]["percent_pred_away"].slice(0, -1);
-        }
+        // Get prediction probabilities directly from API
+        const homeProb = fixture.predictions?.["1x2"]?.home?.toString() || "-";
+        const drawProb = fixture.predictions?.["1x2"]?.draw?.toString() || "-";
+        const awayProb = fixture.predictions?.["1x2"]?.away?.toString() || "-";
 
-        // Decode halftime data stored as a json in mysql
-        var scores_data = JSON.parse(props.todays_matches[i].scores);
+        // Get avg_goals - handle null value
+        const avgGoals = fixture.predictions?.avg_goals !== null && fixture.predictions?.avg_goals !== undefined 
+            ? fixture.predictions.avg_goals 
+            : "-";
 
-        var halftime_data = "";
-        var extratime_data = "";
-        var penalty_data = "";
+        // Get live scores status
+        let livescores_results = DetermineLiveScores(fixture);
+        let livestatus = livescores_results?.[0] || "";
+        let livescores = livescores_results?.[1] || "";
 
-        if (props.todays_matches[i].scores != null) {
-            if (scores_data.halftime.home != null) {
-                halftime_data = '(' + scores_data.halftime.home + ' - ' + scores_data.halftime.away + ')';
-            }
-
-            if (scores_data.extratime.home != null) {
-                extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
-            }
-
-            if (scores_data.penalty.home != null) {
-                penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-            }
-        }
-
-        let computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i]);
-
-        winning_team = computed_winning_preds[0];
-        winning_odd = computed_winning_preds[1];
-
-        let probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
-
-        // isMobile parameter removed - now handled by CSS in DetermineLiveScores
-        let livescores_results = DetermineLiveScores(props.todays_matches[i]);
-
-        let livestatus = livescores_results[0];
-        let livescores = livescores_results[1];
-
-        let fixturesAverage = ComputeFixtureAverage(
-            props.todays_matches[i].teams_perfomance_home_for,
-            props.todays_matches[i].teams_perfomance_home_aganist,
-            props.todays_matches[i].teams_perfomance_away_for,
-            props.todays_matches[i].teams_perfomance_away_aganist,
-            props.todays_matches[i].teams_games_played_home,
-            props.todays_matches[i].teams_games_played_away
-        );
-
-        var sharedTabledetailsArray = [];
-
-        sharedTabledetailsArray.push({
-            game_details: props.todays_matches[i],
-            home_odd: home_odd,
-            draw_odd: draw_odd,
-            away_odd: away_odd,
-            probability_results: probability_results,
-            winning_odd: winning_odd,
-            winning_team: winning_team,
+        var sharedTabledetailsArray = [{
+            game_details: fixture,
+            home_odd: homeProb,
+            draw_odd: drawProb,
+            away_odd: awayProb,
             livestatus: livestatus,
             livescores: livescores,
             halftime_data: halftime_data,
             extratime_data: extratime_data,
             penalty_data: penalty_data,
-            average: fixturesAverage
-        });
+            avg_goals: avgGoals
+        }];
 
         // Form the array of Fixtures Table by country
         predictionsList.push(

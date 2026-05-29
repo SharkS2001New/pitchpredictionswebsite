@@ -210,7 +210,7 @@ export async function getServerSideProps({ params, query }) {
     }
     
     // Base URL for fetching fixtures by date
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_fixtures_by_date";
+    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_fixtures_by_date";
     
     // Cache setup - create cache file for specific date
     const cacheDir = path.join(process.cwd(), 'public', 'cache');

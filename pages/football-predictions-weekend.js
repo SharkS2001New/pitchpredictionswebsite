@@ -228,7 +228,7 @@ export async function getServerSideProps() {
     const sundayDate = weekendDates[1];
     
     // Base URL for weekend fixtures
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_weekend_fixtures";
+    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_weekend_fixtures";
     
     // First batch: ONLY fetch 0-20 records on server (NO full batch)
     const firstBatchUrl = `${baseUrl}?saturday_date=${saturdayDate}&sunday_date=${sundayDate}&start_index=0&end_index=20`;

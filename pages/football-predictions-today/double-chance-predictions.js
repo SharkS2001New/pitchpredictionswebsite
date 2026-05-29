@@ -9,7 +9,6 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import FilterTodaysMatchesLiveUpcomingFinished from "../../components/shared/filter-todays-matches-live-upcoming-finished";
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
-import TodayFootballPredictionsContent from "../../components/seo-content/mainpages/football-predictions-today";
 import fs from 'fs';
 import path from 'path';
 
@@ -175,7 +174,7 @@ export async function getServerSideProps() {
     const currentDate = new Date().toISOString().split('T')[0];
     
     // Base URL for today's games
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
+    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_todays_games";
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Cache setup

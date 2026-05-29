@@ -183,7 +183,7 @@ export async function getServerSideProps() {
     const currentDate = new Date().toISOString().split('T')[0];
     
     // Base URL for today's games
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
+    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_todays_games";
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Cache setup

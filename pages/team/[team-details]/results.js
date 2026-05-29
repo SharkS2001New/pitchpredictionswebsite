@@ -1,4 +1,4 @@
-// pages/team/[team-details]/results.js (or wherever this component is)
+// pages/team/[team-details]/results.js
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import TeamDetailsTop from "../../../components/teamdetails/team_details_top";
@@ -33,7 +33,7 @@ export async function getServerSideProps(context) {
   try {
     // Fetch Top Team Data (required - blocks response)
     const topRes = await fetch(
-      `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
+      `https://develop.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
       { headers }
     );
 
@@ -219,18 +219,31 @@ function Teams({
     return "";
   };
 
-  // Determine which team we're viewing
+  // Determine which team we're viewing with safety checks
   const isHomeTeam = teams_top_data.home_team_id === teamIdInteger;
-  const teamName = isHomeTeam ? teams_top_data.home_team_name : teams_top_data.away_team_name;
+  let teamName = "";
+  
+  if (isHomeTeam) {
+    teamName = teams_top_data.home_team_name || "";
+  } else {
+    teamName = teams_top_data.away_team_name || "";
+  }
 
-  // Prepare predictions data
+  // Prepare predictions data - wrap in array for SelectedMacthesPredDetails
   const predictionsData = [teams_top_data];
+  
+  // Render predictions using the component
   const renderPredictions = <SelectedMacthesPredDetails props={predictionsData} />;
 
-  // Form dynamic URL
-  const url_name = encodeURIComponent(
-    teamName.replace(/\s+/g, "-").toLowerCase() + "-" + teamIdInteger
-  );
+  // Form dynamic URL with safety check
+  let url_name = "";
+  if (teamName) {
+    url_name = encodeURIComponent(
+      teamName.replace(/\s+/g, "-").toLowerCase() + "-" + teamIdInteger
+    );
+  } else {
+    url_name = `team-${teamIdInteger}`;
+  }
 
   // Check data availability
   const hasGeneralMatches = team_last6_matches.length > 0;
@@ -254,12 +267,13 @@ function Teams({
           </div>
         </div>
         
-        <RenderData renderPredictions={renderPredictions} />
+        {/* RenderData expects an array of components from SelectedMacthesPredDetails */}
+        <RenderData renderPredictions={renderPredictions?.props ? [renderPredictions] : []} />
         
         <FiltersTeamDetails
           url_filter={router.pathname.substring(1)}
           match_url={url_name}
-          league_type={teams_top_data.league_type}
+          league_type={teams_top_data.league_type || ""}
         />
       </div>
 
@@ -271,8 +285,8 @@ function Teams({
             props={team_last6_matches}
             team_id={teamIdInteger}
             filter_date={teams_top_data.unformated_date}
-            title={`Games Played By ${teamName}`}
-            team_name={teamName}
+            title={`Games Played By ${teamName || "Team"}`}
+            team_name={teamName || ""}
             initialLeagues={team_last6_leagues}
           />
         )}
@@ -286,7 +300,7 @@ function Teams({
               team_id={teamIdInteger}
               filter_date={teams_top_data.unformated_date}
               title="Home Matches"
-              team_name={teamName}
+              team_name={teamName || ""}
               initialLeagues={team_home_leagues}
             />
           </>
@@ -315,7 +329,7 @@ function Teams({
               team_id={teamIdInteger}
               filter_date={teams_top_data.unformated_date}
               title="Away Matches"
-              team_name={teamName}
+              team_name={teamName || ""}
               initialLeagues={team_away_leagues}
             />
           </>

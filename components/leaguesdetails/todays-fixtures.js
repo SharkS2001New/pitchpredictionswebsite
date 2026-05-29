@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
-import WinningTeamAndOdd from '../functions/determine_winning_team_and_odd';
-import ProbabilityResults from '../functions/determine_probability_results';
 import DetermineLiveScores from '../functions/determine_live_scores';
-import ComputeFixtureAverage from '../functions/ComputefixtureAverage';
 import FixturesTableDisplay from '../shared/fixtures_table_display';
 import LeaguesPageRender from '../shared/renders/leagues-render';
-import DoubleChanceWinningTeamAndOdd from '../functions/double_chance_winning_team_and_odd';
-import DoubleChanceProbabilityResults from '../functions/double_chance_probability_results';
-import UnderOverWinningTeamAndOdd from '../functions/under_over_winning_team_and_odd';
-import UnderOverProbabilityResults from '../functions/under_over_probability_results';
-import BothTeamsToScore from '../functions/BothTeamsToScore';
-import HalfTimeWinningTeamAndOdd from '../functions/halftime_winning_team_and_odd';
-import HalfTimeProbabilityResults from '../functions/halftime_probability_results';
 import { Adsense } from "@ctrl/react-adsense";
 
 function TodaysFixturesByLeague(props) {
-    const router = useRouter(); //fetch page link data
+    const router = useRouter();
     const [mounted, setMounted] = useState(false);
     
     useEffect(() => {
@@ -31,153 +21,73 @@ function TodaysFixturesByLeague(props) {
     var predictionsList = [];
 
     for(let i = 0; i < props.todays_matches.length; i++){  
-        let winning_team = "";
-        let winning_odd = 0;
-
-        let home_odd  = "";
-        let draw_odd = "";
-        let away_odd = "";
-
-        let ht_home_odd = "";
-        let ht_draw_odd = "";
-        let ht_away_odd = "";
-
-        let computed_winning_preds = "";
+        const fixture = props.todays_matches[i];
         
-        let probability_results = "";
+        // Safely extract halftime, extratime, penalty data from new API structure
+        const halftimeData = fixture.score?.half_time;
+        const halftime_data = (halftimeData?.home !== null && halftimeData?.home !== undefined && 
+                               halftimeData?.away !== null && halftimeData?.away !== undefined)
+            ? `(${halftimeData.home} - ${halftimeData.away})` 
+            : "";
+        
+        const extratimeData = fixture.score?.extra_time;
+        const extratime_data = (extratimeData?.home !== null && extratimeData?.home !== undefined && 
+                                 extratimeData?.away !== null && extratimeData?.away !== undefined)
+            ? `${extratimeData.home} - ${extratimeData.away}`
+            : "";
+        
+        const penaltyData = fixture.score?.penalties;
+        const penalty_data = (penaltyData?.home !== null && penaltyData?.home !== undefined && 
+                              penaltyData?.away !== null && penaltyData?.away !== undefined)
+            ? `${penaltyData.home} - ${penaltyData.away}`
+            : "";
 
-        let ht_computed_winning_preds = "";
-        let ht_probability_results = "";
-        let ht_winning_team = "";
-        let ht_winning_odd = "";
+        // Get prediction probabilities directly from API
+        const homeProb = fixture.predictions?.["1x2"]?.home?.toString() || "-";
+        const drawProb = fixture.predictions?.["1x2"]?.draw?.toString() || "-";
+        const awayProb = fixture.predictions?.["1x2"]?.away?.toString() || "-";
+        
+        // Get half-time predictions if on HT/FT page
+        const ht_home_odd = fixture.predictions?.half_time?.home?.toString() || "-";
+        const ht_draw_odd = fixture.predictions?.half_time?.draw?.toString() || "-";
+        const ht_away_odd = fixture.predictions?.half_time?.away?.toString() || "-";
 
-        // Safely handle percentage values
-        if(props.todays_matches[i].percent_pred_home != null){
-            home_odd  = String(props.todays_matches[i]["percent_pred_home"]).slice(0, -1);
-            draw_odd = String(props.todays_matches[i]["percent_pred_draw"]).slice(0, -1);
-            away_odd = String(props.todays_matches[i]["percent_pred_away"]).slice(0, -1);
-        }
+        // Get live scores status
+        let livescores_results = DetermineLiveScores(fixture);
+        let livestatus = livescores_results?.[0] || "";
+        let livescores = livescores_results?.[1] || "";
 
-        if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-            if(props.todays_matches[i].hf_percent_pred_home != null){
-                ht_home_odd  = String(props.todays_matches[i]["hf_percent_pred_home"]).slice(0, -1);
-                ht_draw_odd = String(props.todays_matches[i]["hf_percent_pred_draw"]).slice(0, -1);
-                ht_away_odd = String(props.todays_matches[i]["hf_percent_pred_away"]).slice(0, -1);
-            }
-        }
-                
-        //Decode halftime data stored as a json in mysql
-        var scores_data = {};
-        try {
-            scores_data = JSON.parse(props.todays_matches[i].scores || '{}');
-        } catch (e) {
-            scores_data = {};
-        }
+        // Get avg_goals - handle null value
+        const avgGoals = fixture.predictions?.avg_goals !== null && fixture.predictions?.avg_goals !== undefined 
+            ? fixture.predictions.avg_goals 
+            : "-";
 
-        var halftime_data = "";
-        var extratime_data = "";
-        var penalty_data = "";
+        // Check if we're on halftime-fulltime page
+        const isHalftimeFulltimePage = router.pathname.substring(1).includes("predictions-halftime-fulltime");
+        
+        // Only include half-time predictions if we're on the HT/FT page AND predictions.half_time exists
+        const shouldIncludeHalfTime = isHalftimeFulltimePage && fixture.predictions?.half_time;
 
-        if(scores_data && scores_data.halftime && scores_data.halftime.home != null){
-            halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
-        }                
-
-        if(scores_data && scores_data.extratime && scores_data.extratime.home != null){
-            extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
-        }
-
-        if(scores_data && scores_data.penalty && scores_data.penalty.home != null){
-            penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-        }
-
-        let fixturesAverage = ComputeFixtureAverage(
-            props.todays_matches[i].teams_perfomance_home_for,
-            props.todays_matches[i].teams_perfomance_home_aganist,
-            props.todays_matches[i].teams_perfomance_away_for,
-            props.todays_matches[i].teams_perfomance_away_aganist,
-            props.todays_matches[i].teams_games_played_home,
-            props.todays_matches[i].teams_games_played_away
-        );
-     
-        if(router.pathname.substring(1).includes("double-chance-predictions")) {
-            computed_winning_preds = DoubleChanceWinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i], router.pathname.substring(1));
-
-            winning_team = computed_winning_preds[0];
-            winning_odd = computed_winning_preds[1]; 
-
-            probability_results = DoubleChanceProbabilityResults(props.todays_matches[i], winning_team, router.pathname.substring(1));
-
-        } else if(router.pathname.substring(1).includes("predictions-under-over")) {
-            // Note: UnderOverWinningTeamAndOdd still needs isMobile parameter - pass false as default
-            computed_winning_preds = UnderOverWinningTeamAndOdd(fixturesAverage, false);
-
-            winning_team = computed_winning_preds[0];
-            winning_odd = computed_winning_preds[1];
-
-            probability_results = UnderOverProbabilityResults(props.todays_matches[i], winning_team);
+        var sharedTabledetailsArray = [{
+            game_details: fixture,
+            home_odd: homeProb,
+            draw_odd: drawProb,
+            away_odd: awayProb,
+            livestatus: livestatus,
+            livescores: livescores,
+            halftime_data: halftime_data,
+            extratime_data: extratime_data,
+            penalty_data: penalty_data,
+            avg_goals: avgGoals,
+            // Only include half-time predictions if they exist and we're on the right page
+            ...(shouldIncludeHalfTime && {
+                ht_home_odd: ht_home_odd,
+                ht_draw_odd: ht_draw_odd,
+                ht_away_odd: ht_away_odd,
+            }),
+        }];
             
-        } else if(router.pathname.substring(1).includes("predictions-both-to-score")) {
-            probability_results = BothTeamsToScore(props.todays_matches[i]);
-        
-        } else if(router.pathname.substring(1).includes("predictions-halftime-fulltime")) {
-            ht_computed_winning_preds = HalfTimeWinningTeamAndOdd(ht_home_odd, ht_draw_odd, ht_away_odd, props.todays_matches[i]);
-
-            ht_winning_team = ht_computed_winning_preds[0];
-            ht_winning_odd = ht_computed_winning_preds[1];
-
-            ht_probability_results = HalfTimeProbabilityResults(props.todays_matches[i], ht_winning_team);
-
-            computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i]);
-
-            winning_team = computed_winning_preds[0];
-            winning_odd = computed_winning_preds[1];
-
-            probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
-        } else {
-            computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, props.todays_matches[i]);
-
-            winning_team = computed_winning_preds[0];
-            winning_odd = computed_winning_preds[1];
-
-            probability_results = ProbabilityResults(props.todays_matches[i], winning_team);
-        }        
-        
-        // isMobile parameter removed - now handled by CSS
-        let livescores_results = DetermineLiveScores(props.todays_matches[i]);
-
-        let livestatus = livescores_results[0];
-        let livescores = livescores_results[1];
-
-        var sharedTabledetailsArray = [];
-
-        sharedTabledetailsArray.push(
-            {
-                game_details: props.todays_matches[i],
-                home_odd: home_odd,
-                draw_odd: draw_odd,
-                away_odd: away_odd,
-                probability_results: probability_results,
-                winning_odd: winning_odd,
-                winning_team: winning_team,
-                livestatus: livestatus,
-                livescores: livescores,
-                halftime_data: halftime_data,
-                extratime_data: extratime_data,
-                penalty_data: penalty_data,
-                average: fixturesAverage,
-                // If it's halftime/fulltime page
-                ...(router.pathname.substring(1).includes("predictions-halftime-fulltime") && {
-                    ht_home_odd: ht_home_odd,
-                    ht_draw_odd: ht_draw_odd,
-                    ht_away_odd: ht_away_odd,
-                    ht_probability_results: ht_probability_results,
-                    ht_winning_odd: ht_winning_odd,
-                    ht_winning_team: ht_winning_team,
-                }),
-            }
-        );
-            
-        //Form the array of Fixtures Table by league
+        // Form the array of Fixtures Table by league
         predictionsList.push(
             <FixturesTableDisplay props={sharedTabledetailsArray} key={i} />
         );
@@ -192,7 +102,7 @@ function TodaysFixturesByLeague(props) {
                             <h2 className="sectionTitle">Today's Fixtures - {props.country_name}, {props.league_name}</h2>
                         </div>
                     </div>   
-                    {/**Display fixtures for todays matches for selected league */}
+                    {/* Display fixtures for todays matches for selected league */}
                     <LeaguesPageRender 
                         url_name={router.pathname.substring(1)} 
                         renderPredictions={predictionsList} 

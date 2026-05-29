@@ -21,10 +21,12 @@ function FetchUpcomingMatches({
     const [upcoming_away_matches, setUpcomingAwayTeamMatches] = useState(initialAwayMatches);
     const [homeTeamNum, setHomeTeamNum] = useState(15);
     const [awayTeamNum, setAwayTeamNum] = useState(15);
-    const [loading, setLoading] = useState(false);
-    const [endpointStatus, setEndPointStatus] = useState(
-        (homeStatus === "success" || awayStatus === "success") ? "success" : "error"
-    );
+    const [loadingHome, setLoadingHome] = useState(false);
+    const [loadingAway, setLoadingAway] = useState(false);
+    const [homeHasMore, setHomeHasMore] = useState(initialHomeMatches.length === 15);
+    const [awayHasMore, setAwayHasMore] = useState(initialAwayMatches.length === 15);
+    const [homeStartIndex, setHomeStartIndex] = useState(initialHomeMatches.length);
+    const [awayStartIndex, setAwayStartIndex] = useState(initialAwayMatches.length);
 
     useEffect(() => {
         setMounted(true);
@@ -35,46 +37,103 @@ function FetchUpcomingMatches({
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
 
-    // Fetch additional data if needed (pagination, filtering, etc.)
+    // Fetch more home matches with pagination
     const fetchMoreHomeMatches = async () => {
-        setLoading(true);
+        if (loadingHome || !homeHasMore) return;
+        
+        setLoadingHome(true);
+        const chunkSize = 15;
+        const startIndex = homeStartIndex;
+        const endIndex = homeStartIndex + chunkSize - 1;
+        
         try {
-            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_home_team", {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_by_home_team", {
                 method: 'POST',
                 body: JSON.stringify({
                     home_team_id,
-                    fixture_date
+                    fixture_date,
+                    start_index: startIndex,
+                    end_index: endIndex
                 }),
                 headers: headers,
             });
 
             const data = await response.json();
 
-            if (data.status === true) {
-                setUpcomingHomeTeamMatches(data.data || []);
-                setEndPointStatus("success");
+            if (data.status === true && data.data && data.data.length > 0) {
+                setUpcomingHomeTeamMatches(prev => [...prev, ...data.data]);
+                setHomeStartIndex(prev => prev + data.data.length);
+                
+                if (data.data.length < chunkSize) {
+                    setHomeHasMore(false);
+                }
+            } else {
+                setHomeHasMore(false);
             }
         } catch (error) {
-            console.error(error);
+            console.error('Error fetching more home matches:', error);
         } finally {
-            setLoading(false);
+            setLoadingHome(false);
         }
     };
 
+    // Fetch more away matches with pagination
+    const fetchMoreAwayMatches = async () => {
+        if (loadingAway || !awayHasMore) return;
+        
+        setLoadingAway(true);
+        const chunkSize = 15;
+        const startIndex = awayStartIndex;
+        const endIndex = awayStartIndex + chunkSize - 1;
+        
+        try {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_by_away_team", {
+                method: 'POST',
+                body: JSON.stringify({
+                    away_team_id,
+                    fixture_date,
+                    start_index: startIndex,
+                    end_index: endIndex
+                }),
+                headers: headers,
+            });
+
+            const data = await response.json();
+
+            if (data.status === true && data.data && data.data.length > 0) {
+                setUpcomingAwayTeamMatches(prev => [...prev, ...data.data]);
+                setAwayStartIndex(prev => prev + data.data.length);
+                
+                if (data.data.length < chunkSize) {
+                    setAwayHasMore(false);
+                }
+            } else {
+                setAwayHasMore(false);
+            }
+        } catch (error) {
+            console.error('Error fetching more away matches:', error);
+        } finally {
+            setLoadingAway(false);
+        }
+    };
+
+    // Helper function to format date
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const formatted = DateTimeToUsersTimezone(dateString).split(' ')[0];
+        return formatted.replace(/^(\d{2})\/(\d{2})\/(\d{4})$/, '$1.$2.$3');
+    };
+
+    // Build home matches list
     const upcoming_home_matchesarray = [];
-    const upcoming_away_matchesarray = [];
-
-    let url_name = "";
-
     if (upcoming_home_matches.length > 0 && mounted) {
         upcoming_home_matches.slice(0, homeTeamNum).forEach((match, index) => {
-            url_name = encodeURIComponent(
-                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+            const url_name = encodeURIComponent(
+                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
-            // Determine styles based on team names
             const homeTeamStyle = {};
             const awayTeamStyle = {};
             
@@ -88,10 +147,10 @@ function FetchUpcomingMatches({
             }
 
             upcoming_home_matchesarray.push(
-                <a key={index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
+                <a key={match.fixture_id || index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                     <div className="responsive-row fixturesTextSize matchDetailsLink">
                         <div className="responsive-cell team-link-probability">
-                            {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                            {formatDate(match.date)}
                         </div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...homeTeamStyle }}>
                             {match.home_team_name}
@@ -107,15 +166,16 @@ function FetchUpcomingMatches({
         });
     }
 
+    // Build away matches list
+    const upcoming_away_matchesarray = [];
     if (upcoming_away_matches.length > 0 && mounted) {
         upcoming_away_matches.slice(0, awayTeamNum).forEach((match, index) => {
-            url_name = encodeURIComponent(
-                match.home_team_name.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                match.away_team_name.replace(/\s+/g, '-').toLowerCase() + '-' +
+            const url_name = encodeURIComponent(
+                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
-            // Determine styles based on team names
             const homeTeamStyle = {};
             const awayTeamStyle = {};
             
@@ -129,10 +189,10 @@ function FetchUpcomingMatches({
             }
 
             upcoming_away_matchesarray.push(
-                <a key={index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
+                <a key={match.fixture_id || index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                     <div className="responsive-row fixturesTextSize matchDetailsLink">
                         <div className="responsive-cell team-link-probability">
-                            {DateTimeToUsersTimezone(match.date).split(' ')[0].replace(/^(\d{2})\/(\d{2})\/(\d{2})(\d{2})$/, '$1.$2.$4')}
+                            {formatDate(match.date)}
                         </div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...homeTeamStyle }}>
                             {match.home_team_name}
@@ -148,31 +208,35 @@ function FetchUpcomingMatches({
         });
     }
 
-    const handleClick = () => {
+    const handleHomeShowMore = () => {
         if (upcoming_home_matches.length > homeTeamNum) {
-            setHomeTeamNum(prev => prev + 12);
-        } else {
-            setHomeTeamNum(12);
-            if (upcoming_home_matches.length === 0) {
-                fetchMoreHomeMatches();
-            }
+            setHomeTeamNum(prev => prev + 15);
+        } else if (homeHasMore) {
+            fetchMoreHomeMatches();
+            setHomeTeamNum(prev => prev + 15);
         }
     };
 
-    const handleClickAway = () => {
+    const handleHomeShowLess = () => {
+        setHomeTeamNum(15);
+    };
+
+    const handleAwayShowMore = () => {
         if (upcoming_away_matches.length > awayTeamNum) {
-            setAwayTeamNum(prev => prev + 8);
-        } else {
-            setAwayTeamNum(12);
+            setAwayTeamNum(prev => prev + 15);
+        } else if (awayHasMore) {
+            fetchMoreAwayMatches();
+            setAwayTeamNum(prev => prev + 15);
         }
     };
 
-    // Loading state
-    if (!mounted || (endpointStatus === "" && upcoming_home_matches.length === 0 && upcoming_away_matches.length === 0)) {
-        return <InPagePreLoader />;
-    }
+    const handleAwayShowLess = () => {
+        setAwayTeamNum(15);
+    };
 
     // Error state
+    const endpointStatus = (homeStatus === "success" || awayStatus === "success") ? "success" : "error";
+    
     if (endpointStatus === "error" && upcoming_home_matches.length === 0 && upcoming_away_matches.length === 0) {
         return (
             <>
@@ -202,15 +266,24 @@ function FetchUpcomingMatches({
                             <div className="responsive-cell team-link-probability"></div>
                             <div className="responsive-cell team-link-probability">League</div>
                         </div>
-                        {upcoming_home_matchesarray}
+                        {loadingHome ? <InPagePreLoader /> : upcoming_home_matchesarray}
                         
-                        {upcoming_home_matches.length > 15 && (
+                        {(upcoming_home_matches.length > 15 || homeHasMore) && (
                             <div className="text-center mb-2">
-                                <button className="btn btn-link btn-sm fixturesTextSize" 
-                                    style={{ color: "#B11111", fontWeight: "bold" }} 
-                                    onClick={handleClick}>
-                                    {upcoming_home_matches.length > homeTeamNum ? "Show More Matches" : "Show Less Matches"}
-                                </button>
+                                {upcoming_home_matches.length > homeTeamNum ? (
+                                    <button className="btn btn-link btn-sm fixturesTextSize" 
+                                        style={{ color: "#B11111", fontWeight: "bold" }} 
+                                        onClick={handleHomeShowLess}>
+                                        Show Less Matches
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-link btn-sm fixturesTextSize" 
+                                        style={{ color: "#B11111", fontWeight: "bold" }} 
+                                        onClick={handleHomeShowMore}
+                                        disabled={loadingHome}>
+                                        {loadingHome ? "Loading..." : "Show More Matches"}
+                                    </button>
+                                )}
                             </div>
                         )}
                         <br />
@@ -235,15 +308,24 @@ function FetchUpcomingMatches({
                             <div className="responsive-cell team-link-probability"></div>
                             <div className="responsive-cell team-link-probability">League</div>
                         </div>
-                        {upcoming_away_matchesarray}
+                        {loadingAway ? <InPagePreLoader /> : upcoming_away_matchesarray}
                         
-                        {upcoming_away_matches.length > 15 && (
+                        {(upcoming_away_matches.length > 15 || awayHasMore) && (
                             <div className="text-center">
-                                <button className="btn btn-link btn-sm fixturesTextSize" 
-                                    style={{ color: "#B11111", fontWeight: "bold" }} 
-                                    onClick={handleClickAway}>
-                                    {upcoming_away_matches.length > awayTeamNum ? "Show More Matches" : "Show Less Matches"}
-                                </button>
+                                {upcoming_away_matches.length > awayTeamNum ? (
+                                    <button className="btn btn-link btn-sm fixturesTextSize" 
+                                        style={{ color: "#B11111", fontWeight: "bold" }} 
+                                        onClick={handleAwayShowLess}>
+                                        Show Less Matches
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-link btn-sm fixturesTextSize" 
+                                        style={{ color: "#B11111", fontWeight: "bold" }} 
+                                        onClick={handleAwayShowMore}
+                                        disabled={loadingAway}>
+                                        {loadingAway ? "Loading..." : "Show More Matches"}
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>

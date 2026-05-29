@@ -1,83 +1,118 @@
 import React from 'react';
 import MatchOutcomesHome from './match_outcomes_home_drawings';
-import MatchOutcomesAway from './match_outcomes_away_drawings'; 
-import WinningTeamAndOdd from '../functions/determine_winning_team_and_odd';
-import ProbabilityResults from '../functions/determine_probability_results';
+import MatchOutcomesAway from './match_outcomes_away_drawings';
 import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
 import DetermineLiveScores from '../functions/determine_live_scores';
-import DoubleChanceWinningTeamAndOdd from '../functions/double_chance_winning_team_and_odd';
-import DoubleChanceProbabilityResults from '../functions/double_chance_probability_results';
-import BothTeamsToScore from '../functions/BothTeamsToScore';
 
 function MatchDetailsTop(props) {    
     let game_details = props.props;
+    const fixture = game_details[0];
 
-    let home_odd  = "";
-    let draw_odd =  "";
-    let away_odd = "";
+    // Safely extract data from new API structure
+    const homeTeam = fixture.home_team || {};
+    const awayTeam = fixture.away_team || {};
+    const match = fixture.match || {};
+    const score = fixture.score || {};
+    const predictions = fixture.predictions || {};
+    const odds = fixture.odds || {};
+    const league = fixture.league || {};
 
-    if(game_details[0].percent_pred_home != null && game_details[0].percent_pred_draw !=null && game_details[0].percent_pred_away  != null)
-    {
-        home_odd = game_details[0].percent_pred_home.slice(0, -1);
-        draw_odd = game_details[0].percent_pred_draw.slice(0, -1);
-        away_odd = game_details[0].percent_pred_away.slice(0, -1);  
-    }
+    // Get prediction probabilities directly from API
+    const prediction1x2 = predictions["1x2"] || {};
+    const homeProb = prediction1x2.home?.toString() || "-";
+    const drawProb = prediction1x2.draw?.toString() || "-";
+    const awayProb = prediction1x2.away?.toString() || "-";
 
-    let computed_winning_preds = WinningTeamAndOdd(home_odd, draw_odd, away_odd, game_details[0]);
+    // Get double chance prediction
+    const doubleChance = predictions.double_chance || {};
+    const dcWinningTeam = doubleChance.type || "-";
+    const dcProbability = doubleChance.probability ? `${doubleChance.probability}%` : "-";
 
-    let winning_team = computed_winning_preds[0];
+    // Get BTTS prediction
+    const btts = predictions.both_teams_to_score || {};
+    const bttsPrediction = btts.prediction ? btts.prediction.toUpperCase() : "-";
 
-    let probability_results = ProbabilityResults(game_details[0], winning_team);
-
-    let dc_computed_winning_preds = DoubleChanceWinningTeamAndOdd(home_odd, draw_odd, away_odd, game_details[0], "");
-    let dc_winning_team = dc_computed_winning_preds[0];
-
-    let dc_probability_results = DoubleChanceProbabilityResults(game_details[0], dc_winning_team, "");
-
-    let both_team_to_score  = BothTeamsToScore(game_details[0]);
-
-    // isMobile parameter removed - now handled by CSS in DetermineLiveScores
-    let livescores_results = DetermineLiveScores(game_details[0]);
-
-    //Decode halftime data stored as a json in mysql
-    var scores_data = JSON.parse(game_details[0].scores);
-    var halftime_data = "";
-    var extratime_data = "";
-    var penalty_data = "";
-
-    if(game_details[0].scores != null){
-        if(scores_data.halftime.home != null){
-            halftime_data = '('+ scores_data.halftime.home + ' - ' + scores_data.halftime.away +')';
-        }         
-        
-        if(scores_data.extratime.home != null){
-            extratime_data = scores_data.extratime.home + ' - ' + scores_data.extratime.away;
-        }
-
-        if(scores_data.penalty.home != null){
-            penalty_data = scores_data.penalty.home + ' - ' + scores_data.penalty.away;
-        }
-    }
+    // Determine winning team for 1x2 (highest probability)
+    const getWinningTeam = () => {
+        const home = parseInt(homeProb) || 0;
+        const draw = parseInt(drawProb) || 0;
+        const away = parseInt(awayProb) || 0;
+        if (home > draw && home > away) return "1";
+        if (draw > home && draw > away) return "X";
+        if (away > home && away > draw) return "2";
+        return "-";
+    };
     
+    const winningTeam = getWinningTeam();
+    const winningProbability = winningTeam === "1" ? homeProb : winningTeam === "X" ? drawProb : winningTeam === "2" ? awayProb : "-";
+
+    // Format probability results display
+    const probabilityResults = (
+        <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
+            {winningTeam}
+        </span>
+    );
+
+    const dcProbabilityResults = (
+        <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
+            {dcWinningTeam}
+        </span>
+    );
+
+    const bothTeamToScore = (
+        <span className="number-circle rounded-square" style={{ backgroundColor: "#ffb400" }}>
+            {bttsPrediction}
+        </span>
+    );
+
+    // Get live scores status
+    let livescores_results = DetermineLiveScores(fixture);
+    let livescores = livescores_results?.[1] || "";
+
+    // Extract scores data from new structure
+    const halftimeData = score.half_time;
+    const halftime_data = (halftimeData?.home !== null && halftimeData?.home !== undefined && 
+                           halftimeData?.away !== null && halftimeData?.away !== undefined)
+        ? `(${halftimeData.home} - ${halftimeData.away})` 
+        : "";
+    
+    const extratimeData = score.extra_time;
+    const extratime_data = (extratimeData?.home !== null && extratimeData?.home !== undefined && 
+                             extratimeData?.away !== null && extratimeData?.away !== undefined)
+        ? `${extratimeData.home} - ${extratimeData.away}`
+        : "";
+    
+    const penaltyData = score.penalties;
+    const penalty_data = (penaltyData?.home !== null && penaltyData?.home !== undefined && 
+                          penaltyData?.away !== null && penaltyData?.away !== undefined)
+        ? `${penaltyData.home} - ${penaltyData.away}`
+        : "";
+
+    const matchStatus = match.status || "";
+    const statusLong = match.status_long || "";
+    const matchDatetime = match.datetime || "";
+    const venue = match.venue || "";
+
     return (
         <React.Fragment>
             <div className="mb-2"> 
                 <div className="col-sm-12 text-left text-nowrap">
                     <div className='container'>
                         <img 
-                            src={game_details[0].downloaded_country_flag ? game_details[0].downloaded_country_flag : game_details[0].game_details.downloaded_league_logo} 
+                            src={league.country_logo || fixture.downloaded_country_flag} 
                             className="img-fluid league-logo" 
-                            alt={game_details[0].country_name + "-football-predictions"} 
+                            alt={league.country + "-football-predictions"} 
                             loading="lazy" 
+                            onError={(e) => { e.target.style.display = 'none'; }}
                         />&nbsp;
                             
                         <span style={{fontWeight:"bold", whiteSpace:"break-spaces"}} className="fixturesTextSize">
-                            <a href={encodeURI("/country/football-predictions-for-" + game_details[0].country_name.toLowerCase()) + "/fixtures"} className="ml-2 aTxt">
-                                {game_details[0].country_name.toUpperCase()}
+                            <a href={encodeURI("/country/football-predictions-for-" + (league.country || "").toLowerCase()) + "/fixtures"} className="ml-2 aTxt">
+                                {(league.country || "").toUpperCase()}
                             </a>
                             &nbsp;:&nbsp;
-                            <a href={encodeURI("/league/football-predictions-for-" + game_details[0].country_name.toLowerCase() + "/" + game_details[0].league_name.replace(/\s+/g, '-').toLowerCase() + "-" + game_details[0].league_id + "/fixtures")} className="ml-2 aTxt">
-                                {game_details[0].league_name.toUpperCase()}
+                            <a href={encodeURI("/league/football-predictions-for-" + (league.country || "").toLowerCase() + "/" + (league.name || "").replace(/\s+/g, '-').toLowerCase() + "-" + league.id + "/fixtures")} className="ml-2 aTxt">
+                                {(league.name || "").toUpperCase()}
                             </a>
                         </span>
                     </div>
@@ -88,7 +123,7 @@ function MatchDetailsTop(props) {
                 <div className="col-3"></div>
                 <div className="col-6 text-center">
                     <span className="text-center matchdetailsTextSize" style={{fontFamily: "Arial", fontWeight: "bold"}}>
-                        {DateTimeToUsersTimezone(game_details[0].date)}
+                        {DateTimeToUsersTimezone(matchDatetime)}
                     </span>
                 </div>  
                 <div className="col-3"></div>          
@@ -97,54 +132,51 @@ function MatchDetailsTop(props) {
             <div className="row">
                 <div className="col-4 text-center">
                     <span className="matchdetailsTextSize mb-2" style={{fontWeight:"bold", whiteSpace:"nowrap"}}>
-                        <a href={encodeURI("/team/" + game_details[0].home_team_name.toLowerCase().replace(/\s+/g, '-') + "-" + game_details[0].home_team_id) + "/results"} className="ml-2 aTxt">
-                            {game_details[0].home_team_name}
+                        <a href={encodeURI("/team/" + (homeTeam.name || "").toLowerCase().replace(/\s+/g, '-') + "-" + homeTeam.id) + "/results"} className="ml-2 aTxt">
+                            {homeTeam.name}
                         </a>
                     </span>
                     <div>
-                        <a href={encodeURI("/team/" + game_details[0].home_team_name.toLowerCase().replace(/\s+/g, '-') + "-" + game_details[0].home_team_id) + "/results"} className="ml-2 aTxt">
-                            <img className="image_class" src={game_details[0].home_team_logo} alt={game_details[0].home_team_name + "-predictions-and-fixtures"} />
+                        <a href={encodeURI("/team/" + (homeTeam.name || "").toLowerCase().replace(/\s+/g, '-') + "-" + homeTeam.id) + "/results"} className="ml-2 aTxt">
+                            <img className="image_class" src={homeTeam.logo} alt={homeTeam.name + "-predictions-and-fixtures"} onError={(e) => { e.target.src = '/placeholder.png'; }} />
                         </a>
                     </div>
                 </div>
                 
                 <div className="col-4 text-center">
                     <span style={{fontWeight:"bold", marginBottom: "10px"}}>
-                        {probability_results}&nbsp;|&nbsp;{dc_probability_results}&nbsp;|&nbsp;{both_team_to_score}
+                        {probabilityResults}&nbsp;|&nbsp;{dcProbabilityResults}&nbsp;|&nbsp;{bothTeamToScore}
                     </span>
                     <br/>
                     <span style={{fontWeight:"bold"}}>
-                        {game_details[0].percent_pred_home != "" && game_details[0].percent_pred_draw != "" && game_details[0].percent_pred_away != "" ? " - " :
-                            winning_team == '1' ? home_odd + "%" : winning_team == 'X' ? draw_odd + "%" : away_odd + "%"
-                        }
+                        {winningProbability !== "-" ? winningProbability + "%" : " - "}
                     </span>
                     
                     <span style={{ fontWeight: "bold" }}>
-                        {game_details[0].status_short === "AET" || game_details[0].status_short ? <><br />{extratime_data}</> : game_details[0].status_short === "PEN" ? <><br />{penalty_data}</> : ""}
+                        {matchStatus === "AET" && extratime_data ? <><br />{extratime_data}</> : matchStatus === "PEN" && penalty_data ? <><br />{penalty_data}</> : ""}
                     </span>
                     <br/>
-                    {livescores_results[1]}
+                    {livescores}
                     <br/>
-                    {/* Removed conditional <br/> based on isMobile - now using CSS */}
                     <br className="hide-on-mobile" />
                     <span className="fixturesTextSize" style={{color:"#B11111", fontWeight:"bold"}}>
-                        {game_details[0].status_short === "PEN" || game_details[0].status_short === "P" ? "AFTER PENALTIES" : 
-                         game_details[0].status_short === "AET" ? "AFTER EXTRA TIME" : 
-                         game_details[0].status_short === "NS" ? DateTimeToUsersTimezone(game_details[0].date).split(' ')[1] :  
-                         game_details[0].status_long}
+                        {matchStatus === "PEN" || matchStatus === "P" ? "AFTER PENALTIES" : 
+                         matchStatus === "AET" ? "AFTER EXTRA TIME" : 
+                         matchStatus === "NS" ? DateTimeToUsersTimezone(matchDatetime).split(' ')[1] :  
+                         statusLong}
                     </span>
                     <br/>
                 </div>
                 
                 <div className="col-4 text-center">
                     <span className="matchdetailsTextSize mb-2" style={{fontWeight:"bold", whiteSpace:"pre-wrap"}}>
-                        <a href={encodeURI("/team/" + game_details[0].away_team_name.toLowerCase().replace(/\s+/g, '-') + "-" + game_details[0].away_team_id) + "/results"} className="ml-2 aTxt">
-                            {game_details[0].away_team_name}
+                        <a href={encodeURI("/team/" + (awayTeam.name || "").toLowerCase().replace(/\s+/g, '-') + "-" + awayTeam.id) + "/results"} className="ml-2 aTxt">
+                            {awayTeam.name}
                         </a>
                     </span>
                     <div>
-                        <a href={encodeURI("/team/" + game_details[0].away_team_name.toLowerCase().replace(/\s+/g, '-') + "-" + game_details[0].away_team_id) + "/results"} className="ml-2 aTxt">
-                            <img className="image_class" src={game_details[0].away_team_logo} alt={game_details[0].away_team_name + "-predictions-and-fixtures"} />
+                        <a href={encodeURI("/team/" + (awayTeam.name || "").toLowerCase().replace(/\s+/g, '-') + "-" + awayTeam.id) + "/results"} className="ml-2 aTxt">
+                            <img className="image_class" src={awayTeam.logo} alt={awayTeam.name + "-predictions-and-fixtures"} onError={(e) => { e.target.src = '/placeholder.png'; }} />
                         </a>
                     </div>
                 </div> 
@@ -163,7 +195,7 @@ function MatchDetailsTop(props) {
             
             <div className="row">
                 <div className="col-12 text-center fixturesTextSize">
-                    <span style={{fontWeight:"bold", whiteSpace:"break-spaces"}}>Venue: {game_details[0].venue_name}</span>
+                    <span style={{fontWeight:"bold", whiteSpace:"break-spaces"}}>Venue: {venue || "TBD"}</span>
                     <br/>
                 </div>
             </div>
