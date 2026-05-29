@@ -32,7 +32,7 @@ export default function Blogs({ initialBlogs, initialPageInfo, error: initialErr
         };
         
         const response = await fetch(
-          `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
+          `https://develop.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
           { headers }
         );
         
@@ -163,10 +163,7 @@ export default function Blogs({ initialBlogs, initialPageInfo, error: initialErr
                       </div>
 
                       <p className="blog-excerpt">
-                        {blog.excerpt ||
-                          (blog.content
-                            ?.replace(/<[^>]*>/g, "")
-                            .substring(0, 120) + "...")}
+                        {blog.excerpt}
                       </p>
                     </div>
 
@@ -307,7 +304,7 @@ export async function getServerSideProps({ query }) {
 
   try {
     const response = await fetch(
-      `https://api.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
+      `https://develop.pitchpredictions.com/api/blog?page=${page}&category=${category}`,
       { headers }
     );
 

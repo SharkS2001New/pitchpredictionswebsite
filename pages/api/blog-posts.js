@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     }
 
     // No valid cache, fetch from external API
-    const apiUrl = 'https://api.pitchpredictions.com/api/fetch_blog_posts';
+    const apiUrl = 'https://develop.pitchpredictions.com/api/fetch_blog_posts';
     
     const response = await fetch(apiUrl, {
       headers: {
