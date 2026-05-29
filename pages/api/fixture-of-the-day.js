@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     let status = "success";
 
     // Try primary URL first
-    const primaryResponse = await fetch(`https://api.pitchpredictions.com/api/match_of_the_day?fixture_date=${date}`, {
+    const primaryResponse = await fetch(`https://develop.pitchpredictions.com/api/match_of_the_day?fixture_date=${date}`, {
       headers: headers
     });
 
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
       status = primaryData.message || "success";
     } else {
       // Try alternative URL
-      const alternativeResponse = await fetch(`https://api.pitchpredictions.com/api/auto_featured_match_of_the_day?fixture_date=${date}`, {
+      const alternativeResponse = await fetch(`https://develop.pitchpredictions.com/api/auto_featured_match_of_the_day?fixture_date=${date}`, {
         headers: headers
       });
 

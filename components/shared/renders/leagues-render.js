@@ -67,19 +67,52 @@ function LeaguesPageRender(props) {
             </div>
             
             {/* Fixture details header - desktop only */}
-            <div className="responsive-row hide-on-mobile" style={{ fontSize: "12px", border: "none", backgroundColor: "whitesmoke" }}>
-              <div className="responsive-cell"></div>
-              <div className="responsive-cell team-link"></div>
-              <div className="responsive-cell team-link-y">
-                <span className="m-4">1</span>
-                <span className="m-4">X</span>
-                <span className="m-4">2</span>
-              </div>
-              <div className="responsive-cell team-link-average">Avg</div>
-              <div className="responsive-cell">Prediction</div>
-              <div className="responsive-cell team-link-standings"></div>
-              <div className="responsive-cell team-link-l"></div>
-              <div className="responsive-cell team-link-scores"></div>
+            <div className="responsive-row hide-on-mobile" style={{fontSize: "12px", border: "none", backgroundColor: "whitesmoke"}}>
+                <div className="responsive-cell"></div>
+                <div className="responsive-cell team-link"></div>
+                <div className="responsive-cell team-link-y">
+                    {props.url_name && props.url_name.includes("double-chance-predictions") ? (
+                        // Double Chance headers
+                        <>
+                            <span className="m-4">1X</span>
+                            <span className="m-4">X2</span>
+                            <span className="m-4">12</span>
+                        </>
+                    ) :props.url_name && props.url_name.includes("predictions-halftime-fulltime") ? (
+                        // HT/FT headers
+                        <>
+                            <span className="m-3">HT1</span>
+                            <span className="m-3">HTX</span>
+                            <span className="m-3">HT2</span>
+                        </>
+                    )
+                    
+                    : props.url_name && props.url_name.includes("predictions-under-over") ? (
+                        // Over/Under headers
+                        <>
+                            <span className="m-3">O 2.5</span>
+                            <span className="m-3">U 2.5</span>
+                        </>
+                    ) : props.url_name && props.url_name.includes("predictions-both-to-score") ? (
+                        // BTTS headers
+                        <>
+                            <span className="m-3">YES</span>
+                            <span className="m-3">NO</span>
+                        </>
+                    ) : (
+                        // Default 1X2 headers
+                        <>
+                            <span className="m-4">1</span>
+                            <span className="m-4">X</span>
+                            <span className="m-4">2</span>
+                        </>
+                    )}
+                </div>
+                <div className="responsive-cell team-link-average">Avg</div>
+                <div className="responsive-cell">Prediction {props.url_name && props.url_name.includes("predictions-halftime-fulltime") ? "(HT / FT)" : ""} </div>
+                <div className="responsive-cell team-link-standings"></div>
+                <div className="responsive-cell team-link-l"></div>
+                <div className="responsive-cell team-link-scores"></div>
             </div>
             
             {/* Fixtures content - slice based on rowsToShow */}

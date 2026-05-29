@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-05-29T18:14:29.279Z",
+  "date": "2026-05-29",
+  "data": {
+    "fixture_id": 1418136,
+    "country_name": "Austria",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Austria.svg",
+    "league_short_name": "RL",
+    "league_name": "Regionalliga Ost",
+    "date": "05/29/2026 17:10",
+    "home_team_name": "Favoritner AC",
+    "away_team_name": "Gloggnitz",
+    "percent_pred_home": 10,
+    "percent_pred_draw": 10,
+    "percent_pred_away": 80,
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": "1.68",
+    "max_win_probability": 80,
+    "bets_home": "3.80",
+    "bets_draw": "4.00",
+    "bets_away": "1.67"
+  },
+  "isPrimary": false,
+  "status": "success"
+}
