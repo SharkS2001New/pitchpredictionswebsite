@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         responseData = alternativeData.data[0];
         isPrimary = false;
         status = alternativeData.message || "success";
-      } else {
+      } else { 
         status = "No game available";
       }
     }

@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-05-31T12:38:12.511Z",
+  "date": "2026-05-31",
+  "data": {
+    "fixture_id": 1540059,
+    "country_name": "Argentina",
+    "downloaded_country_flag": "https://www.pitchpredictions.com/images/countries/Argentina.svg",
+    "league_short_name": "COP",
+    "league_name": "Copa Argentina",
+    "date": "05/31/2026 22:00",
+    "home_team_name": "Racing Club",
+    "away_team_name": "Defensa Y Justicia",
+    "percent_pred_home": 80,
+    "percent_pred_draw": 10,
+    "percent_pred_away": 10,
+    "goals_home": null,
+    "goals_away": null,
+    "status_long": "Not Started",
+    "status_short": "NS",
+    "average_goals": "2.00",
+    "max_win_probability": 80,
+    "bets_home": "1.90",
+    "bets_draw": "3.35",
+    "bets_away": "4.00"
+  },
+  "isPrimary": false,
+  "status": "success"
+}

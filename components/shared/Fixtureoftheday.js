@@ -43,12 +43,23 @@ function FixtureOfTheDay() {
 
       const data = await response.json();
       
-      setGames(data.data);
-      setIsPrimaryResponse(data.isPrimary);
-      setEndPointStatus(data.status);
+      // Handle both array and object responses
+      let fixtureData = data.data;
+      if (Array.isArray(fixtureData) && fixtureData.length > 0) {
+        // Take the first fixture from the array
+        fixtureData = fixtureData[0];
+      } else if (Array.isArray(fixtureData) && fixtureData.length === 0) {
+        setEndPointStatus("No game available");
+        setGames(null);
+        return;
+      }
+      
+      setGames(fixtureData);
+      setIsPrimaryResponse(data.isPrimary || false);
+      setEndPointStatus(data.status === true ? "success" : data.status);
       setCacheInfo({
-        fromCache: data.fromCache,
-        generatedAt: data.generatedAt
+        fromCache: data.fromCache || false,
+        generatedAt: data.generatedAt || new Date().toISOString()
       });
       
     } catch (error) {
@@ -63,12 +74,16 @@ function FixtureOfTheDay() {
     fetch(`/api/fixture-of-the-day?date=${currentDate}&refresh=true`)
       .then(response => response.json())
       .then(data => {
-        setGames(data.data);
-        setIsPrimaryResponse(data.isPrimary);
-        setEndPointStatus(data.status);
+        let fixtureData = data.data;
+        if (Array.isArray(fixtureData) && fixtureData.length > 0) {
+          fixtureData = fixtureData[0];
+        }
+        setGames(fixtureData);
+        setIsPrimaryResponse(data.isPrimary || false);
+        setEndPointStatus(data.status === true ? "success" : data.status);
         setCacheInfo({
-          fromCache: data.fromCache,
-          generatedAt: data.generatedAt
+          fromCache: data.fromCache || false,
+          generatedAt: data.generatedAt || new Date().toISOString()
         });
       })
       .catch(error => console.error("Error refreshing:", error));
@@ -128,17 +143,24 @@ function FixtureOfTheDay() {
         <br />
         <div className="responsive-row" style={{ backgroundColor: "#202c3c", color: "white" }}>
           <span style={{ fontSize: "15px", fontWeight: "bold", marginTop: "5px", marginLeft: "10px" }}>Game of the Day</span>
-          {/* Optional: Uncomment if you want to show cache status
           {cacheInfo && cacheInfo.fromCache && (
-            <span style={{ fontSize: '0.7rem', color: '#999', marginLeft: '10px' }}>
+            <span style={{ fontSize: '0.7rem', color: '#ccc', marginLeft: '10px' }}>
               ⚡ {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
             </span>
-          )} */}
+          )}
         </div>
         <div className="responsive-row" style={{ border: "none", color: "black", fontWeight: "bold", backgroundColor: "white", paddingBottom: "15px", height: "100px" }}>
           <div className="responsive-cell team-link-standings mb-4" title={gamesfixtures.country_name || ''}>
             <span style={{ fontSize: "12px", cursor: "default" }}>{gamesfixtures.league_short_name || ''}</span><br />
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={iconColor} className="bi bi-star-fill" viewBox="0 0 16 16">
+            {gamesfixtures.downloaded_country_flag && (
+              <img 
+                src={gamesfixtures.downloaded_country_flag} 
+                alt={gamesfixtures.country_name} 
+                style={{ width: "20px", height: "20px", marginTop: "5px" }}
+                onError={(e) => { e.target.style.display = 'none' }}
+              />
+            )}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill={iconColor} className="bi bi-star-fill" viewBox="0 0 16 16" style={{ marginTop: "5px" }}>
               <path d={iconPath} />
             </svg>
           </div>
