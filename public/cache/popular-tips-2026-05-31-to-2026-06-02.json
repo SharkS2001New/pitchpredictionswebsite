@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-05-31T10:07:43.242Z",
+  "startDate": "2026-05-31",
+  "endDate": "2026-06-02",
+  "data": [
+    {
+      "fixture_id": 1546340,
+      "home_team_id": 631,
+      "away_team_id": 742,
+      "home_team_logo": "https://media.api-sports.io/football/teams/631.png",
+      "away_team_logo": "https://media.api-sports.io/football/teams/742.png",
+      "home_team_name": "Gent",
+      "away_team_name": "Genk",
+      "date": "05/31/2026 16:30",
+      "goals_home": null,
+      "goals_away": null,
+      "status_short": "NS",
+      "status_long": "Not Started",
+      "percent_pred_home": "18%",
+      "percent_pred_draw": "34%",
+      "percent_pred_away": "49%",
+      "league_name": "Jupiler Pro League",
+      "league_short_name": "JL",
+      "country_name": "Belgium",
+      "average_goals": 2.75
+    }
+  ],
+  "count": 1
+}
