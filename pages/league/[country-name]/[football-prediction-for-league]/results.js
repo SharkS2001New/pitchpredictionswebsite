@@ -45,7 +45,7 @@ function FootballPredictionsByLeagueResults({
         const endIndex = currentStartIndex + chunkSize - 1;
         
         try {
-            const url = `https://develop.pitchpredictions.com/api/fetch_league_results?league_id=${leagueId}&start_index=${startIndex}&end_index=${endIndex}`;
+            const url = `https://api.pitchpredictions.com/api/fetch_league_results?league_id=${leagueId}&start_index=${startIndex}&end_index=${endIndex}`;
             const response = await fetch(url, { headers });
             const data = await response.json();
             
@@ -310,7 +310,7 @@ export async function getServerSideProps(context) {
     try {
         // 1. Fetch top leagues data using league_id
         try {
-            const topUrl = `https://develop.pitchpredictions.com/api/fetch_leagues_top_data?league_id=${leagueId}`;
+            const topUrl = `https://api.pitchpredictions.com/api/fetch_leagues_top_data?league_id=${leagueId}`;
             const topResponse = await fetch(topUrl, { headers });
             const topData = await topResponse.json();
             
@@ -323,7 +323,7 @@ export async function getServerSideProps(context) {
         
         // 2. Fetch league results using league_id
         try {
-            const resultsUrl = `https://develop.pitchpredictions.com/api/fetch_league_results?league_id=${leagueId}&start_index=0&end_index=50`;
+            const resultsUrl = `https://api.pitchpredictions.com/api/fetch_league_results?league_id=${leagueId}&start_index=0&end_index=50`;
             const resultsResponse = await fetch(resultsUrl, { headers });
             const resultsDataResponse = await resultsResponse.json();
             

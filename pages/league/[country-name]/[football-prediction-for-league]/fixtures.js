@@ -45,7 +45,7 @@ function FootballPredictionsByLeague({
     async function fetchTodaysFixturesByLeague() {
         try {
             const response = await fetch(
-                `https://develop.pitchpredictions.com/api/fetch_todays_fixtures_by_league_id?league_id=${leagueId}&fixture_date=${todaysDate}&start_index=0&end_index=50`,
+                `https://api.pitchpredictions.com/api/fetch_todays_fixtures_by_league_id?league_id=${leagueId}&fixture_date=${todaysDate}&start_index=0&end_index=50`,
                 {
                     method: 'GET',
                     headers: headers,
@@ -69,7 +69,7 @@ function FootballPredictionsByLeague({
         const endIndex = currentStartIndex + chunkSize - 1;
         
         try {
-            const url = `https://develop.pitchpredictions.com/api/fetch_league_fixtures?league_id=${leagueId}&start_index=${startIndex}&end_index=${endIndex}`;
+            const url = `https://api.pitchpredictions.com/api/fetch_league_fixtures?league_id=${leagueId}&start_index=${startIndex}&end_index=${endIndex}`;
             const response = await fetch(url, { headers });
             const data = await response.json();
             
@@ -360,7 +360,7 @@ export async function getServerSideProps(context) {
     try {
         // 1. Fetch top leagues data
         try {
-            const topUrl = `https://develop.pitchpredictions.com/api/fetch_leagues_top_data?league_id=${leagueId}`;
+            const topUrl = `https://api.pitchpredictions.com/api/fetch_leagues_top_data?league_id=${leagueId}`;
             const topResponse = await fetch(topUrl, { headers });
             const topData = await topResponse.json();
             
@@ -373,7 +373,7 @@ export async function getServerSideProps(context) {
         
         // 2. Fetch today's fixtures
         try {
-            const todaysUrl = `https://develop.pitchpredictions.com/api/fetch_todays_fixtures_by_league_id?league_id=${leagueId}&fixture_date=${todaysDate}&start_index=0&end_index=50`;
+            const todaysUrl = `https://api.pitchpredictions.com/api/fetch_todays_fixtures_by_league_id?league_id=${leagueId}&fixture_date=${todaysDate}&start_index=0&end_index=50`;
             const todaysResponse = await fetch(todaysUrl, { headers });
             const todaysData = await todaysResponse.json();
             
@@ -387,7 +387,7 @@ export async function getServerSideProps(context) {
         
         // 3. Fetch upcoming fixtures (first batch)
         try {
-            const upcomingUrl = `https://develop.pitchpredictions.com/api/fetch_league_fixtures?league_id=${leagueId}&start_index=0&end_index=50`;
+            const upcomingUrl = `https://api.pitchpredictions.com/api/fetch_league_fixtures?league_id=${leagueId}&start_index=0&end_index=50`;
             const upcomingResponse = await fetch(upcomingUrl, { headers });
             const upcomingData = await upcomingResponse.json();
             

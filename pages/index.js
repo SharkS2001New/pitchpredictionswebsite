@@ -162,7 +162,7 @@ export async function getServerSideProps({ req }) {
   const isMobile = /mobile|android|iphone|ipad|phone/i.test(userAgent);
   
   // API base URL
-  const baseUrl = "https://develop.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
+  const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
   
   // Cache setup - store only the first 20 items
   const cacheDir = path.join(process.cwd(), 'public', 'cache');

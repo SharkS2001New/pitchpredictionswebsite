@@ -33,7 +33,7 @@ export async function getServerSideProps(context) {
   try {
     // Fetch Top Team Data (required - blocks response)
     const topRes = await fetch(
-      `https://develop.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
+      `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
       { headers }
     );
 

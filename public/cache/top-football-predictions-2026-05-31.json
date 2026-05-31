@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-31T10:10:58.409Z",
+  "generatedAt": "2026-05-31T10:39:01.888Z",
   "fixtureDate": "2026-05-31",
   "data": [
     {
@@ -1713,101 +1713,6 @@
       }
     },
     {
-      "fixture_id": 1526840,
-      "home_team": {
-        "id": 138,
-        "name": "Guarani Campinas",
-        "logo": "https://media.api-sports.io/football/teams/138.png"
-      },
-      "away_team": {
-        "id": 10862,
-        "name": "Amazonas",
-        "logo": "https://media.api-sports.io/football/teams/10862.png"
-      },
-      "match": {
-        "datetime": "2026-05-31T19:00:00+00:00",
-        "unformatted_date": "2026-05-31",
-        "venue": null,
-        "status": "NS",
-        "status_long": "Not Started",
-        "elapsed": null
-      },
-      "score": {
-        "home": null,
-        "away": null,
-        "half_time": {
-          "home": null,
-          "away": null
-        },
-        "extra_time": {
-          "home": null,
-          "away": null
-        },
-        "penalties": {
-          "home": null,
-          "away": null
-        }
-      },
-      "predictions": {
-        "recommendation": "The model favors Home win after combining the prediction probabilities (65% home, 17% draw, 18% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 15 goals scored and 7 conceded across 8 matches, while the away side has produced 11 goals and conceded 7 across 8 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 45% and average goals of 2.5.",
-        "avg_goals": 2.5,
-        "1x2": {
-          "home": 65,
-          "draw": 17,
-          "away": 18
-        },
-        "double_chance": {
-          "type": "12",
-          "probability": 83
-        },
-        "half_time": {
-          "home": 28,
-          "draw": 66,
-          "away": 6
-        },
-        "both_teams_to_score": {
-          "prediction": "No",
-          "probability": 45
-        },
-        "over_under_2_5": {
-          "prediction": "Ov2.5",
-          "probability": 50
-        }
-      },
-      "odds": {
-        "home": 1.9,
-        "draw": 3,
-        "away": 4.1,
-        "double_chance": {
-          "home_draw": "1.15",
-          "home_away": "1.28",
-          "draw_away": "1.83"
-        },
-        "ht_ft": {
-          "ht_home": "2.62",
-          "ht_draw": "1.90",
-          "ht_away": "4.75"
-        },
-        "over_under": {
-          "over_2_5": 2.45,
-          "under_2_5": 1.5
-        },
-        "btts": {
-          "yes": 2.05,
-          "no": 1.65
-        }
-      },
-      "league": {
-        "id": 75,
-        "name": "Serie C",
-        "short_name": "SC",
-        "round": null,
-        "logo": "https://www.pitchpredictions.com/images/leagues/Serie C.jpg",
-        "country": "Brazil",
-        "country_logo": "https://www.pitchpredictions.com/images/countries/Brazil.svg"
-      }
-    },
-    {
       "fixture_id": 1526841,
       "home_team": {
         "id": 1201,
@@ -1890,6 +1795,101 @@
         "btts": {
           "yes": 2,
           "no": 1.67
+        }
+      },
+      "league": {
+        "id": 75,
+        "name": "Serie C",
+        "short_name": "SC",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Serie C.jpg",
+        "country": "Brazil",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Brazil.svg"
+      }
+    },
+    {
+      "fixture_id": 1526840,
+      "home_team": {
+        "id": 138,
+        "name": "Guarani Campinas",
+        "logo": "https://media.api-sports.io/football/teams/138.png"
+      },
+      "away_team": {
+        "id": 10862,
+        "name": "Amazonas",
+        "logo": "https://media.api-sports.io/football/teams/10862.png"
+      },
+      "match": {
+        "datetime": "2026-05-31T19:00:00+00:00",
+        "unformatted_date": "2026-05-31",
+        "venue": null,
+        "status": "NS",
+        "status_long": "Not Started",
+        "elapsed": null
+      },
+      "score": {
+        "home": null,
+        "away": null,
+        "half_time": {
+          "home": null,
+          "away": null
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (65% home, 17% draw, 18% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 15 goals scored and 7 conceded across 8 matches, while the away side has produced 11 goals and conceded 7 across 8 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 45% and average goals of 2.5.",
+        "avg_goals": 2.5,
+        "1x2": {
+          "home": 65,
+          "draw": 17,
+          "away": 18
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 83
+        },
+        "half_time": {
+          "home": 28,
+          "draw": 66,
+          "away": 6
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 45
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 50
+        }
+      },
+      "odds": {
+        "home": 1.9,
+        "draw": 3,
+        "away": 4.1,
+        "double_chance": {
+          "home_draw": "1.15",
+          "home_away": "1.28",
+          "draw_away": "1.83"
+        },
+        "ht_ft": {
+          "ht_home": "2.62",
+          "ht_draw": "1.90",
+          "ht_away": "4.75"
+        },
+        "over_under": {
+          "over_2_5": 2.45,
+          "under_2_5": 1.5
+        },
+        "btts": {
+          "yes": 2.05,
+          "no": 1.65
         }
       },
       "league": {

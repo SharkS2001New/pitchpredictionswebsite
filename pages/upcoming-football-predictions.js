@@ -176,7 +176,7 @@ export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
     
     // Base URL for upcoming fixtures
-    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_upcoming_fixtures";
+    const baseUrl = "https://api.pitchpredictions.com/api/fetch_upcoming_fixtures";
     
     // Cache setup - create cache file for upcoming predictions
     const cacheDir = path.join(process.cwd(), 'public', 'cache');

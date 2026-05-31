@@ -169,7 +169,7 @@ function TopFootballFixturesToday({
 export async function getServerSideProps() {
     const todaysDate = getFormattedCurrentDate();
     
-    const baseUrl = "https://develop.pitchpredictions.com/api/fetch_top_winning_predictions";
+    const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Cache setup

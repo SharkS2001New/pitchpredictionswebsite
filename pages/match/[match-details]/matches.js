@@ -39,7 +39,7 @@ export async function getServerSideProps(context) {
   try {
     // Fetch main match data first (required)
     const matchRes = await fetch(
-      `https://develop.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
+      `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
       { headers }
     );
 
@@ -72,7 +72,7 @@ export async function getServerSideProps(context) {
       awayLast6LeaguesRes
     ] = await Promise.allSettled([
       // H2H matches
-      fetch("https://develop.pitchpredictions.com/api/fetch_h2h_fixtures", {
+      fetch("https://api.pitchpredictions.com/api/fetch_h2h_fixtures", {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export async function getServerSideProps(context) {
       }),
       
       // H2H leagues
-      fetch("https://develop.pitchpredictions.com/api/fetch_h2h_league", {
+      fetch("https://api.pitchpredictions.com/api/fetch_h2h_league", {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -94,7 +94,7 @@ export async function getServerSideProps(context) {
       }),
       
       // Home team last 6 matches
-      fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_by_home_team", {
+      fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team", {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -104,7 +104,7 @@ export async function getServerSideProps(context) {
       }),
       
       // Away team last 6 matches
-      fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_by_away_team", {
+      fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team", {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -114,7 +114,7 @@ export async function getServerSideProps(context) {
       }),
       
       // Home team last 6 matches leagues (for filtering)
-      fetch("https://develop.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
+      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -124,7 +124,7 @@ export async function getServerSideProps(context) {
       }),
       
       // Away team last 6 matches leagues (for filtering)
-      fetch("https://develop.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
+      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
         method: 'POST',
         headers,
         body: JSON.stringify({
