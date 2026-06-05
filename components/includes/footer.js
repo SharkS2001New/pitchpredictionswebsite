@@ -93,6 +93,41 @@ function Footer(){
                   <li className="mb-0"><a target="_blank" href="https://trangcadobongda.lat/">https://trangcadobongda.lat/</a></li>
                   <li className="mb-0"><a target="_blank" href="https://1agame.io/">1Agame</a></li>
 
+                  {/**Renewed every month on 05, first added 05-06-2026 */} {/**Vietnamese partner */}
+                  <li className="mb-0"><a target="_blank" href="https://vsbet.co/">https://vsbet.co/</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://vsbet.cc/">nhà cái vsbet</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://vsbet.br.com/">https://vsbet.br.com/</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://vsbets.co.com/">vsbet</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://vaboose.cn.com/">vs bet</a></li>
+
+                  <li className="mb-0"><a target="_blank" href="https://socolivettbd.net/">socolive</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://90phutttbd.org/">90phut</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://lytuong.net/">xoilac</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://colatv48.live/">https://colatv48.live/</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://nhacaiuytin.guru/">https://nhacaiuytin.guru/</a></li>
+
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv.com/">xoilac</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv.org/">xem bong da xoilac</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv.online/">xem bong da xoilac</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv.co/">xoilac tv</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv.football/">xem bóng đá xoilac</a></li>
+
+                  <li className="mb-0"><a target="_blank" href="https://cakhiatvv.live/">cà khịa tv</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://cakhiatvv.online/">trực tiếp bóng đá hôm nay</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://cakhiatvv.ink/">cakhiatv trực tiếp bóng đá</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://90phuttv.in.net/">https://90phuttv.in.net/</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://90phuttv.futbol/">bóng đá trực tiếp</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://90phuttv.bid/">90phut tv</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xembongda.ai/">xem bóng đá trực tiếp</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xembongda.co.com/">xem trực tiếp bóng đá</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xembongda.com.co/">xem bóng đá trực tuyến</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://tructiepbongda.fans/">xem bóng đá trực tiếp</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://tructiepbongda.fyi/">trực tiếp bóng đá</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://tructiepbongda.mobile/">xem trực tiếp bóng đá</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xemcakhia.net/">cakhiatv</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilac7.cc/">xoilac bóng đá</a></li>
+                  <li className="mb-0"><a target="_blank" href="https://xoilactvv-live.com/">xoilac tv</a></li>
+
                   {/**Partners links */}
                   <li className="mb-0"><a target="_blank" href="https://www.bettingtips.co.ke">Betting tips</a></li>
                   <li className="mb-0"><a target="_blank" href="https://www.feedinco.com">Feedinco Betting tips</a></li>
