@@ -1,18 +1,94 @@
-export async function getServerSideProps(context) {
-  const slug = context.params?.["team-details"];
+import { useRouter } from "next/router";
+import { Adsense } from "@ctrl/react-adsense";
+import TeamPageHeader from "../../../components/teamdetails/team-page-header";
+import FetchUpcomingMatchesByTeam from "../../../components/teamdetails/upcoming_matches_by_team";
+import DataNotFoundPage from "../../../components/includes/datanotfound";
+import {
+  getLeagueType,
+  loadTeamPageContext,
+} from "../../../components/functions/match_details_helpers";
+import { serializeTeamBundleForClient } from "../../../components/functions/details_prefetch";
 
-  if (!slug) {
-    return { redirect: { destination: "/", permanent: false } };
-  }
+export async function getServerSideProps(context) {
+  const loaded = await loadTeamPageContext(context);
+  if (loaded.notFound) return { notFound: true };
+  if (loaded.redirect) return loaded;
+
+  const { slug, teamIdInteger, bundle } = loaded;
 
   return {
-    redirect: {
-      destination: `/team/${slug}/results?tab=upcoming`,
-      permanent: false,
+    props: {
+      teamSlug: slug,
+      teamIdInteger,
+      initialTeamsTopData: bundle.teamsTopData,
+      initialLast6Matches: bundle.last6Matches,
+      initialFixturesWithPredictions: bundle.upcomingFixtures,
+      teamBundleSnapshot: serializeTeamBundleForClient(bundle),
     },
   };
 }
 
-export default function TeamUpcomingRedirect() {
-  return null;
+function TeamUpcomingMatchesPage({
+  teamSlug,
+  teamIdInteger,
+  initialTeamsTopData,
+  initialLast6Matches,
+  initialFixturesWithPredictions,
+  teamBundleSnapshot,
+}) {
+  const router = useRouter();
+  const teamsTopData = initialTeamsTopData?.data?.[0] || null;
+
+  if (!teamsTopData) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Team details not found." />
+      </div>
+    );
+  }
+
+  const leagueType = getLeagueType(teamsTopData);
+  const showStandings = leagueType === "League";
+  const hasUpcomingMatches = initialFixturesWithPredictions.length > 0;
+
+  return (
+    <>
+      <TeamPageHeader
+        teamsTopData={teamsTopData}
+        teamIdInteger={teamIdInteger}
+        last6Matches={initialLast6Matches}
+        teamSlug={teamSlug}
+        urlFilter={router.pathname.substring(1)}
+        showStandings={showStandings}
+        bundleSnapshot={teamBundleSnapshot}
+      />
+
+      <div className="sites-card mb-2">
+        {hasUpcomingMatches ? (
+          <FetchUpcomingMatchesByTeam
+            initialFixturesWithPredictions={initialFixturesWithPredictions}
+            status="success"
+            showHeader
+          />
+        ) : (
+          <>
+            <div className="text-center fw-bold sectionTitle">
+              <span>UPCOMING MATCHES</span>
+            </div>
+            <DataNotFoundPage props="No upcoming matches data available." />
+          </>
+        )}
+        <br />
+        <Adsense
+          client="ca-pub-5665711413000284"
+          slot="7856848919"
+          style={{ display: "block" }}
+          layout="display"
+          format="auto"
+        />
+      </div>
+    </>
+  );
 }
+
+export default TeamUpcomingMatchesPage;

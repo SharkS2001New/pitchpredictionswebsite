@@ -358,3 +358,139 @@ export async function fetchTeamDetailsBundle(teamIdInteger) {
     upcomingFixtures: upcomingFixtures || [],
   };
 }
+
+const TEAM_TAB_REDIRECTS = {
+  standings: "standings",
+  upcoming: "upcoming-matches",
+  players: "players",
+};
+
+const MATCH_TAB_REDIRECTS = {
+  summary: "overall-statistics",
+  odds: "odds",
+  matches: "matches",
+  standings: "standings",
+  upcoming: "upcoming-matches",
+};
+
+export function getLegacyTeamTabRedirect(slug, tab) {
+  if (!tab || tab === "results") return null;
+  const segment = TEAM_TAB_REDIRECTS[tab];
+  if (!segment) return null;
+  return {
+    redirect: { destination: `/team/${slug}/${segment}`, permanent: false },
+  };
+}
+
+export function getLegacyMatchTabRedirect(slug, tab) {
+  if (!tab) return null;
+  const segment = MATCH_TAB_REDIRECTS[tab];
+  if (!segment) return null;
+  return {
+    redirect: { destination: `/match/${slug}/${segment}`, permanent: false },
+  };
+}
+
+const bundleServerCache = new Map();
+const SERVER_BUNDLE_TTL_MS = 45_000;
+const pendingServerBundles = new Map();
+
+function readServerBundleCache(key) {
+  const entry = bundleServerCache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() - entry.at > SERVER_BUNDLE_TTL_MS) {
+    bundleServerCache.delete(key);
+    return undefined;
+  }
+  return entry.data;
+}
+
+function writeServerBundleCache(key, data) {
+  if (data) {
+    bundleServerCache.set(key, { at: Date.now(), data });
+  }
+}
+
+export async function fetchTeamDetailsBundleCached(teamIdInteger) {
+  const key = `team:${teamIdInteger}`;
+  const cached = readServerBundleCache(key);
+  if (cached !== undefined) return cached;
+
+  if (pendingServerBundles.has(key)) {
+    return pendingServerBundles.get(key);
+  }
+
+  const promise = fetchTeamDetailsBundle(teamIdInteger)
+    .then((data) => {
+      writeServerBundleCache(key, data);
+      return data;
+    })
+    .finally(() => {
+      pendingServerBundles.delete(key);
+    });
+
+  pendingServerBundles.set(key, promise);
+  return promise;
+}
+
+export async function fetchMatchDetailsBundleCached(fixtureIdInteger) {
+  const key = `match:${fixtureIdInteger}`;
+  const cached = readServerBundleCache(key);
+  if (cached !== undefined) return cached;
+
+  if (pendingServerBundles.has(key)) {
+    return pendingServerBundles.get(key);
+  }
+
+  const promise = fetchMatchDetailsBundle(fixtureIdInteger)
+    .then((data) => {
+      writeServerBundleCache(key, data);
+      return data;
+    })
+    .finally(() => {
+      pendingServerBundles.delete(key);
+    });
+
+  pendingServerBundles.set(key, promise);
+  return promise;
+}
+
+export async function loadTeamPageContext(context) {
+  const slug = context.params?.["team-details"] || "";
+  const tabRedirect = getLegacyTeamTabRedirect(slug, context.query?.tab);
+  if (tabRedirect) return tabRedirect;
+
+  const teamIdInteger = parseTeamIdFromSlug(slug);
+  if (!teamIdInteger) return { notFound: true };
+
+  try {
+    const bundle = await fetchTeamDetailsBundleCached(teamIdInteger);
+    if (!bundle) return { notFound: true };
+    return { slug, teamIdInteger, bundle };
+  } catch (error) {
+    console.error("SSR fetch error:", error);
+    return { notFound: true };
+  }
+}
+
+export async function loadMatchPageContext(context) {
+  const slug = context.params?.["match-details"] || "";
+  const tabRedirect = getLegacyMatchTabRedirect(slug, context.query?.tab);
+  if (tabRedirect) return tabRedirect;
+
+  const fixtureIdInteger = parseFixtureIdFromSlug(slug);
+  if (!fixtureIdInteger) {
+    return { redirect: { destination: "/", permanent: false } };
+  }
+
+  try {
+    const bundle = await fetchMatchDetailsBundleCached(fixtureIdInteger);
+    if (!bundle) {
+      return { redirect: { destination: "/", permanent: false } };
+    }
+    return { slug, fixtureIdInteger, bundle };
+  } catch (error) {
+    console.error("Error fetching match data:", error);
+    return { redirect: { destination: "/", permanent: false } };
+  }
+}

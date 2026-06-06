@@ -10,14 +10,12 @@ function DisplayIndependentLeagueStandings(props) {
 
     const isHighlightedRow = (teamId) => {
       const route = router.pathname.substring(1);
-      const isTeamStandings =
-        route === "team/[team-details]/results" &&
-        router.query.tab === "standings" &&
-        props.home_team_id === teamId;
-      const isMatchStandings =
-        route === "match/[match-details]/matches" &&
-        router.query.tab === "standings" &&
-        (props.home_team_id === teamId || props.away_team_id === teamId);
+    const isTeamStandings =
+      route === "team/[team-details]/standings" &&
+      props.home_team_id === teamId;
+    const isMatchStandings =
+      route === "match/[match-details]/standings" &&
+      (props.home_team_id === teamId || props.away_team_id === teamId);
 
       return isTeamStandings || isMatchStandings;
     };

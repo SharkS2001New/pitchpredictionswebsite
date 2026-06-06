@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@ctrl/react-adsense";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";
-import DisplayIndependentLeagueStandings from "../../../components/shared/standings_by_league";
-import DataNotFoundPage from "../../../components/includes/datanotfound";
+import MatchOddsDisplay from "../../../components/matchdetails/match_odds_display";
 import PreLoader from "../../../components/includes/loader";
 import {
   getAwayTeamId,
+  getAwayTeamName,
   getHomeTeamId,
-  getLeagueName,
+  getHomeTeamName,
   getLeagueType,
   loadMatchPageContext,
 } from "../../../components/functions/match_details_helpers";
@@ -33,7 +32,7 @@ export async function getServerSideProps(context) {
   };
 }
 
-function MatchStandingsPage({
+function MatchOddsPage({
   matchSlug,
   fixtureIdInteger,
   initialMatchDetails,
@@ -50,10 +49,11 @@ function MatchStandingsPage({
     return <PreLoader />;
   }
 
+  const homeTeamName = getHomeTeamName(matchDetailsData);
+  const awayTeamName = getAwayTeamName(matchDetailsData);
   const homeTeamId = getHomeTeamId(matchDetailsData);
   const awayTeamId = getAwayTeamId(matchDetailsData);
   const leagueType = getLeagueType(matchDetailsData);
-  const leagueName = getLeagueName(matchDetailsData);
   const showStandings =
     leagueType === "League" && initialStandings.length > 0;
 
@@ -73,29 +73,14 @@ function MatchStandingsPage({
       />
 
       <div className="sites-card">
-        {initialStandings.length === 0 ? (
-          <>
-            <DataNotFoundPage props="Sorry, there isn't enough data available to display at this time." />
-            <br />
-            <Adsense
-              client="ca-pub-5665711413000284"
-              slot="7856848919"
-              style={{ display: "block" }}
-              layout="display"
-              format="auto"
-            />
-          </>
-        ) : (
-          <DisplayIndependentLeagueStandings
-            props={initialStandings}
-            league_name={leagueName}
-            home_team_id={homeTeamId}
-            away_team_id={awayTeamId}
-          />
-        )}
+        <MatchOddsDisplay
+          match={matchDetailsData}
+          homeTeamName={homeTeamName}
+          awayTeamName={awayTeamName}
+        />
       </div>
     </>
   );
 }
 
-export default MatchStandingsPage;
+export default MatchOddsPage;
