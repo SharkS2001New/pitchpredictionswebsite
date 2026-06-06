@@ -7,6 +7,7 @@ import FetchFixtureByIdMyFav from "../functions/FetchfixturesById-Myfavourites";
 
 function FixturesTableDisplay(props, key) {    
     const router = useRouter();
+    const marketRoute = props.marketRoute;
     const [mounted, setMounted] = useState(false);
 
     const fixturestablearray = [];   
@@ -102,6 +103,9 @@ function FixturesTableDisplay(props, key) {
     const doubleChance = game.predictions?.double_chance;
     const overUnder = game.predictions?.over_under_2_5;
     const btts = game.predictions?.both_teams_to_score;
+    const bttsPrediction = btts?.prediction
+        ? String(btts.prediction).trim().toLowerCase()
+        : null;
     const halfTime = game.predictions?.half_time;
     const avgGoals = game.predictions?.avg_goals || "-";
     
@@ -114,6 +118,48 @@ function FixturesTableDisplay(props, key) {
         if (maxProb === probs.away) return "2";
         return "-";
     }
+
+    const getMatchResultToken = (home, away) => {
+        if (home > away) return "1";
+        if (home < away) return "2";
+        return "X";
+    };
+
+    const getHalftimeScores = () => {
+        const fromScore = game.score?.half_time;
+        if (fromScore?.home != null && fromScore?.away != null) {
+            return { home: fromScore.home, away: fromScore.away };
+        }
+
+        let scoresPayload = game.scores;
+        if (typeof scoresPayload === "string") {
+            try {
+                scoresPayload = JSON.parse(scoresPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        const htHome = scoresPayload?.halftime?.home;
+        const htAway = scoresPayload?.halftime?.away;
+        if (htHome == null || htAway == null) return null;
+
+        return { home: htHome, away: htAway };
+    };
+
+    const get1x2PredictionOutcome = (predictedToken, home, away) => {
+        if (!predictedToken || predictedToken === "-" || home == null || away == null) {
+            return null;
+        }
+
+        return predictedToken === getMatchResultToken(home, away) ? "won" : "lost";
+    };
+
+    const getBadgeStyle = (outcome) => ({
+        backgroundColor: outcome === "won" ? "#2e7d32" : outcome === "lost" ? "transparent" : "#ffb400",
+        color: outcome === "lost" ? "#c62828" : "#fff",
+        border: outcome === "lost" ? "2px solid #c62828" : "none"
+    });
     
     // Helper function to get the winning probability value
     function getWinningProbabilityValue(probs, winningTeam) {
@@ -124,7 +170,7 @@ function FixturesTableDisplay(props, key) {
         return 0;
     }
     
-    const currentRoute = router.pathname.substring(1);
+    const currentRoute = marketRoute || router.pathname.substring(1);
     const isDoubleChance = currentRoute.includes("double-chance-predictions");
     const isUnderOver = currentRoute.includes("predictions-under-over");
     const isBTTS = currentRoute.includes("predictions-both-to-score");
@@ -150,7 +196,8 @@ function FixturesTableDisplay(props, key) {
     let finalWinningOdd = null;
     let finalOddsToShow = {};
     let showPopup = false;
-    
+    let htPrediction = "-";
+    let ftPrediction = "-";
     if (isAccumulator) {
         // Get 1x2 data
         const winningTeam = getHighestProbabilityTeam(prediction1x2);
@@ -158,7 +205,7 @@ function FixturesTableDisplay(props, key) {
         
         // Check BTTS Yes odds
         const bttsYesOdds = bttsOdds?.yes ? parseFloat(bttsOdds.yes) : null;
-        const isBTTSFavorable = bttsYesOdds && bttsYesOdds < 1.40 && btts?.prediction === "yes";
+        const isBTTSFavorable = bttsYesOdds && bttsYesOdds < 1.40 && bttsPrediction === "yes";
         
         // Check if avg goals is extreme
         const isAvgGoalsExtreme = avgGoals !== "-" && (avgGoals < 2.0 || avgGoals > 3.0);
@@ -227,15 +274,22 @@ function FixturesTableDisplay(props, key) {
         finalOddsToShow = { option1: overUnderOdds?.over_2_5, option2: overUnderOdds?.under_2_5 };
         showPopup = false;
     } else if (isBTTS) {
-        finalDisplayPrediction = btts?.prediction?.toUpperCase() || "-";
+        finalDisplayPrediction = bttsPrediction ? bttsPrediction.toUpperCase() : "-";
         finalDisplayProbability = btts?.probability ? `${btts.probability}%` : "-";
-        if (btts?.prediction === "yes") finalWinningOdd = "BTTS_Yes";
-        else if (btts?.prediction === "no") finalWinningOdd = "BTTS_No";
+        if (bttsPrediction === "yes") finalWinningOdd = "BTTS_Yes";
+        else if (bttsPrediction === "no") finalWinningOdd = "BTTS_No";
         finalOddsToShow = { option1: bttsOdds?.yes, option2: bttsOdds?.no };
         showPopup = false;
     } else if (isHalftimeFulltime) {
-        finalDisplayPrediction = halfTime ? getHighestProbabilityTeam(halfTime) : "-";
-        finalDisplayProbability = halfTime ? `${Math.max(halfTime.home || 0, halfTime.draw || 0, halfTime.away || 0)}%` : "-";
+        htPrediction = halfTime ? getHighestProbabilityTeam(halfTime) : "-";
+        ftPrediction = prediction1x2 ? getHighestProbabilityTeam(prediction1x2) : "-";
+        finalDisplayPrediction = ftPrediction;
+        finalDisplayProbability = prediction1x2
+            ? `${Math.max(prediction1x2.home || 0, prediction1x2.draw || 0, prediction1x2.away || 0)}%`
+            : "-";
+        if (htPrediction === "1" || htPrediction === "X" || htPrediction === "2") {
+            finalWinningOdd = htPrediction;
+        }
         finalOddsToShow = { option1: htFtOdds?.ht_home, option2: htFtOdds?.ht_draw, option3: htFtOdds?.ht_away };
         showPopup = false;
     } else {
@@ -296,6 +350,77 @@ function FixturesTableDisplay(props, key) {
             fontWeight: isCorrect ? "bold" : ""
         };
     };
+    
+    const getScorePredictionOutcome = () => {
+        const matchFinishedStatuses = ["FT", "AET", "PEN", "AWD", "WO"];
+        const status = game.match?.status;
+        const homeScore = game.score?.home;
+        const awayScore = game.score?.away;
+        
+        if (!matchFinishedStatuses.includes(status) || homeScore == null || awayScore == null || !finalWinningOdd) {
+            return null;
+        }
+
+        const finalResult = getMatchResultToken(homeScore, awayScore);
+        const totalGoals = homeScore + awayScore;
+
+        if (finalWinningOdd === "1" || finalWinningOdd === "X" || finalWinningOdd === "2") {
+            return finalWinningOdd === finalResult ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "1X") {
+            return finalResult === "1" || finalResult === "X" ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "X2") {
+            return finalResult === "X" || finalResult === "2" ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "12") {
+            return finalResult === "1" || finalResult === "2" ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "Over2.5") {
+            return totalGoals > 2.5 ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "Under2.5") {
+            return totalGoals < 2.5 ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "BTTS_Yes") {
+            return homeScore > 0 && awayScore > 0 ? "won" : "lost";
+        }
+
+        if (finalWinningOdd === "BTTS_No") {
+            return homeScore === 0 || awayScore === 0 ? "won" : "lost";
+        }
+
+        return null;
+    };
+
+    const matchFinishedStatuses = ["FT", "AET", "PEN", "AWD", "WO"];
+    const homeScore = game.score?.home;
+    const awayScore = game.score?.away;
+
+    let htPredictionOutcome = null;
+    let ftPredictionOutcome = null;
+
+    if (isHalftimeFulltime) {
+        const htScores = getHalftimeScores();
+        if (htScores) {
+            htPredictionOutcome = get1x2PredictionOutcome(htPrediction, htScores.home, htScores.away);
+        }
+
+        if (matchFinishedStatuses.includes(game.match?.status) && homeScore != null && awayScore != null) {
+            ftPredictionOutcome = get1x2PredictionOutcome(ftPrediction, homeScore, awayScore);
+        }
+    }
+
+    const predictionOutcome = isHalftimeFulltime ? null : getScorePredictionOutcome();
+    const htBadgeStyle = getBadgeStyle(htPredictionOutcome);
+    const ftBadgeStyle = getBadgeStyle(isHalftimeFulltime ? ftPredictionOutcome : predictionOutcome);
+    const predictionBadgeStyle = isHalftimeFulltime ? ftBadgeStyle : getBadgeStyle(predictionOutcome);
 
     const shouldUseClientStyles = mounted && typeof window !== 'undefined';
     
@@ -375,13 +500,13 @@ function FixturesTableDisplay(props, key) {
                 ) : isHalftimeFulltime ? (
                     // HT/FT odds
                     <>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "1") : {}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(htPrediction === "1") : {}}>
                             &nbsp;&nbsp;{finalOddsToShow.option1 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "X") : {}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(htPrediction === "X") : {}}>
                             &nbsp;&nbsp;{finalOddsToShow.option2 || "-"} &nbsp;&nbsp;
                         </span>
-                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(finalDisplayPrediction === "2") : {}}>
+                        <span className="odds-card" style={shouldUseClientStyles ? getOddsCardStyle(htPrediction === "2") : {}}>
                             &nbsp;&nbsp;{finalOddsToShow.option3 || "-"} &nbsp;&nbsp;
                         </span>
                     </>
@@ -455,17 +580,17 @@ function FixturesTableDisplay(props, key) {
                         // HT/FT mobile
                         <>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "1" ? "1px solid green" : ""} : {}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: htPrediction === "1" ? "1px solid green" : ""} : {}}>
                                     &nbsp;{finalOddsToShow.option1 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "X" ? "1px solid green" : ""} : {}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: htPrediction === "X" ? "1px solid green" : ""} : {}}>
                                     &nbsp;{finalOddsToShow.option2 || "-"}&nbsp;
                                 </span>
                             </div>
                             <div className="col-md-12 col-sm-12 col-xs-12" style={{margin: "1px"}}>
-                                <span className="odds-card" style={shouldUseClientStyles ? {border: finalDisplayPrediction === "2" ? "1px solid green" : ""} : {}}>
+                                <span className="odds-card" style={shouldUseClientStyles ? {border: htPrediction === "2" ? "1px solid green" : ""} : {}}>
                                     &nbsp;{finalOddsToShow.option3 || "-"}&nbsp;
                                 </span>
                             </div>
@@ -506,12 +631,12 @@ function FixturesTableDisplay(props, key) {
             <div className="responsive-cell hide-on-mobile" title="Prediction">
                 <br/>
                 {isHalftimeFulltime && halfTime ?
-                    <><span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
-                        {getHighestProbabilityTeam(halfTime)}
+                    <><span className="number-circle rounded-square" style={htBadgeStyle}>
+                        {htPrediction}
                     </span> &nbsp;|&nbsp;</>
                 : <></>
                 }                   
-                <span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
+                <span className="number-circle rounded-square" style={isHalftimeFulltime ? ftBadgeStyle : predictionBadgeStyle}>
                     {finalDisplayPrediction}
                 </span>
             </div>
@@ -520,12 +645,12 @@ function FixturesTableDisplay(props, key) {
             <div className="responsive-cell team-link-standings hide-on-desktop" title="Prediction" style={{fontWeight:"bold", textAlign: "center"}}>
                 <br/>
                 {isHalftimeFulltime && halfTime ?
-                    <><span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
-                        {getHighestProbabilityTeam(halfTime)}
+                    <><span className="number-circle rounded-square" style={htBadgeStyle}>
+                        {htPrediction}
                     </span>&nbsp;|&nbsp;</>
                 : <></>
                 }
-                <span className="number-circle rounded-square" style={{backgroundColor: "#ffb400"}}>
+                <span className="number-circle rounded-square" style={isHalftimeFulltime ? ftBadgeStyle : predictionBadgeStyle}>
                     {finalDisplayPrediction}
                 </span>
                 <br/><br/>

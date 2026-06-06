@@ -141,6 +141,28 @@ function GamesPlayedByTeam({
     let team_matches_array = [];
     let team_matches_leagues_display_array = [];
 
+    const getHalftimeDisplay = (match) => {
+        if (match?.ht_goals_home != null && match?.ht_goals_away != null) {
+            return `${match.ht_goals_home} - ${match.ht_goals_away}`;
+        }
+
+        if (!match?.scores) {
+            return "- - -";
+        }
+
+        try {
+            const scores =
+                typeof match.scores === "string" ? JSON.parse(match.scores) : match.scores;
+            if (scores?.halftime?.home != null && scores?.halftime?.away != null) {
+                return `${scores.halftime.home} - ${scores.halftime.away}`;
+            }
+        } catch (error) {
+            return "- - -";
+        }
+
+        return "- - -";
+    };
+
     if (team_matches.length > 0) {
         team_matches.slice(0, teamMatchesNum).forEach((match, index) => {
             const url_name = encodeURIComponent(
@@ -188,7 +210,7 @@ function GamesPlayedByTeam({
                             <div className="responsive-cell team-link-probability" style={{ whiteSpace: "nowrap" }}>
                                 <span>{match.goals_home} - {match.goals_away}</span>
                                 <br />
-                                <span>({JSON.parse(match.scores).halftime.home} - {JSON.parse(match.scores).halftime.away})</span>
+                                <span>({getHalftimeDisplay(match)})</span>
                             </div>
                             <div className="responsive-cell team-link-probability">
                                 {ComputedWinDrawings(team_id, match.home_team_id, match.away_team_id, match.goals_home, match.goals_away, index)}

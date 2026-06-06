@@ -41,7 +41,7 @@ function Last6Matches({
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
     };
 
-    const last_6matches_leagues_url = "https://develop.pitchpredictions.com/api/fetch_last_6_matches_leagues";
+    const last_6matches_leagues_url = "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues";
 
     useEffect(() => {
         if (router.isReady && mounted) {
@@ -116,7 +116,7 @@ function Last6Matches({
     const filterHomeMatchesByLeagues = async (leagueId) => {
         setLoading1(true);
         try {
-            const response = await fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
                 method: 'POST',
                 body: JSON.stringify({ 
                     home_team_id, 
@@ -144,7 +144,7 @@ function Last6Matches({
     const filterAwayMatchesByLeagues = async (leagueId) => {
         setLoading2(true);
         try {
-            const response = await fetch("https://develop.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_last_six_matches_filtered_by_league", {
                 method: 'POST',
                 body: JSON.stringify({ 
                     home_team_id: away_team_id, 
@@ -182,12 +182,27 @@ function Last6Matches({
     };
 
     // Parse scores safely
-    const parseScores = (scoresJson) => {
-        if (!scoresJson) return { halftime: { home: '-', away: '-' } };
+    const parseScores = (match) => {
+        if (match?.ht_goals_home != null && match?.ht_goals_away != null) {
+            return {
+                halftime: { home: match.ht_goals_home, away: match.ht_goals_away },
+            };
+        }
+
+        if (!match?.scores) {
+            return { halftime: { home: "-", away: "-" } };
+        }
+
         try {
-            return JSON.parse(scoresJson);
+            const parsed =
+                typeof match.scores === "string"
+                    ? JSON.parse(match.scores)
+                    : match.scores;
+            return parsed?.halftime
+                ? parsed
+                : { halftime: { home: "-", away: "-" } };
         } catch {
-            return { halftime: { home: '-', away: '-' } };
+            return { halftime: { home: "-", away: "-" } };
         }
     };
 
@@ -203,7 +218,7 @@ function Last6Matches({
 
             const homeTeamStyle = {};
             const awayTeamStyle = {};
-            const scores = parseScores(match.scores);
+            const scores = parseScores(match);
             
             if (mounted) {
                 if (home_team_id === match.home_team_id) {
@@ -270,7 +285,7 @@ function Last6Matches({
 
             const homeTeamStyle = {};
             const awayTeamStyle = {};
-            const scores = parseScores(match.scores);
+            const scores = parseScores(match);
             
             if (mounted) {
                 if (away_team_id === match.home_team_id) {

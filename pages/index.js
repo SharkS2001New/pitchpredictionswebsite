@@ -208,8 +208,6 @@ export async function getServerSideProps({ req }) {
       
       if (data.status === true && data.data) {
         initialData = data.data;
-
-        console.log(initialData);
         
         // Save to cache
         const cacheData = {

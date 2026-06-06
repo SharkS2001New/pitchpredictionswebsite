@@ -9,9 +9,11 @@ function PagesMatchPredictionDetails({
     isLoading = false, 
     loadedCount = 0, 
     totalCount = 850,
-    isMobile = false
+    isMobile = false,
+    marketRoute = null,
 }) {
     const router = useRouter();
+    const routeForMarket = marketRoute || router.pathname.substring(1);
     const predictionsList = [];   
 
     if(gamesData.length > 0){
@@ -55,7 +57,7 @@ function PagesMatchPredictionDetails({
             let livescores = livescores_results?.[1] || "";
 
             // Check if we're on halftime-fulltime page
-            const isHalftimeFulltimePage = router.pathname.substring(1).includes("predictions-halftime-fulltime");
+            const isHalftimeFulltimePage = routeForMarket.includes("predictions-halftime-fulltime");
             
             // Only include half-time predictions if we're on the HT/FT page AND predictions.half_time exists
             const shouldIncludeHalfTime = isHalftimeFulltimePage && fixture.predictions?.half_time;
@@ -86,7 +88,7 @@ function PagesMatchPredictionDetails({
             }];
                 
             predictionsList.push(
-                <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile}/>
+                <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile} marketRoute={marketRoute}/>
             );
         }  
     }

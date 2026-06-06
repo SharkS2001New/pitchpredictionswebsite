@@ -175,6 +175,13 @@ function LiveFixtures({
 }
 
 export async function getServerSideProps() {
+    return {
+        redirect: {
+            destination: "/live-football-predictions",
+            permanent: false
+        }
+    };
+
     const todaysDate = getFormattedCurrentDate();
     
     // Base URL for live games

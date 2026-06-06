@@ -4,16 +4,30 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@ctrl/react-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
+import JackpotPredictionsContent from "../../components/seo-content/jackpots/jackpots-landing-page";
+import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
+import SportpesaMidweekJackpotContent from "../../components/seo-content/jackpots/sportpesa-midweek-jackpot-predictions";
 import { useRouter } from 'next/router';
 import fs from 'fs';
 import path from 'path';
 
-function JackpotByNamePredictions({ 
+function JackpotSeoContent({ slug }) {
+    if (slug === 'sportpesa-mega-jackpot-predictions') {
+        return <SportpesaMegaJackpotContent />;
+    }
+    if (slug === 'sportpesa-midweek-jackpot-predictions') {
+        return <SportpesaMidweekJackpotContent />;
+    }
+    return <JackpotPredictionsContent />;
+}
+
+function JackpotByNamePredictions({
     initialGamesData, 
     endpointStatus, 
     error,
     initialVoteStats,
     jackpotApiName,
+    jackpotSlug = '',
     isNotFound = false // Add this prop
 }) {         
     const [gamesData, setGamesData] = useState(initialGamesData || []);
@@ -24,6 +38,19 @@ function JackpotByNamePredictions({
     const [refreshingStats, setRefreshingStats] = useState({});
     
     const router = useRouter();
+    const resolvedJackpotSlug =
+        jackpotSlug || router.query['jackpot-predictions-by-name'] || '';
+
+    const seoContentBlock = (
+        <>
+            <br />
+            <div className="seo-content-section">
+                <div className="container">
+                    <JackpotSeoContent slug={resolvedJackpotSlug} />
+                </div>
+            </div>
+        </>
+    );
 
     // Initialize device ID on client side only
     useEffect(() => {
@@ -337,7 +364,8 @@ function JackpotByNamePredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />         
+                />
+                {seoContentBlock}
             </div>
         );
     }
@@ -354,7 +382,8 @@ function JackpotByNamePredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />         
+                />
+                {seoContentBlock}
             </div>
         );
     }
@@ -371,7 +400,8 @@ function JackpotByNamePredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />         
+                />
+                {seoContentBlock}
             </div>
         );
     }
@@ -404,7 +434,9 @@ function JackpotByNamePredictions({
                 style={{ display: "block" }}
                 layout="display"
                 format="auto"
-            /> 
+            />
+
+            {seoContentBlock}
 
             <style jsx>{`  
                 .sites-card {
@@ -440,6 +472,7 @@ export async function getServerSideProps(context) {
                 error: null,
                 initialVoteStats: {},
                 jackpotApiName: null,
+                jackpotSlug,
                 isNotFound: true
             }
         };
@@ -510,6 +543,7 @@ export async function getServerSideProps(context) {
                         error: null,
                         initialVoteStats: {},
                         jackpotApiName: jackpotApiName,
+                        jackpotSlug,
                         isNotFound: true
                     }
                 };
@@ -524,6 +558,7 @@ export async function getServerSideProps(context) {
                         error: "This jackpot is currently not available",
                         initialVoteStats: {},
                         jackpotApiName: jackpotApiName,
+                        jackpotSlug,
                         isNotFound: true
                     }
                 };
@@ -540,6 +575,7 @@ export async function getServerSideProps(context) {
                         error: null,
                         initialVoteStats: {},
                         jackpotApiName: jackpotApiName,
+                        jackpotSlug,
                         isNotFound: true
                     }
                 };
@@ -585,7 +621,6 @@ export async function getServerSideProps(context) {
 
         // ALWAYS fetch live vote stats (don't cache these)
         if (initialGamesData.length > 0) {
-            console.log(`Fetching live vote stats for "${jackpotApiName}"...`);
             const jackpotId = initialGamesData[0]?.jackpot_tips_id;
             const fixtureIds = initialGamesData.map(game => game.fixture_id);
 
@@ -682,6 +717,7 @@ export async function getServerSideProps(context) {
                         error: null,
                         initialVoteStats,
                         jackpotApiName: jackpotApiName,
+                        jackpotSlug,
                         isNotFound: false,
                         cacheInfo
                     }
@@ -699,6 +735,7 @@ export async function getServerSideProps(context) {
                 error: "This jackpot is currently not available",
                 initialVoteStats: {},
                 jackpotApiName: jackpotApiName,
+                jackpotSlug,
                 isNotFound: true
             }
         };
@@ -711,6 +748,7 @@ export async function getServerSideProps(context) {
             error,
             initialVoteStats,
             jackpotApiName: jackpotApiName,
+            jackpotSlug,
             isNotFound: false,
             cacheInfo
         }

@@ -380,11 +380,12 @@ function SportpesaMegaJackpotPredictions({
             {/* <br/>    */}
 
             {/* SEO Content */}
-            {/* <div className="seo-content-section">
+            <br/>
+            <div className="seo-content-section">
                 <div className="container">
                     <SportpesaMegaJackpotContent/>
                 </div>
-            </div> */}
+            </div>
 
             <style jsx>{`  
                 .sites-card {
@@ -492,7 +493,6 @@ export async function getServerSideProps() {
 
         // ALWAYS fetch live vote stats (don't cache these)
         if (initialGamesData.length > 0) {
-            console.log('Fetching live vote stats for Sportpesa Mega Jackpot...');
             const jackpotId = initialGamesData[0]?.jackpot_tips_id;
             const fixtureIds = initialGamesData.map(game => game.fixture_id);
 

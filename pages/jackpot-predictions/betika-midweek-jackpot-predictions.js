@@ -463,7 +463,6 @@ export async function getServerSideProps() {
 
         // If no valid cache, fetch fixtures from API
         if (initialGamesData.length === 0) {
-            console.log('Fetching fresh Betika midweek fixtures from API...');
             
             // Fetch jackpot fixtures
             const response = await fetch(
@@ -510,7 +509,6 @@ export async function getServerSideProps() {
 
         // ALWAYS fetch live vote stats (don't cache these)
         if (initialGamesData.length > 0) {
-            console.log('Fetching live vote stats for Betika midweek jackpot...');
             const jackpotId = initialGamesData[0]?.jackpot_tips_id;
             const fixtureIds = initialGamesData.map(game => game.fixture_id);
 
@@ -617,7 +615,6 @@ export async function getServerSideProps() {
                         
                         if (statsResult.status && statsResult.data) {
                             initialVoteStats = statsResult.data;
-                            console.log('Live vote stats fetched successfully for Betika midweek jackpot (fallback mode)');
                         }
                     } catch (voteStatsError) {
                         console.error("Error fetching vote stats in fallback mode for Betika midweek jackpot:", voteStatsError);

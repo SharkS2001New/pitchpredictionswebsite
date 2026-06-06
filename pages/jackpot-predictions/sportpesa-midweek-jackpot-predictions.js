@@ -474,7 +474,6 @@ export async function getServerSideProps() {
 
         // If no valid cache, fetch fixtures from API
         if (initialGamesData.length === 0) {
-            console.log('Fetching fresh midweek fixtures from API...');
             
             // Fetch jackpot fixtures
             const response = await fetch(

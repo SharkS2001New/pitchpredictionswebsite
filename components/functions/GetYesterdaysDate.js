@@ -1,22 +1,23 @@
+import getFormattedCurrentDate from "./GetTodaysDate";
+
+function subtractDaysFromDateString(dateString, days) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day - days));
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function getFormattedYesterdayDate() {
-    try {
-      // Declare current date
-      const today = new Date();
-      // Get yesterday's date by subtracting one day from the current date
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate());
-      // Get the year, month, and day from yesterday's date
-      const year = yesterday.getFullYear();
-      const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-      const day = String(yesterday.getDate()).padStart(2, '0');
-      // Format the date in "YYYY-MM-DD" format
-      const formatted_date = `${year}-${month}-${day}`;
-  
-      return formatted_date;
-      
-    } catch (err) {
-      console.log(err.message);
-    }
+  try {
+    const today = getFormattedCurrentDate();
+    return subtractDaysFromDateString(today, 1);
+  } catch (err) {
+    console.error("Error formatting yesterday date:", err.message);
+    const fallbackToday = getFormattedCurrentDate();
+    return subtractDaysFromDateString(fallbackToday, 1);
+  }
 }
 
 export default getFormattedYesterdayDate;

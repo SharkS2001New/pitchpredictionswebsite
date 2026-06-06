@@ -1,44 +1,54 @@
-import WinningTeamAndOdd from "../../functions/determine_winning_team_and_odd";
 import React from "react";
+import { getTeamPerformance } from "./trend_helpers";
 
-function CleanSheetTrends(props){
-    const overallData = props.overallData;
+function CleanSheetTrends(props) {
+  const overallData = props.overallData;
+  const cleanSheetTrends = [];
 
-    var cleanSheetTrends = [];
+  overallData.forEach((overall_d, index) => {
+    const performance = getTeamPerformance(overall_d);
+    if (!performance) return;
 
-    {/* clean sheet */}
-    {overallData.map((overall_d, index) => (
-        cleanSheetTrends.push(
-            <React.Fragment key={"C"+index}>                 
-                <div className="row">  
-                    {JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.clean_sheet.total > 0 ? (
-                        <div className="col-md-6">
-                            <span className="badge bg-info">Clean Sheet</span>
-                            <p>
-                                <span style={{fontWeight: "bold"}}>{overall_d.home_team_name}</span> has managed to maintain a clean sheet in their last &nbsp;
-                                <span style={{color:"red", fontWeight: "bold"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.clean_sheet.total}</span> 
-                                <span style={{fontWeight: "bold"}}>&nbsp;{overall_d.league_name}</span>,including <span style={{fontWeight: "bold", color: "red"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.clean_sheet.home} </span>
-                                &nbsp;victories at home and <span style={{fontWeight: "bold", color: "red"}}> {JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.clean_sheet.away}</span> away.
-                            </p>
-                        </div>
-                    ) : ""}
-                    {JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.clean_sheet.total > 0 ? (
-                        <div className="col-md-6">
-                        <span className="badge bg-info">Clean Sheet</span>                            
-                        <p>
-                            <span style={{fontWeight: "bold"}}>{overall_d.away_team_name}</span> has managed to maintain a clean sheet in their last &nbsp;
-                            <span style={{color:"red", fontWeight: "bold"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.clean_sheet.total}</span> 
-                            <span style={{fontWeight: "bold"}}>&nbsp;{overall_d.league_name}</span>,including <span style={{fontWeight: "bold", color: "red"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.clean_sheet.home} </span>
-                            &nbsp;victories at home and <span style={{fontWeight: "bold", color: "red"}}> {JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.clean_sheet.away}</span> away.
-                        </p>
-                        </div>
-                    ) : ""}
-                </div>
-            </React.Fragment>
-        )
-    ))}    
+    const homeCleanSheets = performance.home?.league?.clean_sheet;
+    const awayCleanSheets = performance.away?.league?.clean_sheet;
 
-    return cleanSheetTrends;
+    cleanSheetTrends.push(
+      <React.Fragment key={"C" + index}>
+        <div className="row">
+          {homeCleanSheets?.total > 0 ? (
+            <div className="col-md-6">
+              <span className="badge bg-info">Clean Sheet</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.home_team_name}</span> has managed
+                to maintain a clean sheet in their last{" "}
+                <span style={{ color: "red", fontWeight: "bold" }}>{homeCleanSheets.total}</span>
+                <span style={{ fontWeight: "bold" }}>&nbsp;{overall_d.league_name}</span>, including{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{homeCleanSheets.home}</span>
+                &nbsp;victories at home and{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{homeCleanSheets.away}</span> away.
+              </p>
+            </div>
+          ) : null}
+          {awayCleanSheets?.total > 0 ? (
+            <div className="col-md-6">
+              <span className="badge bg-info">Clean Sheet</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.away_team_name}</span> has managed
+                to maintain a clean sheet in their last{" "}
+                <span style={{ color: "red", fontWeight: "bold" }}>{awayCleanSheets.total}</span>
+                <span style={{ fontWeight: "bold" }}>&nbsp;{overall_d.league_name}</span>, including{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{awayCleanSheets.home}</span>
+                &nbsp;victories at home and{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{awayCleanSheets.away}</span> away.
+              </p>
+            </div>
+          ) : null}
+        </div>
+      </React.Fragment>
+    );
+  });
+
+  return cleanSheetTrends;
 }
 
 export default CleanSheetTrends;

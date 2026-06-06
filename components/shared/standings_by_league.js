@@ -6,7 +6,21 @@ import assignColorToDescription from '../functions/standing_description_color';
 import { Adsense } from "@ctrl/react-adsense";
 
 function DisplayIndependentLeagueStandings(props) {
-    const router = useRouter(); 
+    const router = useRouter();
+
+    const isHighlightedRow = (teamId) => {
+      const route = router.pathname.substring(1);
+      const isTeamStandings =
+        route === "team/[team-details]/results" &&
+        router.query.tab === "standings" &&
+        props.home_team_id === teamId;
+      const isMatchStandings =
+        route === "match/[match-details]/matches" &&
+        router.query.tab === "standings" &&
+        (props.home_team_id === teamId || props.away_team_id === teamId);
+
+      return isTeamStandings || isMatchStandings;
+    };
     
     if(props.props.length>0){
       //Decode halftime data stored as a json in mysql
@@ -25,11 +39,7 @@ function DisplayIndependentLeagueStandings(props) {
             <div 
               className="responsive-row"
               style={
-                (router.pathname.substring(1) === "team/[team-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id) ||
-                (router.pathname.substring(1) === "match/[match-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id ||
-                  props.away_team_id === data_standings[i].team.id)
+                isHighlightedRow(data_standings[i].team.id)
                   ? { backgroundColor: "#FAEBD7"}
                   : { cursor: "auto" }
               }>
@@ -72,11 +82,7 @@ function DisplayIndependentLeagueStandings(props) {
             <div
               className="responsive-row"
               style={
-                (router.pathname.substring(1) === "team/[team-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id) ||
-                (router.pathname.substring(1) === "match/[match-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id ||
-                  props.away_team_id === data_standings[i].team.id)
+                isHighlightedRow(data_standings[i].team.id)
                   ? { backgroundColor: "#FAEBD7"}
                   : { cursor: "auto" }
               }>
@@ -114,11 +120,7 @@ function DisplayIndependentLeagueStandings(props) {
             <div
               className="responsive-row"
               style={
-                (router.pathname.substring(1) === "team/[team-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id) ||
-                (router.pathname.substring(1) === "match/[match-details]/standings" &&
-                  props.home_team_id === data_standings[i].team.id ||
-                  props.away_team_id === data_standings[i].team.id)
+                isHighlightedRow(data_standings[i].team.id)
                   ? { backgroundColor: "#FAEBD7"}
                   : { cursor: "auto" }
               }

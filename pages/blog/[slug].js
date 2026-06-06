@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
 import PreLoader from "../../components/includes/loader";
+import PredictionGuidesLinks from "../../components/seo-content/shared/prediction-guides-links";
 
 export default function BlogPage({ blog, error }) {
   const router = useRouter();
@@ -206,6 +207,8 @@ export default function BlogPage({ blog, error }) {
           dangerouslySetInnerHTML={{ __html: optimizedContent }}
         ></div>
 
+        <br />
+        <PredictionGuidesLinks title="Related Prediction Guides" />
         <br />
       </div>
     </>

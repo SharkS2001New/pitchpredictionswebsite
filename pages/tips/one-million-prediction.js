@@ -9,6 +9,7 @@ import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import fs from 'fs';
 import path from 'path';
+import OneMillionPredictionContent from "../../components/seo-content/tips/one-million-prediction";
 
 function CompetitorPredictions({ 
     initialData, 
@@ -136,7 +137,13 @@ function CompetitorPredictions({
             />
             
             <br/>
-            
+
+            <div className="">
+                <div className="container">
+                    <OneMillionPredictionContent/>
+                </div>
+            </div>
+
             <Adsense
                 client="ca-pub-5665711413000284"
                 slot="3850951453"

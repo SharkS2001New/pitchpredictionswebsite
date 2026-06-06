@@ -1,51 +1,60 @@
-import WinningTeamAndOdd from "../../functions/determine_winning_team_and_odd";
-
 import React from "react";
+import { getTeamPerformance } from "./trend_helpers";
 
 function DrawsTrends(props) {
+  const overallData = props.overallData;
+  const drawsTrends = [];
 
-    const overallData = props.overallData;
+  overallData.forEach((overall_d, index) => {
+    const performance = getTeamPerformance(overall_d);
+    if (!performance) return;
 
-    var drawsTrends = [];
+    const homeDraws = performance.home?.league?.fixtures?.draws;
+    const awayDraws = performance.away?.league?.fixtures?.draws;
 
-    {overallData.map((overall_d, index) => (
-        drawsTrends.push(
-        <React.Fragment key={"D"+index}>
-        <div className="row"> 
-            {JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.fixtures.draws.total > 0 ? (                 
+    drawsTrends.push(
+      <React.Fragment key={"D" + index}>
+        <div className="row">
+          {homeDraws?.total > 0 ? (
             <div className="col-md-6">
-                <span className="badge bg-warning">Draws</span>
-                <p>
-                    <span style={{fontWeight: "bold"}}>{overall_d.home_team_name}</span> has recorded <span style={{color:"red", fontWeight: "bold"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.fixtures.draws.total}</span>
-                    &nbsp;draws with&nbsp;
-                    <span style={{fontWeight: "bold", color: "red"}}>
-                    {JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.fixtures.draws.home}</span>
-                        &nbsp; when playing at home and 
-                        <span style={{fontWeight: "bold", color: "red"}}> &nbsp;{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.fixtures.draws.away}</span> &nbsp;when playing away.
-                </p>
+              <span className="badge bg-warning">Draws</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.home_team_name}</span> has recorded{" "}
+                <span style={{ color: "red", fontWeight: "bold" }}>{homeDraws.total}</span>
+                &nbsp;draws with&nbsp;
+                <span style={{ fontWeight: "bold", color: "red" }}>{homeDraws.home}</span>
+                &nbsp; when playing at home and
+                <span style={{ fontWeight: "bold", color: "red" }}>
+                  {" "}
+                  &nbsp;{awayDraws?.away ?? 0}
+                </span>{" "}
+                &nbsp;when playing away.
+              </p>
             </div>
-            ) : ""}
-            {JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.fixtures.draws.total > 0 ? ( 
-                <div className="col-md-6">
-                    <span className="badge bg-warning">Draws</span>
-                    <p>
-                        <span style={{fontWeight: "bold"}}>{overall_d.away_team_name}</span> has recorded <span style={{color:"red", fontWeight: "bold"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.fixtures.draws.total}</span>
-                        &nbsp; draws with&nbsp;
-                        <span style={{fontWeight: "bold", color: "red"}}>
-                        {JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.fixtures.draws.home}</span>
-                            &nbsp; when playing at home and 
-                            <span style={{fontWeight: "bold", color: "red"}}> &nbsp;{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.fixtures.draws.away}</span> &nbsp;when playing away.
-                   </p>
-                </div>
-            ) : ""  
-            }                     
+          ) : null}
+          {awayDraws?.total > 0 ? (
+            <div className="col-md-6">
+              <span className="badge bg-warning">Draws</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.away_team_name}</span> has recorded{" "}
+                <span style={{ color: "red", fontWeight: "bold" }}>{awayDraws.total}</span>
+                &nbsp; draws with&nbsp;
+                <span style={{ fontWeight: "bold", color: "red" }}>{awayDraws.home}</span>
+                &nbsp; when playing at home and
+                <span style={{ fontWeight: "bold", color: "red" }}>
+                  {" "}
+                  &nbsp;{awayDraws.away}
+                </span>{" "}
+                &nbsp;when playing away.
+              </p>
+            </div>
+          ) : null}
         </div>
-                 
-        </React.Fragment>
-        )
-    ))}
+      </React.Fragment>
+    );
+  });
 
-    return drawsTrends;
+  return drawsTrends;
 }
 
 export default DrawsTrends;

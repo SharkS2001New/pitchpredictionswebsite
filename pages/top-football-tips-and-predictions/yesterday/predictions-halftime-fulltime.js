@@ -8,6 +8,7 @@ import PagesMatchPredictionDetails from "../../../components/shared/pages_match_
 import DataNotFoundPage from "../../../components/includes/datanotfound";
 import FiltersTopFootballPredictions from "../../../components/shared/filters-top-football-predictions";
 import FilterYesterdayTopOverallDoubleChanceUnderOverHTFTPred1x2 from "../../../components/top-football-tips-and-predictions/yesterday/filter-pred1x2-ov-un-dc-ht-ft";
+import getFormattedYesterdayDate from "../../../components/functions/GetYesterdaysDate";
 
 function TopFootballFixturesYesterday({ 
     initialData, 
@@ -175,7 +176,7 @@ function TopFootballFixturesYesterday({
 }
 
 export async function getServerSideProps() {
-    const yesterdaysDate = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
+    const yesterdaysDate = getFormattedYesterdayDate();
     
     // Base URL for top winning predictions
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions";

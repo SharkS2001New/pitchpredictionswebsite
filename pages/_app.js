@@ -69,6 +69,55 @@ function App({ Component, pageProps }) {
     setIsClient(true);
   }, []);
 
+  // Global client fetch retry for unstable internet.
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const originalFetch = window.fetch.bind(window);
+    const shouldRetryStatus = (status) => status === 408 || status === 429 || status >= 500;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    window.fetch = async (input, init = {}) => {
+      const requestUrl = typeof input === "string" ? input : input?.url || "";
+      const method = (init?.method || "GET").toUpperCase();
+      const isGet = method === "GET";
+      const isApiRequest =
+        requestUrl.includes("api.pitchpredictions.com") ||
+        requestUrl.startsWith("/api/");
+
+      if (!isGet || !isApiRequest) {
+        return originalFetch(input, init);
+      }
+
+      const maxRetries = 2;
+      const baseDelayMs = 600;
+      let lastError;
+
+      for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+        try {
+          const response = await originalFetch(input, init);
+
+          if (!shouldRetryStatus(response.status) || attempt === maxRetries) {
+            return response;
+          }
+        } catch (error) {
+          lastError = error;
+          if (attempt === maxRetries) {
+            throw error;
+          }
+        }
+
+        await sleep(baseDelayMs * Math.pow(2, attempt));
+      }
+
+      throw lastError || new Error("Fetch failed after retries");
+    };
+
+    return () => {
+      window.fetch = originalFetch;
+    };
+  }, []);
+
   // Effect to handle ad rotation per page view with random start
   React.useEffect(() => {
     if (!shouldShowAd || !isClient) {

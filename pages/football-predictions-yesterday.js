@@ -187,7 +187,7 @@ export async function getServerSideProps() {
     const yesterdayDate = getFormattedYesterdayDate();
     
     // Base URL for yesterday's games
-    const baseUrl = "https://api.pitchpredictions.com/api/fetch_yesterday_games";
+    const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
     
     // Cache setup - create cache file for yesterday's predictions
     const cacheDir = path.join(process.cwd(), 'public', 'cache');

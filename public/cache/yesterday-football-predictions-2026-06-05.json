@@ -1,0 +1,2002 @@
+{
+  "generatedAt": "2026-06-05T22:07:18.441Z",
+  "fixtureDate": "2026-06-05",
+  "data": [
+    {
+      "fixture_id": 1513488,
+      "home_team": {
+        "id": 915,
+        "name": "Paradou AC",
+        "logo": "https://media.api-sports.io/football/teams/915.png"
+      },
+      "away_team": {
+        "id": 905,
+        "name": "ES Setif",
+        "logo": "https://media.api-sports.io/football/teams/905.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T16:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 2,
+        "half_time": {
+          "home": 0,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (38% home, 32% draw, 30% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 35 goals scored and 52 conceded across 29 matches, while the away side has produced 31 goals and conceded 36 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 42% and average goals of 2.66.",
+        "avg_goals": 2.66,
+        "1x2": {
+          "home": 38,
+          "draw": 32,
+          "away": 30
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 47,
+          "draw": 25,
+          "away": 43
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 42
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 52
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513485,
+      "home_team": {
+        "id": 1070,
+        "name": "Mostaganem",
+        "logo": "https://media.api-sports.io/football/teams/1070.png"
+      },
+      "away_team": {
+        "id": 10743,
+        "name": "El Bayadh",
+        "logo": "https://media.api-sports.io/football/teams/10743.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T16:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 2,
+        "away": 2,
+        "half_time": {
+          "home": 2,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (38% home, 32% draw, 30% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 16 goals scored and 50 conceded across 29 matches, while the away side has produced 15 goals and conceded 38 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 7% and average goals of 2.05.",
+        "avg_goals": 2.05,
+        "1x2": {
+          "home": 38,
+          "draw": 32,
+          "away": 30
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 46,
+          "draw": 25,
+          "away": 44
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 7
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 59
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513483,
+      "home_team": {
+        "id": 10752,
+        "name": "Khenchela",
+        "logo": "https://media.api-sports.io/football/teams/10752.png"
+      },
+      "away_team": {
+        "id": 10777,
+        "name": "MB Rouisset",
+        "logo": "https://media.api-sports.io/football/teams/10777.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T16:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (45% home, 30% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 36 goals scored and 37 conceded across 29 matches, while the away side has produced 30 goals and conceded 34 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 42% and average goals of 2.36.",
+        "avg_goals": 2.36,
+        "1x2": {
+          "home": 45,
+          "draw": 30,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 47,
+          "draw": 25,
+          "away": 43
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 42
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 53
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513484,
+      "home_team": {
+        "id": 906,
+        "name": "MC Alger",
+        "logo": "https://media.api-sports.io/football/teams/906.png"
+      },
+      "away_team": {
+        "id": 931,
+        "name": "ASO Chlef",
+        "logo": "https://media.api-sports.io/football/teams/931.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T17:30:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 2,
+        "away": 0,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (45% home, 30% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 39 goals scored and 18 conceded across 29 matches, while the away side has produced 26 goals and conceded 29 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 39% and average goals of 1.93.",
+        "avg_goals": 1.93,
+        "1x2": {
+          "home": 45,
+          "draw": 30,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 50,
+          "draw": 25,
+          "away": 40
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 39
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 61
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513489,
+      "home_team": {
+        "id": 914,
+        "name": "JS Saoura",
+        "logo": "https://media.api-sports.io/football/teams/914.png"
+      },
+      "away_team": {
+        "id": 911,
+        "name": "CS Constantine",
+        "logo": "https://media.api-sports.io/football/teams/911.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T19:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 3,
+        "away": 1,
+        "half_time": {
+          "home": 2,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (78% home, 10% draw, 12% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 37 goals scored and 25 conceded across 29 matches, while the away side has produced 34 goals and conceded 27 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 43% and average goals of 2.12.",
+        "avg_goals": 2.12,
+        "1x2": {
+          "home": 78,
+          "draw": 10,
+          "away": 12
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 46,
+          "draw": 25,
+          "away": 44
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 43
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 57
+        }
+      },
+      "odds": {
+        "home": 1.67,
+        "draw": 3.25,
+        "away": 5.25,
+        "double_chance": {
+          "home_draw": "1.09",
+          "home_away": "1.25",
+          "draw_away": "2.10"
+        },
+        "ht_ft": {
+          "ht_home": "2.38",
+          "ht_draw": "1.95",
+          "ht_away": "5.50"
+        },
+        "over_under": {
+          "over_2_5": 2.4,
+          "under_2_5": 1.53
+        },
+        "btts": {
+          "yes": 2.2,
+          "no": 1.55
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513489,
+      "home_team": {
+        "id": 914,
+        "name": "JS Saoura",
+        "logo": "https://media.api-sports.io/football/teams/914.png"
+      },
+      "away_team": {
+        "id": 911,
+        "name": "CS Constantine",
+        "logo": "https://media.api-sports.io/football/teams/911.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T19:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 3,
+        "away": 1,
+        "half_time": {
+          "home": 2,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (78% home, 10% draw, 12% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 37 goals scored and 25 conceded across 29 matches, while the away side has produced 34 goals and conceded 27 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 43% and average goals of 2.12.",
+        "avg_goals": 2.12,
+        "1x2": {
+          "home": 78,
+          "draw": 10,
+          "away": 12
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 46,
+          "draw": 25,
+          "away": 44
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 43
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 57
+        }
+      },
+      "odds": {
+        "home": 1.83,
+        "draw": 2.9,
+        "away": 4.6,
+        "double_chance": {
+          "home_draw": "1.18",
+          "home_away": "1.35",
+          "draw_away": "1.91"
+        },
+        "ht_ft": {
+          "ht_home": "2.40",
+          "ht_draw": "2.00",
+          "ht_away": "5.00"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": 2.15,
+          "no": 1.62
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1513482,
+      "home_team": {
+        "id": 918,
+        "name": "JS Kabylie",
+        "logo": "https://media.api-sports.io/football/teams/918.png"
+      },
+      "away_team": {
+        "id": 904,
+        "name": "CR Belouizdad",
+        "logo": "https://media.api-sports.io/football/teams/904.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T19:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (30% home, 30% draw, 40% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 40 goals scored and 31 conceded across 29 matches, while the away side has produced 47 goals and conceded 24 across 29 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 72% and average goals of 2.45.",
+        "avg_goals": 2.45,
+        "1x2": {
+          "home": 30,
+          "draw": 30,
+          "away": 40
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 43,
+          "draw": 25,
+          "away": 47
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 72
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 49
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 186,
+        "name": "Ligue 1",
+        "short_name": "DIV",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Ligue 1.jpg",
+        "country": "Algeria",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Algeria.svg"
+      }
+    },
+    {
+      "fixture_id": 1499458,
+      "home_team": {
+        "id": 8386,
+        "name": "Ituzaingó",
+        "logo": "https://media.api-sports.io/football/teams/8386.png"
+      },
+      "away_team": {
+        "id": 2422,
+        "name": "Real Pilar",
+        "logo": "https://media.api-sports.io/football/teams/2422.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T21:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "HT",
+        "status_long": "Halftime",
+        "elapsed": 45
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (25% home, 28% draw, 47% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 10 goals scored and 32 conceded across 18 matches, while the away side has produced 22 goals and conceded 20 across 18 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 43% and average goals of 2.33.",
+        "avg_goals": 2.33,
+        "1x2": {
+          "home": 25,
+          "draw": 28,
+          "away": 47
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 18,
+          "draw": 70,
+          "away": 12
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 43
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 54
+        }
+      },
+      "odds": {
+        "home": 3.3,
+        "draw": 3,
+        "away": 2.2,
+        "double_chance": {
+          "home_draw": "1.53",
+          "home_away": "1.28",
+          "draw_away": "1.30"
+        },
+        "ht_ft": {
+          "ht_home": "3.85",
+          "ht_draw": "1.95",
+          "ht_away": "2.88"
+        },
+        "over_under": {
+          "over_2_5": 2.6,
+          "under_2_5": 1.45
+        },
+        "btts": {
+          "yes": 2.1,
+          "no": 1.6
+        }
+      },
+      "league": {
+        "id": 131,
+        "name": "Primera B Metropolitana",
+        "short_name": "PB",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Primera B Metropolitana.jpg",
+        "country": "Argentina",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Argentina.svg"
+      }
+    },
+    {
+      "fixture_id": 1499460,
+      "home_team": {
+        "id": 1927,
+        "name": "Talleres Remedios",
+        "logo": "https://media.api-sports.io/football/teams/1927.png"
+      },
+      "away_team": {
+        "id": 8383,
+        "name": "Deportivo Merlo",
+        "logo": "https://media.api-sports.io/football/teams/8383.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T23:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "NS",
+        "status_long": "Not Started",
+        "elapsed": null
+      },
+      "score": {
+        "home": null,
+        "away": null,
+        "half_time": {
+          "home": null,
+          "away": null
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (38% home, 32% draw, 30% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 19 goals scored and 9 conceded across 18 matches, while the away side has produced 22 goals and conceded 20 across 18 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 42% and average goals of 1.94.",
+        "avg_goals": 1.94,
+        "1x2": {
+          "home": 38,
+          "draw": 32,
+          "away": 30
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 22,
+          "draw": 69,
+          "away": 9
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 42
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 61
+        }
+      },
+      "odds": {
+        "home": 2.15,
+        "draw": 2.88,
+        "away": 3.55,
+        "double_chance": {
+          "home_draw": "1.22",
+          "home_away": "1.30",
+          "draw_away": "1.65"
+        },
+        "ht_ft": {
+          "ht_home": "2.85",
+          "ht_draw": "1.90",
+          "ht_away": "4.20"
+        },
+        "over_under": {
+          "over_2_5": 2.65,
+          "under_2_5": 1.44
+        },
+        "btts": {
+          "yes": 2.15,
+          "no": 1.57
+        }
+      },
+      "league": {
+        "id": 131,
+        "name": "Primera B Metropolitana",
+        "short_name": "PB",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Primera B Metropolitana.jpg",
+        "country": "Argentina",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Argentina.svg"
+      }
+    },
+    {
+      "fixture_id": 1512447,
+      "home_team": {
+        "id": 18693,
+        "name": "Platense Res.",
+        "logo": "https://media.api-sports.io/football/teams/18693.png"
+      },
+      "away_team": {
+        "id": 20817,
+        "name": "Belgrano Córdoba Res.",
+        "logo": "https://media.api-sports.io/football/teams/20817.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T18:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 2,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (30% home, 30% draw, 40% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 15 goals scored and 16 conceded across 15 matches, while the away side has produced 22 goals and conceded 25 across 15 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 48% and average goals of 2.6.",
+        "avg_goals": 2.6,
+        "1x2": {
+          "home": 30,
+          "draw": 30,
+          "away": 40
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 40,
+          "draw": 25,
+          "away": 50
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 48
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 51
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 906,
+        "name": "Reserve League",
+        "short_name": "RL",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Reserve League.jpg",
+        "country": "Argentina",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Argentina.svg"
+      }
+    },
+    {
+      "fixture_id": 1547213,
+      "home_team": {
+        "id": 19147,
+        "name": "Brunei U19",
+        "logo": "https://media.api-sports.io/football/teams/19147.png"
+      },
+      "away_team": {
+        "id": 19151,
+        "name": "Malaysia U19",
+        "logo": "https://media.api-sports.io/football/teams/19151.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T09:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 4,
+        "half_time": {
+          "home": 0,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (25% home, 28% draw, 47% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 0 goals scored and 9 conceded across 1 matches, while the away side has produced 3 goals and conceded 0 across 1 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 5% and average goals of 6.",
+        "avg_goals": 6,
+        "1x2": {
+          "home": 25,
+          "draw": 28,
+          "away": 47
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 25,
+          "draw": 25,
+          "away": 60
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 5
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 72
+        }
+      },
+      "odds": {
+        "home": null,
+        "draw": null,
+        "away": null,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": null,
+          "ht_draw": null,
+          "ht_away": null
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 928,
+        "name": "ASEAN Championship U19",
+        "short_name": "AUC",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/AFF U19 Championship.jpg",
+        "country": "Asia",
+        "country_logo": "https://pitchpredictions.com/images/countries/Asia.jpg"
+      }
+    },
+    {
+      "fixture_id": 1547214,
+      "home_team": {
+        "id": 19154,
+        "name": "Singapore U19",
+        "logo": "https://media.api-sports.io/football/teams/19154.png"
+      },
+      "away_team": {
+        "id": 19155,
+        "name": "Thailand U19",
+        "logo": "https://media.api-sports.io/football/teams/19155.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T13:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 4,
+        "half_time": {
+          "home": 0,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (10% home, 15% draw, 75% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 0 goals scored and 3 conceded across 1 matches, while the away side has produced 9 goals and conceded 0 across 1 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 47% and average goals of 6.",
+        "avg_goals": 6,
+        "1x2": {
+          "home": 10,
+          "draw": 15,
+          "away": 75
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 22,
+          "draw": 11,
+          "away": 67
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 47
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 72
+        }
+      },
+      "odds": {
+        "home": 23,
+        "draw": 9,
+        "away": 1.08,
+        "double_chance": {
+          "home_draw": "7.00",
+          "home_away": "1.05",
+          "draw_away": "1.02"
+        },
+        "ht_ft": {
+          "ht_home": "12.00",
+          "ht_draw": "3.30",
+          "ht_away": "1.36"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": 1.95,
+          "no": 1.73
+        }
+      },
+      "league": {
+        "id": 928,
+        "name": "ASEAN Championship U19",
+        "short_name": "AUC",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/AFF U19 Championship.jpg",
+        "country": "Asia",
+        "country_logo": "https://pitchpredictions.com/images/countries/Asia.jpg"
+      }
+    },
+    {
+      "fixture_id": 1547214,
+      "home_team": {
+        "id": 19154,
+        "name": "Singapore U19",
+        "logo": "https://media.api-sports.io/football/teams/19154.png"
+      },
+      "away_team": {
+        "id": 19155,
+        "name": "Thailand U19",
+        "logo": "https://media.api-sports.io/football/teams/19155.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T13:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 4,
+        "half_time": {
+          "home": 0,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (10% home, 15% draw, 75% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 0 goals scored and 3 conceded across 1 matches, while the away side has produced 9 goals and conceded 0 across 1 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 47% and average goals of 6.",
+        "avg_goals": 6,
+        "1x2": {
+          "home": 10,
+          "draw": 15,
+          "away": 75
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 90
+        },
+        "half_time": {
+          "home": 22,
+          "draw": 11,
+          "away": 67
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 47
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 72
+        }
+      },
+      "odds": {
+        "home": 20,
+        "draw": 7.4,
+        "away": 1.09,
+        "double_chance": {
+          "home_draw": null,
+          "home_away": null,
+          "draw_away": null
+        },
+        "ht_ft": {
+          "ht_home": "10.00",
+          "ht_draw": "3.50",
+          "ht_away": "1.36"
+        },
+        "over_under": {
+          "over_2_5": 1.25,
+          "under_2_5": 3.5
+        },
+        "btts": {
+          "yes": 2.1,
+          "no": 1.6
+        }
+      },
+      "league": {
+        "id": 928,
+        "name": "ASEAN Championship U19",
+        "short_name": "AUC",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/AFF U19 Championship.jpg",
+        "country": "Asia",
+        "country_logo": "https://pitchpredictions.com/images/countries/Asia.jpg"
+      }
+    },
+    {
+      "fixture_id": 1517555,
+      "home_team": {
+        "id": 3773,
+        "name": "Sydney FC U23",
+        "logo": "https://media.api-sports.io/football/teams/3773.png"
+      },
+      "away_team": {
+        "id": 16775,
+        "name": "NWS Spirit",
+        "logo": "https://media.api-sports.io/football/teams/16775.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T09:30:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 0,
+        "half_time": {
+          "home": 1,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (45% home, 30% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 23 goals scored and 27 conceded across 16 matches, while the away side has produced 18 goals and conceded 23 across 17 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 62% and average goals of 2.77.",
+        "avg_goals": 2.77,
+        "1x2": {
+          "home": 45,
+          "draw": 30,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 49,
+          "draw": 25,
+          "away": 41
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 62
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 54
+        }
+      },
+      "odds": {
+        "home": 2.75,
+        "draw": 3.65,
+        "away": 2.2,
+        "double_chance": {
+          "home_draw": "1.53",
+          "home_away": "1.20",
+          "draw_away": "1.42"
+        },
+        "ht_ft": {
+          "ht_home": "3.10",
+          "ht_draw": "2.35",
+          "ht_away": "2.70"
+        },
+        "over_under": {
+          "over_2_5": 1.57,
+          "under_2_5": 2.3
+        },
+        "btts": {
+          "yes": 1.48,
+          "no": 2.38
+        }
+      },
+      "league": {
+        "id": 192,
+        "name": "New South Wales NPL",
+        "short_name": "NWS NPL",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/New South Wales NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1517781,
+      "home_team": {
+        "id": 16773,
+        "name": "Hills Brumbies",
+        "logo": "https://media.api-sports.io/football/teams/16773.png"
+      },
+      "away_team": {
+        "id": 20798,
+        "name": "Bulls Academy",
+        "logo": "https://media.api-sports.io/football/teams/20798.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T10:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 2,
+        "away": 2,
+        "half_time": {
+          "home": 2,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (38% home, 32% draw, 30% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 31 goals scored and 28 conceded across 17 matches, while the away side has produced 30 goals and conceded 23 across 17 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 95% and average goals of 3.29.",
+        "avg_goals": 3.29,
+        "1x2": {
+          "home": 38,
+          "draw": 32,
+          "away": 30
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 45,
+          "draw": 25,
+          "away": 45
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 95
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 64
+        }
+      },
+      "odds": {
+        "home": 2.25,
+        "draw": 3.3,
+        "away": 2.6,
+        "double_chance": {
+          "home_draw": "1.40",
+          "home_away": "1.25",
+          "draw_away": "1.55"
+        },
+        "ht_ft": {
+          "ht_home": "2.62",
+          "ht_draw": "2.45",
+          "ht_away": "2.90"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": 1.4,
+          "no": 2.62
+        }
+      },
+      "league": {
+        "id": 835,
+        "name": "New South Wales NPL 2",
+        "short_name": "NSW",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/New South Wales NPL 2.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1517781,
+      "home_team": {
+        "id": 16773,
+        "name": "Hills Brumbies",
+        "logo": "https://media.api-sports.io/football/teams/16773.png"
+      },
+      "away_team": {
+        "id": 20798,
+        "name": "Bulls Academy",
+        "logo": "https://media.api-sports.io/football/teams/20798.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T10:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 2,
+        "away": 2,
+        "half_time": {
+          "home": 2,
+          "away": 2
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (38% home, 32% draw, 30% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 31 goals scored and 28 conceded across 17 matches, while the away side has produced 30 goals and conceded 23 across 17 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 95% and average goals of 3.29.",
+        "avg_goals": 3.29,
+        "1x2": {
+          "home": 38,
+          "draw": 32,
+          "away": 30
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 45,
+          "draw": 25,
+          "away": 45
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 95
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 64
+        }
+      },
+      "odds": {
+        "home": 2.2,
+        "draw": 3.8,
+        "away": 2.5,
+        "double_chance": {
+          "home_draw": "1.44",
+          "home_away": "1.18",
+          "draw_away": "1.55"
+        },
+        "ht_ft": {
+          "ht_home": "2.75",
+          "ht_draw": "2.40",
+          "ht_away": "3.00"
+        },
+        "over_under": {
+          "over_2_5": 1.57,
+          "under_2_5": 2.35
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 835,
+        "name": "New South Wales NPL 2",
+        "short_name": "NSW",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/New South Wales NPL 2.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1523754,
+      "home_team": {
+        "id": 18313,
+        "name": "Cooks Hill United",
+        "logo": "https://media.api-sports.io/football/teams/18313.png"
+      },
+      "away_team": {
+        "id": 23500,
+        "name": "Belmont Swansea",
+        "logo": "https://media.api-sports.io/football/teams/23500.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T10:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 2,
+        "half_time": {
+          "home": 0,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (30% home, 30% draw, 40% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 22 goals scored and 22 conceded across 11 matches, while the away side has produced 31 goals and conceded 26 across 13 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 95% and average goals of 4.19.",
+        "avg_goals": 4.19,
+        "1x2": {
+          "home": 30,
+          "draw": 30,
+          "away": 40
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 43,
+          "draw": 25,
+          "away": 47
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 95
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 80
+        }
+      },
+      "odds": {
+        "home": 2.62,
+        "draw": 3.6,
+        "away": 2.2,
+        "double_chance": {
+          "home_draw": "1.60",
+          "home_away": "1.25",
+          "draw_away": "1.44"
+        },
+        "ht_ft": {
+          "ht_home": "2.75",
+          "ht_draw": "2.75",
+          "ht_away": "2.60"
+        },
+        "over_under": {
+          "over_2_5": null,
+          "under_2_5": null
+        },
+        "btts": {
+          "yes": 1.3,
+          "no": 3.1
+        }
+      },
+      "league": {
+        "id": 481,
+        "name": "Northern NSW NPL",
+        "short_name": "NSW",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Northern NSW NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1523754,
+      "home_team": {
+        "id": 18313,
+        "name": "Cooks Hill United",
+        "logo": "https://media.api-sports.io/football/teams/18313.png"
+      },
+      "away_team": {
+        "id": 23500,
+        "name": "Belmont Swansea",
+        "logo": "https://media.api-sports.io/football/teams/23500.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T10:00:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 1,
+        "away": 2,
+        "half_time": {
+          "home": 0,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (30% home, 30% draw, 40% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 22 goals scored and 22 conceded across 11 matches, while the away side has produced 31 goals and conceded 26 across 13 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 95% and average goals of 4.19.",
+        "avg_goals": 4.19,
+        "1x2": {
+          "home": 30,
+          "draw": 30,
+          "away": 40
+        },
+        "double_chance": {
+          "type": "12",
+          "probability": 70
+        },
+        "half_time": {
+          "home": 43,
+          "draw": 25,
+          "away": 47
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 95
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 80
+        }
+      },
+      "odds": {
+        "home": 2.4,
+        "draw": 4,
+        "away": 2.25,
+        "double_chance": {
+          "home_draw": "1.53",
+          "home_away": "1.17",
+          "draw_away": "1.44"
+        },
+        "ht_ft": {
+          "ht_home": "2.75",
+          "ht_draw": "2.75",
+          "ht_away": "2.62"
+        },
+        "over_under": {
+          "over_2_5": 1.3,
+          "under_2_5": 3.4
+        },
+        "btts": {
+          "yes": null,
+          "no": null
+        }
+      },
+      "league": {
+        "id": 481,
+        "name": "Northern NSW NPL",
+        "short_name": "NSW",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Northern NSW NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1524048,
+      "home_team": {
+        "id": 2531,
+        "name": "Eastern Suburbs",
+        "logo": "https://media.api-sports.io/football/teams/2531.png"
+      },
+      "away_team": {
+        "id": 22916,
+        "name": "Moreton City Excelsior",
+        "logo": "https://media.api-sports.io/football/teams/22916.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T09:30:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 0,
+        "away": 0,
+        "half_time": {
+          "home": 0,
+          "away": 0
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Away win after combining the prediction probabilities (25% home, 28% draw, 47% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 24 goals scored and 15 conceded across 11 matches, while the away side has produced 34 goals and conceded 19 across 12 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 69% and average goals of 3.98.",
+        "avg_goals": 3.98,
+        "1x2": {
+          "home": 25,
+          "draw": 28,
+          "away": 47
+        },
+        "double_chance": {
+          "type": "X2",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 42,
+          "draw": 25,
+          "away": 48
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 69
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 76
+        }
+      },
+      "odds": {
+        "home": 2.55,
+        "draw": 4,
+        "away": 2.2,
+        "double_chance": {
+          "home_draw": "1.53",
+          "home_away": "1.17",
+          "draw_away": "1.48"
+        },
+        "ht_ft": {
+          "ht_home": "2.88",
+          "ht_draw": "2.62",
+          "ht_away": "2.55"
+        },
+        "over_under": {
+          "over_2_5": 1.3,
+          "under_2_5": 3.25
+        },
+        "btts": {
+          "yes": 1.28,
+          "no": 3.1
+        }
+      },
+      "league": {
+        "id": 482,
+        "name": "Queensland NPL",
+        "short_name": "QSL",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Queensland NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1524047,
+      "home_team": {
+        "id": 10215,
+        "name": "Gold Coast Knights",
+        "logo": "https://media.api-sports.io/football/teams/10215.png"
+      },
+      "away_team": {
+        "id": 10220,
+        "name": "Olympic",
+        "logo": "https://media.api-sports.io/football/teams/10220.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T09:30:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 5,
+        "away": 2,
+        "half_time": {
+          "home": 1,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (45% home, 30% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 24 goals scored and 15 conceded across 10 matches, while the away side has produced 26 goals and conceded 24 across 13 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 66% and average goals of 3.87.",
+        "avg_goals": 3.87,
+        "1x2": {
+          "home": 45,
+          "draw": 30,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 47,
+          "draw": 25,
+          "away": 43
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 66
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 74
+        }
+      },
+      "odds": {
+        "home": 1.95,
+        "draw": 3.8,
+        "away": 3,
+        "double_chance": {
+          "home_draw": "1.28",
+          "home_away": "1.18",
+          "draw_away": "1.75"
+        },
+        "ht_ft": {
+          "ht_home": "2.45",
+          "ht_draw": "2.45",
+          "ht_away": "3.30"
+        },
+        "over_under": {
+          "over_2_5": 1.42,
+          "under_2_5": 2.7
+        },
+        "btts": {
+          "yes": 1.38,
+          "no": 2.65
+        }
+      },
+      "league": {
+        "id": 482,
+        "name": "Queensland NPL",
+        "short_name": "QSL",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Queensland NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    },
+    {
+      "fixture_id": 1524047,
+      "home_team": {
+        "id": 10215,
+        "name": "Gold Coast Knights",
+        "logo": "https://media.api-sports.io/football/teams/10215.png"
+      },
+      "away_team": {
+        "id": 10220,
+        "name": "Olympic",
+        "logo": "https://media.api-sports.io/football/teams/10220.png"
+      },
+      "match": {
+        "datetime": "2026-06-05T09:30:00+00:00",
+        "unformatted_date": "2026-06-05",
+        "venue": null,
+        "status": "FT",
+        "status_long": "Match Finished",
+        "elapsed": 90
+      },
+      "score": {
+        "home": 5,
+        "away": 2,
+        "half_time": {
+          "home": 1,
+          "away": 1
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (45% home, 30% draw, 25% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 24 goals scored and 15 conceded across 10 matches, while the away side has produced 26 goals and conceded 24 across 13 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 66% and average goals of 3.87.",
+        "avg_goals": 3.87,
+        "1x2": {
+          "home": 45,
+          "draw": 30,
+          "away": 25
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 75
+        },
+        "half_time": {
+          "home": 47,
+          "draw": 25,
+          "away": 43
+        },
+        "both_teams_to_score": {
+          "prediction": "Yes",
+          "probability": 66
+        },
+        "over_under_2_5": {
+          "prediction": "Ov2.5",
+          "probability": 74
+        }
+      },
+      "odds": {
+        "home": 2.05,
+        "draw": 4,
+        "away": 2.7,
+        "double_chance": {
+          "home_draw": "1.36",
+          "home_away": "1.17",
+          "draw_away": "1.62"
+        },
+        "ht_ft": {
+          "ht_home": "2.50",
+          "ht_draw": "2.50",
+          "ht_away": "3.10"
+        },
+        "over_under": {
+          "over_2_5": 1.4,
+          "under_2_5": 2.75
+        },
+        "btts": {
+          "yes": 1.4,
+          "no": 2.75
+        }
+      },
+      "league": {
+        "id": 482,
+        "name": "Queensland NPL",
+        "short_name": "QSL",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Queensland NPL.jpg",
+        "country": "Australia",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Australia.svg"
+      }
+    }
+  ],
+  "count": 21
+}

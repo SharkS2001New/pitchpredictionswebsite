@@ -1,6 +1,4 @@
 function ReturnJackpotNameSavedInDB(current_url) { 
-    console.log(current_url);
-
     if (current_url == 'jackpot-predictions/sportpesa-mega-jackpot-predictions') { 
         return "Sportpesa Mega Jackpot";
     } else if (current_url == 'jackpot-predictions/sportpesa-midweek-jackpot-predictions') {

@@ -700,9 +700,11 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
         </div>
 
         {/* SEO Content Section */}
-        {/* <div className="container">
-          <JackpotPredictionsContent/>
-        </div> */}
+        <div className="seo-content-section">
+          <div className="container">
+            <JackpotPredictionsContent/>
+          </div>
+        </div>
 
         {/* Share Modal */}
         {showShareModal && <ShareModal />}

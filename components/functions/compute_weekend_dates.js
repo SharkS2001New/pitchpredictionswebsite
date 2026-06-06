@@ -21,7 +21,6 @@ function DateofWeekend() {
 
     return dates;
   } catch (err) {
-    console.log(err.message);
     return err.message;
   }
 }

@@ -52,7 +52,7 @@ function RenderData(props) {
                 />
             ) : (
                 <OtherPagesRenders 
-                    url_name={currentPath} 
+                    url_name={props.marketRoute || currentPath} 
                     renderPredictions={renderPredictionsArray} 
                     onLoadMore={props.onLoadMore}
                     isLoadingMore={props.isLoadingMore}

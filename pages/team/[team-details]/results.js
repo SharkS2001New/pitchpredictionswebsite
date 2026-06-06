@@ -1,206 +1,97 @@
-// pages/team/[team-details]/results.js
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { Adsense } from "@ctrl/react-adsense";
 import TeamDetailsTop from "../../../components/teamdetails/team_details_top";
-import PreLoader from "../../../components/includes/loader";
-import RenderData from "../../../components/shared/render_fixtures_data";
-import SelectedMacthesPredDetails from "../../../components/shared/selected_matches_predictions_details";
-import DataNotFoundPage from "../../../components/includes/datanotfound";
+import TeamMatchPredictions from "../../../components/teamdetails/team_match_predictions";
 import FiltersTeamDetails from "../../../components/teamdetails/filters-on-teams-page";
 import GamesPlayedByTeam from "../../../components/teamdetails/games_played_by_team";
-import { Adsense } from "@ctrl/react-adsense";
+import FetchUpcomingMatchesByTeam from "../../../components/teamdetails/upcoming_matches_by_team";
+import DisplayIndependentLeagueStandings from "../../../components/shared/standings_by_league";
+import DataNotFoundPage from "../../../components/includes/datanotfound";
+import {
+  fetchTeamDetailsBundle,
+  getLeagueType,
+  parseTeamIdFromSlug,
+  resolveTeamFromFixture,
+} from "../../../components/functions/match_details_helpers";
 
-// =====================================================
-// ✅ SERVER SIDE
-// =====================================================
+const VALID_TABS = ["results", "standings", "upcoming", "players"];
 
 export async function getServerSideProps(context) {
-  const { params } = context;
-  const slug = params?.["team-details"] || "";
-  
-  // Extract team ID
-  const teamIdInteger = parseInt(slug.split("-").pop(), 10);
+  const slug = context.params?.["team-details"] || "";
+  const teamIdInteger = parseTeamIdFromSlug(slug);
 
-  if (isNaN(teamIdInteger) || teamIdInteger <= 0) {
+  if (!teamIdInteger) {
     return { notFound: true };
   }
 
-  const headers = {
-    "Content-type": "application/json; charset=UTF-8",
-    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
-  };
+  const initialTab = VALID_TABS.includes(context.query.tab)
+    ? context.query.tab
+    : "results";
 
   try {
-    // Fetch Top Team Data (required - blocks response)
-    const topRes = await fetch(
-      `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
-      { headers }
-    );
+    const bundle = await fetchTeamDetailsBundle(teamIdInteger);
 
-    if (!topRes.ok) {
-      throw new Error(`API responded with status: ${topRes.status}`);
-    }
-
-    const initialTeamsTopData = await topRes.json();
-
-    if (!initialTeamsTopData?.status || !initialTeamsTopData?.data?.length) {
+    if (!bundle) {
       return { notFound: true };
-    }
-
-    const teamData = initialTeamsTopData.data[0];
-    
-    // 🚀 Fetch ALL secondary data in parallel
-    const [
-      last6Res,
-      homeMatchesRes,
-      awayMatchesRes,
-      last6LeaguesRes,
-      homeLeaguesRes,
-      awayLeaguesRes
-    ] = await Promise.allSettled([
-      // Last 6 matches (both sides)
-      fetch("https://api.pitchpredictions.com/api/fetch_teams_matches_both_sides", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          team_id: teamIdInteger,
-          fixture_date: teamData.unformated_date,
-        }),
-      }).then(res => res.json()),
-      
-      // Home matches
-      fetch("https://api.pitchpredictions.com/api/fetch_teams_matches_when_home", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          team_id: teamIdInteger,
-          fixture_date: teamData.unformated_date,
-        }),
-      }).then(res => res.json()),
-      
-      // Away matches
-      fetch("https://api.pitchpredictions.com/api/fetch_teams_matches_when_away", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          team_id: teamIdInteger,
-          fixture_date: teamData.unformated_date,
-        }),
-      }).then(res => res.json()),
-      
-      // Last 6 matches leagues (for filtering)
-      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ 
-          home_team_id: teamIdInteger, 
-          fixture_date: teamData.unformated_date 
-        }),
-      }).then(res => res.json()),
-      
-      // Home matches leagues (for filtering)
-      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ 
-          home_team_id: teamIdInteger, 
-          fixture_date: teamData.unformated_date 
-        }),
-      }).then(res => res.json()),
-      
-      // Away matches leagues (for filtering)
-      fetch("https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues", {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ 
-          home_team_id: teamIdInteger, 
-          fixture_date: teamData.unformated_date 
-        }),
-      }).then(res => res.json())
-    ]);
-
-    // Process last 6 matches
-    let last6Data = [];
-    if (last6Res.status === 'fulfilled' && last6Res.value?.status === true) {
-      last6Data = last6Res.value.data || [];
-    }
-
-    // Process home matches
-    let homeMatchesData = [];
-    if (homeMatchesRes.status === 'fulfilled' && homeMatchesRes.value?.status === true) {
-      homeMatchesData = homeMatchesRes.value.data || [];
-    }
-
-    // Process away matches
-    let awayMatchesData = [];
-    if (awayMatchesRes.status === 'fulfilled' && awayMatchesRes.value?.status === true) {
-      awayMatchesData = awayMatchesRes.value.data || [];
-    }
-
-    // Process last 6 leagues
-    let last6LeaguesData = [];
-    if (last6LeaguesRes.status === 'fulfilled' && last6LeaguesRes.value?.status === true) {
-      last6LeaguesData = last6LeaguesRes.value.data || [];
-    }
-
-    // Process home leagues
-    let homeLeaguesData = [];
-    if (homeLeaguesRes.status === 'fulfilled' && homeLeaguesRes.value?.status === true) {
-      homeLeaguesData = homeLeaguesRes.value.data || [];
-    }
-
-    // Process away leagues
-    let awayLeaguesData = [];
-    if (awayLeaguesRes.status === 'fulfilled' && awayLeaguesRes.value?.status === true) {
-      awayLeaguesData = awayLeaguesRes.value.data || [];
     }
 
     return {
       props: {
-        initialTeamsTopData,
+        initialTeamsTopData: bundle.teamsTopData,
         teamIdInteger,
-        initialLast6Matches: last6Data,
-        initialHomeMatches: homeMatchesData,
-        initialAwayMatches: awayMatchesData,
-        initialLast6Leagues: last6LeaguesData,
-        initialHomeLeagues: homeLeaguesData,
-        initialAwayLeagues: awayLeaguesData,
+        initialTab,
+        initialLast6Matches: bundle.last6Matches,
+        initialHomeMatches: bundle.homeMatches,
+        initialAwayMatches: bundle.awayMatches,
+        initialLast6Leagues: bundle.last6Leagues,
+        initialHomeLeagues: bundle.homeLeagues,
+        initialAwayLeagues: bundle.awayLeagues,
+        initialStandings: bundle.standings,
+        initialFixturesWithPredictions: bundle.upcomingFixtures,
       },
     };
   } catch (error) {
-    console.error('SSR fetch error:', error);
+    console.error("SSR fetch error:", error);
     return { notFound: true };
   }
 }
 
-// =====================================================
-// ✅ COMPONENT
-// =====================================================
-
-function Teams({ 
-  initialTeamsTopData, 
+function TeamDetails({
+  initialTeamsTopData,
   teamIdInteger,
-  initialLast6Matches = [],
-  initialHomeMatches = [],
-  initialAwayMatches = [],
-  initialLast6Leagues = [],
-  initialHomeLeagues = [],
-  initialAwayLeagues = []
+  initialTab,
+  initialLast6Matches,
+  initialHomeMatches,
+  initialAwayMatches,
+  initialLast6Leagues,
+  initialHomeLeagues,
+  initialAwayLeagues,
+  initialStandings,
+  initialFixturesWithPredictions,
 }) {
   const router = useRouter();
-  
-  // SSR data - available immediately
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [teams_top_data] = useState(initialTeamsTopData?.data?.[0] || null);
-  
-  // Data is already available from props - no loading state needed
   const [team_last6_matches] = useState(initialLast6Matches);
   const [team_last6_matches_when_home] = useState(initialHomeMatches);
   const [team_last6_matches_when_away] = useState(initialAwayMatches);
   const [team_last6_leagues] = useState(initialLast6Leagues);
   const [team_home_leagues] = useState(initialHomeLeagues);
   const [team_away_leagues] = useState(initialAwayLeagues);
+  const [table_standings] = useState(initialStandings);
 
-  // If no team data from SSR, show not found
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const tabFromQuery = router.query.tab;
+    if (VALID_TABS.includes(tabFromQuery) && tabFromQuery !== activeTab) {
+      setActiveTab(tabFromQuery);
+    } else if (!tabFromQuery && activeTab !== "results") {
+      setActiveTab("results");
+    }
+  }, [router.isReady, router.query.tab, activeTab]);
+
   if (!teams_top_data) {
     return (
       <div className="sites-card">
@@ -210,150 +101,211 @@ function Teams({
   }
 
   const todays_date = new Date().toISOString().split("T")[0];
-  
-  // Determine match status
+  const teamContext = resolveTeamFromFixture(teams_top_data, teamIdInteger);
+  const teamName = teamContext.teamName;
+  const fixtureDate = teamContext.fixtureDate || todays_date;
+  const leagueType = getLeagueType(teams_top_data);
+  const showStandings = leagueType === "League";
+
   const getMatchStatus = () => {
-    if (teams_top_data.unformated_date === todays_date) return "Today's Match";
-    if (teams_top_data.unformated_date > todays_date) return "Upcoming Match";
-    if (teams_top_data.unformated_date < todays_date) return "Recent Match";
+    if (fixtureDate === todays_date) return "Today's Match";
+    if (fixtureDate > todays_date) return "Upcoming Match";
+    if (fixtureDate < todays_date) return "Recent Match";
     return "";
   };
 
-  // Determine which team we're viewing with safety checks
-  const isHomeTeam = teams_top_data.home_team_id === teamIdInteger;
-  let teamName = "";
-  
-  if (isHomeTeam) {
-    teamName = teams_top_data.home_team_name || "";
-  } else {
-    teamName = teams_top_data.away_team_name || "";
-  }
-
-  // Prepare predictions data - wrap in array for SelectedMacthesPredDetails
-  const predictionsData = [teams_top_data];
-  
-  // Render predictions using the component
-  const renderPredictions = <SelectedMacthesPredDetails props={predictionsData} />;
-
-  // Form dynamic URL with safety check
-  let url_name = "";
-  if (teamName) {
-    url_name = encodeURIComponent(
-      teamName.replace(/\s+/g, "-").toLowerCase() + "-" + teamIdInteger
-    );
-  } else {
-    url_name = `team-${teamIdInteger}`;
-  }
-
-  // Check data availability
   const hasGeneralMatches = team_last6_matches.length > 0;
   const hasHomeMatches = team_last6_matches_when_home.length > 0;
   const hasAwayMatches = team_last6_matches_when_away.length > 0;
+  const hasStandings = table_standings.length > 0;
+  const hasUpcomingMatches = initialFixturesWithPredictions.length > 0;
+
+  const handleTabChange = (tab) => {
+    if (tab === activeTab) return;
+
+    setActiveTab(tab);
+    const query = { ...router.query };
+    if (tab === "results") {
+      delete query.tab;
+    } else {
+      query.tab = tab;
+    }
+    router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+  };
 
   return (
     <>
-      {/* ===== SSR CONTENT - LOADS IMMEDIATELY ===== */}
       <div className="sites-card mb-2">
         <TeamDetailsTop
           props={teams_top_data}
           last_6_matches={team_last6_matches}
           team_id={teamIdInteger}
         />
-        <div className="row">
-          <div className="text-center fw-bold">
-            <h2 className="sectionTitle">
-              <b>{getMatchStatus()}</b>
-            </h2>
-          </div>
-        </div>
-        
-        {/* RenderData expects an array of components from SelectedMacthesPredDetails */}
-        <RenderData renderPredictions={renderPredictions?.props ? [renderPredictions] : []} />
-        
+        <div className="border-top"></div>
         <FiltersTeamDetails
-          url_filter={router.pathname.substring(1)}
-          match_url={url_name}
-          league_type={teams_top_data.league_type || ""}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          showStandings={showStandings}
         />
       </div>
 
-      {/* ===== GAMES PLAYED CONTENT - ALL SERVER RENDERED ===== */}
-      <div className="sites-card">
-        {/* All Matches (combined home/away) */}
-        {hasGeneralMatches && (
-          <GamesPlayedByTeam
-            props={team_last6_matches}
-            team_id={teamIdInteger}
-            filter_date={teams_top_data.unformated_date}
-            title={`Games Played By ${teamName || "Team"}`}
-            team_name={teamName || ""}
-            initialLeagues={team_last6_leagues}
-          />
-        )}
+      {activeTab === "results" && (
+        <>
+          <div className="sites-card mb-2">
+            <div className="row">
+              <div className="text-center fw-bold">
+                <h2 className="sectionTitle">
+                  <b>{getMatchStatus()}</b>
+                </h2>
+              </div>
+            </div>
+            <TeamMatchPredictions gamesData={[teams_top_data]} />
+          </div>
 
-        {/* Home Matches */}
-        {hasHomeMatches && (
-          <>
-            <br />
+          <div className="sites-card mb-2">
+            <div className="text-center fw-bold sectionTitle">
+              <span>RESULTS</span>
+            </div>
+          {hasGeneralMatches && (
             <GamesPlayedByTeam
-              props={team_last6_matches_when_home}
+              props={team_last6_matches}
               team_id={teamIdInteger}
-              filter_date={teams_top_data.unformated_date}
-              title="Home Matches"
+              filter_date={fixtureDate}
+              title={`Games Played By ${teamName || "Team"}`}
               team_name={teamName || ""}
-              initialLeagues={team_home_leagues}
+              initialLeagues={team_last6_leagues}
             />
-          </>
-        )}
+          )}
 
-        {/* AdSense between home and away */}
-        {hasHomeMatches && hasAwayMatches && (
-          <>
-            <br />
-            <Adsense
-              client="ca-pub-5665711413000284"
-              slot="3850951453"
-              style={{ display: "block" }}
-              layout="display"
-              format="auto"
-            />
-            <br />
-          </>
-        )}
+          {hasHomeMatches && (
+            <>
+              <br />
+              <GamesPlayedByTeam
+                props={team_last6_matches_when_home}
+                team_id={teamIdInteger}
+                filter_date={fixtureDate}
+                title="Home Matches"
+                team_name={teamName || ""}
+                initialLeagues={team_home_leagues}
+              />
+            </>
+          )}
 
-        {/* Away Matches */}
-        {hasAwayMatches && (
-          <>
+          {hasHomeMatches && hasAwayMatches && (
+            <>
+              <br />
+              <Adsense
+                client="ca-pub-5665711413000284"
+                slot="3850951453"
+                style={{ display: "block" }}
+                layout="display"
+                format="auto"
+              />
+              <br />
+            </>
+          )}
+
+          {hasAwayMatches && (
             <GamesPlayedByTeam
               props={team_last6_matches_when_away}
               team_id={teamIdInteger}
-              filter_date={teams_top_data.unformated_date}
+              filter_date={fixtureDate}
               title="Away Matches"
               team_name={teamName || ""}
               initialLeagues={team_away_leagues}
             />
-          </>
-        )}
+          )}
 
-        {/* Show message if no data at all */}
-        {!hasGeneralMatches && !hasHomeMatches && !hasAwayMatches && (
-          <>
-            <DataNotFoundPage props="No match data available for this team." />
-            <br />
-          </>
-        )}
+          {!hasGeneralMatches && !hasHomeMatches && !hasAwayMatches && (
+            <>
+              <DataNotFoundPage props="No match data available for this team." />
+              <br />
+            </>
+          )}
 
-        {/* Bottom AdSense */}
-        <Adsense
-          client="ca-pub-5665711413000284"
-          slot="7856848919"
-          style={{ display: "block" }}
-          layout="display"
-          format="auto"
-        />
-      </div>
+          <Adsense
+            client="ca-pub-5665711413000284"
+            slot="7856848919"
+            style={{ display: "block" }}
+            layout="display"
+            format="auto"
+          />
+          </div>
+        </>
+      )}
+
+      {activeTab === "standings" && (
+        <div className="sites-card mb-2">
+          <div className="text-center fw-bold sectionTitle">
+            <span>STANDINGS</span>
+          </div>
+          {hasStandings ? (
+            <DisplayIndependentLeagueStandings
+              props={table_standings}
+              home_team_id={teamIdInteger}
+              league_name={teamContext.leagueName}
+            />
+          ) : (
+            <>
+              <DataNotFoundPage props="No standings data available for this team." />
+              <br />
+            </>
+          )}
+          <Adsense
+            client="ca-pub-5665711413000284"
+            slot="7856848919"
+            style={{ display: "block" }}
+            layout="display"
+            format="auto"
+          />
+        </div>
+      )}
+
+      {activeTab === "upcoming" && (
+        <div className="sites-card mb-2">
+          {hasUpcomingMatches ? (
+            <FetchUpcomingMatchesByTeam
+              initialFixturesWithPredictions={initialFixturesWithPredictions}
+              status="success"
+              showHeader
+            />
+          ) : (
+            <>
+              <div className="text-center fw-bold sectionTitle">
+                <span>UPCOMING MATCHES</span>
+              </div>
+              <DataNotFoundPage props="No upcoming matches data available." />
+            </>
+          )}
+          <br />
+          <Adsense
+            client="ca-pub-5665711413000284"
+            slot="7856848919"
+            style={{ display: "block" }}
+            layout="display"
+            format="auto"
+          />
+        </div>
+      )}
+
+      {activeTab === "players" && (
+        <div className="sites-card mb-2">
+          <div className="text-center fw-bold sectionTitle">
+            <span>PLAYERS</span>
+          </div>
+          <DataNotFoundPage props="Players data is coming soon." />
+          <br />
+          <Adsense
+            client="ca-pub-5665711413000284"
+            slot="7856848919"
+            style={{ display: "block" }}
+            layout="display"
+            format="auto"
+          />
+        </div>
+      )}
     </>
   );
 }
 
-export default Teams;
+export default TeamDetails;

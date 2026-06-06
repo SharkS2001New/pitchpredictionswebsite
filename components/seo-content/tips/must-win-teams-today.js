@@ -1,529 +1,93 @@
+import PredictionGuidesLinks from "../shared/prediction-guides-links";
+
 export default function MustWinTeamsTodayContent() {
-  // Generates today's date string for freshness signal — update server-side daily
-  const today = new Date().toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-
   return (
-    <div
-      id="seo-content"
-      style={{
-        maxWidth: '1200px',
-        margin: '48px auto 0',
-        padding: '0 10px 10px',
-      }}
-    >
+    <section className="seo-content">
 
-      {/* ── FRESHNESS TIMESTAMP ── */}
-      <p
-        style={{
-          fontSize: '0.82rem',
-          opacity: 0.5,
-          marginBottom: '32px',
-          marginTop: 0,
-        }}
-      >
-        Updated daily · Last updated {today}
+      <h2>Must Win Teams Today – High Confidence Football Picks</h2>
+      <p>
+        Explore today&apos;s <strong>must win teams today</strong> on Pitch Predictions — clubs with strong motivation, solid form, and a clear edge in their fixture. Our <strong>football must win tips</strong> highlight sides fighting relegation, chasing titles, or needing points in cup races across the Premier League, La Liga, Bundesliga, Serie A, and 700+ leagues. These are <strong>high confidence football predictions</strong> — not guaranteed wins. Tips guide your research; they never promise results.
       </p>
 
-      {/* ── INTRO / KEYWORD HOOK ── */}
-      <section aria-labelledby="intro-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="intro-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '14px' }}
-        >
-          Must Win Teams Today – Who Has Everything on the Line?
-        </h2>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '14px' }}>
-          Some teams don't just want to win — they <strong>have to win</strong>. Whether it's a
-          relegation battle in the Premier League, a Champions League qualification race in La Liga,
-          or a title decider in the Bundesliga, these high-stakes matches create intense motivation
-          and higher predictability. That's where our{' '}
-          <strong>must win teams today prediction</strong> comes in.
-        </p>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '14px' }}>
-          At <strong>Pitch Predictions</strong>, we spotlight clubs with no room for error across
-          700+ competitions — from Serie A and Ligue 1 to the Europa League and major African
-          leagues. These are matches where one side simply cannot afford to drop points, making them
-          strong candidates for focused betting. Our <strong>must win teams today sure wins</strong>{' '}
-          are not guaranteed outcomes, but they represent the highest-confidence selections our
-          model produces each day.
-        </p>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85 }}>
-          We update this section every morning with that day's selections — factoring in the latest
-          team news, injuries, and match context. Use the date navigation above to explore upcoming
-          fixtures in advance.
-        </p>
-      </section>
+      <h3>Must Win Teams This Week</h3>
+      <p>
+        This week&apos;s <strong>must win teams today</strong> list focuses on clubs in relegation battles, title races, European qualification fights, and knockout cup ties where defeat ends the campaign. We only include fixtures where at least four of six factors — form, H2H, home/away record, motivation, squad news, and odds — point the same way.
+      </p>
+      <p>
+        Selections refresh each morning before European and African kickoffs. For a single high-confidence pick, see <a href="/tips/solo-prediction">solo prediction today</a>. Building a weekend coupon? Pair this list with <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a> (17 games, deadline Saturday) or <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Midweek Jackpot tips</a> (13 games, deadline midweek).
+      </p>
 
-      {/* ── WHY MUST-WIN GAMES MATTER ── */}
-      <section aria-labelledby="why-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="why-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '14px' }}
-        >
-          Why Must Win Games Matter for Betting
-        </h2>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '14px' }}>
-          <strong>Must-win teams</strong> are often more motivated, more aggressive, and far less
-          likely to rotate players. A manager with his job on the line doesn't rest his striker.
-          A club three points from safety doesn't play a reserve goalkeeper. This urgency is
-          measurable — and it shifts the probability of a result in ways that standard form tables
-          don't capture.
-        </p>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '14px' }}>
-          While nothing is ever 100% certain in football, our{' '}
-          <strong>
-            accurate{' '}
-            <a
-              href="https://stake.com/blog/how-to-bet-on-soccer"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              football prediction
-            </a>
-          </strong>{' '}
-          engine factors in the pressure behind each fixture — not just raw statistics. Each day we publish:
-        </p>
-        <ul style={{ paddingLeft: '22px', marginBottom: '0' }}>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            Key fixtures featuring genuine must-win scenarios across top leagues
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            Context on <em>why</em> a team must win — relegation threat, title race, cup final spot
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            Recent form, momentum, and head-to-head records
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            Suggested single or accumulator picks to boost your betting slip
-          </li>
-        </ul>
-      </section>
+      <h3>Why Must Win Teams Today Matter</h3>
+      <p>
+        A must-win team is a side with everything on the line — and that urgency often shows on the pitch. Managers under pressure field their strongest line-ups. Relegation-threatened clubs fight harder at home. Our <strong>strong football picks today</strong> factor in this motivation alongside raw statistics:
+      </p>
+      <ul>
+        <li>Recent form — wins, draws, losses, and goals over the last 5–10 matches</li>
+        <li>Head-to-head records between today&apos;s opponents</li>
+        <li>Home vs away performance splits for each team</li>
+        <li>Match importance — relegation, title race, European qualification, or cup progress</li>
+        <li>Confirmed injuries, suspensions, and squad news</li>
+      </ul>
+      <p>
+        Motivation data is a key part of every <strong>football form guide today</strong> review on this page.
+      </p>
 
-      {/* ── HOW WE SELECT MUST-WIN TEAMS ── */}
-      <section aria-labelledby="methodology-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="methodology-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '14px' }}
-        >
-          How We Select Today's Must-Win Teams
-        </h2>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '20px' }}>
-          Every <strong>must win teams today prediction</strong> passes through a structured
-          six-factor evaluation. Low-confidence matches are deliberately excluded — only those with
-          strong multi-factor alignment make the cut:
-        </p>
+      <h3>Markets in Our Must Win Tips</h3>
+      <p>
+        Our daily <strong>match winner tips</strong> cover the markets must-win bettors use most:
+      </p>
+      <ul>
+        <li><strong>1X2:</strong> Home win, draw, or away win with a confidence rating</li>
+        <li><strong>Double Chance:</strong> Cover two outcomes — 1X, 12, or X2</li>
+        <li><strong>Over/Under 2.5 Goals:</strong> Goal-line picks from scoring averages</li>
+        <li><strong>BTTS:</strong> Both teams to score, built on attack and defence records</li>
+        <li><strong>HT/FT:</strong> Half-time and full-time combined selections</li>
+      </ul>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '14px',
-            marginBottom: '20px',
-          }}
-        >
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              📈 Recent League Form
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              We review each team's last 5 and last 10 matches — wins, draws, losses, goals scored
-              and conceded — to assess current momentum across the Premier League, La Liga,
-              Bundesliga, Serie A, and 700+ other competitions.
-            </p>
-          </article>
+      <h3>How We Select Must Win Teams Today</h3>
+      <p>
+        Every <strong>must win teams today</strong> pick passes through a structured review:
+      </p>
+      <ul>
+        <li>Team form analysis over recent fixtures</li>
+        <li>Head-to-head history and psychological edges between opponents</li>
+        <li>Home vs away win rates tracked separately</li>
+        <li>Squad fitness — injuries, suspensions, and rotation risk</li>
+        <li>Odds movement and market signals before kickoff</li>
+        <li>Match context — why one side simply cannot afford to drop points</li>
+      </ul>
+      <p>
+        Only fixtures where multiple factors align make the daily list. Low-confidence games are excluded deliberately.
+      </p>
 
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              ⚔️ Head-to-Head History
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              Historical matchups reveal patterns current form alone can miss — psychological edges,
-              tactical familiarity and historical dominance between two sides.
-            </p>
-          </article>
+      <h3>Leagues We Cover</h3>
+      <p>
+        <strong>High confidence football predictions</strong> on Pitch Predictions span the Premier League, Champions League, Europa League, La Liga, Bundesliga, Serie A, Ligue 1, PSL, NPFL, Kenya Premier League, and 700+ competitions worldwide. Selections are updated every morning before kickoff.
+      </p>
 
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              🏟️ Home & Away Record
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              A team's home form and away record are tracked separately. Home advantage is a
-              well-documented statistical factor — and we weight it accordingly in every football
-              prediction.
-            </p>
-          </article>
+      <h3>Safe &amp; Responsible Betting</h3>
+      <p>
+        Even the strongest <strong>football must win tips</strong> can lose — a red card, deflected goal, or inspired goalkeeper changes any match. Follow these rules:
+      </p>
+      <ul>
+        <li>Bet only what you can afford to lose</li>
+        <li>Use must-win picks as a starting point — verify team news yourself</li>
+        <li>Check the match stats page and <a href="/team-comparison">Team Comparison tool</a> before staking</li>
+        <li>Set a budget and never chase losses</li>
+        <li>Seek local gambling support if betting stops being entertainment</li>
+      </ul>
 
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              🏥 Squad Availability
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              Confirmed injuries, suspensions and rotation decisions are factored in. The absence of
-              a key player can shift the balance of a must-win match significantly.
-            </p>
-          </article>
+      <h3>Why Pitch Predictions Must Win Tips Are Trusted</h3>
+      <p>
+        Pitch Predictions delivers free <strong>must win teams today</strong> selections with verified data, transparent reasoning, and daily updates. Our <strong>strong football picks today</strong> are built to educate and inform — not to promise impossible wins.
+      </p>
 
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              💹 Odds & Market Movement
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              Sustained movement in the betting market toward one side often reflects information
-              the public hasn't fully priced in yet. We monitor line shifts across bookmakers daily.
-            </p>
-          </article>
+      <p>
+        Use today&apos;s <strong>match winner tips</strong> and <strong>football form guide today</strong> data to research smarter — not as a shortcut to guaranteed profit.
+      </p>
 
-          <article
-            style={{
-              padding: '18px 20px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(255,255,255,0.03)',
-            }}
-          >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '7px' }}>
-              🎯 Match Importance
-            </h3>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, opacity: 0.82 }}>
-              Is one team fighting relegation while the other has nothing to play for? Motivation
-              and context are central to every must-win prediction — especially late in the season
-              or in cup competitions.
-            </p>
-          </article>
-        </div>
-      </section>
+      <PredictionGuidesLinks excludeHref="/tips/must-win-teams-today" title="Related Prediction Guides" />
 
-      {/* ── RESPONSIBLE USE ── */}
-      <section aria-labelledby="tips-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="tips-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '14px' }}
-        >
-          How to Use Must-Win Team Picks Responsibly
-        </h2>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '14px' }}>
-          Our must-win selections are a starting point for your own research — not a substitute for
-          it. Even the most confident football prediction can be undone by a red card, a deflected
-          goal or an inspired goalkeeper. Keep these principles in mind:
-        </p>
-        <ul style={{ paddingLeft: '22px', marginBottom: '14px' }}>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <strong>Cross-reference with the match stats page.</strong> Click through to any match
-            listing to see the full H2H table, form guide and goal averages before deciding.
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <strong>Check the league context.</strong> A team strong on paper may rotate their
-            squad ahead of a European tie or play cautiously in a domestic cup.
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <strong>
-              Use the{' '}
-              <a href="/team-comparison" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                Team Comparison tool
-              </a>
-            </strong>{' '}
-            to go deeper on any specific fixture — side-by-side stats, recent results and goal
-            patterns.
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <strong>Manage your stakes sensibly.</strong> Even strong favourites lose. Never stake
-            more than you can afford to lose on any single selection.{' '}
-            <strong>Gambling should be entertaining, not a financial strategy.</strong>
-          </li>
-        </ul>
-      </section>
-
-      {/* ── FAQ SECTION ── */}
-      <section aria-labelledby="faq-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="faq-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '20px' }}
-        >
-          Frequently Asked Questions
-        </h2>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-          <details
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}
-            open
-          >
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              What does "must-win team" mean in football predictions?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              A must-win team is a side our analysts identify as having a strong statistical and
-              motivational edge in a given match. These{' '}
-              <strong>must win teams today predictions</strong> are based on current form,
-              head-to-head records, home/away performance, squad availability and betting market
-              data. It does not mean the outcome is certain — it means the data and context
-              consistently support one side over the other.
-            </p>
-          </details>
-
-          <details style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}>
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              Are must win teams today sure wins?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              No football prediction is ever a guaranteed sure win. However,{' '}
-              <strong>must win teams today sure wins</strong> refer to selections where multiple
-              independent factors — form, motivation, H2H records, odds movement — all point to the
-              same outcome. These high-confidence picks offer a stronger basis for betting decisions
-              than general tips.
-            </p>
-          </details>
-
-          <details style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}>
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              How does Pitch Predictions select must-win teams?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              Each <strong>must win teams today prediction</strong> passes through a six-factor
-              model: recent league form, H2H records, home/away win rates, squad fitness, betting
-              line movement, and match importance — relegation battles, title races, cup qualifiers.
-              We only publish teams where at least four of these six factors align in the same
-              direction.
-            </p>
-          </details>
-
-          <details style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}>
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              Are the must-win tips free?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              Yes, completely free. All must-win team selections on this page are available at no
-              cost. A premium tier is available for early-access picks and higher-confidence
-              exclusive tips updated before 9:00 AM GMT.
-            </p>
-          </details>
-
-          <details style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}>
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              How often is this page updated?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              Must-win team selections are updated each morning, typically by 9:00 AM GMT. The page
-              is refreshed daily to reflect the latest team news, injury updates and fixture
-              context. Use the date navigation bar above to view upcoming days in advance.
-            </p>
-          </details>
-
-          <details style={{ borderBottom: '1px solid rgba(255,255,255,0.09)', padding: '16px 0' }}>
-            <summary
-              style={{
-                fontSize: '0.97rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                listStyle: 'none',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              Which leagues are covered?
-              <span
-                aria-hidden="true"
-                style={{ fontSize: '1.1rem', opacity: 0.45, flexShrink: 0, marginLeft: '12px' }}
-              >
-                +
-              </span>
-            </summary>
-            <p
-              style={{ fontSize: '0.92rem', lineHeight: 1.8, marginTop: '12px', opacity: 0.82 }}
-            >
-              We cover must-win picks across 700+ leagues including the Premier League, La Liga,
-              Bundesliga, Serie A, Ligue 1, Champions League, Europa League, and major African and
-              Asian competitions — including fixtures covered by SportPesa, Betika, and Mozzart Bet
-              jackpots.
-            </p>
-          </details>
-        </div>
-      </section>
-
-      {/* ── JACKPOT PREDICTIONS INTERNAL LINKS ── */}
-      <section aria-labelledby="jackpot-heading" style={{ marginBottom: '44px' }}>
-        <h2
-          id="jackpot-heading"
-          style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '14px' }}
-        >
-          Looking for the Best Jackpot Predictions?
-        </h2>
-        <p style={{ fontSize: '0.97rem', lineHeight: 1.85, marginBottom: '16px' }}>
-          If you're searching for reliable{' '}
-          <a
-            href="/jackpot-predictions"
-            style={{ color: 'inherit', textDecoration: 'underline', fontWeight: 600 }}
-          >
-            jackpot prediction
-          </a>{' '}
-          across top bookmakers like SportPesa, Betika, and Mozzart Bet — we've got you covered.
-          Our platform brings together expertly analysed picks to help boost your chances across
-          every major jackpot pool.
-        </p>
-        <ul style={{ paddingLeft: '22px', marginBottom: '0' }}>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <a
-              href="/jackpot-predictions/sportpesa-mega-jackpot-predictions"
-              style={{ color: 'inherit', textDecoration: 'underline' }}
-            >
-              Sportpesa Mega Jackpot Predictions
-            </a>
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <a
-              href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions"
-              style={{ color: 'inherit', textDecoration: 'underline' }}
-            >
-              Sportpesa Midweek Jackpot Predictions
-            </a>
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <a
-              href="/jackpot-predictions/mozzart-super-daily-jackpot-predictions"
-              style={{ color: 'inherit', textDecoration: 'underline' }}
-            >
-              Mozzart Super Daily Jackpot Predictions
-            </a>
-          </li>
-          <li style={{ fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '8px' }}>
-            <a
-              href="/jackpot-predictions/betika-midweek-jackpot-predictions"
-              style={{ color: 'inherit', textDecoration: 'underline' }}
-            >
-              Betika Midweek Jackpot Predictions
-            </a>
-          </li>
-        </ul>
-      </section>
-    </div>
+    </section>
   );
 }

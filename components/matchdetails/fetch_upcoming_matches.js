@@ -47,7 +47,7 @@ function FetchUpcomingMatches({
         const endIndex = homeStartIndex + chunkSize - 1;
         
         try {
-            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_by_home_team", {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_home_team", {
                 method: 'POST',
                 body: JSON.stringify({
                     home_team_id,
@@ -87,7 +87,7 @@ function FetchUpcomingMatches({
         const endIndex = awayStartIndex + chunkSize - 1;
         
         try {
-            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_by_away_team", {
+            const response = await fetch("https://api.pitchpredictions.com/api/fetch_upcoming_matches_away_team", {
                 method: 'POST',
                 body: JSON.stringify({
                     away_team_id,

@@ -1,14 +1,12 @@
 // pages/live-football-predictions.js
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
 import { Adsense } from "@ctrl/react-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../components/includes/datanotfound";
 import getFormattedCurrentDate from "../components/functions/GetTodaysDate";
-import FilterTodaysMatchesLiveUpcomingFinished from "../components/shared/filter-todays-matches-live-upcoming-finished";
-import FilterLiveOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/live-football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
+import fetchJsonWithRetry from "../components/functions/fetch_with_retry";
 import LivescoresContent from "../components/seo-content/mainpages/live-football-predictions";
 
 function LiveFixtures({ 
@@ -18,7 +16,6 @@ function LiveFixtures({
     baseUrl,
     todaysDate 
 }) {
-    const router = useRouter();
     const [allData, setAllData] = useState(initialData || []);
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20); // Start after the first 20
@@ -36,14 +33,9 @@ function LiveFixtures({
         
         try {
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
-            
-            const response = await fetch(chunkUrl, {
+            const chunkData = await fetchJsonWithRetry(chunkUrl, {
                 headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
             });
-            
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
                 // Append new data to existing data
@@ -76,6 +68,29 @@ function LiveFixtures({
     const handleLoadMore = () => {
         setLoadTrigger(prev => prev + 1);
     };
+
+    // Keep live scores fresh on the livescores page
+    useEffect(() => {
+        const refreshLiveData = async () => {
+            const endIndex = Math.max(currentStartIndex - 1, 20);
+            const refreshUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=${endIndex}`;
+
+            try {
+                const livePayload = await fetchJsonWithRetry(refreshUrl, {
+                    headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                });
+
+                if (livePayload.status === true && Array.isArray(livePayload.data)) {
+                    setAllData(livePayload.data);
+                }
+            } catch (refreshError) {
+                console.error("Error refreshing live matches:", refreshError);
+            }
+        };
+
+        const intervalId = setInterval(refreshLiveData, 20000);
+        return () => clearInterval(intervalId);
+    }, [baseUrl, todaysDate, currentStartIndex]);
 
     // Show preloader while server is fetching data
     if (!initialData && !error) {
@@ -139,6 +154,7 @@ function LiveFixtures({
     // Render the page with data
     return (
         <div className="sites-card">
+            {/*
             <div className="container-fluid">                        
                 <div className="row" style={{backgroundColor: "#edf3f5"}}>
                     <div className="col-md-3 col-2"></div>
@@ -156,6 +172,7 @@ function LiveFixtures({
                     <div className="col-md-1 col-1"></div>
                 </div>
             </div>
+            */}
             
             <RenderData 
                 renderPredictions={renderPredictions}
@@ -198,24 +215,14 @@ export async function getServerSideProps() {
     const startTime = Date.now();
     
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
         // Fetch first batch only - no full batch fetch on server
-        const response = await fetch(firstBatchUrl, {
+        const data = await fetchJsonWithRetry(firstBatchUrl, {
             headers: { 
                 "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
             },
-            signal: controller.signal
+            retries: 2,
+            timeoutMs: 7000
         });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
         
         // Check API response structure
         if (data.status === true) {

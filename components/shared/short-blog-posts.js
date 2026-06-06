@@ -1,5 +1,6 @@
 // components/shared/short-blog-posts.js
 import React, { useEffect, useState } from 'react';
+import PredictionGuidesLinks from '../seo-content/shared/prediction-guides-links';
 
 const ShortBlogPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -38,18 +39,28 @@ const ShortBlogPosts = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    if (!mounted) return '';
+    if (!dateString) return '';
+
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      const normalized = String(dateString).trim().replace(' ', 'T');
+      const date = new Date(normalized);
+
+      if (Number.isNaN(date.getTime())) {
+        return '';
+      }
+
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
     } catch (e) {
-      return dateString;
+      return '';
     }
   };
+
+  const getPostDate = (post) =>
+    post.published_at || post.created_at || post.post_date || post.date;
 
   if (!mounted) {
     return (
@@ -96,14 +107,18 @@ const ShortBlogPosts = () => {
             <div key={itemKey} className="col-md-6 col-12">
               <div className="post-item p-3 m-1">
                 <span className="h6 post-title linkTxt3 mb-3">
-                  <a href={post.post_link || post.link || '#'}>{post.title || 'Untitled'}</a>
+                  <a href={post.post_link || (post.slug ? `/blog/${post.slug}` : '#')}>
+                    {post.title || 'Untitled'}
+                  </a>
                 </span>
-                <p className="post-date">{formatDate(post.post_date || post.date)}</p>
+                <p className="post-date">{formatDate(getPostDate(post))}</p>
               </div>
             </div>
           );
         })}
       </div>
+      <br />
+      <PredictionGuidesLinks title="Football Prediction Guides" />
     </div>
   );
 };

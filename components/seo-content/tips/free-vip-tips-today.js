@@ -1,3 +1,5 @@
+import PredictionGuidesLinks from "../shared/prediction-guides-links";
+
 export default function FreeVipTipsTodayContent() {
   return (
     <section className="seo-content">
@@ -7,6 +9,11 @@ export default function FreeVipTipsTodayContent() {
         Unlock <strong>today’s top free VIP tips</strong> with Pitch Predictions. Our expert analysts provide precise football predictions for 1X2, BTTS, correct score, and jackpot markets. 
         Designed for bettors in Africa and America, these tips use real match data and team insights to help you make smarter betting decisions. 
         Remember: predictions guide, they don’t guarantee results.
+      </p>
+
+      <h3>Free VIP Tips This Week</h3>
+      <p>
+        This week&apos;s <strong>free VIP tips today</strong> cover KPL and PSL morning cards, European evening fixtures, and MLS weekend games. Jackpot VIP angles point to the <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega</a> (17 games, KSh 360M) and <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Midweek</a> (13 games) coupons when those coupons are active. Tips refresh daily before the first kickoff.
       </p>
 
       <h3>Why Free VIP Tips Matter</h3>
@@ -71,6 +78,8 @@ export default function FreeVipTipsTodayContent() {
       <p>
         Stay ahead of the game with <strong>free VIP tips today</strong> that are designed to educate, guide, and empower you — not promise impossible wins.
       </p>
+
+      <PredictionGuidesLinks excludeHref="/tips/free-vip-tips-today" title="Related Prediction Guides" />
 
     </section>
   );

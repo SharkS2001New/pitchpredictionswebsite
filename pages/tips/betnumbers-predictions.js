@@ -182,7 +182,6 @@ export async function getServerSideProps() {
         // Create cache directory if it doesn't exist
         if (!fs.existsSync(cacheDir)) {
             fs.mkdirSync(cacheDir, { recursive: true });
-            console.log('📁 Created cache directory');
         }
 
         // Check if we have a valid cache file

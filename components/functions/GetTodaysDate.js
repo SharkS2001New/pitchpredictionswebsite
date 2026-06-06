@@ -1,23 +1,26 @@
 // components/functions/GetTodaysDate.js
 
+const SITE_TIMEZONE = "Africa/Nairobi";
+
+function getFormattedDateInTimezone(timeZone, date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
+
 function getFormattedCurrentDate() {
   try {
-    // Method 1: Manual construction (MOST RELIABLE - works everywhere)
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    return `${year}-${month}-${day}`; // Always returns 2026-03-06
-    
-    // OR Method 2: Use toISOString() (also reliable)
-    // return new Date().toISOString().split('T')[0]; // Also returns 2026-03-06
-    
-    // DON'T use toLocaleDateString() - it's locale-dependent!
+    return getFormattedDateInTimezone(SITE_TIMEZONE);
   } catch (err) {
     console.error("Error formatting current date:", err.message);
-    // Return today's date as fallback using ISO string
-    return new Date().toISOString().split('T')[0];
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 }
 

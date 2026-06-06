@@ -146,9 +146,7 @@ function TeamComparison() {
                 setH2HMatchDetails([]);
             }
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.log('Request aborted');
-            } else {
+            if (error.name !== 'AbortError') {
                 console.error('Error fetching H2H data:', error);
                 setH2HMatchDetails([]);
             }

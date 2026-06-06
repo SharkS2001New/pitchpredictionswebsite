@@ -136,8 +136,13 @@ function CompetitorPredictions({
                 hasMore={hasMore}
             />
             
-            {/* <br/>
-            <SoloPredictionsContent/> */}
+            <br/>
+
+            <div className="">
+                <div className="container">
+                    <SoloPredictionsContent/>
+                </div>
+            </div>
 
             <Adsense
                 client="ca-pub-5665711413000284"

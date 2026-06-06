@@ -1,35 +1,29 @@
-function FiltersMatchDetails(props){
-    return(
-      <div className="tabs">
-        <div className="tabs__group">             
-              <a
-                href={"/match/football-predictions-" + props.match_url + "/matches"} className="tabs__tab"
-                id={props.url_filter == "match/[match-details]/matches" ? "activeElement1" : ""}
-              >
-                Matches
-              </a>
-              {/* <a
-                href={"/match/football-predictions-" + props.match_url+"/overall-statistics"} className="tabs__tab"
-                id={props.url_filter == "match/[match-details]/overall-statistics" ? "activeElement1" : ""}
-              >
-                Overall Stats
-              </a> */}
-              {props.league_type === "League" ?
-                <a
-                  href={"/match/football-predictions-" + props.match_url + "/standings"} className="tabs__tab"
-                  id={props.url_filter == "match/[match-details]/standings" ? "activeElement1" : ""}>
-                  Standings
-                </a>
-              : "" }
-              <a
-                href={"/match/football-predictions-" + props.match_url + "/upcoming-matches"} className="tabs__tab"
-                id={props.url_filter == "match/[match-details]/upcoming-matches" ? "activeElement1" : ""}
-              >
-                Next Matches
-              </a>
-        </div>
+function FiltersMatchDetails({ activeTab, onTabChange, showStandings = true }) {
+  const tabLink = (tab, label) => (
+    <a
+      href="#"
+      className="tabs__tab"
+      id={activeTab === tab ? "activeElement1" : undefined}
+      onClick={(event) => {
+        event.preventDefault();
+        onTabChange(tab);
+      }}
+    >
+      {label}
+    </a>
+  );
+
+  return (
+    <div className="tabs">
+      <div className="tabs__group">
+        {tabLink("summary", "Summary")}
+        {tabLink("odds", "Odds")}
+        {tabLink("matches", "Matches")}
+        {showStandings ? tabLink("standings", "Standings") : null}
+        {tabLink("upcoming", "Next Matches")}
       </div>
-    )
+    </div>
+  );
 }
 
 export default FiltersMatchDetails;

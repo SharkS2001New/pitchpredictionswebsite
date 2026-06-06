@@ -18,6 +18,7 @@ function TodaysFixtures({
     endpointStatus, 
     error,
     baseUrl,
+    liveBaseUrl,
     todaysDate,
     structuredData,
 }) {
@@ -73,6 +74,32 @@ function TodaysFixtures({
     const handleLoadMore = () => {
         setLoadTrigger(prev => prev + 1);
     };
+
+    // Keep in-play matches live on today's page while keeping NS cache-friendly
+    useEffect(() => {
+        const refreshLiveMatches = async () => {
+            const endIndex = Math.max(currentStartIndex - 1, 20);
+            const liveUrl = `${liveBaseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=${endIndex}`;
+
+            try {
+                const response = await fetch(liveUrl, {
+                    headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                });
+
+                if (!response.ok) return;
+                const livePayload = await response.json();
+
+                if (livePayload.status === true && Array.isArray(livePayload.data)) {
+                    setAllData((prevMatches) => mergeLiveMatchesIntoList(prevMatches, livePayload.data));
+                }
+            } catch (refreshError) {
+                console.error("Error refreshing today's live matches:", refreshError);
+            }
+        };
+
+        const intervalId = setInterval(refreshLiveMatches, 20000);
+        return () => clearInterval(intervalId);
+    }, [liveBaseUrl, todaysDate, currentStartIndex]);
 
     if (!initialData && !error) {
         return <PreLoader />;
@@ -184,7 +211,9 @@ export async function getServerSideProps() {
     
     // Base URL for today's games
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_todays_games";
+    const liveBaseUrl = "https://api.pitchpredictions.com/api/fetch_live_games";
     const firstBatchUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
+    const liveFirstBatchUrl = `${liveBaseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Cache setup
     const cacheDir = path.join(process.cwd(), 'public', 'cache');
@@ -205,6 +234,8 @@ export async function getServerSideProps() {
             fs.mkdirSync(cacheDir, { recursive: true });
         }
 
+        let cachedNotStartedMatches = [];
+
         // Check if we have a valid cache file (2 minutes = 120000 ms)
         if (fs.existsSync(cachePath)) {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
@@ -215,8 +246,8 @@ export async function getServerSideProps() {
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
             
             if (ageInMinutes <= 2) { // 2 minutes max
-                // Cache is valid - use it!
-                initialData = cache.data;
+                // Cache is valid - use cached not started fixtures only
+                cachedNotStartedMatches = cache.data || [];
                 cacheInfo = {
                     fromCache: true,
                     generatedAt: cache.generatedAt
@@ -227,43 +258,77 @@ export async function getServerSideProps() {
             }
         }
 
-        // If no valid cache, fetch from API
-        if (initialData.length === 0) {
-            const response = await fetch(firstBatchUrl, {
-                headers: { 
+        // Fetch today's base fixtures
+        let freshTodaysMatches = [];
+        const todaysResponse = await fetch(firstBatchUrl, {
+            headers: { 
+                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+            }
+        });
+        
+        if (!todaysResponse.ok) {
+            throw new Error(`HTTP error! status: ${todaysResponse.status}`);
+        }
+        
+        const todaysPayload = await todaysResponse.json();
+        
+        if (todaysPayload.status === true && todaysPayload.data) {
+            freshTodaysMatches = todaysPayload.data || [];
+
+            // Cache only fixtures that have not started yet
+            const notStartedMatches = freshTodaysMatches.filter((match) =>
+                isNotStartedMatchStatus(match?.match?.status)
+            );
+
+            const cacheData = {
+                generatedAt: new Date().toISOString(),
+                fixtureDate: todaysDate,
+                data: notStartedMatches,
+                count: notStartedMatches.length
+            };
+            
+            const tempPath = `${cachePath}.tmp.${Date.now()}`;
+            fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
+            fs.renameSync(tempPath, cachePath);
+            
+            cacheInfo = {
+                fromCache: false,
+                generatedAt: cacheData.generatedAt
+            };
+        } else {
+            endpointStatus = "error";
+            error = todaysPayload.message || "Failed to load today's predictions";
+        }
+
+        // Fetch live fixtures and overlay them on today's list
+        let liveMatches = [];
+        try {
+            const liveResponse = await fetch(liveFirstBatchUrl, {
+                headers: {
                     "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
                 }
             });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+
+            if (liveResponse.ok) {
+                const livePayload = await liveResponse.json();
+                if (livePayload.status === true && Array.isArray(livePayload.data)) {
+                    liveMatches = livePayload.data;
+                }
             }
-            
-            const data = await response.json();
-            
-            if (data.status === true && data.data) {
-                initialData = data.data || [];
-                
-                // Save to cache (atomic write for K3s)
-                const cacheData = {
-                    generatedAt: new Date().toISOString(),
-                    fixtureDate: todaysDate,
-                    data: initialData,
-                    count: initialData.length
-                };
-                
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
-                
-                cacheInfo = {
-                    fromCache: false,
-                    generatedAt: cacheData.generatedAt
-                };
-            } else {
-                endpointStatus = "error";
-                error = data.message || "Failed to load today's predictions";
-            }
+        } catch (liveErr) {
+            console.error("Error fetching live overlay for today page:", liveErr);
+        }
+
+        const notStartedSource = freshTodaysMatches.length > 0
+            ? freshTodaysMatches.filter((match) => isNotStartedMatchStatus(match?.match?.status))
+            : cachedNotStartedMatches;
+        const startedSource = freshTodaysMatches.filter((match) => !isNotStartedMatchStatus(match?.match?.status));
+        const baseMatches = [...notStartedSource, ...startedSource];
+
+        initialData = mergeLiveMatchesIntoList(baseMatches, liveMatches);
+        if (initialData.length > 0) {
+            endpointStatus = "success";
+            error = null;
         }
 
         // Clean up old cache files (older than 2 minutes)
@@ -302,6 +367,7 @@ export async function getServerSideProps() {
             endpointStatus,
             error,
             baseUrl: baseUrl,
+            liveBaseUrl,
             todaysDate: todaysDate,
             structuredData,
             cacheInfo
@@ -332,6 +398,33 @@ function cleanupOldCacheFiles(cacheDir) {
     } catch (error) {
         console.error('Error cleaning up cache:', error);
     }
+}
+
+function isNotStartedMatchStatus(status) {
+    const notStartedStatuses = ["NS", "TBD", "PST"];
+    return notStartedStatuses.includes(status);
+}
+
+function mergeLiveMatchesIntoList(baseMatches = [], liveMatches = []) {
+    const merged = Array.isArray(baseMatches) ? [...baseMatches] : [];
+    const indexByFixtureId = new Map();
+
+    merged.forEach((match, index) => {
+        indexByFixtureId.set(match?.fixture_id, index);
+    });
+
+    for (const liveMatch of liveMatches) {
+        const fixtureId = liveMatch?.fixture_id;
+        if (!fixtureId) continue;
+
+        if (indexByFixtureId.has(fixtureId)) {
+            merged[indexByFixtureId.get(fixtureId)] = liveMatch;
+        } else {
+            merged.unshift(liveMatch);
+        }
+    }
+
+    return merged;
 }
 
 // Helper function to create structured data

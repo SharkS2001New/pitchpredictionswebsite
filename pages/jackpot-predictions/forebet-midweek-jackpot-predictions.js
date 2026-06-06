@@ -380,11 +380,11 @@ function ForebetMidweekJackpotPredictions({
             <br/>   
 
             {/* SEO Content */}
-            {/* <div className="seo-content-section">
+            <div className="seo-content-section">
                 <div className="container">
                     <SportpesaMidweekJackpotContent/>
                 </div>
-            </div> */}
+            </div>
 
             <style jsx>{`  
                 .sites-card {

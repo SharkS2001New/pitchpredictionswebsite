@@ -1,34 +1,28 @@
-function FiltersTeamDetails(props){
-    return(
+function FiltersTeamDetails({ activeTab, onTabChange, showStandings = true }) {
+  const tabLink = (tab, label) => (
+    <a
+      href="#"
+      className="tabs__tab"
+      id={activeTab === tab ? "activeElement1" : undefined}
+      onClick={(event) => {
+        event.preventDefault();
+        onTabChange(tab);
+      }}
+    >
+      {label}
+    </a>
+  );
+
+  return (
     <div className="tabs">
-        <div className="tabs__group">
-              <a
-                href={"/team/" + props.match_url+"/results"} className="tabs__tab"
-                id={props.url_filter == "team/[team-details]/results" ? "activeElement1" : ""}
-              >
-                Results
-              </a>
-              {props.league_type ==="League" ? 
-                <a
-                  href={"/team/" + props.match_url + "/standings"} className="tabs__tab"
-                  id={props.url_filter == "team/[team-details]/standings" ? "activeElement1" : ""}>
-                  Standings
-                </a>
-              : "" }
-              <a
-                href={"/team/" + props.match_url + "/upcoming-matches"} className="tabs__tab"
-                id={props.url_filter == "team/[team-details]/upcoming-matches" ? "activeElement1" : ""}
-              >
-                Next Matches
-              </a>
-              <a
-                href={"/team/" + props.match_url + "/players"} className="tabs__tab"
-                id={props.url_filter == "team/[team-details]/players" ? "activeElement1" : ""}
-              >
-                Players
-              </a>
-        </div>
+      <div className="tabs__group">
+        {tabLink("results", "Results")}
+        {showStandings ? tabLink("standings", "Standings") : null}
+        {tabLink("upcoming", "Next Matches")}
+        {tabLink("players", "Players")}
       </div>
-    )
+    </div>
+  );
 }
+
 export default FiltersTeamDetails;

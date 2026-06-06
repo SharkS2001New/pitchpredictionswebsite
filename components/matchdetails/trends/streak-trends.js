@@ -1,39 +1,48 @@
-import WinningTeamAndOdd from "../../functions/determine_winning_team_and_odd";
 import React from "react";
+import { getTeamPerformance } from "./trend_helpers";
 
 function StreaksTrends(props) {
+  const overallData = props.overallData;
+  const streaksTrends = [];
 
-    const overallData = props.overallData;
+  overallData.forEach((overall_d, index) => {
+    const performance = getTeamPerformance(overall_d);
+    if (!performance) return;
 
-    var streaksTrends = [];
+    const homeStreak = performance.home?.league?.biggest?.streak?.wins;
+    const awayStreak = performance.away?.league?.biggest?.streak?.wins;
 
-    {overallData.map((overall_d, index) => (
-        streaksTrends.push(
-        <React.Fragment key={"s"+index}>
-            <div className="row">   
-                {JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.biggest.streak.wins >  0 ? (
-                    <div className="col-md-6">
-                        <span className="badge bg-secondary">Streaks</span>
-                        <p>
-                            <span style={{fontWeight: "bold"}}>{overall_d.home_team_name}</span>  has won &nbsp;<span style={{fontWeight: "bold", color: "red"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).home.league.biggest.streak.wins}</span>
-                            &nbsp;consecutive matches in <span style={{fontWeight: "bold"}}>{overall_d.league_name}</span>.
-                         </p>
-                    </div> 
-                ) : ""}
-                {JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.biggest.streak.wins >  0 ? (
-                    <div className="col-md-6">
-                        <span className="badge bg-secondary">Streaks</span>
-                        <p>
-                            <span style={{fontWeight: "bold"}}>{overall_d.away_team_name}</span>  has won &nbsp;<span style={{fontWeight: "bold", color: "red"}}>{JSON.parse(overall_d.teams_perfomance_per_fixture).away.league.biggest.streak.wins}</span>
-                             &nbsp;consecutive matches in <span style={{fontWeight: "bold"}}>{overall_d.league_name}</span>.
-                        </p>
-                    </div>
-                ) : ""}
+    streaksTrends.push(
+      <React.Fragment key={"s" + index}>
+        <div className="row">
+          {homeStreak > 0 ? (
+            <div className="col-md-6">
+              <span className="badge bg-secondary">Streaks</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.home_team_name}</span> has won{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{homeStreak}</span>
+                &nbsp;consecutive matches in{" "}
+                <span style={{ fontWeight: "bold" }}>{overall_d.league_name}</span>.
+              </p>
             </div>
-        </React.Fragment>
-        )
-    ))}
-    return streaksTrends;
+          ) : null}
+          {awayStreak > 0 ? (
+            <div className="col-md-6">
+              <span className="badge bg-secondary">Streaks</span>
+              <p>
+                <span style={{ fontWeight: "bold" }}>{overall_d.away_team_name}</span> has won{" "}
+                <span style={{ fontWeight: "bold", color: "red" }}>{awayStreak}</span>
+                &nbsp;consecutive matches in{" "}
+                <span style={{ fontWeight: "bold" }}>{overall_d.league_name}</span>.
+              </p>
+            </div>
+          ) : null}
+        </div>
+      </React.Fragment>
+    );
+  });
+
+  return streaksTrends;
 }
 
 export default StreaksTrends;

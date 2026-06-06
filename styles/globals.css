@@ -1229,6 +1229,13 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   display: flex;
 }
 
+button.tabs__tab {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+}
+
 a, a:hover {
   text-decoration: none;
 }

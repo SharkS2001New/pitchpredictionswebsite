@@ -1,3 +1,5 @@
+import PredictionGuidesLinks from "../shared/prediction-guides-links";
+
 export default function LandingPageContent() {
   return (
     <main 
@@ -366,6 +368,8 @@ export default function LandingPageContent() {
           </li>
         </ul>
       </section>
+
+      <PredictionGuidesLinks title="Expert Tip &amp; Jackpot Guides" />
 
       {/* ── FAQ SECTION ── */}
       <section aria-labelledby="faq-heading" style={{ marginBottom: '10px' }}>

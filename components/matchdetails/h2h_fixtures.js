@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 import { Adsense } from "@ctrl/react-adsense";
 import InPagePreLoader from "../includes/inpagepreloader";
+import DataNotFoundPage from "../includes/datanotfound";
 
 function H2HFixturesData({ 
     home_team_id, 
@@ -102,25 +103,6 @@ function H2HFixturesData({
         }
     };
 
-    const getPercentages = () => {
-        if (h2h_match_details.length > 0 && h2h_match_details[0].countHometeamWins !== undefined) {
-            const total = h2h_match_details[0].countHometeamWins + 
-                         h2h_match_details[0].countDraws + 
-                         h2h_match_details[0].countAwayTeamWins;
-            
-            if (total === 0) return { home: "0%", draw: "0%", away: "0%" };
-            
-            return {
-                home: Math.round((h2h_match_details[0].countHometeamWins / total) * 100) + "%",
-                draw: Math.round((h2h_match_details[0].countDraws / total) * 100) + "%",
-                away: Math.round((h2h_match_details[0].countAwayTeamWins / total) * 100) + "%"
-            };
-        }
-        return { home: "0%", draw: "0%", away: "0%" };
-    };
-
-    const percentages = getPercentages();
-
     let h2hmatchdetailslist = [];
     let leaguesdisplayList = [];
 
@@ -209,35 +191,31 @@ function H2HFixturesData({
     };
 
     if (h2h_match_details.length === 0) {
-        return null;
+        if (loading) {
+            return (
+                <div className="sites-card mb-2">
+                    <div className="row">
+                        <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
+                    </div>
+                    <InPagePreLoader />
+                </div>
+            );
+        }
+
+        return (
+            <div className="sites-card mb-2">
+                <div className="row">
+                    <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
+                </div>
+                <DataNotFoundPage props="No Head To Head Fixtures Found" />
+            </div>
+        );
     }
 
     return (
-        <>
+        <div className="sites-card mb-2">
             <div className="row">
                 <div className="text-center fw-bold sectionTitle">HEAD-TO-HEAD MATCHES</div>
-            </div>
-            
-            {/* H2H Stats Summary */}
-            <div className="row text-center mb-3">
-                <div className="col-4">
-                    <div className="card p-2">
-                        <h5>{percentages.home}</h5>
-                        <small>Home Wins</small>
-                    </div>
-                </div>
-                <div className="col-4">
-                    <div className="card p-2">
-                        <h5>{percentages.draw}</h5>
-                        <small>Draws</small>
-                    </div>
-                </div>
-                <div className="col-4">
-                    <div className="card p-2">
-                        <h5>{percentages.away}</h5>
-                        <small>Away Wins</small>
-                    </div>
-                </div>
             </div>
             
             {leaguesdisplayList.length > 1 && (
@@ -283,7 +261,7 @@ function H2HFixturesData({
                     format="auto"
                 />
             </div>
-        </>
+        </div>
     );
 }
 

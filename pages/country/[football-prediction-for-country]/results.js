@@ -268,8 +268,7 @@ export async function getServerSideProps(context) {
                 hasResults = true;
                 hasMoreResults = resultsDataResponse.data.length === 50;
             } else if (resultsDataResponse.status === false) {
-                // Log the error but don't fail - just means no data
-                console.log('No results found for country:', countryNameForApi);
+                // No results for this country
             }
         } catch (resultsError) {
             console.error('Error fetching results fixtures:', resultsError);

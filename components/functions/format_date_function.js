@@ -19,7 +19,6 @@ function FormatedDate(num_of_days) {
         return "Invalid number of days provided";
       }
     } catch (err) {
-      console.log(err.message);
     }
 }  
 
