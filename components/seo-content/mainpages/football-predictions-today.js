@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function TodayFootballPredictionsContent() {
   return (
     <section className="seo-content">
@@ -9,17 +7,7 @@ export default function TodayFootballPredictionsContent() {
           Pitch Predictions publishes free, statistics-driven football predictions for every match today across 700+ leagues worldwide. Whether you follow the English Premier League, La Liga, the Bundesliga, or regional leagues across Africa and Asia — you'll find a fully analysed tip here before kickoff.
         </p>
         <p>
-          Each prediction is generated using a multi-factor model covering current form, head-to-head records, squad news, home/away performance, and live betting market signals. Every tip displays a <strong>confidence percentage</strong> so you can quickly spot the strongest picks of the day.
-        </p>
-      </section>
-
-      <section>
-        <h3>Today&apos;s Featured Guides</h3>
-        <p>
-          Beyond the full match list above, explore specialist picks updated daily: <a href="/tips/must-win-teams-today">must win teams today</a> for sides with everything on the line, <a href="/tips/solo-prediction">solo prediction today</a> for a single high-confidence match, and <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a> when the weekend coupon is live. Midweek bettors should check <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot tips</a> (13 games, ~KSh 11M) before Wednesday or Thursday deadlines.
-        </p>
-        <p>
-          Looking for competitor-style tips? See <a href="/tips/sokafans">Sokafans predictions today</a>, <a href="/tips/one-million-prediction">One Million Prediction tips</a>, and <a href="/tips/free-vip-tips-today">free VIP tips today</a> — all free, all updated before kickoff.
+          Each prediction is generated using a multi-factor model covering current form, head-to-head records, squad news, home/away performance, and live betting market signals. Every tip displays a <strong>confidence percentage</strong> so you can quickly spot the strongest picks of the day. For BetNumbers-style daily picks see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a>; for weekly coupons see <a href="/jackpot-predictions">jackpot predictions</a>.
         </p>
       </section>
 
@@ -65,8 +53,6 @@ export default function TodayFootballPredictionsContent() {
         <h3>HT/FT — Half Time Full Time</h3>
         <p>High-reward bets predicting both the half-time and full-time results. Today's HT/FT tips are selected from matches with the strongest statistical signals.</p>
       </section>
-
-      <PredictionGuidesLinks title="More Prediction Guides" />
 
       <section>
         <h2>Frequently Asked Questions</h2>

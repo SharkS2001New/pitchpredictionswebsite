@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function LandingPageContent() {
   return (
     <main 
@@ -22,7 +20,7 @@ export default function LandingPageContent() {
           <strong>Pitch Predictions</strong> is a free, statistics-based football prediction platform trusted by punters and football fans across the globe. We analyse every match using a multi-factor model that weighs recent form, head-to-head history, squad fitness, home/away records, and betting market movements — delivering predictions that go far deeper than gut feelings.
         </p>
         <p style={{ fontSize: '1rem', lineHeight: 1.8, marginBottom: '16px' }}>
-          Whether you're looking for <a href="/football-predictions-today" style={{ color: 'inherit', textDecoration: 'underline' }}>today's free football tips</a>, <a href="/football-predictions-weekend" style={{ color: 'inherit', textDecoration: 'underline' }}>weekend accumulators</a>, <a href="/jackpot-predictions" style={{ color: 'inherit', textDecoration: 'underline' }}>jackpot selections</a>, or real-time live score tracking, Pitch Predictions puts every tool in one place — covering leagues from the English Premier League to the Sportpesa Kenya Mega Jackpot.
+          Whether you're looking for <a href="/football-predictions-today" style={{ color: 'inherit', textDecoration: 'underline' }}>today's free football tips</a>, <a href="/tips/betnumbers-predictions" style={{ color: 'inherit', textDecoration: 'underline' }}>BetNumbers predictions</a>, <a href="/football-predictions-weekend" style={{ color: 'inherit', textDecoration: 'underline' }}>weekend accumulators</a>, <a href="/jackpot-predictions" style={{ color: 'inherit', textDecoration: 'underline' }}>jackpot selections</a>, or real-time live score tracking, Pitch Predictions puts every tool in one place — covering leagues from the English Premier League to the Sportpesa Kenya Mega Jackpot.
         </p>
       </section>
 
@@ -308,6 +306,26 @@ export default function LandingPageContent() {
           </li>
           <li>
             <a
+              href="/tips/betnumbers-predictions"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                textDecoration: 'none',
+                color: 'inherit',
+                fontSize: '0.92rem',
+                fontWeight: 500
+              }}
+              title="BetNumbers Predictions"
+            >
+              <span>🔢</span> <span>BetNumbers Predictions Today</span>
+            </a>
+          </li>
+          <li>
+            <a
               href="/jackpot-predictions"
               style={{
                 display: 'flex',
@@ -368,8 +386,6 @@ export default function LandingPageContent() {
           </li>
         </ul>
       </section>
-
-      <PredictionGuidesLinks title="Expert Tip &amp; Jackpot Guides" />
 
       {/* ── FAQ SECTION ── */}
       <section aria-labelledby="faq-heading" style={{ marginBottom: '10px' }}>

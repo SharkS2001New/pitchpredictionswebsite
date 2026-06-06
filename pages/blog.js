@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import PreLoader from "../components/includes/loader";
-import PredictionGuidesLinks from "../components/seo-content/shared/prediction-guides-links";
-
 export default function Blogs({
   initialBlogs,
   initialPageInfo,
@@ -295,9 +293,6 @@ export default function Blogs({
           </>
         )}
         <br />
-        <div className="container-wide">
-          <PredictionGuidesLinks title="Football Prediction Guides" />
-        </div>
       </div>
 
       <style jsx>{`

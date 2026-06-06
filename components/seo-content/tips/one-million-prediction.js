@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function OneMillionPredictionContent() {
   return (
     <section className="seo-content">
@@ -7,14 +5,6 @@ export default function OneMillionPredictionContent() {
       <h2>One Million Prediction Tips – Today &amp; Tomorrow</h2>
       <p>
         Get free <strong>One Million Prediction tips</strong> on Pitch Predictions — covering <strong>one million prediction today</strong> and <strong>one million prediction tomorrow</strong> fixtures across 1X2, BTTS, and <strong>one million prediction correct score</strong> markets. Every pick uses team form, head-to-head records, and league standings. Whether you follow the Premier League, La Liga, or African leagues, our <strong>one million prediction</strong> content is updated daily before kickoff. Tips guide your research; they never guarantee wins.
-      </p>
-
-      <h3>One Million Prediction This Week</h3>
-      <p>
-        This page highlights today&apos;s strongest straight-win selections and up to three <strong>one million prediction correct score</strong> angles where goal-scoring patterns align clearly. <strong>One million prediction today</strong> picks refresh each morning; <strong>one million prediction tomorrow</strong> fixtures appear once the next-day card opens — usually by mid-afternoon.
-      </p>
-      <p>
-        Correct score tips carry odds of 5.00–12.00+ and higher variance than 1X2 picks. We limit them to fixtures with the clearest H2H scoreline trends. For weekend coupon play, see our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a> (17 games, KSh 360M grand prize).
       </p>
 
       <h3>What Is One Million Prediction?</h3>
@@ -56,7 +46,7 @@ export default function OneMillionPredictionContent() {
 
       <h3>One Million Prediction Correct Score</h3>
       <p>
-        <strong>One million prediction correct score</strong> is the highest-reward market — you predict the exact final scoreline, for example 2–1 or 1–0. We only flag correct score angles where goal patterns and H2H scorelines align strongly. Even well-researched tips lose frequently — treat these as speculative picks and never stake more than you can afford to lose.
+        <strong>One million prediction correct score</strong> is the highest-reward market — you predict the exact final scoreline, for example 2–1 or 1–0. We only flag correct score angles where goal patterns and H2H scorelines align strongly. Even well-researched tips lose frequently — treat these as speculative picks and never stake more than you can afford to lose. For weekend coupon play, see our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a>.
       </p>
 
       <h3>How We Generate One Million Prediction Tips</h3>
@@ -78,14 +68,12 @@ export default function OneMillionPredictionContent() {
 
       <h3>Why Pitch Predictions One Million Tips Are Trusted</h3>
       <p>
-        Pitch Predictions publishes free <strong>one million prediction today</strong> and <strong>one million prediction tomorrow</strong> content with verified data, clear reasoning, and daily updates across the Premier League, Champions League, PSL, NPFL, and 700+ leagues. Our goal is to educate bettors with data — not promise impossible results.
+        Pitch Predictions publishes free <strong>one million prediction today</strong> and <strong>one million prediction tomorrow</strong> content with verified data, clear reasoning, and daily updates across the Premier League, Champions League, PSL, NPFL, and 700+ leagues. Browse the full daily list on our <a href="/">homepage</a>.
       </p>
 
       <p>
         Use today&apos;s <strong>one million prediction</strong> picks to research smarter — not as a shortcut to guaranteed profit.
       </p>
-
-      <PredictionGuidesLinks excludeHref="/tips/one-million-prediction" title="Related Prediction Guides" />
 
     </section>
   );

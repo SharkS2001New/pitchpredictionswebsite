@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T22:27:42.747Z",
+  "generatedAt": "2026-06-06T00:11:17.952Z",
   "fixtureDate": "2026-06-06",
   "data": [
     {
@@ -350,26 +350,26 @@
         }
       },
       "odds": {
-        "home": 3,
-        "draw": 2.7,
-        "away": 2.45,
+        "home": 2.95,
+        "draw": 2.88,
+        "away": 2.4,
         "double_chance": {
           "home_draw": "1.44",
-          "home_away": "1.36",
-          "draw_away": "1.30"
+          "home_away": "1.30",
+          "draw_away": "1.36"
         },
         "ht_ft": {
-          "ht_home": "4.00",
-          "ht_draw": "1.80",
-          "ht_away": "3.40"
+          "ht_home": "3.60",
+          "ht_draw": "1.85",
+          "ht_away": "3.30"
         },
         "over_under": {
-          "over_2_5": 3,
-          "under_2_5": 1.36
+          "over_2_5": 2.85,
+          "under_2_5": 1.38
         },
         "btts": {
-          "yes": 2.5,
-          "no": 1.5
+          "yes": 2.25,
+          "no": 1.53
         }
       },
       "league": {
@@ -445,26 +445,26 @@
         }
       },
       "odds": {
-        "home": 2.95,
-        "draw": 2.88,
-        "away": 2.4,
+        "home": 3,
+        "draw": 2.7,
+        "away": 2.45,
         "double_chance": {
           "home_draw": "1.44",
-          "home_away": "1.30",
-          "draw_away": "1.36"
+          "home_away": "1.36",
+          "draw_away": "1.30"
         },
         "ht_ft": {
-          "ht_home": "3.60",
-          "ht_draw": "1.85",
-          "ht_away": "3.30"
+          "ht_home": "4.00",
+          "ht_draw": "1.80",
+          "ht_away": "3.40"
         },
         "over_under": {
-          "over_2_5": 2.85,
-          "under_2_5": 1.38
+          "over_2_5": 3,
+          "under_2_5": 1.36
         },
         "btts": {
-          "yes": 2.25,
-          "no": 1.53
+          "yes": 2.5,
+          "no": 1.5
         }
       },
       "league": {
@@ -540,26 +540,26 @@
         }
       },
       "odds": {
-        "home": 1.65,
-        "draw": 3.2,
-        "away": 5.5,
+        "home": 1.5,
+        "draw": 3.3,
+        "away": 6.5,
         "double_chance": {
-          "home_draw": "1.09",
+          "home_draw": "1.07",
           "home_away": "1.25",
-          "draw_away": "2.15"
+          "draw_away": "2.30"
         },
         "ht_ft": {
-          "ht_home": "2.30",
+          "ht_home": "2.10",
           "ht_draw": "2.00",
-          "ht_away": "5.50"
+          "ht_away": "7.00"
         },
         "over_under": {
-          "over_2_5": 2.45,
-          "under_2_5": 1.5
+          "over_2_5": 2.38,
+          "under_2_5": 1.53
         },
         "btts": {
-          "yes": 2.2,
-          "no": 1.55
+          "yes": 2.62,
+          "no": 1.44
         }
       },
       "league": {
@@ -1048,101 +1048,6 @@
       }
     },
     {
-      "fixture_id": 1499462,
-      "home_team": {
-        "id": 481,
-        "name": "Villa Dalmine",
-        "logo": "https://media.api-sports.io/football/teams/481.png"
-      },
-      "away_team": {
-        "id": 8380,
-        "name": "Villa San Carlos",
-        "logo": "https://media.api-sports.io/football/teams/8380.png"
-      },
-      "match": {
-        "datetime": "2026-06-06T18:30:00+00:00",
-        "unformatted_date": "2026-06-06",
-        "venue": null,
-        "status": "NS",
-        "status_long": "Not Started",
-        "elapsed": null
-      },
-      "score": {
-        "home": null,
-        "away": null,
-        "half_time": {
-          "home": null,
-          "away": null
-        },
-        "extra_time": {
-          "home": null,
-          "away": null
-        },
-        "penalties": {
-          "home": null,
-          "away": null
-        }
-      },
-      "predictions": {
-        "recommendation": "The model favors Home win after combining the prediction probabilities (78% home, 11% draw, 11% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 22 goals scored and 10 conceded across 18 matches, while the away side has produced 19 goals and conceded 27 across 18 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 35% and average goals of 2.17.",
-        "avg_goals": 2.17,
-        "1x2": {
-          "home": 78,
-          "draw": 11,
-          "away": 11
-        },
-        "double_chance": {
-          "type": "1X",
-          "probability": 89
-        },
-        "half_time": {
-          "home": 47,
-          "draw": 25,
-          "away": 43
-        },
-        "both_teams_to_score": {
-          "prediction": "No",
-          "probability": 35
-        },
-        "over_under_2_5": {
-          "prediction": "Un2.5",
-          "probability": 56
-        }
-      },
-      "odds": {
-        "home": 1.5,
-        "draw": 3.3,
-        "away": 6.5,
-        "double_chance": {
-          "home_draw": "1.07",
-          "home_away": "1.25",
-          "draw_away": "2.30"
-        },
-        "ht_ft": {
-          "ht_home": "2.10",
-          "ht_draw": "2.00",
-          "ht_away": "7.00"
-        },
-        "over_under": {
-          "over_2_5": 2.38,
-          "under_2_5": 1.53
-        },
-        "btts": {
-          "yes": 2.62,
-          "no": 1.44
-        }
-      },
-      "league": {
-        "id": 131,
-        "name": "Primera B Metropolitana",
-        "short_name": "PB",
-        "round": null,
-        "logo": "https://www.pitchpredictions.com/images/leagues/Primera B Metropolitana.jpg",
-        "country": "Argentina",
-        "country_logo": "https://www.pitchpredictions.com/images/countries/Argentina.svg"
-      }
-    },
-    {
       "fixture_id": 1499457,
       "home_team": {
         "id": 471,
@@ -1225,6 +1130,101 @@
         "btts": {
           "yes": 2.5,
           "no": 1.5
+        }
+      },
+      "league": {
+        "id": 131,
+        "name": "Primera B Metropolitana",
+        "short_name": "PB",
+        "round": null,
+        "logo": "https://www.pitchpredictions.com/images/leagues/Primera B Metropolitana.jpg",
+        "country": "Argentina",
+        "country_logo": "https://www.pitchpredictions.com/images/countries/Argentina.svg"
+      }
+    },
+    {
+      "fixture_id": 1499462,
+      "home_team": {
+        "id": 481,
+        "name": "Villa Dalmine",
+        "logo": "https://media.api-sports.io/football/teams/481.png"
+      },
+      "away_team": {
+        "id": 8380,
+        "name": "Villa San Carlos",
+        "logo": "https://media.api-sports.io/football/teams/8380.png"
+      },
+      "match": {
+        "datetime": "2026-06-06T18:30:00+00:00",
+        "unformatted_date": "2026-06-06",
+        "venue": null,
+        "status": "NS",
+        "status_long": "Not Started",
+        "elapsed": null
+      },
+      "score": {
+        "home": null,
+        "away": null,
+        "half_time": {
+          "home": null,
+          "away": null
+        },
+        "extra_time": {
+          "home": null,
+          "away": null
+        },
+        "penalties": {
+          "home": null,
+          "away": null
+        }
+      },
+      "predictions": {
+        "recommendation": "The model favors Home win after combining the prediction probabilities (78% home, 11% draw, 11% away).\nThis conclusion blends market odds, expected goals and historical team performance data to reach a single preferred result.\nHome side form is reflected by 22 goals scored and 10 conceded across 18 matches, while the away side has produced 19 goals and conceded 27 across 18 matches.\nThe recommendation also accounts for projected match flow, BTTS probability of 35% and average goals of 2.17.",
+        "avg_goals": 2.17,
+        "1x2": {
+          "home": 78,
+          "draw": 11,
+          "away": 11
+        },
+        "double_chance": {
+          "type": "1X",
+          "probability": 89
+        },
+        "half_time": {
+          "home": 47,
+          "draw": 25,
+          "away": 43
+        },
+        "both_teams_to_score": {
+          "prediction": "No",
+          "probability": 35
+        },
+        "over_under_2_5": {
+          "prediction": "Un2.5",
+          "probability": 56
+        }
+      },
+      "odds": {
+        "home": 1.65,
+        "draw": 3.2,
+        "away": 5.5,
+        "double_chance": {
+          "home_draw": "1.09",
+          "home_away": "1.25",
+          "draw_away": "2.15"
+        },
+        "ht_ft": {
+          "ht_home": "2.30",
+          "ht_draw": "2.00",
+          "ht_away": "5.50"
+        },
+        "over_under": {
+          "over_2_5": 2.45,
+          "under_2_5": 1.5
+        },
+        "btts": {
+          "yes": 2.2,
+          "no": 1.55
         }
       },
       "league": {

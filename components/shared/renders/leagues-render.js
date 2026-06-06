@@ -10,14 +10,19 @@ function LeaguesPageRender(props) {
 
   // For leagues page, group the data in the same round with the same title bar (heading round name)
   if (
-    // Fixtures Pages on all predictions
+    // Fixtures pages on all predictions
     props.url_name === "league/[country-name]/[football-prediction-for-league]/fixtures" ||
     props.url_name === "league/[country-name]/[football-prediction-for-league]/fixtures/double-chance-predictions" ||
     props.url_name === "league/[country-name]/[football-prediction-for-league]/fixtures/predictions-halftime-fulltime" ||
     props.url_name === "league/[country-name]/[football-prediction-for-league]/fixtures/predictions-under-over" ||
     props.url_name === "league/[country-name]/[football-prediction-for-league]/fixtures/predictions-both-to-score" ||
-    // Other league pages
+    // Results pages on all predictions
     props.url_name === "league/[country-name]/[football-prediction-for-league]/results" ||
+    props.url_name === "league/[country-name]/[football-prediction-for-league]/results/double-chance-predictions" ||
+    props.url_name === "league/[country-name]/[football-prediction-for-league]/results/predictions-halftime-fulltime" ||
+    props.url_name === "league/[country-name]/[football-prediction-for-league]/results/predictions-under-over" ||
+    props.url_name === "league/[country-name]/[football-prediction-for-league]/results/predictions-both-to-score" ||
+    // Other league pages
     props.url_name === "league/[country-name]/[football-prediction-for-league]/standings" ||
     props.url_name === "league/[country-name]/[football-prediction-for-league]/trends"
   ) {

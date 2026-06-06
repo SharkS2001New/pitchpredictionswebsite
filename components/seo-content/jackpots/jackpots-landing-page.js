@@ -1,30 +1,20 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function JackpotPredictionsContent() {
   return (
     <section className="seo-content">
 
       <h2>Jackpot Tips and Predictions This Week</h2>
       <p>
-        Get free <strong>jackpot predictions</strong> on Pitch Predictions — expert analysis for every preselected game on this week&apos;s active coupons. We cover <strong>Sportpesa jackpot predictions</strong>, <strong>Betika jackpot predictions</strong>, Mozzart, Betpawa, Sportybet, and more across Kenya, Tanzania, Uganda, and Nigeria. Every tip includes <strong>1X2</strong> and <strong>Double Chance</strong> options backed by form, H2H, and squad data. Predictions guide your slip; they never guarantee a win.
-      </p>
-
-      <h3>This Week&apos;s Active Jackpots</h3>
-      <p>
-        <strong>Sportpesa Mega Jackpot</strong> — 17 games every weekend, entry <strong>KSh 99</strong>, grand prize up to <strong>KSh 360 million</strong> (rolls over if unwon). Bonuses pay for 12–16 correct. Deadline: before the first Saturday kickoff. <strong>Sportpesa Midweek</strong> — 13 games, ~<strong>KSh 11 million</strong> grand prize, bonuses from 10 correct. Deadline: Wednesday or Thursday evening. <strong>Betika Midweek</strong> — 15 games, <strong>KSh 15 million</strong> top prize.
-      </p>
-      <p>
-        <strong>Mozzart Super Daily</strong> runs 16 games every day. Our <strong>today&apos;s jackpot tips</strong> and <strong>Sportpesa mega jackpot analysis</strong> go live early each week — review every game before submitting your slip. For daily match picks outside jackpots, see <a href="/tips/must-win-teams-today">must win teams today</a> and <a href="/tips/sokafans">Sokafans predictions today</a>.
+        Get free <strong>jackpot predictions</strong> on Pitch Predictions — expert analysis for every preselected game on active coupons. We cover <strong>Sportpesa jackpot predictions</strong>, <strong>Betika jackpot predictions</strong>, Mozzart, Betpawa, Sportybet, and more across Kenya, Tanzania, Uganda, and Nigeria. Every tip includes <strong>1X2</strong> and <strong>Double Chance</strong> options backed by form, H2H, and squad data. For daily 1X2 and BTTS picks outside jackpots, see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> or browse the full match list on our <a href="/">homepage</a>. Predictions guide your slip; they never guarantee a win.
       </p>
 
       <h3>What Are Jackpot Predictions?</h3>
       <p>
-        A football jackpot is a betting pool where you predict outcomes for all preselected games on one coupon — typically 8 to 18 fixtures. Get every game right and you win the grand prize. Most jackpots also pay <strong>bonus rewards</strong> for near-perfect slips, making partial wins a realistic weekly target.
+        A football jackpot is a betting pool where you predict outcomes for all preselected games on one coupon — typically 8 to 18 fixtures. Get every game right and you win the grand prize. Most jackpots also pay <strong>bonus rewards</strong> for near-perfect slips, making partial wins a realistic weekly target. The <strong>Sportpesa Mega Jackpot</strong> runs 17 games every weekend (entry <strong>KSh 99</strong>, grand prize up to <strong>KSh 360 million</strong>). The <strong>Sportpesa Midweek</strong> coupon has 13 games (~<strong>KSh 11 million</strong> grand prize, bonuses from 10 correct).
       </p>
 
-      <h3>Jackpots We Cover This Week</h3>
+      <h3>Jackpots We Cover</h3>
       <p>
-        Our <strong>free jackpot tips</strong> and <strong>today&apos;s jackpot tips</strong> span every major bookmaker:
+        Our <strong>free jackpot tips</strong> span every major bookmaker:
       </p>
       <ul>
         <li><a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> — 17 games, weekend, up to KSh 360 million</li>
@@ -33,9 +23,6 @@ export default function JackpotPredictionsContent() {
         <li><a href="/jackpot-predictions/mozzart-super-daily-jackpot-predictions">Mozzart Super Daily</a> — 16 games, daily</li>
         <li><a href="/jackpot-predictions/bet9ja-super9ja-jackpot-predictions">Bet9ja Super9ja</a>, Sportybet, Betway, Betpawa, and more</li>
       </ul>
-      <p>
-        View the full list on our <a href="/jackpot-predictions">jackpot predictions hub</a> — updated weekly before each deadline.
-      </p>
 
       <h3>Mega Jackpot vs Midweek Jackpot</h3>
       <p>
@@ -84,10 +71,8 @@ export default function JackpotPredictionsContent() {
       </p>
 
       <p>
-        Use this week&apos;s <strong>free jackpot tips</strong> to research every game on your coupon before the deadline.
+        Use our <strong>free jackpot tips</strong> to research every game on your coupon before the deadline.
       </p>
-
-      <PredictionGuidesLinks excludeHref="/jackpot-predictions" title="Daily Tip Guides" />
 
     </section>
   );

@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function SportpesaMidweekJackpotContent() {
   return (
     <section className="seo-content">
@@ -9,22 +7,17 @@ export default function SportpesaMidweekJackpotContent() {
         Get free <strong>Sportpesa Midweek Jackpot predictions</strong> for all 13 games this week on Pitch Predictions. The Sportpesa Midweek Jackpot runs every midweek with <strong>13 preselected games</strong> from leagues across Europe and beyond. The grand prize is approximately <strong>KSh 11 million</strong> for a perfect 13/13 slip. Our <strong>SportPesa Midweek Jackpot tips</strong> include 1X2 and Double Chance analysis for every selection. Predictions guide your slip; they never guarantee a win.
       </p>
 
-      <h3>This Week&apos;s Midweek Jackpot Coupon</h3>
-      <p>
-        This week&apos;s Sportpesa Midweek coupon has <strong>13 preselected games</strong> — typically midweek European fixtures from the Championship, League One, Coppa Italia, and similar leagues. Grand prize: approximately <strong>KSh 11 million</strong> for 13/13 correct. Bonus prizes for <strong>10, 11, or 12</strong> correct make 11/13 a realistic weekly target for informed bettors.
-      </p>
-      <p>
-        <strong>Deadline:</strong> before the first listed kickoff — usually Wednesday or Thursday evening EAT. Tips publish at the start of the week. Weekend bettors should also check the <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> (17 games, up to KSh 360M). For daily singles, see <a href="/tips/must-win-teams-today">must win teams today</a>.
-      </p>
-
       <h3>Sportpesa Midweek Jackpot Prize Structure</h3>
+      <p>
+        The midweek coupon has <strong>13 preselected games</strong> — typically midweek European fixtures from the Championship, League One, Coppa Italia, and similar leagues. <strong>Deadline:</strong> before the first listed kickoff — usually Wednesday or Thursday evening EAT.
+      </p>
       <ul>
         <li><strong>Grand prize (13/13):</strong> Approximately KSh 11 million — rolls over if no winner</li>
         <li><strong>Bonus prizes:</strong> Awarded for 10, 11, or 12 correct predictions every week</li>
         <li><strong>Deadline:</strong> Before kickoff of the first preselected game — typically Wednesday or Thursday evening</li>
       </ul>
       <p>
-        With only 13 games, reaching 11 or 12 correct is a realistic weekly target when using structured <strong>midweek jackpot predictions</strong> and <strong>accurate predictions</strong> backed by data.
+        With only 13 games, reaching 11 or 12 correct is a realistic weekly target. Weekend bettors should check the <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> (17 games, up to KSh 360M). Daily picks are on our <a href="/">homepage</a> and <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> page.
       </p>
 
       <h3>Midweek vs Mega Jackpot</h3>
@@ -84,11 +77,6 @@ export default function SportpesaMidweekJackpotContent() {
       <p>
         Review this week&apos;s <strong>Sportpesa Midweek Jackpot predictions</strong> and submit your slip before the first kickoff.
       </p>
-
-      <PredictionGuidesLinks
-        excludeHref="/jackpot-predictions/sportpesa-midweek-jackpot-predictions"
-        title="Related Prediction Guides"
-      />
 
     </section>
   );

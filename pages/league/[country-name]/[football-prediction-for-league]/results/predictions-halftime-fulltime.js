@@ -252,8 +252,8 @@ export async function getServerSideProps(context) {
                 endpointStatus: "error",
                 error: "Invalid league or country parameters",
                 baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
-                leagueName: leagueNameForApi || "",
-                countryName: countryNameForApi || "",
+                leagueName: leagueNameWithHyphens || "",
+                countryName: extractedCountry || "",
                 displayLeagueName: displayLeagueName || "",
                 displayCountryName: displayCountryName || "",
                 leagueId: leagueId || 0,
@@ -283,25 +283,28 @@ export async function getServerSideProps(context) {
             console.error('Error fetching leagues top data:', topError);
         }
         
-        // Fetch league results
-        const resultsUrl = `https://api.pitchpredictions.com/api/fetch_league_results?league_name=${encodeURIComponent(leagueNameForApi)}&country_name=${encodeURIComponent(countryNameForApi)}`;
-        
+        let resultsDataList = [];
+        const resultsUrl = `https://api.pitchpredictions.com/api/fetch_league_results?league_id=${leagueId}&start_index=0&end_index=50`;
+
         const resultsResponse = await fetch(resultsUrl, { headers });
-        
+
         if (!resultsResponse.ok) {
             throw new Error(`HTTP error! status: ${resultsResponse.status}`);
         }
-        
+
         const resultsData = await resultsResponse.json();
-        
+        if (resultsData.status === true && resultsData.data?.length) {
+            resultsDataList = resultsData.data;
+        }
+
         return {
             props: {
-                initialData: resultsData.data || [],
-                endpointStatus: resultsData.status === true ? "success" : "error",
-                error: resultsData.status === true ? null : (resultsData.message || "Failed to load league results"),
+                initialData: resultsDataList,
+                endpointStatus: resultsDataList.length > 0 ? "success" : "error",
+                error: resultsDataList.length > 0 ? null : (resultsData.message || "No results found for this league"),
                 baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
-                leagueName: leagueNameForApi,
-                countryName: countryNameForApi,
+                leagueName: leagueNameWithHyphens,
+                countryName: extractedCountry,
                 displayLeagueName: displayLeagueName,
                 displayCountryName: displayCountryName,
                 leagueId: leagueId,
@@ -317,8 +320,8 @@ export async function getServerSideProps(context) {
                 endpointStatus: "error",
                 error: error.message,
                 baseUrl: "https://api.pitchpredictions.com/api/fetch_league_results",
-                leagueName: leagueNameForApi,
-                countryName: countryNameForApi,
+                leagueName: leagueNameWithHyphens,
+                countryName: extractedCountry,
                 displayLeagueName: displayLeagueName,
                 displayCountryName: displayCountryName,
                 leagueId: leagueId,

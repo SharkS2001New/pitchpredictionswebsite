@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function SportpesaMegaJackpotContent() {
   return (
     <section className="seo-content">
@@ -9,22 +7,17 @@ export default function SportpesaMegaJackpotContent() {
         Get free <strong>Sportpesa Mega Jackpot predictions</strong> for all 17 games this weekend on Pitch Predictions. The Sportpesa Mega Jackpot is Kenya&apos;s most popular football pool — 17 preselected games, KSh 99 per entry, and a grand prize of up to <strong>KSh 360 million</strong> for a perfect 17/17 slip. Our <strong>SportPesa Mega Jackpot tips</strong> include 1X2 and Double Chance analysis for every game. Predictions guide your slip; they never guarantee a win.
       </p>
 
-      <h3>This Weekend&apos;s Mega Jackpot Coupon</h3>
-      <p>
-        This weekend&apos;s coupon features <strong>17 preselected games</strong> drawn from the Premier League, La Liga, Serie A, Bundesliga, and other European leagues. Entry costs <strong>KSh 99</strong> per slip (multiple entries allowed). Grand prize: up to <strong>KSh 360 million</strong> for 17/17 correct — the pool rolls over if no one wins. Bonus tiers pay out weekly for 12, 13, 14, 15, or 16 correct picks even when the jackpot is not won.
-      </p>
-      <p>
-        <strong>Deadline:</strong> before kickoff of Game 1 — typically Saturday afternoon East Africa Time. Predictions on this page update early in the week once Sportpesa publishes the coupon. For midweek play, see <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot predictions</a> (13 games, ~KSh 11M). Daily singles: <a href="/tips/solo-prediction">solo prediction today</a>.
-      </p>
-
       <h3>Sportpesa Mega Jackpot Prize Structure</h3>
+      <p>
+        This weekend&apos;s coupon features <strong>17 preselected games</strong> drawn from the Premier League, La Liga, Serie A, Bundesliga, and other European leagues. Entry costs <strong>KSh 99</strong> per slip (multiple entries allowed). <strong>Deadline:</strong> before kickoff of Game 1 — typically Saturday afternoon East Africa Time.
+      </p>
       <ul>
         <li><strong>Grand prize (17/17):</strong> Up to KSh 360 million — rolls over if no winner</li>
         <li><strong>Bonus prizes:</strong> Awarded for 12, 13, 14, 15, or 16 correct predictions every week</li>
         <li><strong>Entry cost:</strong> KSh 99 per slip — multiple entries allowed</li>
       </ul>
       <p>
-        Bonus targets are a realistic weekly goal. Reaching 13 or 14 correct is achievable with structured <strong>mega jackpot analysis</strong> — even without hitting all 17.
+        Bonus targets are a realistic weekly goal. For midweek play, see <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot predictions</a> (13 games, ~KSh 11M). Daily singles are on our <a href="/">homepage</a> and <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> page.
       </p>
 
       <h3>How We Build Sportpesa Mega Jackpot Predictions</h3>
@@ -91,11 +84,6 @@ export default function SportpesaMegaJackpotContent() {
       <p>
         Review this weekend&apos;s <strong>Sportpesa Mega Jackpot predictions</strong> and submit your slip before the first kickoff.
       </p>
-
-      <PredictionGuidesLinks
-        excludeHref="/jackpot-predictions/sportpesa-mega-jackpot-predictions"
-        title="Related Prediction Guides"
-      />
 
     </section>
   );

@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function SokafansPredictionsContent() {
   return (
     <section className="seo-content">
@@ -7,14 +5,6 @@ export default function SokafansPredictionsContent() {
       <h2>Sokafans Predictions – Free Football Tips &amp; Jackpot Picks</h2>
       <p>
         Looking for <strong>Sokafans predictions</strong> today? Pitch Predictions gives you free daily <strong>Sokafans tips</strong>, jackpot analysis, and match previews across 700+ leagues. Whether you follow Kenyan leagues, the Premier League, or weekend jackpots, our <strong>Sokafans prediction today</strong> picks use real form data, head-to-head records, and squad news — not guesswork. Predictions guide your decisions; they never guarantee results.
-      </p>
-
-      <h3>Sokafans Tips This Week</h3>
-      <p>
-        Sokafans is widely used in Kenya for daily KPL picks and weekend Sportpesa coupons. This week our <strong>Sokafans prediction today</strong> list covers morning Kenyan Premier League fixtures and evening European games, with separate jackpot write-ups for the <strong>Sokafans mega jackpot prediction</strong> (17 games, grand prize up to <strong>KSh 360 million</strong>, deadline before the first Saturday kickoff) and the midweek 13-game coupon (~<strong>KSh 11 million</strong>, deadline Wednesday or Thursday evening).
-      </p>
-      <p>
-        Daily <strong>Sokafans free tips today</strong> refresh before the first listed match. Jackpot analysis for all coupon games goes live early in the week — check our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega</a> and <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Midweek</a> pages for game-by-game 1X2 and Double Chance picks.
       </p>
 
       <h3>Why Sokafans Tips Today Matter</h3>
@@ -49,9 +39,9 @@ export default function SokafansPredictionsContent() {
         Pitch Predictions covers the jackpots that <strong>Sokafans jackpot prediction</strong> users follow every week:
       </p>
       <ul>
-        <li><strong>Sokafans mega jackpot prediction:</strong> Sportpesa Mega Jackpot — 17 preselected games with 1X2 and Double Chance analysis for every coupon game</li>
-        <li><strong>Midweek Jackpot:</strong> 13-game Sportpesa midweek coupon with form, H2H, and standings data</li>
-        <li><strong>Betika Midweek:</strong> Full analysis for every game on the Betika coupon before each deadline</li>
+        <li><strong>Sokafans mega jackpot prediction:</strong> <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> — 17 preselected games with 1X2 and Double Chance analysis</li>
+        <li><strong>Midweek Jackpot:</strong> <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa midweek coupon</a> — 13 games with form, H2H, and standings data</li>
+        <li><strong>All jackpots:</strong> Full coverage on our <a href="/jackpot-predictions">jackpot predictions hub</a></li>
       </ul>
       <p>
         Jackpot tips are updated weekly. Each game is reviewed individually — not copied from generic lists.
@@ -85,14 +75,12 @@ export default function SokafansPredictionsContent() {
 
       <h3>Why Pitch Predictions Sokafans Tips Are Trusted</h3>
       <p>
-        Pitch Predictions delivers free <strong>Sokafans tips today prediction</strong> content with verified data, transparent reasoning, and daily updates across Kenyan leagues, the PSL, NPFL, and 700+ competitions worldwide. Our goal is to educate and inform — not promise impossible wins.
+        Pitch Predictions delivers free <strong>Sokafans tips today prediction</strong> content with verified data, transparent reasoning, and daily updates across Kenyan leagues, the PSL, NPFL, and 700+ competitions worldwide. Browse the full daily card on our <a href="/">homepage</a> or compare with <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> for another data-driven angle.
       </p>
 
       <p>
         Stay ahead with <strong>Sokafans prediction today</strong> picks designed to guide smarter betting decisions every day.
       </p>
-
-      <PredictionGuidesLinks excludeHref="/tips/sokafans" title="Related Prediction Guides" />
 
     </section>
   );

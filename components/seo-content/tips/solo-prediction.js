@@ -1,5 +1,3 @@
-import PredictionGuidesLinks from "../shared/prediction-guides-links";
-
 export default function SoloPredictionsContent() {
   return (
     <section className="seo-content">
@@ -9,17 +7,9 @@ export default function SoloPredictionsContent() {
         Looking for a reliable <strong>solo prediction today</strong>? Pitch Predictions publishes one focused football pick every day — one match, one outcome, one clear reason. A <strong>solo prediction for today</strong> removes accumulator chain risk: your result depends on a single researched fixture, not five or ten games where one upset ruins everything. Our <strong>football predictions</strong> use form, H2H stats, and match context. Tips guide your choices; they do not guarantee profit.
       </p>
 
-      <h3>Solo Prediction This Week</h3>
-      <p>
-        Each day we publish one <strong>solo prediction today</strong> — the single fixture where form, head-to-head data, and motivation score highest on our model (typically 65%+ confidence). The pick replaces the previous day&apos;s selection each morning before <strong>9:00 AM GMT</strong>, covering Premier League, La Liga, PSL, NPFL, Kenya Premier League, and other major cards.
-      </p>
-      <p>
-        Unlike accumulators, one wrong result does not wipe your slip. Pair today&apos;s solo pick with our <a href="/tips/must-win-teams-today">must win teams today</a> list for additional high-stakes fixtures, or browse <a href="/jackpot-predictions">jackpot predictions</a> if you are building a weekend coupon.
-      </p>
-
       <h3>What Is Solo Prediction?</h3>
       <p>
-        A solo bet is a single-match wager — the opposite of a multibet or accumulator. You research one game, back one outcome, and your result is decided by that match alone. For bettors who want consistency over jackpot-chasing, <strong>solo prediction for today</strong> is the most disciplined approach available.
+        A solo bet is a single-match wager — the opposite of a multibet or accumulator. You research one game, back one outcome, and your result is decided by that match alone. For bettors who want consistency over jackpot-chasing, <strong>solo prediction for today</strong> is the most disciplined approach available. Each pick replaces the previous day&apos;s selection each morning, typically covering Premier League, La Liga, PSL, NPFL, and other major cards.
       </p>
 
       <h3>How We Build Solo Predictions</h3>
@@ -49,7 +39,7 @@ export default function SoloPredictionsContent() {
 
       <h3>Leagues We Cover</h3>
       <p>
-        <strong>Football predictions</strong> on Pitch Predictions span 700+ leagues — Premier League, La Liga, Bundesliga, Champions League, South Africa PSL, Nigeria NPFL, Kenya Premier League, CAF competitions, MLS, and Liga MX. Each <strong>solo prediction for today</strong> includes brief reasoning, not just a result label.
+        <strong>Football predictions</strong> on Pitch Predictions span 700+ leagues — Premier League, La Liga, Bundesliga, Champions League, South Africa PSL, Nigeria NPFL, Kenya Premier League, CAF competitions, MLS, and Liga MX. Each <strong>solo prediction for today</strong> includes brief reasoning, not just a result label. For multi-game coupons, see our <a href="/jackpot-predictions">jackpot predictions</a> hub.
       </p>
 
       <h3>How to Use Solo Prediction Today</h3>
@@ -71,14 +61,12 @@ export default function SoloPredictionsContent() {
 
       <h3>Why Pitch Predictions Solo Tips Are Trusted</h3>
       <p>
-        Pitch Predictions delivers free <strong>solo prediction today</strong> picks with verified data, transparent analysis, and daily updates. Our goal is to help you research one game properly — not to promise impossible wins.
+        Pitch Predictions delivers free <strong>solo prediction today</strong> picks with verified data, transparent analysis, and daily updates. Compare with <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> or return to the <a href="/">homepage</a> for the full match list.
       </p>
 
       <p>
         Use today&apos;s <strong>solo prediction for today</strong> to make a smarter, more focused betting decision.
       </p>
-
-      <PredictionGuidesLinks excludeHref="/tips/solo-prediction" title="Related Prediction Guides" />
 
     </section>
   );

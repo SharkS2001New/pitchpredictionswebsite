@@ -1,6 +1,5 @@
 // components/shared/short-blog-posts.js
 import React, { useEffect, useState } from 'react';
-import PredictionGuidesLinks from '../seo-content/shared/prediction-guides-links';
 
 const ShortBlogPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -118,7 +117,6 @@ const ShortBlogPosts = () => {
         })}
       </div>
       <br />
-      <PredictionGuidesLinks title="Football Prediction Guides" />
     </div>
   );
 };
