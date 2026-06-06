@@ -51,9 +51,12 @@ export function removeCacheFileAtPath(cachePath) {
   try {
     if (cachePath && fs.existsSync(cachePath)) {
       fs.unlinkSync(cachePath);
+      return !fs.existsSync(cachePath);
     }
+    return false;
   } catch (error) {
     console.error("Error removing cache file:", error);
+    return false;
   }
 }
 

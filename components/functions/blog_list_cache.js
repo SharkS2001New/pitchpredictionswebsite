@@ -122,38 +122,86 @@ export function getBlogPostCachePath(slug) {
   };
 }
 
-export function clearBlogPostCache(slug) {
-  if (!slug) {
-    return { slug: "", removed: [], notFound: [] };
+function getBlogPostSlugVariants(slug) {
+  const raw = String(slug || "").trim();
+  const safeSlug = raw.replace(/[^a-zA-Z0-9_-]/g, "_");
+
+  return [...new Set([raw, safeSlug].filter(Boolean))];
+}
+
+function listBlogPostCacheFiles(slug) {
+  const variants = getBlogPostSlugVariants(slug);
+  const dirs = [BLOG_JSON_CACHE_DIR, BLOG_HTML_CACHE_DIR, LEGACY_BLOG_CACHE_DIR];
+  const files = new Set();
+
+  for (const dir of dirs) {
+    if (!fs.existsSync(dir)) continue;
+
+    for (const name of fs.readdirSync(dir)) {
+      if (!name.startsWith("blog-post-")) continue;
+
+      for (const variant of variants) {
+        if (name.startsWith(`blog-post-${variant}`)) {
+          files.add(path.join(dir, name));
+          break;
+        }
+      }
+    }
   }
 
-  const paths = getBlogPostCachePath(slug);
-  const legacy = getLegacyBlogPostPaths(slug);
-  const targets = [
-    { key: "json", file: paths.cachePath },
-    { key: "meta", file: paths.metaCachePath },
-    { key: "html", file: paths.contentCachePath },
-    { key: "legacyJson", file: legacy.cachePath },
-    { key: "legacyMeta", file: legacy.metaCachePath },
-    { key: "legacyHtml", file: legacy.contentCachePath },
-  ];
+  return [...files];
+}
 
+export function clearBlogPostCache(slug) {
+  if (!slug) {
+    return { slug: "", removed: [], notFound: [], failed: [], removedFiles: [] };
+  }
+
+  const { safeSlug } = getBlogPostCachePath(slug);
+  const files = listBlogPostCacheFiles(slug);
   const removed = [];
   const notFound = [];
+  const failed = [];
+  const removedFiles = [];
 
-  for (const { key, file } of targets) {
-    if (fs.existsSync(file)) {
-      removeCacheFileAtPath(file);
-      removed.push(key);
+  if (files.length === 0) {
+    return {
+      slug: safeSlug,
+      removed: [],
+      notFound: ["json", "meta", "html", "legacyJson", "legacyMeta", "legacyHtml"],
+      failed: [],
+      removedFiles: [],
+    };
+  }
+
+  for (const file of files) {
+    const basename = path.basename(file);
+    const deleted = removeCacheFileAtPath(file);
+
+    if (deleted) {
+      removedFiles.push(basename);
+      if (basename.endsWith("-meta.json")) {
+        removed.push("meta");
+      } else if (basename.endsWith(".json")) {
+        removed.push("json");
+      } else if (basename.endsWith(".html")) {
+        removed.push("html");
+      } else {
+        removed.push(basename);
+      }
+    } else if (fs.existsSync(file)) {
+      failed.push(basename);
     } else {
-      notFound.push(key);
+      notFound.push(basename);
     }
   }
 
   return {
-    slug: paths.safeSlug,
-    removed,
-    notFound,
+    slug: safeSlug,
+    removed: [...new Set(removed)],
+    notFound: [...new Set(notFound)],
+    failed: [...new Set(failed)],
+    removedFiles,
   };
 }
 

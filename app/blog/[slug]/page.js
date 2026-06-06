@@ -15,7 +15,7 @@ import {
   getFeaturedImage,
 } from "../../../lib/blog/blog-utils";
 
-export const revalidate = 3600;
+export const revalidate = false;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
