@@ -6,7 +6,7 @@ import {
   writeCacheFileAtPath,
 } from "./file_cache";
 
-export const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+export const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour — blog list pages only
 const API_BASE = "https://api.pitchpredictions.com/api/blog";
 const BLOG_JSON_CACHE_DIR = path.join(process.cwd(), "pages", "blogscache");
 const BLOG_HTML_CACHE_DIR = path.join(process.cwd(), "public", "blogscache");
@@ -122,13 +122,48 @@ export function getBlogPostCachePath(slug) {
   };
 }
 
+export function clearBlogPostCache(slug) {
+  if (!slug) {
+    return { slug: "", removed: [], notFound: [] };
+  }
+
+  const paths = getBlogPostCachePath(slug);
+  const legacy = getLegacyBlogPostPaths(slug);
+  const targets = [
+    { key: "json", file: paths.cachePath },
+    { key: "meta", file: paths.metaCachePath },
+    { key: "html", file: paths.contentCachePath },
+    { key: "legacyJson", file: legacy.cachePath },
+    { key: "legacyMeta", file: legacy.metaCachePath },
+    { key: "legacyHtml", file: legacy.contentCachePath },
+  ];
+
+  const removed = [];
+  const notFound = [];
+
+  for (const { key, file } of targets) {
+    if (fs.existsSync(file)) {
+      removeCacheFileAtPath(file);
+      removed.push(key);
+    } else {
+      notFound.push(key);
+    }
+  }
+
+  return {
+    slug: paths.safeSlug,
+    removed,
+    notFound,
+  };
+}
+
 export function readBlogPostCache(cachePath) {
   if (!fs.existsSync(cachePath)) return null;
 
   try {
     const cache = JSON.parse(fs.readFileSync(cachePath, "utf8"));
-    const ageMs = Date.now() - new Date(cache.generatedAt).getTime();
-    return { cache, isFresh: ageMs <= CACHE_TTL_MS };
+    // Blog posts stay cached until explicitly cleared via /api/clear-blog-cache/[slug]
+    return { cache, isFresh: true };
   } catch {
     return null;
   }
