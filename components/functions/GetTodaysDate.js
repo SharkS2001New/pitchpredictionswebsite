@@ -2,13 +2,30 @@
 
 const SITE_TIMEZONE = "Africa/Nairobi";
 
-function getFormattedDateInTimezone(timeZone, date = new Date()) {
-  return new Intl.DateTimeFormat("en-CA", {
+function getDatePartsInTimezone(timeZone, date = new Date()) {
+  return new Intl.DateTimeFormat("en-US", {
     timeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(date);
+  }).formatToParts(date);
+}
+
+function partsToIsoDate(parts) {
+  const lookup = Object.fromEntries(
+    parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
+  );
+  const { year, month, day } = lookup;
+
+  if (!year || !month || !day) {
+    throw new Error("Unable to parse date parts");
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+function getFormattedDateInTimezone(timeZone, date = new Date()) {
+  return partsToIsoDate(getDatePartsInTimezone(timeZone, date));
 }
 
 function getFormattedCurrentDate() {
@@ -17,11 +34,30 @@ function getFormattedCurrentDate() {
   } catch (err) {
     console.error("Error formatting current date:", err.message);
     const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
 }
 
+function addDaysToIsoDate(isoDate, days) {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function getFormattedDateWithOffset(daysFromToday) {
+  return addDaysToIsoDate(getFormattedCurrentDate(), daysFromToday);
+}
+
 export default getFormattedCurrentDate;
+export {
+  SITE_TIMEZONE,
+  addDaysToIsoDate,
+  getFormattedDateWithOffset,
+  getFormattedDateInTimezone,
+};

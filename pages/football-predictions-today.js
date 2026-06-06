@@ -12,6 +12,7 @@ import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/f
 import TodayFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-today";
 import fs from 'fs';
 import path from 'path';
+import { CACHE_DIR, getCacheFilePath, writeCacheFile } from "../components/functions/file_cache";
 
 function TodaysFixtures({ 
     initialData, 
@@ -216,9 +217,8 @@ export async function getServerSideProps() {
     const liveFirstBatchUrl = `${liveBaseUrl}?fixture_date=${todaysDate}&start_index=0&end_index=20`;
     
     // Cache setup
-    const cacheDir = path.join(process.cwd(), 'public', 'cache');
     const cacheFilename = `todays-predictions-${todaysDate}.json`; // Specific cache for today's page
-    const cachePath = path.join(cacheDir, cacheFilename);
+    const cachePath = getCacheFilePath(cacheFilename);
     
     let initialData = [];
     let endpointStatus = "success";
@@ -227,15 +227,9 @@ export async function getServerSideProps() {
         fromCache: false,
         generatedAt: null
     };
+    let cachedNotStartedMatches = [];
 
     try {
-        // Create cache directory if it doesn't exist
-        if (!fs.existsSync(cacheDir)) {
-            fs.mkdirSync(cacheDir, { recursive: true });
-        }
-
-        let cachedNotStartedMatches = [];
-
         // Check if we have a valid cache file (2 minutes = 120000 ms)
         if (fs.existsSync(cachePath)) {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
@@ -287,9 +281,7 @@ export async function getServerSideProps() {
                 count: notStartedMatches.length
             };
             
-            const tempPath = `${cachePath}.tmp.${Date.now()}`;
-            fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-            fs.renameSync(tempPath, cachePath);
+            writeCacheFile(cacheFilename, cacheData);
             
             cacheInfo = {
                 fromCache: false,
@@ -332,7 +324,7 @@ export async function getServerSideProps() {
         }
 
         // Clean up old cache files (older than 2 minutes)
-        cleanupOldCacheFiles(cacheDir);
+        cleanupOldCacheFiles(CACHE_DIR);
 
     } catch (err) {
         console.error('Error fetching today\'s predictions:', err);

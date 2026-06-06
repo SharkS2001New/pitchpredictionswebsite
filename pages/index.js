@@ -11,6 +11,7 @@ import ShortBlogPosts from "../components/shared/short-blog-posts";
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
 import fs from 'fs';
 import path from 'path';
+import { CACHE_DIR, getCacheFilePath, writeCacheFile } from '../components/functions/file_cache';
 
 export default function Home({ 
     initialData, 
@@ -165,20 +166,14 @@ export async function getServerSideProps({ req }) {
   const baseUrl = "https://api.pitchpredictions.com/api/fetch_top_winning_predictions?fixture_date=" + todaysDate;
   
   // Cache setup - store only the first 20 items
-  const cacheDir = path.join(process.cwd(), 'public', 'cache');
   const cacheFilename = `top-football-predictions-${todaysDate}.json`;
-  const cachePath = path.join(cacheDir, cacheFilename);
+  const cachePath = getCacheFilePath(cacheFilename);
   
   let initialData = [];
   let endpointStatus = "success";
   let error = null;
 
   try {
-    // Create cache directory if it doesn't exist
-    if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
-    }
-
     // Check if we have a valid cache file
     if (fs.existsSync(cachePath)) {
       const cacheContent = fs.readFileSync(cachePath, 'utf8');
@@ -217,7 +212,7 @@ export async function getServerSideProps({ req }) {
           count: initialData.length
         };
         
-        fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+        writeCacheFile(cacheFilename, cacheData);
       } else {
         endpointStatus = "error";
         error = data.message || "API returned error";
@@ -225,7 +220,7 @@ export async function getServerSideProps({ req }) {
     }
 
     // Clean up old cache files
-    await cleanupOldCacheFiles(cacheDir);
+    await cleanupOldCacheFiles(CACHE_DIR);
 
   } catch (err) {
     console.error('Error in getServerSideProps:', err);

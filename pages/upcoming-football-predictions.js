@@ -12,6 +12,7 @@ import FilterUpcomingOverallDoubleChanceUnderOverHTFTPred1x2 from "../components
 import UpcomingFootballPredictionsContent from "../components/seo-content/mainpages/upcoming-football-predictions";
 import fs from 'fs';
 import path from 'path';
+import { CACHE_DIR, getCacheFilePath, writeCacheFile } from "../components/functions/file_cache";
 
 function UpcomingFixtures({ 
     initialData, 
@@ -179,9 +180,8 @@ export async function getServerSideProps() {
     const baseUrl = "https://api.pitchpredictions.com/api/fetch_upcoming_fixtures";
     
     // Cache setup - create cache file for upcoming predictions
-    const cacheDir = path.join(process.cwd(), 'public', 'cache');
     const cacheFilename = `upcoming-football-predictions-${todaysDate}.json`;
-    const cachePath = path.join(cacheDir, cacheFilename);
+    const cachePath = getCacheFilePath(cacheFilename);
     
     let initialData = [];
     let endpointStatus = "success";
@@ -192,11 +192,6 @@ export async function getServerSideProps() {
     };
 
     try {
-        // Create cache directory if it doesn't exist
-        if (!fs.existsSync(cacheDir)) {
-            fs.mkdirSync(cacheDir, { recursive: true });
-        }
-
         // Check if we have a valid cache file
         if (fs.existsSync(cachePath)) {
             // Read the cache file
@@ -256,7 +251,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                writeCacheFile(cacheFilename, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -271,7 +266,7 @@ export async function getServerSideProps() {
         }
 
         // Clean up old cache files (older than 1 hour)
-        await cleanupOldCacheFiles(cacheDir);
+        await cleanupOldCacheFiles(CACHE_DIR);
 
     } catch (err) {
         console.error('Error fetching upcoming fixtures:', err);
