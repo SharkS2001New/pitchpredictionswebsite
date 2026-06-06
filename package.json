@@ -27,7 +27,7 @@
     "nookies": "^2.5.2",
     "react": "^19.2.7",
     "react-bootstrap": "^2.10.9",
-    "react-calendar": "^4.2.1",
+    "react-calendar": "^5.1.0",
     "react-dom": "^19.2.7",
     "react-markdown": "^10.1.0",
     "swr": "^2.4.1"

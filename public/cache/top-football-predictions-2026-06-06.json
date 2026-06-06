@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T06:14:14.640Z",
+  "generatedAt": "2026-06-06T06:29:03.310Z",
   "fixtureDate": "2026-06-06",
   "data": [
     {
@@ -1065,7 +1065,7 @@
         "venue": null,
         "status": "2H",
         "status_long": "Second Half",
-        "elapsed": 53
+        "elapsed": 64
       },
       "score": {
         "home": 0,
