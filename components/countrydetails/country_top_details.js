@@ -20,7 +20,7 @@ function  CountriesDetailsTop(props){
             </React.Fragment>
         )
     }else{
-        <PreLoader/>
+        return <PreLoader/>
     }
 
 }
