@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useRouter } from "next/router";
+import useCompatRouter from "../functions/use-compat-router";
 
 function CustomDatePicker() {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    var router = useRouter();
+    var router = useCompatRouter();
 
     //function to handle date change on select
     function handleDateChange(event) {        

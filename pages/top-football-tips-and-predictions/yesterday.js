@@ -1,7 +1,7 @@
 // pages/top-football-tips-and-predictions/yesterday.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
@@ -11,6 +11,7 @@ import FilterYesterdayTopOverallDoubleChanceUnderOverHTFTPred1x2 from "../../com
 import getFormattedYesterdayDate from "../../components/functions/GetYesterdaysDate";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function TopFootballFixturesYesterday({ 
     initialData, 
@@ -241,9 +242,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

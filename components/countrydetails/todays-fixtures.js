@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import DetermineLiveScores from '../functions/determine_live_scores';
 import FixturesTableDisplay from '../shared/fixtures_table_display';
 import CountrysPageRenders from '../shared/renders/country-renders';
-import { Adsense } from '@ctrl/react-adsense';
+import { Adsense } from '@/components/shared/client-adsense';
 
 function TodaysFixturesByCountry(props) {
     const router = useRouter();
@@ -61,7 +61,7 @@ function TodaysFixturesByCountry(props) {
 
         // Form the array of Fixtures Table by country
         predictionsList.push(
-            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} />
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={fixture.fixture_id || i} />
         );
     }
 

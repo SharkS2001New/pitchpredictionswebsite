@@ -1,6 +1,6 @@
 // pages/live-football-predictions.js
 import React, { useState, useEffect } from "react";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";

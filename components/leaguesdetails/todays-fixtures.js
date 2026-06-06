@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import DetermineLiveScores from '../functions/determine_live_scores';
 import FixturesTableDisplay from '../shared/fixtures_table_display';
 import LeaguesPageRender from '../shared/renders/leagues-render';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 
 function TodaysFixturesByLeague(props) {
     const router = useRouter();
@@ -89,7 +89,7 @@ function TodaysFixturesByLeague(props) {
             
         // Form the array of Fixtures Table by league
         predictionsList.push(
-            <FixturesTableDisplay props={sharedTabledetailsArray} key={i} />
+            <FixturesTableDisplay props={sharedTabledetailsArray} key={fixture.fixture_id || i} />
         );
     } 
 

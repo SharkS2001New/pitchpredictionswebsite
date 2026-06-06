@@ -8,7 +8,7 @@ import PreLoader from "../../../../components/includes/loader";
 import DataNotFoundPage from "../../../../components/includes/datanotfound";
 import FetchLeaguesTopData from "../../../../components/functions/FetchLeaguesTopData";
 import LeaguesDetailsTop from "../../../../components/leaguesdetails/leagues_top_details";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 
 function FootballPredictionsByLeagueTrends() {
   const router = useRouter();

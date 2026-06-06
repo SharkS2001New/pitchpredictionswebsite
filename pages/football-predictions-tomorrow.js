@@ -1,7 +1,7 @@
 // pages/football-predictions-tomorrow.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import FormatedDate from "../components/functions/format_date_function";
@@ -11,6 +11,7 @@ import FilterTomorrowsOverallDoubleChanceUnderOverHTFTPred1x2 from "../component
 import TomorrowFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-tomorrow";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 function TomorrowFixtures({ 
     initialData, 
@@ -262,7 +263,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

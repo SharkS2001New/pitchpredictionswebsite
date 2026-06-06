@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";
 import MatchSummaryDisplay from "../../../components/matchdetails/match_summary_display";
 import PreLoader from "../../../components/includes/loader";

@@ -1,7 +1,7 @@
 // pages/jackpot-predictions/[jackpot-predictions-by-name].js
 import React, { useState, useEffect } from 'react';
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
 import JackpotPredictionsContent from "../../components/seo-content/jackpots/jackpots-landing-page";
@@ -10,6 +10,7 @@ import SportpesaMidweekJackpotContent from "../../components/seo-content/jackpot
 import { useRouter } from 'next/router';
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function JackpotSeoContent({ slug }) {
     if (slug === 'sportpesa-mega-jackpot-predictions') {
@@ -340,7 +341,7 @@ function JackpotByNamePredictions({
     // Show friendly message if jackpot is not found (404)
     if (isNotFound) {
         return (
-            <div className="sites-card">
+            <div className="sites-card jackpot-sites-card">
                 <div className="container text-center py-5">
                     <div className="mb-4">
                         <i className="bi bi-trophy" style={{ fontSize: '4rem', color: '#6c757d' }}></i>
@@ -373,7 +374,7 @@ function JackpotByNamePredictions({
     // Handle error state (API errors, etc.)
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
+            <div className="sites-card jackpot-sites-card">
                 <DataNotFoundPage props="This jackpot is currently not available. Please check back later." />
                 <br/>
                 <Adsense
@@ -391,7 +392,7 @@ function JackpotByNamePredictions({
     // Handle empty data state (API returned no data)
     if (!gamesData || gamesData.length === 0) {
         return (
-            <div className="sites-card">
+            <div className="sites-card jackpot-sites-card">
                 <DataNotFoundPage props="No jackpot fixtures available at the moment." />
                 <br/>
                 <Adsense
@@ -407,7 +408,7 @@ function JackpotByNamePredictions({
     }
 
     return (
-        <div className="sites-card">
+        <div className="sites-card jackpot-sites-card">
             {/* Premium Banner */}
             <div className="premium-banner">
                 <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
@@ -437,15 +438,6 @@ function JackpotByNamePredictions({
             />
 
             {seoContentBlock}
-
-            <style jsx>{`  
-                .sites-card {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 10px;
-                }               
-            `}</style>
         </div>
     );
 }
@@ -607,9 +599,7 @@ export async function getServerSideProps(context) {
                 };
                 
                 // Atomic write
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

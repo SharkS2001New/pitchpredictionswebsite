@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import TeamMatchPredictions from "../../../components/teamdetails/team_match_predictions";
 import GamesPlayedByTeam from "../../../components/teamdetails/games_played_by_team";
 import TeamPageHeader from "../../../components/teamdetails/team-page-header";

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import InPagePreLoader from "../includes/inpagepreloader";
 import DataNotFoundPage from "../includes/datanotfound";
 

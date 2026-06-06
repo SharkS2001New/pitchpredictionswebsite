@@ -1,7 +1,7 @@
 // pages/football-predictions-today.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
@@ -230,7 +230,7 @@ export async function getServerSideProps() {
     let cachedNotStartedMatches = [];
 
     try {
-        // Check if we have a valid cache file (2 minutes = 120000 ms)
+        // Check if we have a valid cache file (1 minute = 60000 ms)
         if (fs.existsSync(cachePath)) {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
             const cache = JSON.parse(cacheContent);
@@ -239,7 +239,7 @@ export async function getServerSideProps() {
             const now = new Date().getTime();
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
             
-            if (ageInMinutes <= 2) { // 2 minutes max
+            if (ageInMinutes <= 1) { // 1 minute max
                 // Cache is valid - use cached not started fixtures only
                 cachedNotStartedMatches = cache.data || [];
                 cacheInfo = {
@@ -323,7 +323,7 @@ export async function getServerSideProps() {
             error = null;
         }
 
-        // Clean up old cache files (older than 2 minutes)
+        // Clean up old cache files (older than 1 minute)
         cleanupOldCacheFiles(CACHE_DIR);
 
     } catch (err) {

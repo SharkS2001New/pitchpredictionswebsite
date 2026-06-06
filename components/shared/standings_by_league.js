@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import PreLoader from '../includes/loader';
 import StandingsFormWinLose from '../functions/standings_win_lose_form';
 import assignColorToDescription from '../functions/standing_description_color';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 
 function DisplayIndependentLeagueStandings(props) {
     const router = useRouter();

@@ -1,7 +1,7 @@
 // pages/football-predictions/[filter_date].js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
@@ -9,6 +9,7 @@ import DataNotFoundPage from "../components/includes/datanotfound";
 import FilterByDateOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions/filter-pred1x2-ov-un-dc-ht-ft";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 function FootballPredictionsByDate({ 
     initialData, 
@@ -292,9 +293,7 @@ export async function getServerSideProps({ params, query }) {
                 };
                 
                 // Atomic write
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

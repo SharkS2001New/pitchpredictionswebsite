@@ -1,7 +1,7 @@
 // pages/football-predictions-yesterday.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../components/shared/pages_match_predictions_details";
@@ -11,6 +11,7 @@ import FilterYesterdayOverallDoubleChanceUnderOverHTFTPred1x2 from "../component
 import YesterdayFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-yesterday";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 function YesterdayFixtures({ 
     initialData, 
@@ -269,7 +270,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

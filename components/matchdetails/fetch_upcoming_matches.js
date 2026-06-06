@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
 import DataNotFoundPage from "../includes/datanotfound";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import InPagePreLoader from "../includes/inpagepreloader";
 
 function FetchUpcomingMatches({ 

@@ -1,7 +1,7 @@
 // pages/football-predictions-weekend.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../components/includes/loader";
 import RenderData from "../components/shared/render_fixtures_data";
 import DateofWeekend from "../components/functions/compute_weekend_dates";
@@ -11,6 +11,7 @@ import FilterWeekendOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/
 import WeekendFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-weekend";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 function WeekendFixtures({ 
     initialData, 
@@ -322,9 +323,7 @@ export async function getServerSideProps() {
                 };
                 
                 // Atomic write
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

@@ -1,9 +1,11 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
+import { buildMatchUrlSlug } from '../functions/match_details_helpers';
+import dedupeFixturesById from '../functions/dedupe_fixtures_by_id';
 
 function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes = {}, onVote, votingInProgress = {} }) {
+  const uniqueGamesData = dedupeFixturesById(gamesData);
 
   const TeamIcon = ({ name, logo, size = 18 }) => {
     if (logo) {
@@ -133,7 +135,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
 
   return (
     <div className="container my-4">
-      {gamesData.map((game, index) => {
+      {uniqueGamesData.map((game, index) => {
         const stats = voteStats[game.fixture_id] || {};
         const hasVoted = !!selectedVotes[game.fixture_id];
         const userVote = selectedVotes[game.fixture_id]?.prediction;
@@ -158,6 +160,12 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
         const drawPct = totalVotes ? Math.round((votes.draw_votes / totalVotes) * 100) : 0;
         const awayPct = totalVotes ? Math.round((votes.away_votes / totalVotes) * 100) : 0;
         const maxPct = Math.max(homePct, drawPct, awayPct);
+
+        const matchUrl = `/match/football-predictions-${buildMatchUrlSlug(
+          game.home_team_name || '',
+          game.away_team_name || '',
+          game.fixture_id
+        )}/matches`;
 
         const renderVoteButton = (label, prediction, teamName, teamLogo) => {
             const isVoting = votingInProgress?.[game.fixture_id];
@@ -190,11 +198,17 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                 <div className="text-nowrap">
                   <div className="mb-2 d-flex align-items-center gap-2">
                     <strong>{game.jackpot_position}.</strong>
-                    <TeamIcon name={game.home_team_name} logo={game.home_team_logo} size={20} />
-                    <strong>{game.home_team_name}</strong>
-                    <span>vs</span>
-                    <TeamIcon name={game.away_team_name} logo={game.away_team_logo} size={20} />
-                    <strong>{game.away_team_name}</strong>                 
+                    <a
+                      href={matchUrl}
+                      className="d-flex align-items-center gap-2"
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                      <TeamIcon name={game.home_team_name} logo={game.home_team_logo} size={20} />
+                      <strong>{game.home_team_name}</strong>
+                      <span>vs</span>
+                      <TeamIcon name={game.away_team_name} logo={game.away_team_logo} size={20} />
+                      <strong>{game.away_team_name}</strong>
+                    </a>
                   </div>
                   
                   <div className="d-flex align-items-center gap-2 flex-wrap">
@@ -287,7 +301,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
             </div>
             
             {/* Ad insertion logic */}
-            {(index === 2 && index !== gamesData.length - 1) && (
+            {(index === 2 && index !== uniqueGamesData.length - 1) && (
                 <div className="desktop-container-resize">
                   <div className="text-center">
                     <Adsense
@@ -300,7 +314,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   </div>
                 </div>
             )}
-            {index !== 2 && (index - 2) % 8 === 0 && index !== gamesData.length - 1 && (
+            {index !== 2 && (index - 2) % 8 === 0 && index !== uniqueGamesData.length - 1 && (
                <div className="desktop-container-resize">
                   <div className="text-center">
                     <Adsense

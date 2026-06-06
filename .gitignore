@@ -31,3 +31,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# generated API/page caches
+/public/cache/*
+!/public/cache/.gitkeep
+/public/blogscache/*
+!/public/blogscache/.gitkeep
+/pages/blogscache/*
+!/pages/blogscache/.gitkeep

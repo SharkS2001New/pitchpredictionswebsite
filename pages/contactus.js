@@ -1,4 +1,4 @@
-import { Adsense } from '@ctrl/react-adsense';
+import { Adsense } from '@/components/shared/client-adsense';
 import React from 'react';
 
 function ContactUs(){

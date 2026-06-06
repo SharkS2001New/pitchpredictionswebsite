@@ -1,12 +1,13 @@
 // pages/jackpot-predictions.js
 import React, { useState } from 'react';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import JackpotPredictionsContent from '../components/seo-content/jackpots/jackpots-landing-page';
 import { useRouter } from 'next/router';
 import getJackpotNameFromSlug from '../components/functions/GetJackpotName';
 import ReturnSlugFromJackpotName from '../components/functions/getJackpotNameFromSlug';
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '', structuredData, cacheInfo }) {
   const router = useRouter();
@@ -292,7 +293,7 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       
-      <div className="sites-card">
+      <div className="sites-card jackpot-sites-card">
         {/* Search Bar */}
         <div className="container mb-4 mt-2">
           <div className="row">
@@ -833,9 +834,7 @@ export async function getServerSideProps({ req, query }) {
       };
       
       // Atomic write
-      const tempPath = `${cachePath}.tmp.${Date.now()}`;
-      fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-      fs.renameSync(tempPath, cachePath);
+      writeCacheFileAtPath(cachePath, cacheData);
       
       cacheInfo = {
         fromCache: false,

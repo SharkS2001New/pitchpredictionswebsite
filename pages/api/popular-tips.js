@@ -1,6 +1,11 @@
 // pages/api/popular-tips.js
 import fs from 'fs';
 import path from 'path';
+import {
+  hasCacheableData,
+  removeCacheFileAtPath,
+  writeCacheFileAtPath,
+} from '../../components/functions/file_cache';
 
 export default async function handler(req, res) {
   // Only allow GET requests
@@ -37,7 +42,7 @@ export default async function handler(req, res) {
       const now = new Date().getTime();
       const ageInHours = (now - cacheTime) / (1000 * 60 * 60);
       
-      if (ageInHours <= 3) {
+      if (ageInHours <= 3 && hasCacheableData(cache.data)) {
         // Return cached data
         return res.status(200).json({
           fromCache: true,
@@ -45,8 +50,8 @@ export default async function handler(req, res) {
           data: cache.data
         });
       } else {
-        // Cache expired - delete it
-        fs.unlinkSync(cachePath);
+        // Cache expired or empty - delete it
+        removeCacheFileAtPath(cachePath);
       }
     }
 
@@ -74,17 +79,7 @@ export default async function handler(req, res) {
       count: data.data?.length || 0
     };
 
-    // Save to cache (atomic write for K3s)
-    const tempPath = `${cachePath}.tmp.${Date.now()}`;
-    
-    // Ensure the directory exists before writing temp file
-    const tempDir = path.dirname(tempPath);
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true, mode: 0o755 });
-    }
-    
-    fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-    fs.renameSync(tempPath, cachePath);
+    writeCacheFileAtPath(cachePath, cacheData);
 
     // Clean up old cache files (older than 3 hours)
     cleanupOldCacheFiles(cacheDir);

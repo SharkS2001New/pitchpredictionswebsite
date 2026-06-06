@@ -1,6 +1,6 @@
 // pages/betnumbers-predictions.js
 import React, { useState, useEffect } from "react";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import PopularTips from "../../components/shared/popular_tips_display";
 import RenderData from "../../components/shared/render_fixtures_data";
@@ -10,6 +10,7 @@ import PagesMatchPredictionDetails from "../../components/shared/pages_match_pre
 import BetnumbersPredictionContent from "../../components/seo-content/tips/betnumbers-predictions";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function BetNumbersPredictions({ 
     initialData, 
@@ -190,12 +191,12 @@ export async function getServerSideProps() {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
             const cache = JSON.parse(cacheContent);
             
-            // Check if cache is still valid (3 minutes = 180000 ms)
+            // Check if cache is still valid (1 minute = 60000 ms)
             const cacheTime = new Date(cache.generatedAt).getTime();
             const now = new Date().getTime();
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
                         
-            if (ageInMinutes <= 3) {
+            if (ageInMinutes <= 1) {
                 // ✅ Cache is valid - use it!
                 initialData = cache.data;
                 endpointStatus = "success";
@@ -239,7 +240,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -251,7 +252,7 @@ export async function getServerSideProps() {
             }
         }
 
-        // Clean up old cache files (older than 3 minutes)
+        // Clean up old cache files (older than 1 minute)
         await cleanupOldCacheFiles(cacheDir);
 
     } catch (err) {

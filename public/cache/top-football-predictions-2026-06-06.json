@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T03:51:23.052Z",
+  "generatedAt": "2026-06-06T06:14:14.640Z",
   "fixtureDate": "2026-06-06",
   "data": [
     {
@@ -1063,16 +1063,16 @@
         "datetime": "2026-06-06T05:00:00+00:00",
         "unformatted_date": "2026-06-06",
         "venue": null,
-        "status": "NS",
-        "status_long": "Not Started",
-        "elapsed": null
+        "status": "2H",
+        "status_long": "Second Half",
+        "elapsed": 53
       },
       "score": {
-        "home": null,
-        "away": null,
+        "home": 0,
+        "away": 1,
         "half_time": {
-          "home": null,
-          "away": null
+          "home": 0,
+          "away": 1
         },
         "extra_time": {
           "home": null,

@@ -15,9 +15,8 @@ import Footer from '../components/includes/footer';
 import React from "react";
 import { useRouter } from 'next/router';
 import SideNavBar from '../components/includes/sidenav';
-import MyCalendar from '../components/includes/Calendar';
-import FixtureOfTheDay from '../components/shared/Fixtureoftheday';
-import { Adsense } from "@ctrl/react-adsense";
+import PersistentSidebar from '../components/layout/persistent-sidebar';
+import { Adsense } from "@/components/shared/client-adsense";
 // import AdsterraAd from '../components/shared/AdsterraAd';
 
 function App({ Component, pageProps }) {
@@ -224,20 +223,15 @@ function App({ Component, pageProps }) {
                   </div>    
                   {!isAuthPage && 
                   <div className="col-lg-3 d-none d-lg-block">
-                    {/**Visible only on lg */}
-                    <div style={{marginTop: "6px"}}>
-                      <MyCalendar/>
-                      <br/>
-                      <FixtureOfTheDay/>  
-                      <br/>
+                    <PersistentSidebar>
                       <Adsense
                         client="ca-pub-5665711413000284"
                         slot="4434810353"
                         style={{ display: "block" }}
                         layout="display"
                         format="auto"
-                      />                 
-                    </div>
+                      />
+                    </PersistentSidebar>
                   </div>     
                 }    
               </div>

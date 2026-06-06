@@ -1,6 +1,11 @@
 // pages/api/blog-posts.js
 import fs from 'fs';
 import path from 'path';
+import {
+  hasCacheableData,
+  removeCacheFileAtPath,
+  writeCacheFileAtPath,
+} from '../../components/functions/file_cache';
 
 export default async function handler(req, res) {
   // Only allow GET requests
@@ -27,13 +32,17 @@ export default async function handler(req, res) {
       const now = new Date().getTime();
       const ageInHours = (now - cacheTime) / (1000 * 60 * 60);
       
-      if (ageInHours <= 1) {
+      if (ageInHours <= 1 && hasCacheableData(cache.data)) {
         // Return cached data
         return res.status(200).json({
           fromCache: true,
           generatedAt: cache.generatedAt,
           data: cache.data
         });
+      }
+
+      if (!hasCacheableData(cache.data)) {
+        removeCacheFileAtPath(cachePath);
       }
     }
 
@@ -59,10 +68,7 @@ export default async function handler(req, res) {
       count: data.data?.length || 0
     };
 
-    // Save to cache (atomic write for K3s)
-    const tempPath = `${cachePath}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-    fs.renameSync(tempPath, cachePath);
+    writeCacheFileAtPath(cachePath, cacheData);
 
     // Clean up old blog cache files (older than 1 hour)
     cleanupOldCacheFiles(cacheDir);

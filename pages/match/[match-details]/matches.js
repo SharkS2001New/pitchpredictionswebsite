@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import H2HFixturesData from "../../../components/matchdetails/h2h_fixtures";
 import Last6Matches from "../../../components/matchdetails/last_6_matches";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";

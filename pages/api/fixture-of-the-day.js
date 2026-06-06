@@ -1,6 +1,11 @@
 // pages/api/fixture-of-the-day.js
 import fs from 'fs';
 import path from 'path';
+import {
+  hasCacheableData,
+  removeCacheFileAtPath,
+  writeCacheFileAtPath,
+} from '../../components/functions/file_cache';
 
 export default async function handler(req, res) {
   // Only allow GET requests
@@ -34,7 +39,7 @@ export default async function handler(req, res) {
       const now = new Date().getTime();
       const ageInHours = (now - cacheTime) / (1000 * 60 * 60);
       
-      if (ageInHours <= 1) { // 1 hour cache
+      if (ageInHours <= 1 && hasCacheableData(cache.data)) { // 1 hour cache
         return res.status(200).json({
           fromCache: true,
           generatedAt: cache.generatedAt,
@@ -42,6 +47,10 @@ export default async function handler(req, res) {
           isPrimary: cache.isPrimary,
           status: cache.status
         });
+      }
+
+      if (!hasCacheableData(cache.data)) {
+        removeCacheFileAtPath(cachePath);
       }
     }
 
@@ -78,30 +87,30 @@ export default async function handler(req, res) {
       }
     }
 
-    // Prepare cache data
-    const cacheData = {
-      generatedAt: new Date().toISOString(),
-      date: date,
-      data: responseData,
-      isPrimary: isPrimary,
-      status: status
-    };
+    const generatedAt = new Date().toISOString();
 
-    // Save to cache (atomic write for K3s)
-    const tempPath = `${cachePath}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-    fs.renameSync(tempPath, cachePath);
+    if (hasCacheableData(responseData)) {
+      const cacheData = {
+        generatedAt,
+        date: date,
+        data: responseData,
+        isPrimary: isPrimary,
+        status: status
+      };
 
-    // Clean up old fixture cache files (older than 1 hour)
-    cleanupOldCacheFiles(cacheDir);
+      writeCacheFileAtPath(cachePath, cacheData);
+      cleanupOldCacheFiles(cacheDir);
+    } else {
+      removeCacheFileAtPath(cachePath);
+    }
 
     // Return fresh data
     return res.status(200).json({
       fromCache: false,
-      generatedAt: cacheData.generatedAt,
-      data: cacheData.data,
-      isPrimary: cacheData.isPrimary,
-      status: cacheData.status
+      generatedAt,
+      data: responseData,
+      isPrimary: isPrimary,
+      status: status
     });
 
   } catch (error) {

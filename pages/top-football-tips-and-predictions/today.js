@@ -1,16 +1,18 @@
 // pages/top-football-tips-and-predictions/today.js
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PreLoader from "../../components/includes/loader";
 import RenderData from "../../components/shared/render_fixtures_data";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
+import dedupeFixturesById from "../../components/functions/dedupe_fixtures_by_id";
 import FiltersTopFootballPredictions from "../../components/shared/filters-top-football-predictions";
 import FilterTodaysTopOverallDoubleChanceUnderOverHTFTPred1x2 from "../../components/top-football-tips-and-predictions/today/filter-pred1x2-ov-un-dc-ht-ft";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function TopFootballFixturesToday({ 
     initialData, 
@@ -20,7 +22,7 @@ function TopFootballFixturesToday({
     todaysDate
 }){     
     const router = useRouter();
-    const [allData, setAllData] = useState(initialData || []);
+    const [allData, setAllData] = useState(() => dedupeFixturesById(initialData || []));
     const [loadingMore, setLoadingMore] = useState(false);
     const [currentStartIndex, setCurrentStartIndex] = useState(20);
     const [hasMore, setHasMore] = useState(true);
@@ -46,7 +48,7 @@ function TopFootballFixturesToday({
             const chunkData = await response.json();
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
-                setAllData(prevData => [...prevData, ...chunkData.data]);
+                setAllData(prevData => dedupeFixturesById([...prevData, ...chunkData.data]));
                 setCurrentStartIndex(endIndex + 1);
                 
                 if (endIndex >= 400 || chunkData.data.length < chunkSize) {
@@ -191,7 +193,7 @@ export async function getServerSideProps() {
             fs.mkdirSync(cacheDir, { recursive: true });
         }
 
-        // Check if we have a valid cache file (3 minutes = 180000 ms)
+        // Check if we have a valid cache file (1 minute = 60000 ms)
         if (fs.existsSync(cachePath)) {
             const cacheContent = fs.readFileSync(cachePath, 'utf8');
             const cache = JSON.parse(cacheContent);
@@ -200,7 +202,7 @@ export async function getServerSideProps() {
             const now = new Date().getTime();
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
             
-            if (ageInMinutes <= 3) {
+            if (ageInMinutes <= 1) {
                 // Cache is valid - use it!
                 initialData = cache.data;
                 cacheInfo = {
@@ -240,9 +242,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,
@@ -282,7 +282,7 @@ export async function getServerSideProps() {
 
     return {
         props: {
-            initialData,
+            initialData: dedupeFixturesById(initialData),
             endpointStatus,
             error,
             baseUrl: baseUrl,

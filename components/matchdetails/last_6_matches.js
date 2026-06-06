@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import ComputedWinDrawings from "../functions/computed_win_lose_draw_drawing";
 import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import InPagePreLoader from "../includes/inpagepreloader";
 
 function Last6Matches({ 

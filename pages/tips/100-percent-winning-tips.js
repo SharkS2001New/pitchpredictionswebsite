@@ -1,6 +1,6 @@
 // pages/competitor-predictions.js
 import React, { useState, useEffect } from "react";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import PopularTips from "../../components/shared/popular_tips_display";
 import RenderData from "../../components/shared/render_fixtures_data";
@@ -9,6 +9,7 @@ import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function CompetitorPredictions({ 
     initialData, 
@@ -178,7 +179,7 @@ export async function getServerSideProps() {
             const now = new Date().getTime();
             const ageInMinutes = (now - cacheTime) / (1000 * 60);
             
-            if (ageInMinutes <= 3) {
+            if (ageInMinutes <= 1) {
                 initialData = cache.data;
                 cacheInfo = {
                     fromCache: true,
@@ -216,7 +217,7 @@ export async function getServerSideProps() {
                     count: initialData.length
                 };
                 
-                fs.writeFileSync(cachePath, JSON.stringify(cacheData, null, 2));
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

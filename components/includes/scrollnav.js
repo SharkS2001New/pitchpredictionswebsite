@@ -1,10 +1,10 @@
 import { useState,useEffect,useRef } from "react";
-import { useRouter } from "next/router";
+import useCompatRouter from "../functions/use-compat-router";
 import CountNoOfmyMatches from "../functions/CountMyMatches";
 import CustomDatePicker from "./CustomDatePicker";
 
 function Scrollnav(){
-    var router = useRouter();
+    var router = useCompatRouter();
     const [noofMyMatches,setNumberOfMymatches] = useState(0);
     const [favMatchesUpdateCounter, setfavMatchesUpdateCounter] = useState(0);
    

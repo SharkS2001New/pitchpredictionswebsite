@@ -5,7 +5,7 @@ import DataNotFoundPage from '../components/includes/datanotfound';
 import PreLoader from '../components/includes/loader';
 import PagesMatchPredictionDetails from '../components/shared/pages_match_predictions_details';
 import RenderData from '../components/shared/render_fixtures_data';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
 import ShortBlogPosts from "../components/shared/short-blog-posts";
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";

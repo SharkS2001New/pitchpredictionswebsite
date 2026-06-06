@@ -63,7 +63,7 @@ function getCachePolicyByRoute(route) {
   if (route.startsWith("/football-predictions-today")) {
     return {
       prefix: "todays-predictions-",
-      ttlMs: 2 * 60 * 1000,
+      ttlMs: 1 * 60 * 1000,
     };
   }
 
@@ -75,7 +75,7 @@ function getCachePolicyByRoute(route) {
   ) {
     return {
       prefix: "top-football-predictions-",
-      ttlMs: 3 * 60 * 1000,
+      ttlMs: 1 * 60 * 1000,
     };
   }
 

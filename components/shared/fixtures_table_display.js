@@ -5,13 +5,12 @@ import PopupProbabilityTooltip from "./popup-probability";
 import CheckiffixtureIsSelected from "../functions/CheckIfFixtureisSelected";
 import FetchFixtureByIdMyFav from "../functions/FetchfixturesById-Myfavourites";
 
-function FixturesTableDisplay(props, key) {    
+function FixturesTableDisplay({ props: fixtureProps, marketRoute }) {
     const router = useRouter();
-    const marketRoute = props.marketRoute;
+    const marketRoutePath = marketRoute;
     const [mounted, setMounted] = useState(false);
 
-    const fixturestablearray = [];   
-    var fixture_details = props.props[0];
+    var fixture_details = fixtureProps[0];
     const game = fixture_details.game_details;
 
     const [iconColor, setIconColor] = useState("currentColor");
@@ -170,7 +169,7 @@ function FixturesTableDisplay(props, key) {
         return 0;
     }
     
-    const currentRoute = marketRoute || router.pathname.substring(1);
+    const currentRoute = marketRoutePath || router.pathname.substring(1);
     const isDoubleChance = currentRoute.includes("double-chance-predictions");
     const isUnderOver = currentRoute.includes("predictions-under-over");
     const isBTTS = currentRoute.includes("predictions-both-to-score");
@@ -428,8 +427,8 @@ function FixturesTableDisplay(props, key) {
     const awayTeamName = game.away_team?.name || '';
     const matchStatus = game.match?.status || '';
     
-    fixturestablearray.push(
-        <div key={key} className="responsive-row fixturesTextSize fixturesWholeRow" style={{cursor : "auto"}}>  
+    return (
+        <div className="responsive-row fixturesTextSize fixturesWholeRow" style={{cursor : "auto"}}>
             {/* Star icon */}
             <div className="responsive-cell star-cell" onClick={() => selectMyMatches(game)} style={{cursor : "pointer"}}>
                 <br/>
@@ -699,8 +698,6 @@ function FixturesTableDisplay(props, key) {
             </div>          
         </div>
     );
-
-    return fixturestablearray;        
 }
 
 export default FixturesTableDisplay;

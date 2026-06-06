@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import Head from 'next/head';
 import PreLoader from "../components/includes/loader";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import DataNotFoundPage from "../components/includes/datanotfound";
 
 function SearchResults({ initialSearchResults, searchQuery, error }) {

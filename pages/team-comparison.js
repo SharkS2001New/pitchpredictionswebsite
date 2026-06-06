@@ -1,6 +1,6 @@
 // pages/team-comparison.js
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import Head from 'next/head';
 import FetchSearchResultsForTeamComparison from "../components/functions/search-by-team-comparison";
 import fetchTeamsLast6Matches from "../components/teamdetails/functions/fetch_last_6_matches";

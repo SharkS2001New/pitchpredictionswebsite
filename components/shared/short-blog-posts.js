@@ -98,9 +98,8 @@ const ShortBlogPosts = () => {
         </div>
       )} */}
       <div className="row">
-        {posts.map((post) => {
-          // Generate a reliable key
-          const itemKey = post.ID || post.id || `post-${Math.random()}`;
+        {posts.map((post, index) => {
+          const itemKey = post.ID || post.id || post.slug || `post-${index}`;
           
           return (
             <div key={itemKey} className="col-md-6 col-12">

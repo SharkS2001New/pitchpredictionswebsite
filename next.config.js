@@ -1,12 +1,31 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if 
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
   reactStrictMode: true,
-}
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.pitchpredictions.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "pitchpredictions.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.pitchpredictions.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "admin.pitchpredictions.com",
+        pathname: "/**",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

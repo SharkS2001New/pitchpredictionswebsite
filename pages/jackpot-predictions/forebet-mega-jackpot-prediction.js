@@ -1,11 +1,12 @@
 // pages/jackpot/sportpesa-mega-jackpot-predictions.js
 import React, { useState, useEffect } from 'react';
 import DataNotFoundPage from "../../components/includes/datanotfound";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
 function SportpesaMegaJackpotPredictions({ 
     initialGamesData, 
@@ -305,7 +306,7 @@ function SportpesaMegaJackpotPredictions({
     // Handle error state
     if (endpointStatus === "error" || error) {
         return (
-            <div className="sites-card">
+            <div className="sites-card jackpot-sites-card">
                 <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
                 <br/>
                 <Adsense
@@ -328,7 +329,7 @@ function SportpesaMegaJackpotPredictions({
     // Handle empty data state
     if (!gamesData || gamesData.length === 0) {
         return (
-            <div className="sites-card">
+            <div className="sites-card jackpot-sites-card">
                 <DataNotFoundPage props="No jackpot fixtures available at the moment." />
                 <br/>
                 <Adsense
@@ -349,7 +350,7 @@ function SportpesaMegaJackpotPredictions({
     }
 
     return (
-        <div className="sites-card">
+        <div className="sites-card jackpot-sites-card">
             {/* Premium Banner */}
             <div className="premium-banner">
                 <p className="text-center blink_me">Buy Premium Jackpot Predictions Now and Win a Bonus!!!</p>
@@ -386,15 +387,6 @@ function SportpesaMegaJackpotPredictions({
                     <SportpesaMegaJackpotContent/>
                 </div>
             </div>
-
-            <style jsx>{`  
-                .sites-card {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 10px;
-                }
-            `}</style>
         </div>
     );
 }
@@ -477,9 +469,7 @@ export async function getServerSideProps() {
                 };
                 
                 // Atomic write
-                const tempPath = `${cachePath}.tmp.${Date.now()}`;
-                fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-                fs.renameSync(tempPath, cachePath);
+                writeCacheFileAtPath(cachePath, cacheData);
                 
                 cacheInfo = {
                     fromCache: false,

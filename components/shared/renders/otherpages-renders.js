@@ -1,5 +1,5 @@
 // components/shared/other_pages_renders.js
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import React, { useState } from "react";
 import PreLoader from "../../includes/loader";
 

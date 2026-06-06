@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import TeamPageHeader from "../../../components/teamdetails/team-page-header";
 import DataNotFoundPage from "../../../components/includes/datanotfound";
 import {

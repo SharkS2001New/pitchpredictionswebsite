@@ -5,7 +5,7 @@ import DataNotFoundPage from "../../../../components/includes/datanotfound";
 import FiltersLeagueDetails from "../../../../components/leaguesdetails/filters-league-details";
 import DisplayIndependentLeagueStandings from "../../../../components/shared/standings_by_league";
 import LeaguesDetailsTop from "../../../../components/leaguesdetails/leagues_top_details";
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 
 function FootballPredictionsByLeagueStandings({
   initialTopLeaguesData,

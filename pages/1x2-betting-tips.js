@@ -5,11 +5,12 @@ import DataNotFoundPage from '../components/includes/datanotfound';
 import PreLoader from '../components/includes/loader';
 import PagesMatchPredictionDetails from '../components/shared/pages_match_predictions_details';
 import RenderData from '../components/shared/render_fixtures_data';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import PopularTips from "../components/shared/popular_tips_display";
 import OneXTwoContent from "../components/seo-content/mainpages/1x2-betting-tips";
 import fs from 'fs';
 import path from 'path';
+import { writeCacheFileAtPath } from "../components/functions/file_cache";
 
 export default function Home({ 
     initialData, 
@@ -234,9 +235,7 @@ export async function getServerSideProps() {
         };
         
         // Atomic write for K3s
-        const tempPath = `${cachePath}.tmp.${Date.now()}`;
-        fs.writeFileSync(tempPath, JSON.stringify(cacheData, null, 2));
-        fs.renameSync(tempPath, cachePath);
+        writeCacheFileAtPath(cachePath, cacheData);
         
         cacheInfo = {
           fromCache: false,

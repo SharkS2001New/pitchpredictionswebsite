@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import Head from 'next/head';
 import styles from '../styles/404.module.css';
-import { Adsense } from '@ctrl/react-adsense';
+import { Adsense } from '@/components/shared/client-adsense';
 
 const NotFoundPage = () => {
   return (

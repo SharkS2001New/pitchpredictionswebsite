@@ -1,6 +1,7 @@
 // components/shared/pages_match_predictions_details.js
 import React from "react";
 import DetermineLiveScores from "../functions/determine_live_scores";
+import dedupeFixturesById from "../functions/dedupe_fixtures_by_id";
 import FixturesTableDisplay from "./fixtures_table_display";
 import { useRouter } from 'next/router'
 
@@ -14,11 +15,12 @@ function PagesMatchPredictionDetails({
 }) {
     const router = useRouter();
     const routeForMarket = marketRoute || router.pathname.substring(1);
-    const predictionsList = [];   
+    const predictionsList = [];
+    const uniqueGamesData = dedupeFixturesById(gamesData);
 
-    if(gamesData.length > 0){
-        for(let i = 0; i < gamesData.length; i++){  
-            const fixture = gamesData[i];
+    if(uniqueGamesData.length > 0){
+        for(let i = 0; i < uniqueGamesData.length; i++){  
+            const fixture = uniqueGamesData[i];
 
             // Safely extract halftime data - check if values exist and are not null
             const halftimeData = fixture.score?.half_time;
@@ -88,7 +90,12 @@ function PagesMatchPredictionDetails({
             }];
                 
             predictionsList.push(
-                <FixturesTableDisplay props={sharedTabledetailsArray} key={i} isMobile={isMobile} marketRoute={marketRoute}/>
+                <FixturesTableDisplay
+                    props={sharedTabledetailsArray}
+                    key={`fixture-${fixture.fixture_id}-${i}`}
+                    isMobile={isMobile}
+                    marketRoute={marketRoute}
+                />
             );
         }  
     }

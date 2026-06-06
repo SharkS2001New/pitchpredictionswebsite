@@ -1,7 +1,7 @@
 // pages/my-selected-matches.js
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from 'next/router';
-import { Adsense } from "@ctrl/react-adsense";
+import { Adsense } from "@/components/shared/client-adsense";
 import Head from 'next/head';
 import RenderData from "../components/shared/render_fixtures_data";
 import WinningTeamAndOdd from "../components/functions/determine_winning_team_and_odd";

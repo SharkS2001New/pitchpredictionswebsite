@@ -1,28 +1,38 @@
+'use client';
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter } from "next/router";
+import useCompatRouter from '../functions/use-compat-router';
 import jsonpopularLeagues from "../../public/jsonfiles/popular-leagues.json";
 import jsonotherLeagues from "../../public/jsonfiles/other-leagues.json";
 import jsonotherCompetitions from "../../public/jsonfiles/other-competitions.json";
 import LeagusByCountryCollapsible from "./leagues_by_country_collapsible";
 import GetLeagueId from '../functions/GetLeagueId';
 
+const STATIC_PINNED_LEAGUES = jsonpopularLeagues.data || [];
+const STATIC_OTHER_LEAGUES = jsonotherLeagues.data || [];
+const STATIC_OTHER_COMPETITIONS = jsonotherCompetitions.data || [];
+const CACHE_DURATION = 24 * 60 * 60 * 1000;
+
+function readCachedLeagues(key, fallback) {
+    if (typeof window === "undefined") return fallback;
+
+    try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return fallback;
+        const parsed = JSON.parse(cached);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
 function SideNavBar() {
-    const router = useRouter();
-    const [mounted, setMounted] = useState(false);
-    
-    // Memoize the leagueId to prevent recalculations
+    const router = useCompatRouter();
     const leagueId = useMemo(() => GetLeagueId(router), [router]);
 
-    // Initialize with empty arrays - no localStorage access during server render
-    const [pinnedLeagues, setPinnedLeagues] = useState([]);
-    const [otherLeagues, setOtherLeagues] = useState([]);
-    const [otherCompetions, setOtherCompetions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Set mounted state after hydration
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    const [pinnedLeagues, setPinnedLeagues] = useState(STATIC_PINNED_LEAGUES);
+    const [otherLeagues, setOtherLeagues] = useState(STATIC_OTHER_LEAGUES);
+    const [otherCompetions, setOtherCompetions] = useState(STATIC_OTHER_COMPETITIONS);
 
     const openSidemenu = useCallback(() => {
         if (typeof window === 'undefined') return;
@@ -30,94 +40,30 @@ function SideNavBar() {
         localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
     }, []);
 
-    // Cache duration - 24 hours
-    const CACHE_DURATION = 24 * 60 * 60 * 1000;
-
-    // Load from localStorage only after mounting
     useEffect(() => {
-        if (!mounted) return;
+        setPinnedLeagues(readCachedLeagues('pinnedLeagues', STATIC_PINNED_LEAGUES));
+        setOtherLeagues(readCachedLeagues('otherLeagues', STATIC_OTHER_LEAGUES));
+        setOtherCompetions(readCachedLeagues('otherCompetitions', STATIC_OTHER_COMPETITIONS));
 
-        // Load cached data
-        const cachedPinned = localStorage.getItem('pinnedLeagues');
-        const cachedOther = localStorage.getItem('otherLeagues');
-        const cachedComp = localStorage.getItem('otherCompetitions');
-        
-        if (cachedPinned) setPinnedLeagues(JSON.parse(cachedPinned));
-        if (cachedOther) setOtherLeagues(JSON.parse(cachedOther));
-        if (cachedComp) setOtherCompetions(JSON.parse(cachedComp));
-
-        // Check if we need to fetch fresh data
-        loadAllLeagues();
-    }, [mounted]);
-
-    const loadAllLeagues = async () => {
-        setIsLoading(true);
-        
-        // Check cache timestamps
-        const pinnedTimestamp = localStorage.getItem('pinnedLeagues_timestamp');
-        const otherTimestamp = localStorage.getItem('otherLeagues_timestamp');
-        const compTimestamp = localStorage.getItem('otherCompetitions_timestamp');
         const now = Date.now();
+        const updates = [
+            { key: 'pinnedLeagues', data: STATIC_PINNED_LEAGUES, tsKey: 'pinnedLeagues_timestamp', setter: setPinnedLeagues },
+            { key: 'otherLeagues', data: STATIC_OTHER_LEAGUES, tsKey: 'otherLeagues_timestamp', setter: setOtherLeagues },
+            { key: 'otherCompetitions', data: STATIC_OTHER_COMPETITIONS, tsKey: 'otherCompetitions_timestamp', setter: setOtherCompetions },
+        ];
 
-        // Load pinned leagues if cache expired or doesn't exist
-        if (!pinnedTimestamp || now - parseInt(pinnedTimestamp) > CACHE_DURATION) {
-            await getPinnedLeagues();
-        }
+        for (const item of updates) {
+            const timestamp = localStorage.getItem(item.tsKey);
+            const isExpired = !timestamp || now - parseInt(timestamp, 10) > CACHE_DURATION;
 
-        // Load other leagues if cache expired or doesn't exist
-        if (!otherTimestamp || now - parseInt(otherTimestamp) > CACHE_DURATION) {
-            await getOtherLeagues();
-        }
-
-        // Load other competitions if cache expired or doesn't exist
-        if (!compTimestamp || now - parseInt(compTimestamp) > CACHE_DURATION) {
-            await getOtherCompetions();
-        }
-
-        setIsLoading(false);
-    };
-
-    // Fetch pinned leagues and cache them
-    const getPinnedLeagues = useCallback(async () => {
-        try {
-            const data = jsonpopularLeagues.data;
-            setPinnedLeagues(data);
-            
-            // Cache with timestamp
-            localStorage.setItem('pinnedLeagues', JSON.stringify(data));
-            localStorage.setItem('pinnedLeagues_timestamp', Date.now().toString());
-        } catch (error) {
-            console.error("Error loading pinned leagues:", error);
+            if (isExpired) {
+                item.setter(item.data);
+                localStorage.setItem(item.key, JSON.stringify(item.data));
+                localStorage.setItem(item.tsKey, now.toString());
+            }
         }
     }, []);
 
-    // Fetch other leagues and cache them
-    const getOtherLeagues = useCallback(async () => {
-        try {
-            const data = jsonotherLeagues.data;
-            setOtherLeagues(data);
-            
-            localStorage.setItem('otherLeagues', JSON.stringify(data));
-            localStorage.setItem('otherLeagues_timestamp', Date.now().toString());
-        } catch (error) {
-            console.error("Error loading other leagues:", error);
-        }
-    }, []);
-
-    // Fetch other competitions and cache them
-    const getOtherCompetions = useCallback(async () => {
-        try {
-            const data = jsonotherCompetitions.data;
-            setOtherCompetions(data);
-            
-            localStorage.setItem('otherCompetitions', JSON.stringify(data));
-            localStorage.setItem('otherCompetitions_timestamp', Date.now().toString());
-        } catch (error) {
-            console.error("Error loading other competitions:", error);
-        }
-    }, []);
-
-    // Extract country name with useMemo
     const countryName = useMemo(() => {
         if (router.pathname.includes("country/[football-prediction-for-country]") && router.isReady) {
             const query_link = router.query["football-prediction-for-country"];
@@ -127,7 +73,6 @@ function SideNavBar() {
         return "";
     }, [router.pathname, router.isReady, router.query]);
 
-    // Memoize pinned leagues display to prevent recalculation on every render
     const displayPinnedLeagues = useMemo(() => {
         if (!pinnedLeagues?.length) return [];
 
@@ -156,7 +101,6 @@ function SideNavBar() {
         ));
     }, [pinnedLeagues, leagueId, openSidemenu]);
 
-    // Navigation items configuration for cleaner code
     const navItems = useMemo(() => [
         { href: "/football-predictions-today", label: "Football Predictions Today", exact: true },
         { href: "/live-football-predictions", label: "Live Football Predictions", exact: true },
@@ -172,28 +116,12 @@ function SideNavBar() {
         { href: "/jackpot-predictions", label: "Jackpot Predictions", exact: true }
     ], [router.pathname]);
 
-    // Show loading skeleton during server render or initial mount
-    if (!mounted || (isLoading && !pinnedLeagues.length)) {
-        return (
-            <div className="" id="sidebar-wrapper">
-                <div className="sideNavCustom">
-                    <div className="list-group list-group-flush">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                            <div key={i} className="skeleton-row skeleton-row-shimmer" style={{ height: "40px", margin: "5px" }}></div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="" id="sidebar-wrapper">
             <div className="sideNavCustom">
                 <div className="list-group list-group-flush">
                     <span className="list-group-item list-group-item-action p-1 sideNavCustom1" style={{ backgroundColor: "#212830" }}></span>
                     
-                    {/* Dynamic navigation items */}
                     {navItems.map((item) => (
                         <a
                             key={item.href}
