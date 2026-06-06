@@ -65,7 +65,7 @@ export default function FreeVipTipsTodayContent() {
       <h3>Why Pitch Predictions VIP Tips Are Trusted</h3>
       <p>
         Pitch Predictions delivers <strong>today’s most accurate free VIP tips</strong> with expert insight, verified data, and tested models. 
-        Whether it’s African leagues like Kenya Premier League or South Africa PSL, or American competitions like MLS and Copa America, we give bettors the tools to make informed decisions. See also <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> and the full daily card on our <a href="/">homepage</a>.
+        Whether it&apos;s African leagues like Kenya Premier League or South Africa PSL, or American competitions like MLS and Copa America, we give bettors the tools to make informed decisions.
       </p>
 
       <p>

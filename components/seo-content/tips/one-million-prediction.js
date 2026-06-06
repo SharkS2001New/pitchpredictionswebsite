@@ -68,7 +68,7 @@ export default function OneMillionPredictionContent() {
 
       <h3>Why Pitch Predictions One Million Tips Are Trusted</h3>
       <p>
-        Pitch Predictions publishes free <strong>one million prediction today</strong> and <strong>one million prediction tomorrow</strong> content with verified data, clear reasoning, and daily updates across the Premier League, Champions League, PSL, NPFL, and 700+ leagues. Browse the full daily list on our <a href="/">homepage</a>.
+        Pitch Predictions publishes free <strong>one million prediction today</strong> and <strong>one million prediction tomorrow</strong> content with verified data, clear reasoning, and daily updates across the Premier League, Champions League, PSL, NPFL, and 700+ leagues.
       </p>
 
       <p>

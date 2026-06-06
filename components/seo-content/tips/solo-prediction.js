@@ -61,7 +61,7 @@ export default function SoloPredictionsContent() {
 
       <h3>Why Pitch Predictions Solo Tips Are Trusted</h3>
       <p>
-        Pitch Predictions delivers free <strong>solo prediction today</strong> picks with verified data, transparent analysis, and daily updates. Compare with <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> or return to the <a href="/">homepage</a> for the full match list.
+        Pitch Predictions delivers free <strong>solo prediction today</strong> picks with verified data, transparent analysis, and daily updates.
       </p>
 
       <p>

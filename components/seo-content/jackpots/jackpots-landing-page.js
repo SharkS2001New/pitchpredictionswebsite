@@ -4,7 +4,7 @@ export default function JackpotPredictionsContent() {
 
       <h2>Jackpot Tips and Predictions This Week</h2>
       <p>
-        Get free <strong>jackpot predictions</strong> on Pitch Predictions — expert analysis for every preselected game on active coupons. We cover <strong>Sportpesa jackpot predictions</strong>, <strong>Betika jackpot predictions</strong>, Mozzart, Betpawa, Sportybet, and more across Kenya, Tanzania, Uganda, and Nigeria. Every tip includes <strong>1X2</strong> and <strong>Double Chance</strong> options backed by form, H2H, and squad data. For daily 1X2 and BTTS picks outside jackpots, see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> or browse the full match list on our <a href="/">homepage</a>. Predictions guide your slip; they never guarantee a win.
+        Get free <strong>jackpot predictions</strong> on Pitch Predictions — expert analysis for every preselected game on active coupons. We cover <strong>Sportpesa jackpot predictions</strong>, <strong>Betika jackpot predictions</strong>, Mozzart, Betpawa, Sportybet, and more across Kenya, Tanzania, Uganda, and Nigeria. Every tip includes <strong>1X2</strong> and <strong>Double Chance</strong> options backed by form, H2H, and squad data. Predictions guide your slip; they never guarantee a win.
       </p>
 
       <h3>What Are Jackpot Predictions?</h3>
@@ -67,7 +67,7 @@ export default function JackpotPredictionsContent() {
 
       <h3>Why Pitch Predictions Jackpot Tips Are Trusted</h3>
       <p>
-        Pitch Predictions delivers free <strong>jackpot predictions</strong> with verified data, transparent reasoning, and weekly updates across Sportpesa, Betika, Mozzart, and 700+ leagues. Our goal is to help you build a smarter slip — not promise impossible wins.
+        Pitch Predictions delivers free <strong>jackpot predictions</strong> with verified data, transparent reasoning, and weekly updates across Sportpesa, Betika, Mozzart, and 700+ leagues. For daily 1X2 and BTTS singles, see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a>.
       </p>
 
       <p>

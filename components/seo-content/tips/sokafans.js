@@ -75,7 +75,7 @@ export default function SokafansPredictionsContent() {
 
       <h3>Why Pitch Predictions Sokafans Tips Are Trusted</h3>
       <p>
-        Pitch Predictions delivers free <strong>Sokafans tips today prediction</strong> content with verified data, transparent reasoning, and daily updates across Kenyan leagues, the PSL, NPFL, and 700+ competitions worldwide. Browse the full daily card on our <a href="/">homepage</a> or compare with <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> for another data-driven angle.
+        Pitch Predictions delivers free <strong>Sokafans tips today prediction</strong> content with verified data, transparent reasoning, and daily updates across Kenyan leagues, the PSL, NPFL, and 700+ competitions worldwide.
       </p>
 
       <p>

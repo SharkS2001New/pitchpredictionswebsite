@@ -19,7 +19,7 @@ export default function MustWinTeamsTodayContent() {
         <li>Confirmed injuries, suspensions, and squad news</li>
       </ul>
       <p>
-        Motivation data is a key part of every <strong>football form guide today</strong> review on this page. Building a weekend coupon? Pair this list with <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a> or browse all <a href="/jackpot-predictions">jackpot tips</a> on Pitch Predictions.
+        Motivation data is a key part of every <strong>football form guide today</strong> review on this page. Building a weekend coupon? See our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a>.
       </p>
 
       <h3>Markets in Our Must Win Tips</h3>
@@ -52,7 +52,7 @@ export default function MustWinTeamsTodayContent() {
 
       <h3>Leagues We Cover</h3>
       <p>
-        <strong>High confidence football predictions</strong> on Pitch Predictions span the Premier League, Champions League, Europa League, La Liga, Bundesliga, Serie A, Ligue 1, PSL, NPFL, Kenya Premier League, and 700+ competitions worldwide. Selections are updated every morning before kickoff. Return to the <a href="/">homepage</a> for the full daily match list.
+        <strong>High confidence football predictions</strong> on Pitch Predictions span the Premier League, Champions League, Europa League, La Liga, Bundesliga, Serie A, Ligue 1, PSL, NPFL, Kenya Premier League, and 700+ competitions worldwide. Selections are updated every morning before kickoff.
       </p>
 
       <h3>Safe &amp; Responsible Betting</h3>

@@ -17,7 +17,7 @@ export default function SportpesaMegaJackpotContent() {
         <li><strong>Entry cost:</strong> KSh 99 per slip — multiple entries allowed</li>
       </ul>
       <p>
-        Bonus targets are a realistic weekly goal. For midweek play, see <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot predictions</a> (13 games, ~KSh 11M). Daily singles are on our <a href="/">homepage</a> and <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> page.
+        Bonus targets are a realistic weekly goal. For midweek play, see <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot predictions</a> (13 games, ~KSh 11M).
       </p>
 
       <h3>How We Build Sportpesa Mega Jackpot Predictions</h3>
@@ -78,7 +78,7 @@ export default function SportpesaMegaJackpotContent() {
 
       <h3>Why Pitch Predictions Mega Jackpot Tips Are Trusted</h3>
       <p>
-        Pitch Predictions publishes free <strong>SportPesa Mega Jackpot tips</strong> every week before the Saturday deadline — with verified data, transparent reasoning, and both 1X2 and Double Chance options for all 17 games. Our <strong>SportPesa betting advice</strong> is built to educate — not promise impossible wins.
+        Pitch Predictions publishes free <strong>SportPesa Mega Jackpot tips</strong> every week before the Saturday deadline — with verified data, transparent reasoning, and both 1X2 and Double Chance options for all 17 games. Daily singles bettors may prefer <a href="/tips/betnumbers-predictions">BetNumbers predictions</a>.
       </p>
 
       <p>

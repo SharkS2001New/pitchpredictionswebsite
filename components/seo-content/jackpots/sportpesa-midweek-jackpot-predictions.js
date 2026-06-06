@@ -17,7 +17,7 @@ export default function SportpesaMidweekJackpotContent() {
         <li><strong>Deadline:</strong> Before kickoff of the first preselected game — typically Wednesday or Thursday evening</li>
       </ul>
       <p>
-        With only 13 games, reaching 11 or 12 correct is a realistic weekly target. Weekend bettors should check the <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> (17 games, up to KSh 360M). Daily picks are on our <a href="/">homepage</a> and <a href="/tips/betnumbers-predictions">BetNumbers predictions</a> page.
+        With only 13 games, reaching 11 or 12 correct is a realistic weekly target. Weekend bettors should check the <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> (17 games, up to KSh 360M).
       </p>
 
       <h3>Midweek vs Mega Jackpot</h3>
@@ -71,7 +71,7 @@ export default function SportpesaMidweekJackpotContent() {
 
       <h3>Why Pitch Predictions Midweek Tips Are Trusted</h3>
       <p>
-        Pitch Predictions publishes free <strong>SportPesa Midweek Jackpot tips</strong> every week before the deadline — with verified data, transparent reasoning, and both 1X2 and Double Chance options for all 13 games. Our <strong>midweek jackpot predictions</strong> are built to educate — not promise impossible wins.
+        Pitch Predictions publishes free <strong>SportPesa Midweek Jackpot tips</strong> every week before the deadline — with verified data, transparent reasoning, and both 1X2 and Double Chance options for all 13 games. For daily singles, see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a>.
       </p>
 
       <p>

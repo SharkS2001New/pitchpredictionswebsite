@@ -7,7 +7,7 @@ export default function TodayFootballPredictionsContent() {
           Pitch Predictions publishes free, statistics-driven football predictions for every match today across 700+ leagues worldwide. Whether you follow the English Premier League, La Liga, the Bundesliga, or regional leagues across Africa and Asia — you'll find a fully analysed tip here before kickoff.
         </p>
         <p>
-          Each prediction is generated using a multi-factor model covering current form, head-to-head records, squad news, home/away performance, and live betting market signals. Every tip displays a <strong>confidence percentage</strong> so you can quickly spot the strongest picks of the day. For BetNumbers-style daily picks see <a href="/tips/betnumbers-predictions">BetNumbers predictions</a>; for weekly coupons see <a href="/jackpot-predictions">jackpot predictions</a>.
+          Each prediction is generated using a multi-factor model covering current form, head-to-head records, squad news, home/away performance, and live betting market signals. Every tip displays a <strong>confidence percentage</strong> so you can quickly spot the strongest picks of the day.
         </p>
       </section>
 

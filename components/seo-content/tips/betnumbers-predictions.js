@@ -4,8 +4,8 @@ export default function BetnumbersPredictionContent() {
 
       <h2>Betnumbers Prediction for Today</h2>
       <p>
-        Betnumbers predictions are free today at Pitch Predictions, your trusted betting companion. Access Betnumbers predictions for today&apos;s football matches, including Double Chance, 1X2, Over/Under 2.5, live scores, and <a href="/jackpot-predictions">jackpot predictions</a>. 
-        Pitch Predictions updates Betnumbers predictions ahead of time, giving you enough time to analyze. Browse the full daily match list on our <a href="/">homepage</a> or see today&apos;s fixtures on <a href="/football-predictions-today">football predictions today</a>.
+        Betnumbers predictions are free today at Pitch Predictions, your trusted betting companion. Access Betnumbers predictions for today&apos;s football matches, including Double Chance, 1X2, Over/Under 2.5, and live scores.
+        Pitch Predictions updates Betnumbers predictions ahead of time, giving you enough time to analyze. Building a weekend coupon? See our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a>.
       </p>
 
       <h3>Betnumbers Free Tips</h3>
@@ -32,7 +32,7 @@ export default function BetnumbersPredictionContent() {
         <li><a href="/jackpot-predictions/betika-midweek-jackpot-predictions">Betika Midweek Jackpot Predictions</a></li>
         <li><a href="/jackpot-predictions/mozzart-super-grand-jackpot-predictions">Mozzart Super Grand Jackpot Prediction</a>, requiring 17–19 correct predictions.</li>
       </ul>
-      <p>Our expert analysis ensures you have a higher chance of hitting the jackpot and winning grand prizes. View all active coupons on the <a href="/jackpot-predictions">jackpot predictions hub</a>.</p>
+      <p>Our expert analysis ensures you have a higher chance of hitting the jackpot and winning grand prizes.</p>
 
       <h3>Betnumbers Mega Jackpot Prediction</h3>
       <p>
