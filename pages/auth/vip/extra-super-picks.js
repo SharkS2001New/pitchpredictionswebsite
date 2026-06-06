@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import withAuth from "../checkAuth";
 import UserNotSubcribed from '../includes/user-not-subcribed';
 import fetchGames from '../../../components/auth/fetch_games';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 import AuthPreloader from '../includes/auth_preLoader';
 
 function ExtraSuperTips() {
@@ -26,28 +27,12 @@ function ExtraSuperTips() {
 
     setLoading(true);
 
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      const offset = date.getTimezoneOffset(); 
-      date.setMinutes(date.getMinutes() - offset); 
-      return date.toISOString().split('T')[0]; 
-    }    
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchGames(formatDate(yesterday), 21).then(response => setYesterdaysMatches(response.data)),
-      fetchGames(formatDate(today), 21).then(response => setTodaysMatches(response.data)),
-      fetchGames(formatDate(tomorrow), 21).then(response => setTomorrowsMatches(response.data))
+      fetchGames(yesterday, 21).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchGames(today, 21).then((response) => setTodaysMatches(response.data || [])),
+      fetchGames(tomorrow, 21).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

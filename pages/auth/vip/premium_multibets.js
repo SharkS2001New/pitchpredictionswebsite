@@ -5,6 +5,7 @@ import withAuth from "../checkAuth";
 import UserNotSubcribed from '../includes/user-not-subcribed';
 import AuthPreloader from '../includes/auth_preLoader';
 import fetchMultibetsGames from '../../../components/auth/fetch_games_ppredictions';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 
 const predictionWonOrLost = (tip, scores, goals_home, goals_away) => {
   const homeGoals = parseInt(goals_home, 10) || 0;
@@ -78,28 +79,12 @@ function VipGames() {
 
     setLoading(true);
 
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      const offset = date.getTimezoneOffset(); 
-      date.setMinutes(date.getMinutes() - offset); 
-      return date.toISOString().split('T')[0]; 
-    }    
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchMultibetsGames(formatDate(yesterday)).then(response => setYesterdaysMatches(response.data)),
-      fetchMultibetsGames(formatDate(today)).then(response => setTodaysMatches(response.data)),
-      fetchMultibetsGames(formatDate(tomorrow)).then(response => setTomorrowsMatches(response.data))
+      fetchMultibetsGames(yesterday).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchMultibetsGames(today).then((response) => setTodaysMatches(response.data || [])),
+      fetchMultibetsGames(tomorrow).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

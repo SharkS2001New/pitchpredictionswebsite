@@ -2,8 +2,15 @@ function DateTimeToUsersTimezone(original_date_given) {
     if (!original_date_given) return "Date not available";
     
     try {
-        // Parse the ISO date string
-        const date = new Date(original_date_given);
+        let dateInput = original_date_given;
+
+        if (typeof dateInput === "string" && /^\d{2}\/\d{2}\/\d{4}/.test(dateInput)) {
+            const [datePart, timePart = "00:00"] = dateInput.split(" ");
+            const [day, month, year] = datePart.split("/");
+            dateInput = `${year}-${month}-${day}T${timePart.length === 5 ? `${timePart}:00` : timePart}`;
+        }
+
+        const date = new Date(dateInput);
         
         // Check if date is valid
         if (isNaN(date.getTime())) {

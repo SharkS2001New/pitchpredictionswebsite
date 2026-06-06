@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import fetchFreePlanGames from '../../../components/auth/free_plans_pages';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 import withAuth from '../checkAuth';
 import DateTimeToUsersTimezone from '../../../components/functions/DatetimeToUsersTimezone';
 import AuthPreloader from '../includes/auth_preLoader';
@@ -9,29 +10,15 @@ function BothTeamsToScore() {
   const [yesterdaysMatches, setYesterdaysMatches] = useState([]);
   const [tomorrowMatches, setTomorrowsMatches] = useState([]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      return date.toISOString().split('T')[0];
-    }
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(yesterday), 12).then(response => setYesterdaysMatches(response.data)),
-      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(today), 12).then(response => setTodaysMatches(response.data)),
-      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", formatDate(tomorrow), 12).then(response => setTomorrowsMatches(response.data))
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", yesterday).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", today).then((response) => setTodaysMatches(response.data || [])),
+      fetchFreePlanGames("fetch_auth_both_teams_to_score_fixtures", tomorrow).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false));

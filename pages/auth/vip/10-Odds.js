@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import withAuth from "../checkAuth";
 import UserNotSubcribed from '../includes/user-not-subcribed';
 import AuthPreloader from '../includes/auth_preLoader';
-import fetchPitchPredictionsGames from '../../../components/auth/fetch_pitchpredictions_games';
+import fetchGames from '../../../components/auth/fetch_games';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 
 function Vip10OddsGames() {
   const [user, setUser] = useState(null);
@@ -26,28 +27,12 @@ function Vip10OddsGames() {
 
     setLoading(true);
 
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      const offset = date.getTimezoneOffset(); 
-      date.setMinutes(date.getMinutes() - offset); 
-      return date.toISOString().split('T')[0]; 
-    }    
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date",formatDate(yesterday), 13).then(response => setYesterdaysMatches(response.data)),
-      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date", formatDate(today), 13).then(response => setTodaysMatches(response.data)),
-      fetchPitchPredictionsGames("get_auth_10odds_matches_by_date", formatDate(tomorrow), 13).then(response => setTomorrowsMatches(response.data))
+      fetchGames(yesterday, 13).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchGames(today, 13).then((response) => setTodaysMatches(response.data || [])),
+      fetchGames(tomorrow, 13).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

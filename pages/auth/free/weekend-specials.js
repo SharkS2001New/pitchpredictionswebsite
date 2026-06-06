@@ -9,15 +9,15 @@ import WeekendSpecialDates from '../../../components/functions/weekend_special_d
 
 // Helper to compute prediction type
 const getPredictionType = (match) => {
-  if (!match.average_goals || match.average_goals === "-") return null;
+  const homePercent = parseInt(String(match.percent_pred_home ?? 0).replace("%", ""), 10) || 0;
+  const drawPercent = parseInt(String(match.percent_pred_draw ?? 0).replace("%", ""), 10) || 0;
+  const awayPercent = parseInt(String(match.percent_pred_away ?? 0).replace("%", ""), 10) || 0;
 
   const avgGoals = parseFloat(match.average_goals);
-  const homePercent = parseInt(match.percent_pred_home.replace("%", ""));
-  const drawPercent = parseInt(match.percent_pred_draw.replace("%", ""));
-  const awayPercent = parseInt(match.percent_pred_away.replace("%", ""));
-
-  if (avgGoals < 2.0 || avgGoals > 3.0) {
-    return avgGoals > 2.5 ? "Over2.5" : "Under2.5";
+  if (!Number.isNaN(avgGoals) && match.average_goals && match.average_goals !== "-") {
+    if (avgGoals < 2.0 || avgGoals > 3.0) {
+      return avgGoals > 2.5 ? "Over2.5" : "Under2.5";
+    }
   }
 
   if (homePercent > 45 || drawPercent > 45 || awayPercent > 45) {
@@ -111,7 +111,7 @@ function WeekendFootball() {
 
     // Fetch data using Promise.all for better control
     Promise.all([
-      fetchWeekendGames("fetch_auth_upcoming_matches", startDate, endDate).then(response => setWeekendMatches(response.data)),
+      fetchWeekendGames("fetch_auth_upcoming_matches", startDate, endDate).then((response) => setWeekendMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete
@@ -167,35 +167,7 @@ function WeekendFootball() {
                                   {match.away_team_name}
                                   <span style={{fontWeight: "bold"}}>{isMobile == true && <><br/>{DateTimeToUsersTimezone(match.date).split(' ')[0]}</> }</span>
                               </td>
-                              <td>
-                                  {parseFloat(match.average_goals) < 2.0 || parseFloat(match.average_goals) > 3.0 ? (
-                                      parseFloat(match.average_goals) > 2.5 ? (
-                                          "Over2.5"
-                                      ) : (
-                                          "Under2.5"
-                                      )
-                                  ) : parseInt(match.percent_pred_home.replace('%', '')) > 45 ||
-                                  parseInt(match.percent_pred_draw.replace('%', '')) > 45 ||
-                                  parseInt(match.percent_pred_away.replace('%', '')) > 45 ? (
-                                      parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_draw.replace('%', '')) &&
-                                      parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')) ? (
-                                          1
-                                      ) : parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_home.replace('%', '')) &&
-                                      parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')) ? (
-                                          "X"
-                                      ) : (
-                                          2
-                                      )
-                                  ) : parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_draw.replace('%', '')) &&
-                                  parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')) ? (
-                                      "1X"
-                                  ) : parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_home.replace('%', '')) &&
-                                  parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')) ? (
-                                      "X2"
-                                  ) : (
-                                      "12"
-                                  )}
-                              </td>
+                              <td>{getPredictionType(match) || "-"}</td>
                               <td>{match.goals_home != null && match.goals_away != null ? `${match.goals_home} - ${match.goals_away}` : "-"}</td>
                               <td>
                                   {match.goals_home != null && match.goals_away != null

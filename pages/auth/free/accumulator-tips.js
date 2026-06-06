@@ -3,6 +3,7 @@ import withAuth from "../checkAuth";
 import AuthPreloader from '../../auth/includes/auth_preLoader';
 import DateTimeToUsersTimezone from '../../../components/functions/DatetimeToUsersTimezone';
 import fetchFreePlanGames2 from '../../../components/auth/free_plans_pages_pitchpredictions';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 
 function computeFixtureAverage(goalsForHome, goalsAgainstHome, goalsForAway, goalsAgainstAway, totalGamesPlayedByHome, totalGamesPlayedByAway) {
     if ((goalsForHome || goalsForAway) && (totalGamesPlayedByHome || totalGamesPlayedByAway) !== null) {
@@ -27,17 +28,25 @@ function computeFixtureTip(fixture) {
         fixture?.teams_games_played_away ?? 0
     );
 
-    if (fixture?.tip && fixture.tip.trim() !== "") {
+    if (fixture?.tip && String(fixture.tip).trim() !== "") {
         return fixture.tip;
+    }
+
+    const avgGoals = fixture?.average_goals;
+    if (avgGoals && avgGoals !== "-") {
+        const parsedAverage = parseFloat(avgGoals);
+        if (!Number.isNaN(parsedAverage) && (parsedAverage < 2.0 || parsedAverage > 3.0)) {
+            return parsedAverage > 2.5 ? "Over2.5" : "Under2.5";
+        }
     }
 
     if ((fixturesAverage < 2.0 || fixturesAverage > 3.0) && fixturesAverage !== "-") {
         return parseFloat(fixturesAverage) > 2.5 ? "Over2.5" : "Under2.5";
     }
 
-    const percentPredHome = parseFloat((fixture?.percent_pred_home ?? "0").replace("%", ""));
-    const percentPredDraw = parseFloat((fixture?.percent_pred_draw ?? "0").replace("%", ""));
-    const percentPredAway = parseFloat((fixture?.percent_pred_away ?? "0").replace("%", ""));
+    const percentPredHome = parseFloat(String(fixture?.percent_pred_home ?? "0").replace("%", ""));
+    const percentPredDraw = parseFloat(String(fixture?.percent_pred_draw ?? "0").replace("%", ""));
+    const percentPredAway = parseFloat(String(fixture?.percent_pred_away ?? "0").replace("%", ""));
 
     if (Math.max(percentPredHome, percentPredDraw, percentPredAway) > 45) {
         if (percentPredHome > percentPredDraw && percentPredHome > percentPredAway) {
@@ -96,29 +105,15 @@ function AccumulatorTips() {
   const [yesterdaysMatches, setYesterdaysMatches] = useState([]);
   const [tomorrowMatches, setTomorrowsMatches] = useState([]);
 
-  const [loading, setLoading] = useState(false); // State for preloader
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      return date.toISOString().split('T')[0];
-    }
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchFreePlanGames2("fetch_tipster_preds_match_tips",formatDate(yesterday), 12).then(response => setYesterdaysMatches(response.data)),
-      fetchFreePlanGames2("fetch_tipster_preds_match_tips",formatDate(today), 12).then(response => setTodaysMatches(response.data)),
-      fetchFreePlanGames2("fetch_tipster_preds_match_tips", formatDate(tomorrow), 12).then(response => setTomorrowsMatches(response.data))
+      fetchFreePlanGames2("fetch_tipster_preds_match_tips", yesterday).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchFreePlanGames2("fetch_tipster_preds_match_tips", today).then((response) => setTodaysMatches(response.data || [])),
+      fetchFreePlanGames2("fetch_tipster_preds_match_tips", tomorrow).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete

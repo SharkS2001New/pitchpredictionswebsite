@@ -26,19 +26,22 @@ function Dashboard() {
 
   useEffect(() => {
     async function fetchData() {
-      const ip = await getUserIp();
-
-      if (ip) {
-        const code = await getCountryByIp(ip);
-        
-        setCountryCode(code);
-      } else {
-        res.status(400).json({ error: "Unable to determine the country" });
+      try {
+        const ip = await getUserIp();
+        if (ip) {
+          const code = await getCountryByIp(ip);
+          setCountryCode(code || "KE");
+        } else {
+          setCountryCode("KE");
+        }
+      } catch (error) {
+        console.error("Unable to determine country:", error);
+        setCountryCode("KE");
       }
     }
 
     fetchData();
-  }, [router]);
+  }, []);
 
   const handleScrollToPremiumPlan = () => {
     if (premiumPlanRef.current) {

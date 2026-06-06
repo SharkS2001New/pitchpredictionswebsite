@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import withAuth from "../checkAuth";
 import AuthPreloader from '../../auth/includes/auth_preLoader';
 import fetchFreePlanGames from '../../../components/auth/free_plans_pages';
+import getAuthFixtureDates from '../../../components/auth/auth_fixture_dates';
 import DateTimeToUsersTimezone from '../../../components/functions/DatetimeToUsersTimezone';
 
 function DoubleChance() {
@@ -9,29 +10,15 @@ function DoubleChance() {
   const [yesterdaysMatches, setYesterdaysMatches] = useState([]);
   const [tomorrowMatches, setTomorrowsMatches] = useState([]);
 
-  const [loading, setLoading] = useState(false); // State for preloader
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Helper function to format dates in YYYY-MM-DD
-    function formatDate(date) {
-      return date.toISOString().split('T')[0];
-    }
+    const { yesterday, today, tomorrow } = getAuthFixtureDates();
 
-    // Get today's date
-    const today = new Date();
-
-    // Compute yesterday and tomorrow
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    // Fetch data using Promise.all for better control
     Promise.all([
-      fetchFreePlanGames("fetch_auth_double_chance_fixtures",formatDate(yesterday), 12).then(response => setYesterdaysMatches(response.data)),
-      fetchFreePlanGames("fetch_auth_double_chance_fixtures",formatDate(today), 12).then(response => setTodaysMatches(response.data)),
-      fetchFreePlanGames("fetch_auth_double_chance_fixtures", formatDate(tomorrow), 12).then(response => setTomorrowsMatches(response.data))
+      fetchFreePlanGames("fetch_auth_double_chance_fixtures", yesterday).then((response) => setYesterdaysMatches(response.data || [])),
+      fetchFreePlanGames("fetch_auth_double_chance_fixtures", today).then((response) => setTodaysMatches(response.data || [])),
+      fetchFreePlanGames("fetch_auth_double_chance_fixtures", tomorrow).then((response) => setTomorrowsMatches(response.data || [])),
     ])
       .catch(error => console.error('Error fetching games:', error))
       .finally(() => setLoading(false)); // Hide loader after all fetches are complete
@@ -60,15 +47,15 @@ function DoubleChance() {
   };
   
   const getPredictionType = (match) => {
-    return (parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_draw.replace('%', '')) &&
-      parseInt(match.percent_pred_home.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')))
+    const home = parseInt(String(match.percent_pred_home ?? 0).replace('%', ''), 10) || 0;
+    const draw = parseInt(String(match.percent_pred_draw ?? 0).replace('%', ''), 10) || 0;
+    const away = parseInt(String(match.percent_pred_away ?? 0).replace('%', ''), 10) || 0;
+
+    return (home > draw && home > away)
       ? "1X"
-      : (
-        (parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_home.replace('%', '')) &&
-          parseInt(match.percent_pred_draw.replace('%', '')) > parseInt(match.percent_pred_away.replace('%', '')))
+      : ((draw > home && draw > away)
           ? "X2"
-          : "12"
-      );
+          : "12");
   };
   
   const checkPredictionResult = (match) => {

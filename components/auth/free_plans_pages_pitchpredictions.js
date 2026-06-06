@@ -1,26 +1,27 @@
+import fetchJsonWithRetry from "../functions/fetch_with_retry";
+import { normalizeAuthApiResponse } from "./normalize_auth_fixture";
+
+const AUTH_API_BASE = "https://api.pitchpredictions.com/api";
+const AUTH_API_HEADERS = {
+  "Content-Type": "application/json; charset=UTF-8",
+  Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+};
+
 async function fetchFreePlanGames2(urlLink, matchDate) {
   try {
-      const response = await fetch(
-          `https://api.pitchpredictions.com/api/${urlLink}?fixture_date=${matchDate}`, 
-          {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json; charset=UTF-8",
-                  "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
-              },
-          }
-      );
-
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await fetchJsonWithRetry(
+      `${AUTH_API_BASE}/${urlLink}?fixture_date=${encodeURIComponent(matchDate)}`,
+      {
+        headers: AUTH_API_HEADERS,
+        retries: 2,
+        timeoutMs: 10000,
       }
+    );
 
-      const data = await response.json();
-
-      return data;
+    return normalizeAuthApiResponse(data);
   } catch (error) {
-      console.error("Error fetching games:", error.message || error);
-      throw new Error(`Failed to fetch games: ${error.message || error}`);
+    console.error("Error fetching games:", error.message || error);
+    return { status: false, data: [] };
   }
 }
 

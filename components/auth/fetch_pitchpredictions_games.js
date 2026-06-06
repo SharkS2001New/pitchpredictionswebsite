@@ -1,26 +1,22 @@
-async function fetchPitchPredictionsGames(urlLink, matchDate, category) {
+const { default: api } = require("./api");
+
+async function fetchPitchPredictionsGames(endpoint, matchDate, category) {
   try {
-      const response = await fetch(
-          `https://api.pitchpredictions.com/api/${urlLink}?match_date=${matchDate}&category=${category}`, 
-          {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json; charset=UTF-8",
-                  "Authorization": "wUlhuXImIV1Pi2IKwGDIKSln9c",
-              },
-          }
-      ); 
+    const response = await api.get(`/${endpoint}`, {
+      params: {
+        match_date: matchDate,
+        category,
+      },
+    });
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return data;
+    return {
+      ...response.data,
+      data: Array.isArray(response.data?.data) ? response.data.data : [],
+    };
   } catch (error) {
-      console.error("Error fetching games:", error.message || error);
-      throw new Error(`Failed to fetch games: ${error.message || error}`);
+    const serverErrors = error.response?.data || error.message;
+    console.error("Error fetching games:", serverErrors);
+    return { status: false, data: [] };
   }
 }
 
