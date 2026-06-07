@@ -435,47 +435,6 @@ export async function fetchBlogList(page, category) {
   return trimBlogListPayload(data);
 }
 
-export async function fetchHomepageBlogPosts() {
-  const page = 1;
-  const category = "ALL";
-  const { cacheDir, cachePath, legacyCachePath } = getCachePath(page, category);
-
-  try {
-    const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
-
-    if (cached?.isFresh) {
-      return cached.payload.data || [];
-    }
-
-    const payload = await fetchBlogList(page, category);
-    writeCache(cacheDir, cachePath, payload);
-    return payload.data || [];
-  } catch (error) {
-    const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
-
-    if (cached?.payload?.data?.length) {
-      return cached.payload.data;
-    }
-
-    console.error("Homepage blog fetch failed:", error);
-    return [];
-  }
-}
-
-/** Sync cache read only — safe for getServerSideProps without blocking on network. */
-export function readHomepageBlogPostsFromCache() {
-  const page = 1;
-  const category = "ALL";
-  const { cachePath, legacyCachePath } = getCachePath(page, category);
-  const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
-
-  if (cached?.payload?.data?.length) {
-    return cached.payload.data;
-  }
-
-  return [];
-}
-
 /** Clears blog list + homepage snippet caches (not individual post files). */
 export function clearBlogListCaches() {
   const removedFiles = [];

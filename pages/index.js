@@ -6,13 +6,7 @@ import PreLoader from '../components/includes/loader';
 import PagesMatchPredictionDetails from '../components/shared/pages_match_predictions_details';
 import RenderData from '../components/shared/render_fixtures_data';
 import { Adsense } from "@/components/shared/client-adsense";
-import dynamic from "next/dynamic";
 import PopularTips from "../components/shared/popular_tips_display";
-
-const ShortBlogPosts = dynamic(
-  () => import("../components/shared/short-blog-posts"),
-  { ssr: false }
-);
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
 import fs from 'fs';
 import path from 'path';
@@ -136,8 +130,6 @@ export default function Home({
         <div className="text-center mb-4" style={{ marginTop: "4px" }}>
           <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">Football Predictions for Today</a>
         </div>
-
-        <ShortBlogPosts />
 
         <Adsense
           client="ca-pub-5665711413000284"
