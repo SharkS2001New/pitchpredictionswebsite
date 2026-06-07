@@ -1,112 +1,104 @@
-// components/shared/short-blog-posts.js
-import React, { useEffect, useState } from 'react';
+"use client";
 
-const ShortBlogPosts = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [mounted, setMounted] = useState(false);
-  const [cacheInfo, setCacheInfo] = useState(null);
+import { useEffect, useState } from "react";
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+
+  try {
+    const normalized = String(dateString).trim().replace(" ", "T");
+    const date = new Date(normalized);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
+    return "";
+  }
+}
+
+function getPostDate(post) {
+  return post.published_at || post.created_at || post.post_date || post.date;
+}
+
+export default function ShortBlogPosts({ posts: initialPosts = [] }) {
+  const [posts, setPosts] = useState(initialPosts);
 
   useEffect(() => {
-    setMounted(true);
-    
-    const fetchPosts = async () => {
-      try {
-        // Call our internal API route that handles caching
-        const response = await fetch('/api/blog-posts');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
-        }
-        
-        const data = await response.json();
-        setPosts(data.data || []);
-        setCacheInfo({
-          fromCache: data.fromCache,
-          generatedAt: data.generatedAt
-        });
-        
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    if (initialPosts.length > 0) {
+      setPosts(initialPosts);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadPosts = () => {
+      fetch("/api/blog-list?page=1&category=ALL")
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data) => {
+          if (!cancelled && data?.data?.length) {
+            setPosts(data.data);
+            return;
+          }
+
+          if (!cancelled) {
+            return fetch("/api/blog-posts")
+              .then((response) => (response.ok ? response.json() : null))
+              .then((fallback) => {
+                if (!cancelled && fallback?.data?.length) {
+                  setPosts(fallback.data);
+                }
+              });
+          }
+        })
+        .catch(() => {});
     };
 
-    fetchPosts();
-  }, []);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-
-    try {
-      const normalized = String(dateString).trim().replace(' ', 'T');
-      const date = new Date(normalized);
-
-      if (Number.isNaN(date.getTime())) {
-        return '';
-      }
-
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    } catch (e) {
-      return '';
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(loadPosts, { timeout: 2000 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(idleId);
+      };
     }
-  };
 
-  const getPostDate = (post) =>
-    post.published_at || post.created_at || post.post_date || post.date;
+    const timeoutId = window.setTimeout(loadPosts, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [initialPosts]);
 
-  if (!mounted) {
-    return (
-      <div className="container-wide">
-        <h2 className="sectionTitle text-center">Latest News - Blog</h2>
-        <div className="row"></div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="container-wide">
-        <h2 className="sectionTitle text-center">Latest News - Blog</h2>
-        <div className="text-center">Loading blog posts...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container-wide">
-        <h2 className="sectionTitle text-center">Latest News - Blog</h2>
-        <div className="error">Error: {error}</div>
-      </div>
-    );
+  if (!posts.length) {
+    return null;
   }
 
   return (
-    <div className="container-wide">
-      <h2 className="sectionTitle text-center">Latest News - Blog</h2>
-      {/* Optional: Show cache status */}
-      {/* {cacheInfo && cacheInfo.fromCache && (
-        <div className="text-center" style={{ fontSize: '0.7rem', color: '#666', marginBottom: '10px' }}>
-          ⚡ Cached: {new Date(cacheInfo.generatedAt).toLocaleTimeString()}
-        </div>
-      )} */}
-      <div className="row">
+    <div className="container-wide" style={{ marginBottom: 0, paddingBottom: 0 }}>
+      <h2 className="sectionTitle text-center" style={{ marginBottom: "10px" }}>
+        Latest News - Blog
+      </h2>
+      <div className="row" style={{ marginBottom: 0 }}>
         {posts.map((post, index) => {
           const itemKey = post.ID || post.id || post.slug || `post-${index}`;
-          
+
           return (
             <div key={itemKey} className="col-md-6 col-12">
               <div className="post-item p-3 m-1">
                 <span className="h6 post-title linkTxt3 mb-3">
-                  <a href={post.post_link || (post.slug ? `/blog/${post.slug}` : '#')}>
-                    {post.title || 'Untitled'}
+                  <a
+                    href={
+                      post.post_link ||
+                      (post.slug ? `/blog/${post.slug}` : "#")
+                    }
+                  >
+                    {post.title || "Untitled"}
                   </a>
                 </span>
                 <p className="post-date">{formatDate(getPostDate(post))}</p>
@@ -115,9 +107,6 @@ const ShortBlogPosts = () => {
           );
         })}
       </div>
-      <br />
     </div>
   );
-};
-
-export default ShortBlogPosts;
+}

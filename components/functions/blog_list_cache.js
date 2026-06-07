@@ -434,3 +434,71 @@ export async function fetchBlogList(page, category) {
 
   return trimBlogListPayload(data);
 }
+
+export async function fetchHomepageBlogPosts() {
+  const page = 1;
+  const category = "ALL";
+  const { cacheDir, cachePath, legacyCachePath } = getCachePath(page, category);
+
+  try {
+    const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
+
+    if (cached?.isFresh) {
+      return cached.payload.data || [];
+    }
+
+    const payload = await fetchBlogList(page, category);
+    writeCache(cacheDir, cachePath, payload);
+    return payload.data || [];
+  } catch (error) {
+    const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
+
+    if (cached?.payload?.data?.length) {
+      return cached.payload.data;
+    }
+
+    console.error("Homepage blog fetch failed:", error);
+    return [];
+  }
+}
+
+/** Sync cache read only — safe for getServerSideProps without blocking on network. */
+export function readHomepageBlogPostsFromCache() {
+  const page = 1;
+  const category = "ALL";
+  const { cachePath, legacyCachePath } = getCachePath(page, category);
+  const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
+
+  if (cached?.payload?.data?.length) {
+    return cached.payload.data;
+  }
+
+  return [];
+}
+
+/** Clears blog list + homepage snippet caches (not individual post files). */
+export function clearBlogListCaches() {
+  const removedFiles = [];
+  const failed = [];
+  const dirs = [BLOG_JSON_CACHE_DIR, LEGACY_BLOG_CACHE_DIR];
+
+  for (const dir of dirs) {
+    if (!fs.existsSync(dir)) continue;
+
+    for (const file of fs.readdirSync(dir)) {
+      const isListCache = file.startsWith("blog-list-page-");
+      const isHomeSnippet = file === "blog-posts.json";
+
+      if (!isListCache && !isHomeSnippet) continue;
+
+      const filePath = path.join(dir, file);
+      if (removeCacheFileAtPath(filePath)) {
+        removedFiles.push(file);
+      } else if (fs.existsSync(filePath)) {
+        failed.push(file);
+      }
+    }
+  }
+
+  return { removedFiles, failed };
+}

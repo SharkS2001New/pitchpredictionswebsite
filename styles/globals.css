@@ -1292,6 +1292,14 @@ a, a:hover {
   .footerPart3 {
     white-space: pre-wrap;
   }
+
+  footer.footer .fixturesTextSize {
+    font-size: 14px;
+  }
+
+  footer.footer .footerLinks {
+    font-size: 14px;
+  }
 }
 
 /* Large devices table */
@@ -1348,6 +1356,14 @@ a, a:hover {
 
   .footerPart3 {
     white-space: nowrap;
+  }
+
+  footer.footer .fixturesTextSize {
+    font-size: 15px;
+  }
+
+  footer.footer .footerLinks {
+    font-size: 15px;
   }
 }
 
