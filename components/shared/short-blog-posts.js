@@ -27,40 +27,47 @@ function getPostDate(post) {
   return post.published_at || post.created_at || post.post_date || post.date;
 }
 
-export default function ShortBlogPosts({ posts: initialPosts = [] }) {
-  const [posts, setPosts] = useState(initialPosts);
+async function fetchHomepagePosts() {
+  const listResponse = await fetch("/api/blog-list?page=1&category=ALL");
+  if (listResponse.ok) {
+    const listData = await listResponse.json();
+    if (listData?.data?.length) {
+      return listData.data;
+    }
+  }
+
+  const postsResponse = await fetch("/api/blog-posts");
+  if (postsResponse.ok) {
+    const postsData = await postsResponse.json();
+    if (postsData?.data?.length) {
+      return postsData.data;
+    }
+  }
+
+  return [];
+}
+
+export default function ShortBlogPosts() {
+  const [posts, setPosts] = useState(null);
 
   useEffect(() => {
-    if (initialPosts.length > 0) {
-      setPosts(initialPosts);
-      return;
-    }
-
     let cancelled = false;
 
     const loadPosts = () => {
-      fetch("/api/blog-list?page=1&category=ALL")
-        .then((response) => (response.ok ? response.json() : null))
+      fetchHomepagePosts()
         .then((data) => {
-          if (!cancelled && data?.data?.length) {
-            setPosts(data.data);
-            return;
-          }
-
           if (!cancelled) {
-            return fetch("/api/blog-posts")
-              .then((response) => (response.ok ? response.json() : null))
-              .then((fallback) => {
-                if (!cancelled && fallback?.data?.length) {
-                  setPosts(fallback.data);
-                }
-              });
+            setPosts(data);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          if (!cancelled) {
+            setPosts([]);
+          }
+        });
     };
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    if ("requestIdleCallback" in window) {
       const idleId = window.requestIdleCallback(loadPosts, { timeout: 2000 });
       return () => {
         cancelled = true;
@@ -73,9 +80,9 @@ export default function ShortBlogPosts({ posts: initialPosts = [] }) {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [initialPosts]);
+  }, []);
 
-  if (!posts.length) {
+  if (!posts?.length) {
     return null;
   }
 

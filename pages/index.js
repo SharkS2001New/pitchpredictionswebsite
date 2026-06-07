@@ -6,10 +6,14 @@ import PreLoader from '../components/includes/loader';
 import PagesMatchPredictionDetails from '../components/shared/pages_match_predictions_details';
 import RenderData from '../components/shared/render_fixtures_data';
 import { Adsense } from "@/components/shared/client-adsense";
+import dynamic from "next/dynamic";
 import PopularTips from "../components/shared/popular_tips_display";
-import ShortBlogPosts from "../components/shared/short-blog-posts";
+
+const ShortBlogPosts = dynamic(
+  () => import("../components/shared/short-blog-posts"),
+  { ssr: false }
+);
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
-import { readHomepageBlogPostsFromCache } from "../components/functions/blog_list_cache";
 import fs from 'fs';
 import path from 'path';
 import { CACHE_DIR, getCacheFilePath, writeCacheFile } from '../components/functions/file_cache';
@@ -20,8 +24,7 @@ export default function Home({
     error,
     baseUrl,
     structuredData,
-    isMobile = false,
-    blogPosts = []
+    isMobile = false
 }) {
   const [allData, setAllData] = useState(initialData || []);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -134,12 +137,12 @@ export default function Home({
           <a className="btn btn-danger btn-sm" href="/football-predictions-today" role="button">Football Predictions for Today</a>
         </div>
 
-        <ShortBlogPosts posts={blogPosts} />
+        <ShortBlogPosts />
 
         <Adsense
           client="ca-pub-5665711413000284"
           slot="3850951453"
-          style={{ display: "block", marginTop: blogPosts.length > 0 ? "4px" : "0" }}
+          style={{ display: "block" }}
           layout="display"
           format="auto"
         />
@@ -246,9 +249,6 @@ export async function getServerSideProps({ req }) {
   // Create structured data
   const structuredData = createStructuredData(siteUrl, currentDate);
 
-  // Blogs: cache-only on SSR so games are never blocked by a blog API call.
-  const blogPosts = readHomepageBlogPostsFromCache();
-
   return {
     props: {
       initialData,
@@ -256,8 +256,7 @@ export async function getServerSideProps({ req }) {
       error,
       baseUrl,
       structuredData,
-      isMobile,
-      blogPosts
+      isMobile
     }
   };
 }

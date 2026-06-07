@@ -103,7 +103,7 @@ function SponsorLinks() {
           fontWeight: 700,
         }}
       >
-        Sponsor Links
+       Our Partners & Sponsors
       </p>
       <div
         style={{
