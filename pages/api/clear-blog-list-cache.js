@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { clearBlogListCaches } from "../../../components/functions/blog_list_cache";
+import { clearBlogListCaches } from "../../components/functions/blog_list_cache";
 
 const KEY_LENGTH = 24;
 
