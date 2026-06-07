@@ -50,20 +50,6 @@ const sponsors = [
   { label: 'xoilac bóng đá',                  url: 'https://xoilac7.cc/'                  },
   { label: 'xoilac tv',                        url: 'https://xoilactvv-live.com/'          },
   /* expires 06-07-2026 end */
-
-  /* Partners links — no expiry, remove manually when needed */
-  { label: 'Betting tips',                     url: 'https://www.bettingtips.co.ke'        },
-  { label: 'Feedinco Betting tips',            url: 'https://www.feedinco.com'             },
-  { label: 'Betrekatips',                      url: 'https://www.betrekatips.com'          },
-  { label: "Today's Football Prediction",      url: 'https://todayspredict.com'            },
-  { label: '100 Sure Straight Wins',           url: 'https://tips100.com'                  },
-  { label: 'Tipsxtra',                         url: 'https://tipsxtra.com'                 },
-  { label: 'Raja Win678.com',                  url: 'https://sportiya.com/raja-win678-com' },
-  { label: 'Soccervista',                      url: 'https://forebetpredict.com/soccervista'},
-  { label: 'This Week Pool Result',            url: 'https://thisweekpoolresult.com'       },
-  { label: '100 Percent Winning Tips',         url: 'http://100percentwinnings.com'        },
-  { label: 'fulltimepredict',                  url: 'https://www.fulltimepredict.com'      },
-  /* Partners links end */
 ];
 
 const COLLAPSE_AFTER = 10;

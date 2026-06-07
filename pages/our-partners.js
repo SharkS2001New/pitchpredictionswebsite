@@ -89,6 +89,13 @@ function OurPartners() {
                     <li><a href="https://100suretip.com/1x2-free-football-predictions" target="blank">1x2 free Football predictions</a></li>
                     <li><a href="https://www.mwanasoka.co.ke" target="blank">Check predictions on Mwanasoka</a></li>
                     <li><a href="https://www.statarea.co.ke" target="blank">View today’s tips on Statarea</a></li>
+                    <li><a href="https://www.betrekatips.com" target="blank">Betrekatips</a></li>
+                    <li><a href="https://tipsxtra.com" target="blank">Tipsxtra</a></li>
+                    <li><a href="https://sportiya.com/raja-win678-com" target="blank">Raja Win678.com</a></li>
+                    <li><a href="https://forebetpredict.com/soccervista" target="blank">Soccervista</a></li>
+                    <li><a href="https://thisweekpoolresult.com" target="blank">This Week Pool Result</a></li>
+                    <li><a href="http://100percentwinnings.com" target="blank">100 Percent Winning Tips</a></li>
+                    <li><a href="https://www.fulltimepredict.com" target="blank">fulltimepredict</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>
