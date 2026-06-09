@@ -50,6 +50,9 @@ const sponsors = [
   { label: 'xoilac bóng đá',                  url: 'https://xoilac7.cc/'                  },
   { label: 'xoilac tv',                        url: 'https://xoilactvv-live.com/'          },
   /* expires 06-07-2026 end */
+
+  /* New text link, expires 09-06-2026 */
+  { label: 'Loto188',                         url: 'https://aloto188.com/'                },
 ];
 
 const COLLAPSE_AFTER = 10;
