@@ -3,9 +3,9 @@ function OptionPickedFeaturedMatch(percent_pred_home, percent_pred_draw, percent
 
     // Check average goals for Over/Under prediction
     if (average_goals > 3.3) {
-        optionPicked = "Ov2.5"; // Over 2.5 Goals
+        optionPicked = "Over2.5";
     } else if (average_goals < 1.8) {
-        optionPicked = "Un2.5"; // Under 2.5 Goals
+        optionPicked = "Under2.5";
     } else {
         // If Over/Under conditions are not met, determine 1X2 options
         // Convert percentages to numbers (remove the "%" sign)

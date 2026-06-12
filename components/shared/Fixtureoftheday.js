@@ -132,20 +132,16 @@ function FixtureOfTheDay() {
   let probability_results = "";
 
   if (gamesfixtures && endpointStatus === "success") {
-    if (isPrimaryResponse) {
-      probability_results = ProbabilityResults(
-        gamesfixtures,
-        gamesfixtures.option_picked
-      );
-    } else {
-      const optionPicked = OptionPickedFeaturedMatch(
-        gamesfixtures.percent_pred_home,
-        gamesfixtures.percent_pred_draw,
-        gamesfixtures.percent_pred_away,
-        gamesfixtures.average_goals
-      );
-      probability_results = ProbabilityResults(gamesfixtures, optionPicked);
-    }
+    const optionPicked = isPrimaryResponse
+      ? gamesfixtures.option_picked
+      : OptionPickedFeaturedMatch(
+          gamesfixtures.percent_pred_home,
+          gamesfixtures.percent_pred_draw,
+          gamesfixtures.percent_pred_away,
+          gamesfixtures.average_goals
+        );
+
+    probability_results = ProbabilityResults(gamesfixtures, optionPicked);
   }
 
   if (endpointStatus === "") {
