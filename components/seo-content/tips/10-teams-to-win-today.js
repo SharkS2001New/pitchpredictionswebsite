@@ -1,28 +1,28 @@
-export default function LiobetContent() {
+export default function TenTeamsToWinTodayContent() {
   return (
     <section className="seo-content">
 
-      <h2>Liobet Predictions &amp; Tips for Today</h2>
+      <h2>Sure 10 Teams to Win Today – Football Predictions</h2>
       <p>
-        Unlock <strong>Liobet predictions</strong> with Pitch Predictions. Designed for bettors who want structured analysis, our <strong>Liobet tips</strong> use form, head-to-head records, and squad news.
+        Get today's <strong>10 teams to win today</strong> on Pitch Predictions. Our <strong>sure 10 teams to win today</strong> help you compare fixtures with data before you place a bet.
         Our analysis supports smarter decisions; it does not promise winnings.
       </p>
 
-      <h3>Why Liobet Tips Help</h3>
+      <h3>Why These Team Picks Help</h3>
       <p>
-        <strong>Liobet predictions</strong> work best when built on:
+        <strong>10 teams to win today</strong> work best when built on:
       </p>
       <ul>
-        <li>Clean sheets and scoring averages</li>
-        <li>Patterns in previous encounters</li>
-        <li>Separate home vs away performance data</li>
-        <li>Player availability and tactical match-ups</li>
+        <li>Momentum from recent fixtures</li>
+        <li>Recurring H2H scoreline and outcome patterns</li>
+        <li>Travel, weather, and home advantage factors</li>
+        <li>Odds movement that may signal late team news</li>
       </ul>
       <p>
         You get context behind each tip — not just a result label.
       </p>
 
-      <h3>Today's Covered Markets</h3>
+      <h3>Prediction Markets Available</h3>
       <p>
         Whether you prefer singles or accas, markets include:
       </p>
@@ -32,12 +32,12 @@ export default function LiobetContent() {
         <li><strong>Over/Under 2.5 Goals:</strong> Over or under 2.5 based on recent goals</li>
         <li><strong>Both Teams to Score (BTTS):</strong> Whether each team is likely to find the net</li>
         <li><strong>Correct Score:</strong> Precise result tips — higher variance, higher odds</li>
-        <li><strong>Explore More Tips:</strong> <a href="/tips/victor-predict">Victor Predict tips</a> and <a href="/tips/passion-predict">Passion Predict tips</a> updated daily</li>
+        <li><strong>Related Lists:</strong> <a href="/tips/must-win-teams-today">Must win teams today</a> and <a href="/tips/sure-tips">Sure tips today</a> with confidence ratings</li>
       </ul>
 
-      <h3>How Picks Are Selected</h3>
+      <h3>How We Generate Predictions</h3>
       <p>
-        Every <strong>Liobet predictions</strong> fixture passes through:
+        Our <strong>10 teams to win today</strong> workflow weighs:
       </p>
       <ul>
         <li>Team form over recent matches</li>
@@ -46,16 +46,16 @@ export default function LiobetContent() {
         <li>Statistical models updated before kickoff</li>
       </ul>
       <p>
-        Our goal is useful guidance, not unrealistic win-rate claims.
+        Tips are updated daily so you are not working from stale data.
       </p>
 
       <h3>Safe &amp; Responsible Betting</h3>
       <p>
-        No tip removes risk. Stay in control by:
+        Even strong analysis can lose. Bet responsibly by:
       </p>
       <ul>
         <li>Use small stakes on higher-variance markets</li>
-        <li>Use Liobet predictions as guidance, not guarantees</li>
+        <li>Use 10 teams to win today as guidance, not guarantees</li>
         <li>Pause after a losing run — do not double up</li>
         <li>Never follow tips blindly without your own check</li>
         <li>Access responsible gambling tools from your bookmaker</li>
@@ -63,10 +63,10 @@ export default function LiobetContent() {
 
       <h3>Why Pitch Predictions Is Trusted</h3>
       <p>
-        Our team prepares <strong>Liobet predictions</strong> with the same rigour we apply across all daily predictions. Covering major cups, domestic leagues, and international fixtures.
+        Our team prepares <strong>10 teams to win today</strong> with the same rigour we apply across all daily predictions. Covering major cups, domestic leagues, and international fixtures.
       </p>
       <p>
-        <strong>Liobet predictions</strong> should support your judgement, not replace it.
+        <strong>10 teams to win today</strong> should support your judgement, not replace it.
       </p>
 
     </section>

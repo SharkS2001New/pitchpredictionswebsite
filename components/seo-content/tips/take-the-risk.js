@@ -1,16 +1,16 @@
-export default function SoloPredictionsContent() {
+export default function TakeTheRiskContent() {
   return (
     <section className="seo-content">
 
-      <h2>Solo Prediction Today – Data-Driven Football Pick</h2>
+      <h2>Big Odds &amp; High Risk Predictions for Big Wins Today</h2>
       <p>
-        Unlock <strong>solo prediction today</strong> with Pitch Predictions. Designed for bettors who want structured analysis, our <strong>solo prediction for today</strong> use form, head-to-head records, and squad news.
+        Unlock <strong>big odds predictions</strong> with Pitch Predictions. Designed for bettors who want structured analysis, our <strong>high risk betting tips</strong> use form, head-to-head records, and squad news.
         Our analysis supports smarter decisions; it does not promise winnings.
       </p>
 
-      <h3>Why a Solo Pick Works</h3>
+      <h3>Why High-Odds Tips Need Care</h3>
       <p>
-        <strong>solo prediction today</strong> work best when built on:
+        <strong>big odds predictions</strong> work best when built on:
       </p>
       <ul>
         <li>Clean sheets and scoring averages</li>
@@ -32,12 +32,12 @@ export default function SoloPredictionsContent() {
         <li><strong>Over/Under 2.5 Goals:</strong> Goal trends from both teams' last 5–10 games</li>
         <li><strong>Both Teams to Score (BTTS):</strong> Both sides to score — built on attack and defence records</li>
         <li><strong>Correct Score:</strong> High-reward correct score angles</li>
-        <li><strong>Multi-Match Options:</strong> <a href="/tips/tips180">Tips180 predictions</a> and <a href="/tips/accumulator-tips">Accumulator tips today</a> when you want wider coverage</li>
+        <li><strong>Lower-Variance Options:</strong> <a href="/tips/sure-tips">Sure tips today</a> and <a href="/tips/correct-score">Correct score tips</a> when you want safer markets</li>
       </ul>
 
       <h3>How Picks Are Selected</h3>
       <p>
-        Every <strong>solo prediction today</strong> fixture passes through:
+        Every <strong>big odds predictions</strong> fixture passes through:
       </p>
       <ul>
         <li>Recent wins, draws, losses, and goals</li>
@@ -55,7 +55,7 @@ export default function SoloPredictionsContent() {
       </p>
       <ul>
         <li>Use small stakes on higher-variance markets</li>
-        <li>Use solo prediction today as guidance, not guarantees</li>
+        <li>Use big odds predictions as guidance, not guarantees</li>
         <li>Pause after a losing run — do not double up</li>
         <li>Never follow tips blindly without your own check</li>
         <li>Access responsible gambling tools from your bookmaker</li>
@@ -63,10 +63,10 @@ export default function SoloPredictionsContent() {
 
       <h3>Why Pitch Predictions Is Trusted</h3>
       <p>
-        We deliver <strong>solo prediction today</strong> using tested models and analyst review — not copied tip lists. Covering major cups, domestic leagues, and international fixtures.
+        We deliver <strong>big odds predictions</strong> using tested models and analyst review — not copied tip lists. Covering major cups, domestic leagues, and international fixtures.
       </p>
       <p>
-        <strong>solo prediction today</strong> should support your judgement, not replace it.
+        <strong>big odds predictions</strong> should support your judgement, not replace it.
       </p>
 
     </section>

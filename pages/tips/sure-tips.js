@@ -7,7 +7,7 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
-import DirectWinPredictionsContent from "../../components/seo-content/tips/direct-win-prediction";
+import SureTipsContent from "../../components/seo-content/tips/sure-tips";
 import fs from 'fs';
 import path from 'path';
 import Head from 'next/head';
@@ -288,7 +288,7 @@ function CompetitorPredictions({
                             
                 <div className="">
                     <div className="container">
-                        <DirectWinPredictionsContent/>
+                        <SureTipsContent/>
                     </div>
                 </div>
             </div>

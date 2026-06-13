@@ -7,6 +7,7 @@ import RenderData from "../../components/shared/render_fixtures_data";
 import getFormattedCurrentDate from "../../components/functions/GetTodaysDate";
 import PreLoader from "../../components/includes/loader";
 import PagesMatchPredictionDetails from "../../components/shared/pages_match_predictions_details";
+import HundredSureWinsOnlyContent from "../../components/seo-content/tips/100-sure-wins-only";
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
@@ -145,6 +146,14 @@ function CompetitorPredictions({
                 layout="display"
                 format="auto"
             />
+
+            <br/>
+
+            <div className="">
+                <div className="container">
+                    <HundredSureWinsOnlyContent/>
+                </div>
+            </div>
         </div>
     );
 }

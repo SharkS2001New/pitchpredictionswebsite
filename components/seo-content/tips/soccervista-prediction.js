@@ -1,16 +1,16 @@
-export default function MwanasokaTipsContent() {
+export default function SoccervistaPredictionsContent() {
   return (
     <section className="seo-content">
 
-      <h2>Mwanasoka Predictions – Free Daily Football Tips &amp; Jackpot Picks</h2>
+      <h2>SoccerVista Sure Win Football Predictions &amp; Betting Tips Today</h2>
       <p>
-        Unlock <strong>Mwanasoka predictions today</strong> with Pitch Predictions. Designed for bettors who want structured analysis, our <strong>Mwanasoka football predictions</strong> use form, head-to-head records, and squad news.
+        Unlock <strong>SoccerVista predictions</strong> with Pitch Predictions. Designed for bettors who want structured analysis, our <strong>soccervista.com today sure win</strong> use form, head-to-head records, and squad news.
         No football outcome is guaranteed — treat every tip as guidance only.
       </p>
 
-      <h3>Why Mwanasoka Tips Help</h3>
+      <h3>Why SoccerVista Analysis Helps</h3>
       <p>
-        Useful <strong>Mwanasoka predictions today</strong> combine match context with:
+        Useful <strong>SoccerVista predictions</strong> combine match context with:
       </p>
       <ul>
         <li>Clean sheets and scoring averages</li>
@@ -32,12 +32,12 @@ export default function MwanasokaTipsContent() {
         <li><strong>Over/Under 2.5 Goals:</strong> Total goals analysis from attack and defence data</li>
         <li><strong>Both Teams to Score (BTTS):</strong> Offensive output and clean-sheet trends</li>
         <li><strong>Correct Score:</strong> Exact scoreline picks where data is strongest</li>
-        <li><strong>Jackpot Predictions:</strong> <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega</a> and <a href="/jackpot-predictions/betika-midweek-jackpot-predictions">Betika Midweek</a> coupons with preselected games</li>
+        <li><strong>Explore More Tips:</strong> <a href="/tips/correct-predict">Correct Predict tips</a> and <a href="/tips/bet-of-the-day-tips">Bet of the day</a> with expert analysis</li>
       </ul>
 
       <h3>How Picks Are Selected</h3>
       <p>
-        Every <strong>Mwanasoka predictions today</strong> fixture passes through:
+        Every <strong>SoccerVista predictions</strong> fixture passes through:
       </p>
       <ul>
         <li>Last 5–10 results for both teams</li>
@@ -55,7 +55,7 @@ export default function MwanasokaTipsContent() {
       </p>
       <ul>
         <li>Never bet with rent, bill, or loan money</li>
-        <li>Do not stake more than you can lose on Mwanasoka predictions today</li>
+        <li>Do not stake more than you can lose on SoccerVista predictions</li>
         <li>Walk away after hitting your daily limit</li>
         <li>Check team news yourself before kickoff</li>
         <li>Contact local help services if gambling feels out of control</li>
@@ -63,10 +63,10 @@ export default function MwanasokaTipsContent() {
 
       <h3>Why Pitch Predictions Is Trusted</h3>
       <p>
-        Pitch Predictions publishes free <strong>Mwanasoka predictions today</strong> with verified stats, clear reasoning, and daily updates. Across European top flights and regional African competitions.
+        Pitch Predictions publishes free <strong>SoccerVista predictions</strong> with verified stats, clear reasoning, and daily updates. Across European top flights and regional African competitions.
       </p>
       <p>
-        Rely on <strong>Mwanasoka predictions today</strong> for structure and data — then make your own final call.
+        Rely on <strong>SoccerVista predictions</strong> for structure and data — then make your own final call.
       </p>
 
     </section>

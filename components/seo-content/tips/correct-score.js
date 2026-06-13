@@ -2,53 +2,72 @@ export default function CorrectScorePredictionsContent() {
   return (
     <section className="seo-content">
 
-      <h2>Correct Score Predictions</h2>
+      <h2>Correct Score Predictions – Accurate Football Tips &amp; Analysis</h2>
       <p>
-        A <strong>correct score prediction</strong> means predicting the exact final score of a football match. Unlike regular bets like 1X2 or over/under, correct score betting requires higher precision but offers bigger odds. If you’re aiming for high returns, this is the market to watch.
+        Access free <strong>correct score predictions</strong> at Pitch Predictions. You get <strong>correct score tips</strong> updated daily with confidence context on every pick.
+        Use these picks as research support, not sure-win promises.
       </p>
 
-      <h3>Guaranteed Correct Score Tips</h3>
+      <h3>Why Correct Score Tips Differ</h3>
       <p>
-        While no tip is 100% guaranteed, PitchPredictions website bases its predictions on:
-      </p>
-      <ul>
-        <li>Form analysis</li>
-        <li>Goal stats</li>
-        <li>Head-to-head history</li>
-        <li>Motivation (league, survival, cups)</li>
-      </ul>
-      <p>
-        We publish only matches with <strong>70%+ model confidence</strong>.
-      </p>
-
-      <h3>100% Sure Correct Score Predictions – Myth or Reality?</h3>
-      <p>
-        Be wary of “100% sure” claims. Our tips on Pitch Predictions are as accurate as analysis allows, but betting always involves risk. We prefer honesty and transparency to fake guarantees.
-      </p>
-
-      <h3>Why We’re Called the King of Correct Score</h3>
-      <p>
-        Our team has delivered over <strong>500+ winning correct score tips</strong> in the last year. Users rate us for:
+        Strong <strong>correct score predictions</strong> start with verified signals such as:
       </p>
       <ul>
-        <li>Daily instant updates and upcoming matches for up to one month ahead</li>
-        <li>Display of games from all leagues all over the world</li>
-        <li>Predictions across multiple markets such as:  
-          <ul>
-            <li><a href="https://www.pitchpredictions.com/football-predictions-today/predictions-both-to-score" target="_blank" rel="noopener noreferrer">BTTS Predictions</a></li>
-            <li><a href="https://www.pitchpredictions.com/football-predictions-today/predictions-under-over" target="_blank" rel="noopener noreferrer">Over/Under 2.5 Predictions</a></li>
-            <li><a href="https://www.pitchpredictions.com/football-predictions-today/double-chance-predictions" target="_blank" rel="noopener noreferrer">Double Chance Predictions</a></li>
-          </ul>
-        </li>
+        <li>Attack and defence output in recent games</li>
+        <li>Dominant trends in past meetings</li>
+        <li>Motivation — cups, relegation, or title races</li>
+        <li>Market signals and pre-match line movement</li>
+      </ul>
+      <p>
+        Together, these factors support clearer pre-match decisions.
+      </p>
+
+      <h3>Betting Markets Included</h3>
+      <p>
+        Our daily picks cover the markets bettors use most:
+      </p>
+      <ul>
+        <li><strong>1X2:</strong> Full-time result picks with reasoning</li>
+        <li><strong>Double Chance:</strong> Cover two outcomes in one bet</li>
+        <li><strong>Over/Under 2.5 Goals:</strong> Over or under 2.5 based on recent goals</li>
+        <li><strong>Both Teams to Score (BTTS):</strong> Whether each team is likely to find the net</li>
+        <li><strong>Correct Score:</strong> Precise result tips — higher variance, higher odds</li>
+        <li><strong>Higher-Odds Markets:</strong> <a href="/tips/take-the-risk">Take the risk tips</a> and <a href="/tips/100-sure-wins-only">100 sure wins only</a> for high-confidence picks</li>
       </ul>
 
-      <h3>FAQs About Correct Score Predictions on <a href="https://www.pitchpredictions.com" target="_blank" rel="noopener noreferrer">PitchPredictions.com</a></h3>
-      
-      <p><strong>Q: Can I get correct score predictions for free?</strong><br/>
-      A: Yes, at Pitch Prediction platform we post at least 300+ free daily picks. Premium users get 5+ and accumulator combos.</p>
+      <h3>Our Analysis Process</h3>
+      <p>
+        Before we publish <strong>correct score predictions</strong>, we assess:
+      </p>
+      <ul>
+        <li>Team form over recent matches</li>
+        <li>Player injuries, suspensions, and lineups</li>
+        <li>Home vs away performance trends</li>
+        <li>Statistical models updated before kickoff</li>
+      </ul>
+      <p>
+        You see the logic behind each pick — not just the prediction label.
+      </p>
 
-      <p><strong>Q: Which football leagues do you include on Pitch Predictions Website?</strong><br/>
-      A: <a href="https://www.pitchpredictions.com/league/football-predictions-for-england/premier-league-39/fixtures" target="_blank" rel="noopener noreferrer">EPL</a>, <a href="https://www.pitchpredictions.com/league/football-predictions-for-italy/serie-a-135/fixtures" target="_blank" rel="noopener noreferrer">Serie A</a>, La Liga, Bundesliga, <a href="https://www.pitchpredictions.com/league/football-predictions-for-france/ligue-1-61/fixtures" target="_blank" rel="noopener noreferrer">Ligue 1</a>, and major international games.</p>
+      <h3>Safe &amp; Responsible Betting</h3>
+      <p>
+        Protect yourself with simple discipline:
+      </p>
+      <ul>
+        <li>Stake only money you can afford to lose</li>
+        <li>Treat correct score predictions as research — not sure wins</li>
+        <li>Do not chase losses with bigger bets</li>
+        <li>Avoid betting when tired, stressed, or emotional</li>
+        <li>Seek local gambling support if betting stops being fun</li>
+      </ul>
+
+      <h3>Why Pitch Predictions Is Trusted</h3>
+      <p>
+        Our team prepares <strong>correct score predictions</strong> with the same rigour we apply across all daily predictions. From Kenya Premier League and South Africa PSL to MLS and Copa Libertadores.
+      </p>
+      <p>
+        <strong>correct score predictions</strong> on Pitch Predictions are built to inform, not to promise impossible results.
+      </p>
 
     </section>
   );

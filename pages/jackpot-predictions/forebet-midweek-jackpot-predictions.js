@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@/components/shared/client-adsense";
-import SportpesaMidweekJackpotContent from '../../components/seo-content/jackpots/sportpesa-midweek-jackpot-predictions';
+import ForebetMidweekJackpotContent from '../../components/seo-content/jackpots/forebet-midweek-jackpot-predictions';
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import fs from 'fs';
 import path from 'path';
@@ -319,7 +319,7 @@ function ForebetMidweekJackpotPredictions({
                 <br/>   
                 <div className="">
                     <div className="container">
-                        <SportpesaMidweekJackpotContent/>
+                        <ForebetMidweekJackpotContent/>
                     </div>
                 </div>         
             </div>
@@ -342,7 +342,7 @@ function ForebetMidweekJackpotPredictions({
                 <br/>   
                 <div className="">
                     <div className="container">
-                        <SportpesaMidweekJackpotContent/>
+                        <ForebetMidweekJackpotContent/>
                     </div>
                 </div>         
             </div>
@@ -383,7 +383,7 @@ function ForebetMidweekJackpotPredictions({
             {/* SEO Content */}
             <div className="seo-content-section">
                 <div className="container">
-                    <SportpesaMidweekJackpotContent/>
+                    <ForebetMidweekJackpotContent/>
                 </div>
             </div>
         </div>

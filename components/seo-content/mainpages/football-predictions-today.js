@@ -1,74 +1,76 @@
 export default function TodayFootballPredictionsContent() {
   return (
     <section className="seo-content">
-      <section>
-        <h2>Football Predictions for Today</h2>
-        <p>
-          Pitch Predictions publishes free, statistics-driven football predictions for every match today across 700+ leagues worldwide. Whether you follow the English Premier League, La Liga, the Bundesliga, or regional leagues across Africa and Asia — you'll find a fully analysed tip here before kickoff.
-        </p>
-        <p>
-          Each prediction is generated using a multi-factor model covering current form, head-to-head records, squad news, home/away performance, and live betting market signals. Every tip displays a <strong>confidence percentage</strong> so you can quickly spot the strongest picks of the day.
-        </p>
-      </section>
 
-      <section>
-        <h2>How We Build Today's Football Predictions</h2>
-        <p>Every match goes through our structured analysis framework before a prediction goes live. Here are the six factors we assess for every game today:</p>
+      <h2>Today&apos;s Football Predictions – Free Tips &amp; Stats</h2>
+      <p>
+        Find free <strong>football predictions for today</strong> on Pitch Predictions. Our expert analysts provide precise tips for 1X2, BTTS, Over/Under, correct score, and jackpot markets across 700+ leagues.
+        Designed for bettors worldwide, every <strong>today football prediction</strong> uses form, head-to-head records, squad news, and statistical models.
+        No football outcome is guaranteed — treat every tip as guidance only.
+      </p>
 
-        <h3>Recent Form</h3>
-        <p>We review each team's last 5–10 fixtures — analysing wins, draws, losses, goals scored and conceded, and overall momentum heading into today's match.</p>
+      <h3>Why Today&apos;s Football Predictions Matter</h3>
+      <p>
+        Strong <strong>football tips today</strong> start with verified signals such as:
+      </p>
+      <ul>
+        <li>Recent form over the last 5–10 matches</li>
+        <li>Head-to-head trends between today&apos;s opponents</li>
+        <li>Home vs away performance for each team</li>
+        <li>Smart analysis of odds and confidence ratings on every pick</li>
+      </ul>
+      <p>
+        These factors turn a long fixture list into focused <strong>today matches predictions</strong> you can actually research.
+      </p>
 
-        <h3>Head-to-Head History</h3>
-        <p>H2H records between today's opponents reveal recurring patterns in scorelines, goal tendencies, and dominant sides that consistently influence outcomes.</p>
+      <h3>Markets in Today&apos;s Football Predictions</h3>
+      <p>
+        Our <strong>today soccer predictions</strong> span multiple betting markets:
+      </p>
+      <ul>
+        <li><strong>1X2:</strong> Home win, draw, or away win predictions</li>
+        <li><strong>Double Chance:</strong> Cover two outcomes — 1X, 12, or X2</li>
+        <li><strong>Over/Under 2.5 Goals:</strong> Goal-line picks from scoring averages</li>
+        <li><strong>Both Teams to Score (BTTS):</strong> Attack and defence analysis</li>
+        <li><strong>HT/FT:</strong> Half-time and full-time combined picks</li>
+        <li><strong>Jackpot Predictions:</strong> <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega</a> and <a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Midweek</a> coupons with preselected games</li>
+      </ul>
 
-        <h3>Injuries &amp; Suspensions</h3>
-        <p>Missing a key striker or holding midfielder can change a game completely. We factor all confirmed absences and suspensions into every prediction before publishing.</p>
+      <h3>How We Build Football Predictions for Today</h3>
+      <p>
+        Every <strong>football predictions today</strong> pick is backed by:
+      </p>
+      <ul>
+        <li>Team form analysis over recent fixtures</li>
+        <li>Player availability, injuries, and tactical match-ups</li>
+        <li>Historical home vs away trends</li>
+        <li>Data-driven models updated daily before kickoff</li>
+      </ul>
+      <p>
+        Every published tip includes reasoning you can verify before kickoff.
+      </p>
 
-        <h3>Home vs Away Performance</h3>
-        <p>Home advantage is statistically significant in football. We split every team's home and away records separately to produce a more accurate probability for each fixture.</p>
+      <h3>Safe &amp; Responsible Betting</h3>
+      <p>
+        Football betting carries financial risk. Practical habits help:
+      </p>
+      <ul>
+        <li>Bet only what you can afford to lose</li>
+        <li>Use predictions as guidance, not guarantees</li>
+        <li>Keep track of limits and avoid chasing losses</li>
+        <li>Never bet when emotional or stressed</li>
+        <li>Access local support if gambling becomes problematic</li>
+      </ul>
 
-        <h3>Odds &amp; Market Movement</h3>
-        <p>Sharp line movement before kickoff often reflects late team news. We track today's odds to flag value bets and inflated lines across major bookmakers.</p>
+      <h3>Why Pitch Predictions Today Tips Are Trusted</h3>
+      <p>
+        Pitch Predictions delivers free <strong>soccer predictions today</strong> with expert insight, verified data, and tested models.
+        Whether it&apos;s the Premier League, La Liga, or regional leagues across Africa and Asia, we give bettors the tools to make informed decisions.
+      </p>
+      <p>
+        Use <strong>football predictions for today</strong> to research smarter — not to chase guaranteed profits.
+      </p>
 
-        <h3>Tactical Match-Up</h3>
-        <p>Formation clashes, pressing intensity, defensive shape, and set-piece threats are assessed for today's key fixtures — factors that raw statistics alone can miss.</p>
-      </section>
-
-      <section>
-        <h2>Today's Football Prediction Markets</h2>
-        <p>Pitch Predictions covers every major betting market for today's matches:</p>
-
-        <h3>1X2 — Match Winner</h3>
-        <p>Predict Home win (1), Draw (X), or Away win (2) for every match today. Our most popular market — each pick comes with a confidence percentage backed by statistical analysis.</p>
-
-        <h3>Double Chance — 1X / 12 / X2</h3>
-        <p>Cover two outcomes in one bet. Lower risk and ideal for games where one team is favourite but a draw is possible.</p>
-
-        <h3>Over / Under 2.5 Goals</h3>
-        <p>Will today's match produce more or fewer than 2.5 goals? We cover Over/Under 1.5, 2.5, and 3.5 lines with data-backed reasoning for each fixture.</p>
-
-        <h3>Both Teams to Score — BTTS / GG / NG</h3>
-        <p>Will both sides find the net today? Our BTTS predictions are built on defensive records, attacking output, and H2H goal-scoring patterns.</p>
-
-        <h3>HT/FT — Half Time Full Time</h3>
-        <p>High-reward bets predicting both the half-time and full-time results. Today's HT/FT tips are selected from matches with the strongest statistical signals.</p>
-      </section>
-
-      <section>
-        <h2>Frequently Asked Questions</h2>
-
-        <h3>Are today's football predictions free?</h3>
-        <p>Yes. All of today's predictions are completely free — including 1X2, BTTS, Over/Under, Double Chance and HT/FT tips. A premium subscription unlocks our highest-confidence exclusive picks.</p>
-
-        <h3>How are today's predictions calculated?</h3>
-        <p>We use a multi-factor model analysing current form, head-to-head history, team news, home/away records, and live market movements. Each tip is assigned a confidence percentage — the higher the number, the stronger the statistical signal.</p>
-
-        <h3>Which leagues have predictions today?</h3>
-        <p>We cover 700+ leagues today, including the Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Champions League, Europa League, and leagues across Africa and Asia.</p>
-
-        <h3>What does the confidence percentage mean?</h3>
-        <p>The confidence percentage reflects our model's statistical certainty in a given outcome. It does not guarantee the result — it helps you prioritise the strongest picks of the day.</p>
-      </section>
     </section>
   );
 }

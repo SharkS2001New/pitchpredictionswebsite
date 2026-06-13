@@ -1,5 +1,4 @@
 'use client';
-import { useState, useEffect } from "react";
 import Script from "next/script";
 
 const sponsors = [
@@ -55,22 +54,9 @@ const sponsors = [
   { label: 'Loto188',                         url: 'https://aloto188.com/'                },
 ];
 
-const COLLAPSE_AFTER = 10;
-const SHOW_MORE_COLOR = "#ffc107"; // Bootstrap text-warning — matches BeGambleAware.org link
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
 
 function SponsorLinks() {
-  const [mounted, setMounted] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
-
-  if (!mounted) return null;
-
-  const visible = showAll ? sponsors : sponsors.slice(0, COLLAPSE_AFTER);
-  const hiddenCount = sponsors.length - COLLAPSE_AFTER;
-  const hasMore = hiddenCount > 0;
-
   return (
     <div
       className="footer-sponsor-links"
@@ -102,7 +88,7 @@ function SponsorLinks() {
           gap: "12px 16px",
         }}
       >
-        {visible.map((sponsor, index) => (
+        {sponsors.map((sponsor, index) => (
           <a
             key={`${sponsor.url}-${index}`}
             href={sponsor.url}
@@ -117,26 +103,6 @@ function SponsorLinks() {
             {sponsor.label}
           </a>
         ))}
-
-        {hasMore && (
-          <button
-            type="button"
-            onClick={() => setShowAll(!showAll)}
-            className="text-warning"
-            style={{
-              background: "none",
-              border: "none",
-              color: SHOW_MORE_COLOR,
-              fontSize: "14px",
-              fontWeight: 600,
-              cursor: "pointer",
-              padding: 0,
-              textDecoration: "underline",
-            }}
-          >
-            {showAll ? "Show less" : `Show more (${hiddenCount} more)`}
-          </button>
-        )}
       </div>
     </div>
   );
@@ -273,7 +239,7 @@ function Footer() {
 
         <hr className="my-4"/>
 
-        {/* Sponsor Links — loads client-side only */}
+        {/* Sponsor Links — all partners in SSR HTML */}
         <SponsorLinks />
 
         <hr className="my-4"/>
