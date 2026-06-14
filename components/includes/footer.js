@@ -52,6 +52,9 @@ const sponsors = [
 
   /* New text link, expires 09-06-2026 */
   { label: 'Loto188',                         url: 'https://aloto188.com/'                },
+
+  /* New text link, Paid for 3 months, first added 14-06-2026, expires 14-09-2026 */
+  { label: 'Tigoals livescore',                        url: 'https://tigoals.io/'          },
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
@@ -93,7 +96,7 @@ function SponsorLinks() {
             key={`${sponsor.url}-${index}`}
             href={sponsor.url}
             target="_blank"
-            rel="sponsored nofollow noopener noreferrer"
+            // rel="sponsored nofollow noopener noreferrer"
             style={{
               color: LINK_COLOR,
               fontSize: "14px",
