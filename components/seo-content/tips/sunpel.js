@@ -66,7 +66,7 @@ export default function SunpelPredictionsContent() {
         Our team prepares <strong>Sunpel predictions today</strong> with the same rigour we apply across all daily predictions. Covering major cups, domestic leagues, and international fixtures.
       </p>
       <p>
-        <strong>Sunpel predictions today</strong> should support your judgement, not replace it.
+        <strong> <a href="https://www.sunpel.co.ke/" target="_blank">Sunpel predictions </a> today</strong> should support your judgement, not replace it.
       </p>
 
     </section>

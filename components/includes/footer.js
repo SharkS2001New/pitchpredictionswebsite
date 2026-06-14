@@ -96,7 +96,7 @@ function SponsorLinks() {
             key={`${sponsor.url}-${index}`}
             href={sponsor.url}
             target="_blank"
-            // rel="sponsored nofollow noopener noreferrer"
+            rel="sponsored nofollow noopener noreferrer"
             style={{
               color: LINK_COLOR,
               fontSize: "14px",
