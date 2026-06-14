@@ -4,23 +4,23 @@ import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@/components/shared/client-adsense";
 import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
-import JackpotPredictionsContent from "../../components/seo-content/jackpots/jackpots-landing-page";
 import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
 import SportpesaMidweekJackpotContent from "../../components/seo-content/jackpots/sportpesa-midweek-jackpot-predictions";
+import BetikaMidweekJackpotContent from "../../components/seo-content/jackpots/betika-midweek-jackpot-predictions";
+import ForebetMegaJackpotContent from "../../components/seo-content/jackpots/forebet-mega-jackpot-prediction";
+import ForebetMidweekJackpotContent from "../../components/seo-content/jackpots/forebet-midweek-jackpot-predictions";
 import { useRouter } from 'next/router';
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
-function JackpotSeoContent({ slug }) {
-    if (slug === 'sportpesa-mega-jackpot-predictions') {
-        return <SportpesaMegaJackpotContent />;
-    }
-    if (slug === 'sportpesa-midweek-jackpot-predictions') {
-        return <SportpesaMidweekJackpotContent />;
-    }
-    return <JackpotPredictionsContent />;
-}
+const JACKPOT_SEO_BY_SLUG = {
+    'sportpesa-mega-jackpot-predictions': SportpesaMegaJackpotContent,
+    'sportpesa-midweek-jackpot-predictions': SportpesaMidweekJackpotContent,
+    'betika-midweek-jackpot-predictions': BetikaMidweekJackpotContent,
+    'forebet-mega-jackpot-prediction': ForebetMegaJackpotContent,
+    'forebet-midweek-jackpot-predictions': ForebetMidweekJackpotContent,
+};
 
 function JackpotByNamePredictions({
     initialGamesData, 
@@ -41,17 +41,18 @@ function JackpotByNamePredictions({
     const router = useRouter();
     const resolvedJackpotSlug =
         jackpotSlug || router.query['jackpot-predictions-by-name'] || '';
+    const SeoContent = JACKPOT_SEO_BY_SLUG[resolvedJackpotSlug];
 
-    const seoContentBlock = (
+    const seoContentBlock = SeoContent ? (
         <>
             <br />
             <div className="seo-content-section">
                 <div className="container">
-                    <JackpotSeoContent slug={resolvedJackpotSlug} />
+                    <SeoContent />
                 </div>
             </div>
         </>
-    );
+    ) : null;
 
     // Initialize device ID on client side only
     useEffect(() => {
