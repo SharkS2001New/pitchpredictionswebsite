@@ -11,8 +11,7 @@ import FilterTodaysMatchesLiveUpcomingFinished from "../components/shared/filter
 import FilterTodaysOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/football-predictions-today/filter-pred1x2-ov-un-dc-ht-ft";
 import TodayFootballPredictionsContent from "../components/seo-content/mainpages/football-predictions-today";
 import fs from 'fs';
-import path from 'path';
-import { CACHE_DIR, getCacheFilePath, writeCacheFile } from "../components/functions/file_cache";
+import { CACHE_DIR, getCacheFilePath, purgeStaleJsonCaches, readJsonCache, writeCacheFile } from "../components/functions/file_cache";
 
 function TodaysFixtures({ 
     initialData, 
@@ -230,26 +229,14 @@ export async function getServerSideProps() {
     let cachedNotStartedMatches = [];
 
     try {
-        // Check if we have a valid cache file (1 minute = 60000 ms)
-        if (fs.existsSync(cachePath)) {
-            const cacheContent = fs.readFileSync(cachePath, 'utf8');
-            const cache = JSON.parse(cacheContent);
-            
-            const cacheTime = new Date(cache.generatedAt).getTime();
-            const now = new Date().getTime();
-            const ageInMinutes = (now - cacheTime) / (1000 * 60);
-            
-            if (ageInMinutes <= 1) { // 1 minute max
-                // Cache is valid - use cached not started fixtures only
-                cachedNotStartedMatches = cache.data || [];
-                cacheInfo = {
-                    fromCache: true,
-                    generatedAt: cache.generatedAt
-                };
-            } else {
-                // Cache expired - delete it
-                fs.unlinkSync(cachePath);
-            }
+        // Check if we have a valid cache file (1 minute)
+        const cache = readJsonCache(cachePath, 60 * 1000);
+        if (cache) {
+            cachedNotStartedMatches = cache.data || [];
+            cacheInfo = {
+                fromCache: true,
+                generatedAt: cache.generatedAt
+            };
         }
 
         // Fetch today's base fixtures
@@ -323,8 +310,7 @@ export async function getServerSideProps() {
             error = null;
         }
 
-        // Clean up old cache files (older than 1 minute)
-        cleanupOldCacheFiles(CACHE_DIR);
+        purgeStaleJsonCaches(30 * 60 * 1000, CACHE_DIR);
 
     } catch (err) {
         console.error('Error fetching today\'s predictions:', err);
@@ -365,31 +351,6 @@ export async function getServerSideProps() {
             cacheInfo
         }
     };
-}
-
-// Helper function to clean up old cache files
-function cleanupOldCacheFiles(cacheDir) {
-    try {
-        if (!fs.existsSync(cacheDir)) return;
-        
-        const files = fs.readdirSync(cacheDir);
-        const now = new Date().getTime();
-        const maxAge = 5 * 60 * 1000; // 5 minutes
-        
-        for (const file of files) {
-            if (file.startsWith('todays-predictions-') && file.endsWith('.json')) {
-                const filePath = path.join(cacheDir, file);
-                const stats = fs.statSync(filePath);
-                const fileAge = now - stats.mtimeMs;
-                
-                if (fileAge > maxAge) {
-                    fs.unlinkSync(filePath);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error cleaning up cache:', error);
-    }
 }
 
 function isNotStartedMatchStatus(status) {

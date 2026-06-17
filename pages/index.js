@@ -10,8 +10,7 @@ import PopularTips from "../components/shared/popular_tips_display";
 import HomepageBlogSlot from "../components/shared/homepage-blog-slot";
 import LandingPageContent from "../components/seo-content/mainpages/landing-page";
 import fs from 'fs';
-import path from 'path';
-import { CACHE_DIR, getCacheFilePath, writeCacheFile } from '../components/functions/file_cache';
+import { CACHE_DIR, getCacheFilePath, purgeStaleJsonCaches, readJsonCache, writeCacheFile } from '../components/functions/file_cache';
 
 export default function Home({ 
     initialData, 
@@ -174,20 +173,9 @@ export async function getServerSideProps({ req }) {
   let error = null;
 
   try {
-    // Check if we have a valid cache file
-    if (fs.existsSync(cachePath)) {
-      const cacheContent = fs.readFileSync(cachePath, 'utf8');
-      const cache = JSON.parse(cacheContent);
-      
-      const cacheTime = new Date(cache.generatedAt).getTime();
-      const now = new Date().getTime();
-      const ageInMinutes = (now - cacheTime) / (1000 * 60);
-      
-      if (ageInMinutes <= 3) {
-        initialData = cache.data;
-      } else {
-        fs.unlinkSync(cachePath);
-      }
+    const cache = readJsonCache(cachePath, 3 * 60 * 1000);
+    if (cache) {
+      initialData = cache.data;
     }
 
     // If we don't have valid cache data, fetch from API
@@ -219,8 +207,7 @@ export async function getServerSideProps({ req }) {
       }
     }
 
-    // Clean up old cache files
-    await cleanupOldCacheFiles(CACHE_DIR);
+    purgeStaleJsonCaches(30 * 60 * 1000, CACHE_DIR);
 
   } catch (err) {
     console.error('Error in getServerSideProps:', err);
@@ -254,30 +241,6 @@ export async function getServerSideProps({ req }) {
       isMobile
     }
   };
-}
-
-async function cleanupOldCacheFiles(cacheDir) {
-  try {
-    if (!fs.existsSync(cacheDir)) return;
-    
-    const files = fs.readdirSync(cacheDir);
-    const now = new Date().getTime();
-    const maxAge = 3 * 60 * 1000; // 3 minutes
-    
-    for (const file of files) {
-      if (file.startsWith('top-football-predictions-') && file.endsWith('.json')) {
-        const filePath = path.join(cacheDir, file);
-        const stats = fs.statSync(filePath);
-        const fileAge = now - stats.mtimeMs;
-        
-        if (fileAge > maxAge) {
-          fs.unlinkSync(filePath);
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error cleaning up cache:', error);
-  }
 }
 
 function createStructuredData(siteUrl, currentDate) {
