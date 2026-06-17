@@ -1,37 +1,18 @@
-// pages/jackpot-predictions/[jackpot-predictions-by-name].js
+// pages/jackpot/sportpesa-mega-jackpot-predictions.js
 import React, { useState, useEffect } from 'react';
 import DataNotFoundPage from "../../components/includes/datanotfound";
 import { Adsense } from "@/components/shared/client-adsense";
-import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
-import ReturnJackpotNameSavedInDB from "../../components/functions/getJackpotFilterName";
-import SportpesaMegaJackpotContent from "../../components/seo-content/jackpots/sportpesa-mega-jackpot-predictions";
-import SportpesaMidweekJackpotContent from "../../components/seo-content/jackpots/sportpesa-midweek-jackpot-predictions";
-import BetikaMidweekJackpotContent from "../../components/seo-content/jackpots/betika-midweek-jackpot-predictions";
-import ForebetMegaJackpotContent from "../../components/seo-content/jackpots/forebet-mega-jackpot-prediction";
-import ForebetMidweekJackpotContent from "../../components/seo-content/jackpots/forebet-midweek-jackpot-predictions";
 import StatareaMegaJackpotContent from "../../components/seo-content/jackpots/statarea-mega-jackpot-prediction";
-import { useRouter } from 'next/router';
+import JackpotGamesBootstrap from "../../components/shared/jackpot-games-new-ui";
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
-const JACKPOT_SEO_BY_SLUG = {
-    'sportpesa-mega-jackpot-predictions': SportpesaMegaJackpotContent,
-    'sportpesa-midweek-jackpot-predictions': SportpesaMidweekJackpotContent,
-    'betika-midweek-jackpot-predictions': BetikaMidweekJackpotContent,
-    'forebet-mega-jackpot-prediction': ForebetMegaJackpotContent,
-    'forebet-midweek-jackpot-predictions': ForebetMidweekJackpotContent,
-    'statarea-mega-jackpot-prediction': StatareaMegaJackpotContent,
-};
-
-function JackpotByNamePredictions({
+function StatareaMegaJackpotPredictions({
     initialGamesData, 
     endpointStatus, 
     error,
-    initialVoteStats,
-    jackpotApiName,
-    jackpotSlug = '',
-    isNotFound = false // Add this prop
+    initialVoteStats 
 }) {         
     const [gamesData, setGamesData] = useState(initialGamesData || []);
     const [selectedVotes, setSelectedVotes] = useState({});
@@ -39,22 +20,6 @@ function JackpotByNamePredictions({
     const [deviceId, setDeviceId] = useState('');
     const [votingInProgress, setVotingInProgress] = useState({});
     const [refreshingStats, setRefreshingStats] = useState({});
-    
-    const router = useRouter();
-    const resolvedJackpotSlug =
-        jackpotSlug || router.query['jackpot-predictions-by-name'] || '';
-    const SeoContent = JACKPOT_SEO_BY_SLUG[resolvedJackpotSlug];
-
-    const seoContentBlock = SeoContent ? (
-        <>
-            <br />
-            <div className="seo-content-section">
-                <div className="container">
-                    <SeoContent />
-                </div>
-            </div>
-        </>
-    ) : null;
 
     // Initialize device ID on client side only
     useEffect(() => {
@@ -174,7 +139,6 @@ function JackpotByNamePredictions({
 
     const handleVote = async (fixtureId, prediction) => {
         if (!deviceId) {
-            alert("Device ID not initialized. Please refresh the page.");
             return;
         }
 
@@ -186,14 +150,12 @@ function JackpotByNamePredictions({
         try {
             const game = gamesData.find(g => g.fixture_id == fixtureId);
             if (!game) {
-                alert("Game not found");
                 return;
             }
 
             // Check if game is still votable (NS status only)
             if (game.status_short !== 'NS') {
-                // Silently return without alert
-                return;
+                return; // Silently return if game is completed
             }
 
             // Set voting in progress for this fixture
@@ -222,7 +184,7 @@ function JackpotByNamePredictions({
         } catch (err) {
             console.error("Vote submission error:", err);
             // Only show alert for unexpected errors
-            if (!err.message?.includes('already completed')) {
+            if (!err.message.includes('already completed')) {
                 alert(err.message || "Failed to submit vote. Please try again.");
             }
         } finally {
@@ -317,7 +279,7 @@ function JackpotByNamePredictions({
                 fixture_id: fixtureId,
                 prediction: prediction,
                 device_id: deviceId,
-                jackpot_name: game.jackpot_name || jackpotApiName || 'Unknown Jackpot',
+                jackpot_name: game.jackpot_name || 'Sportpesa Mega Jackpot',
                 game_status: game.status_short
             };
 
@@ -341,44 +303,11 @@ function JackpotByNamePredictions({
         }
     };
 
-    // Show friendly message if jackpot is not found (404)
-    if (isNotFound) {
-        return (
-            <div className="sites-card jackpot-sites-card">
-                <div className="container text-center py-5">
-                    <div className="mb-4">
-                        <i className="bi bi-trophy" style={{ fontSize: '4rem', color: '#6c757d' }}></i>
-                    </div>
-                    <h2 className="h4 mb-3">Jackpot Not Available</h2>
-                    <p className="text-muted mb-4">
-                        This jackpot is either not currently active or hasn't been updated yet. 
-                        Please check back later or browse our other active jackpots.
-                    </p>
-                    <div className="mb-4">
-                        <a href="/jackpot-predictions" className="btn btn-primary">
-                            <i className="bi bi-arrow-left me-2"></i>
-                            View All Jackpots
-                        </a>
-                    </div>
-                </div>
-                <br/>
-                <Adsense
-                    client="ca-pub-5665711413000284"
-                    slot="3850951453"
-                    style={{ display: "block" }}
-                    layout="display"
-                    format="auto"
-                />
-                {seoContentBlock}
-            </div>
-        );
-    }
-
-    // Handle error state (API errors, etc.)
+    // Handle error state
     if (endpointStatus === "error" || error) {
         return (
             <div className="sites-card jackpot-sites-card">
-                <DataNotFoundPage props="This jackpot is currently not available. Please check back later." />
+                <DataNotFoundPage props={error || "Jackpot fixtures have not been updated. Please check again later."} />
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -386,13 +315,18 @@ function JackpotByNamePredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />
-                {seoContentBlock}
+                />   
+                <br/>   
+                <div className="">
+                    <div className="container">
+                       <StatareaMegaJackpotContent/>
+                    </div>
+                </div>         
             </div>
         );
     }
 
-    // Handle empty data state (API returned no data)
+    // Handle empty data state
     if (!gamesData || gamesData.length === 0) {
         return (
             <div className="sites-card jackpot-sites-card">
@@ -404,8 +338,13 @@ function JackpotByNamePredictions({
                     style={{ display: "block" }}
                     layout="display"
                     format="auto"
-                />
-                {seoContentBlock}
+                />   
+                <br/>   
+                <div className="">
+                    <div className="container">
+                       <StatareaMegaJackpotContent/>
+                    </div>
+                </div>         
             </div>
         );
     }
@@ -426,7 +365,7 @@ function JackpotByNamePredictions({
                 selectedVotes={selectedVotes}
                 voteStats={voteStats}
                 onVote={handleVote}
-                votingInProgress={votingInProgress}
+                votingInProgress={votingInProgress} 
                 refreshingStats={refreshingStats}
             />
 
@@ -438,41 +377,21 @@ function JackpotByNamePredictions({
                 style={{ display: "block" }}
                 layout="display"
                 format="auto"
-            />
+            /> 
+            {/* <br/>    */}
 
-            {seoContentBlock}
+            {/* SEO Content */}
+            <br/>
+            <div className="seo-content-section">
+                <div className="container">
+                    <StatareaMegaJackpotContent/>
+                </div>
+            </div>
         </div>
     );
 }
 
-export async function getServerSideProps(context) {
-    const { 'jackpot-predictions-by-name': jackpotSlug } = context.params;
-    
-    if (!jackpotSlug) {
-        return {
-            notFound: true
-        };
-    }
-    
-    // FIXED: Rename this variable to avoid conflict with 'path' module
-    const urlPath = `jackpot-predictions/${jackpotSlug}`;
-    const jackpotApiName = ReturnJackpotNameSavedInDB(urlPath);
-    
-    // If jackpot name is "Unknown Jackpot", show friendly 404
-    if (!jackpotApiName || jackpotApiName === "Unknown Jackpot") {
-        return {
-            props: {
-                initialGamesData: [],
-                endpointStatus: "not_found",
-                error: null,
-                initialVoteStats: {},
-                jackpotApiName: null,
-                jackpotSlug,
-                isNotFound: true
-            }
-        };
-    }
-    
+export async function getServerSideProps() {
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
         "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
@@ -487,10 +406,9 @@ export async function getServerSideProps(context) {
         generatedAt: null
     };
 
-    // Create a safe filename from jackpot name for caching
-    const safeJackpotName = jackpotApiName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    // Cache setup
     const cacheDir = path.join(process.cwd(), 'public', 'cache');
-    const cacheFilename = `${safeJackpotName}-fixtures.json`;
+    const cacheFilename = `statarea-mega-jackpot-fixtures.json`;
     const cachePath = path.join(cacheDir, cacheFilename);
 
     try {
@@ -525,80 +443,29 @@ export async function getServerSideProps(context) {
         if (initialGamesData.length === 0) {            
             // Fetch jackpot fixtures
             const response = await fetch(
-                `https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=${encodeURIComponent(jackpotApiName)}`,
+                "https://api.pitchpredictions.com/api/fetch_jackpot_fixtures_by_name?jackpot_name=Sportpesa Mega Jackpot",
                 { headers }
             );
 
-            // If API returns 404, show friendly message
-            if (response.status === 404) {
-                return {
-                    props: {
-                        initialGamesData: [],
-                        endpointStatus: "not_found",
-                        error: null,
-                        initialVoteStats: {},
-                        jackpotApiName: jackpotApiName,
-                        jackpotSlug,
-                        isNotFound: true
-                    }
-                };
-            }
-
             if (!response.ok) {
-                // For other errors, still show friendly message but with error status
-                return {
-                    props: {
-                        initialGamesData: [],
-                        endpointStatus: "not_found",
-                        error: "This jackpot is currently not available",
-                        initialVoteStats: {},
-                        jackpotApiName: jackpotApiName,
-                        jackpotSlug,
-                        isNotFound: true
-                    }
-                };
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             
-            // If API returns false status or no data, show friendly message
-            if (!data.status || !data.data || data.data.length === 0) {
-                return {
-                    props: {
-                        initialGamesData: [],
-                        endpointStatus: "not_found",
-                        error: null,
-                        initialVoteStats: {},
-                        jackpotApiName: jackpotApiName,
-                        jackpotSlug,
-                        isNotFound: true
-                    }
-                };
-            }
-            
-            if (data.status && data.data && data.data.length > 0) {
+            if (data.status && data.data) {
                 initialGamesData = data.data.map(game => ({
                     ...game,
                     jackpot_id: game.jackpot_tips_id,
                     fixture_id: game.fixture_id,
-                    game_id: game.id,
-                    // Add helper properties for UI
-                    home_team_name: game.home_team_name,
-                    away_team_name: game.away_team_name,
-                    percent_pred_home: game.percent_pred_home || "0%",
-                    percent_pred_draw: game.percent_pred_draw || "0%",
-                    percent_pred_away: game.percent_pred_away || "0%",
-                    bets_home: game.bets_home || "1.00",
-                    bets_draw: game.bets_draw || "1.00",
-                    bets_away: game.bets_away || "1.00"
+                    game_id: game.id
                 }));
 
                 // Save fixtures to cache (without vote stats)
                 const cacheData = {
                     generatedAt: new Date().toISOString(),
                     gamesData: initialGamesData,
-                    count: initialGamesData.length,
-                    jackpotName: jackpotApiName
+                    count: initialGamesData.length
                 };
                 
                 // Atomic write
@@ -607,9 +474,11 @@ export async function getServerSideProps(context) {
                 cacheInfo = {
                     fromCache: false,
                     generatedAt: cacheData.generatedAt
-                };
-                
+                };                
             }
+
+            endpointStatus = data.status === true ? "success" : "error";
+            error = data.status === true ? null : (data.message || "Failed to load jackpot fixtures");
         }
 
         // ALWAYS fetch live vote stats (don't cache these)
@@ -657,12 +526,15 @@ export async function getServerSideProps(context) {
         }
 
         // Clean up old cache files (older than 30 minutes)
-        await cleanupOldCacheFiles(cacheDir, safeJackpotName);
+        await cleanupOldCacheFiles(cacheDir);
 
-        endpointStatus = "success";
-        error = null;
-
-    } catch (error) {
+    } catch (err) {
+        console.error("Error fetching Sportpesa Mega jackpot data:", err);
+        endpointStatus = "error";
+        error = err.message || "Failed to load jackpot fixtures";
+        initialGamesData = [];
+        initialVoteStats = {};
+        
         // If cache exists but API failed, use cached fixtures as fallback
         if (fs.existsSync(cachePath)) {
             try {
@@ -674,6 +546,8 @@ export async function getServerSideProps(context) {
                     generatedAt: cache.generatedAt,
                     isFallback: true
                 };
+                endpointStatus = "success";
+                error = null;
                 
                 // Still try to get live vote stats even if fixtures are from cache
                 if (initialGamesData.length > 0) {
@@ -699,57 +573,28 @@ export async function getServerSideProps(context) {
                             initialVoteStats = statsResult.data;
                         }
                     } catch (voteStatsError) {
-                        console.error(`Error fetching vote stats in fallback mode for "${jackpotApiName}":`, voteStatsError);
+                        console.error("Error fetching vote stats in fallback mode for Sportpesa Mega Jackpot:", voteStatsError);
                     }
                 }
-                
-                return {
-                    props: {
-                        initialGamesData,
-                        endpointStatus: "success",
-                        error: null,
-                        initialVoteStats,
-                        jackpotApiName: jackpotApiName,
-                        jackpotSlug,
-                        isNotFound: false,
-                        cacheInfo
-                    }
-                };
             } catch (fallbackErr) {
-                console.error(`Fallback error for "${jackpotApiName}":`, fallbackErr);
+                console.error('Fallback error for Sportpesa Mega Jackpot:', fallbackErr);
             }
         }
-
-        // Return friendly message instead of error
-        return {
-            props: {
-                initialGamesData: [],
-                endpointStatus: "not_found",
-                error: "This jackpot is currently not available",
-                initialVoteStats: {},
-                jackpotApiName: jackpotApiName,
-                jackpotSlug,
-                isNotFound: true
-            }
-        };
     }
-    
+
     return {
         props: {
             initialGamesData,
             endpointStatus,
-            error,
+            error: error || null,
             initialVoteStats,
-            jackpotApiName: jackpotApiName,
-            jackpotSlug,
-            isNotFound: false,
             cacheInfo
         }
     };
 }
 
 // Helper function to clean up old cache files
-async function cleanupOldCacheFiles(cacheDir, currentJackpotName) {
+async function cleanupOldCacheFiles(cacheDir) {
     try {
         if (!fs.existsSync(cacheDir)) return;
         
@@ -758,8 +603,7 @@ async function cleanupOldCacheFiles(cacheDir, currentJackpotName) {
         const maxAge = 30 * 60 * 1000; // 30 minutes
         
         for (const file of files) {
-            // Only clean up files that end with '-fixtures.json' and aren't the current one
-            if (file.endsWith('-fixtures.json') && !file.includes(currentJackpotName)) {
+            if (file === 'statarea-mega-jackpot-fixtures.json') {
                 const filePath = path.join(cacheDir, file);
                 const stats = fs.statSync(filePath);
                 const fileAge = now - stats.mtimeMs;
@@ -774,4 +618,4 @@ async function cleanupOldCacheFiles(cacheDir, currentJackpotName) {
     }
 }
 
-export default JackpotByNamePredictions;
+export default StatareaMegaJackpotPredictions;

@@ -923,6 +923,13 @@ function MetaContent(){
         page_title = "Free Cheerplex Football Tips and Predictions";
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+    } else if (current_url.includes("tips/clevertips")) {
+        title = "Clever Tips Today – Free Football Predictions & Smart Picks";
+        meta_desc_content = "Get clever tips today with free football predictions on Pitch Predictions. Clever tip prediction picks for 1X2, BTTS, correct score &amp; more — updated daily across 700+ leagues.";
+        meta_keywords = "clevertips, clever tips, clever tips today, clever tip prediction, clever bet tips, clever soccer tips, clever tips prediction today";
+        page_title = "Clever Tips Today – Free Football Predictions";
+
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/mwanasoka")) {
         title = "Mwanasoka Predictions – Free Daily Football Tips & Jackpot Picks | Pitch Predictions";
         meta_desc_content = "Looking for Mwanasoka predictions today? Get free daily football tips, jackpot predictions, BTTS, GG, correct score &amp; over/under picks on Pitch Predictions — updated daily.";
@@ -1272,6 +1279,14 @@ function MetaContent(){
         meta_keywords = "Forebet Mega Jackpot Prediction, Forebet Sportpesa Mega Jackpot Prediction, Mega Jackpot tips today, Forebet football tips, Forebet Mega Jackpot this weekend";
         page_title = "Forebet Sportpesa Mega Jackpot Predictions";
         
+        meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
+
+    } else if (current_url == "jackpot-predictions/statarea-mega-jackpot-prediction") {
+        title = "Statarea Mega Jackpot Prediction – Sportpesa Weekend Tips";
+        meta_desc_content = "Free Statarea Mega Jackpot Prediction for all 17 Sportpesa Mega games this weekend. Expert 1X2 &amp; Double Chance analysis backed by form, H2H &amp; squad data — updated before every deadline.";
+        meta_keywords = "Statarea Mega Jackpot Prediction, Staterea Mega Jackpot Prediction This weekend, Old Statarea Mega Jackpot Prediction, Statarea mega jackpot, Statarea prediction mega jackpot, Statarea Sportpesa Mega Jackpot Prediction, Statarea Mega Jackpot Prediction today";
+        page_title = "Statarea Mega Jackpot Prediction – Sportpesa Weekend Tips";
+
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url == "jackpot-predictions/sportpesa-midweek-jackpot-predictions") {
