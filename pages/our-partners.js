@@ -96,6 +96,8 @@ function OurPartners() {
                     <li><a href="https://thisweekpoolresult.com" target="blank">This Week Pool Result</a></li>
                     <li><a href="http://100percentwinnings.com" target="blank">100 Percent Winning Tips</a></li>
                     <li><a href="https://www.fulltimepredict.com" target="blank">fulltimepredict</a></li>
+                    <li><a href="https://tipsgg.com/" target="_blank">Tipsgg.com</a></li>
+                    <li><a href="https://soccervis.com/" target="_blank">Soccervis.com</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>

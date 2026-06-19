@@ -45,9 +45,10 @@ const sponsors = [
   { label: 'xem bóng đá trực tiếp',           url: 'https://tructiepbongda.fans/'         },
   { label: 'trực tiếp bóng đá',               url: 'https://tructiepbongda.fyi/'          },
   { label: 'xem trực tiếp bóng đá',           url: 'https://tructiepbongda.mobile/'       },
-  { label: 'cakhiatv',                         url: 'https://xemcakhia.net/'               },
+  { label: 'cakhiatv',                        url: 'https://xemcakhia.net/'               },
   { label: 'xoilac bóng đá',                  url: 'https://xoilac7.cc/'                  },
-  { label: 'xoilac tv',                        url: 'https://xoilactvv-live.com/'          },
+  { label: 'xoilac tv',                       url: 'https://xoilactvv-live.com/'          },
+  { label: 'https://trangcadobongda.lat/',    url: 'https://trangcadobongda.lat/'         },
   /* expires 06-07-2026 end */
 
   /* New text link, expires 09-06-2026 */
