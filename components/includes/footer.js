@@ -56,6 +56,10 @@ const sponsors = [
 
   /* New text link, Paid for 3 months, first added 14-06-2026, expires 14-09-2026 */
   { label: 'Tigoals livescore',                        url: 'https://tigoals.io/'          },
+
+  /* New text link, first added 20-06-2026, expires 20-07-2026 */
+  { label: 'keo nha cai',                     url: 'https://rva.us.com/'           },
+  /* expires 20-07-2026 end */
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
