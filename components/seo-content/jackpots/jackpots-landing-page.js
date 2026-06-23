@@ -55,7 +55,8 @@ export default function JackpotPredictionsContent() {
 
       <h3>Safe &amp; Responsible Betting</h3>
       <p>
-        Jackpots carry real financial risk — every game must be correct for the grand prize. Follow these rules:
+        Jackpots carry real financial risk — every game must be correct for the grand prize. Additionally, just like with <a href="https://evolutiondg.com">라이브 카지노</a>, the most important thing when chasing jackpots is to practice responsible betting according to your current financial situation. 
+       Follow these rules:
       </p>
       <ul>
         <li>Bet only what you can afford to lose</li>
