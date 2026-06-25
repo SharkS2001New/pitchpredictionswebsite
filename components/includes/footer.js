@@ -17,9 +17,9 @@ const sponsors = [
   /* expires 06-07-2026 end */
 
   /* Renewed every month on 05, first added 05-06-2026, expires 05-07-2026 — Vietnamese partner */
-  { label: 'vsbet',                            url: 'https://vsbet.co/'                    },
+  { label: 'https://vsbet.co/',                url: 'https://vsbet.co/'                    },
   { label: 'nhà cái vsbet',                   url: 'https://vsbet.cc/'                    },
-  { label: 'vsbet',                            url: 'https://vsbet.br.com/'                },
+  { label: 'https://vsbet.br.com/',            url: 'https://vsbet.br.com/'                },
   { label: 'vsbet',                            url: 'https://vsbets.co.com/'               },
   { label: 'vs bet',                           url: 'https://vaboose.cn.com/'              },
   /* expires 05-07-2026 end */
@@ -28,6 +28,8 @@ const sponsors = [
   { label: 'socolive',                         url: 'https://socolivettbd.net/'            },
   { label: '90phut',                           url: 'https://90phutttbd.org/'              },
   { label: 'xoilac',                           url: 'https://lytuong.net/'                 },
+  { label: 'https://colatv48.live/',           url: 'https://colatv48.live/'               },
+  { label: 'https://nhacaiuytin.guru/',        url: 'https://nhacaiuytin.guru/'            },
   { label: 'xoilac',                           url: 'https://xoilactvv.com/'               },
   { label: 'xem bong da xoilac',               url: 'https://xoilactvv.org/'               },
   { label: 'xem bong da xoilac',               url: 'https://xoilactvv.online/'            },
@@ -36,7 +38,7 @@ const sponsors = [
   { label: 'cà khịa tv',                      url: 'https://cakhiatvv.live/'              },
   { label: 'trực tiếp bóng đá hôm nay',        url: 'https://cakhiatvv.online/'            },
   { label: 'cakhiatv trực tiếp bóng đá',       url: 'https://cakhiatvv.ink/'               },
-  { label: '90phut tv',                        url: 'https://90phuttv.in.net/'             },
+  { label: 'https://90phuttv.in.net/',         url: 'https://90phuttv.in.net/'             },
   { label: 'bóng đá trực tiếp',               url: 'https://90phuttv.futbol/'             },
   { label: '90phut tv',                        url: 'https://90phuttv.bid/'                },
   { label: 'xem bóng đá trực tiếp',           url: 'https://xembongda.ai/'               },

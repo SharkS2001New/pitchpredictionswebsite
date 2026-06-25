@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 import BlogArticleJsonLd from "../../../components/blog/blog-article-json-ld";
-import BlogLargeContent from "../../../components/blog/blog-large-content";
+import BlogPostBody from "../../../components/blog/blog-post-body";
 import BlogPostHeader from "../../../components/blog/blog-post-header";
 import { LARGE_BLOG_CONTENT_BYTES } from "../../../lib/blog/blog-content-config";
 import {
   ensureBlogPostContentCached,
-  fetchBlogPostContent,
   fetchBlogPostMeta,
 } from "../../../lib/blog/fetch-blog-post";
 import {
@@ -89,48 +88,14 @@ export default async function BlogPostPage({ params }) {
       <BlogArticleJsonLd meta={meta} slug={slug} />
       <BlogPostHeader meta={meta} />
 
-      {isLargeArticle ? (
-        <>
-          {meta.excerpt ? (
-            <p
-              className="blog-excerpt"
-              style={{
-                lineHeight: "1.8",
-                fontSize: "1rem",
-                color: "#444",
-                marginBottom: "1.5rem",
-              }}
-            >
-              {meta.excerpt}
-            </p>
-          ) : null}
-          <BlogLargeContent slug={slug} contentUrl={contentInfo.publicUrl} />
-        </>
-      ) : (
-        <BlogPostInlineContent slug={slug} />
-      )}
+      <BlogPostBody
+        slug={slug}
+        excerpt={meta.excerpt}
+        isLargeArticle={isLargeArticle}
+        contentUrl={contentInfo.publicUrl}
+      />
 
       <br />
     </div>
-  );
-}
-
-async function BlogPostInlineContent({ slug }) {
-  const content = await fetchBlogPostContent(slug);
-
-  if (!content) {
-    return (
-      <p style={{ color: "#666", lineHeight: 1.8 }}>
-        This article has no content yet.
-      </p>
-    );
-  }
-
-  return (
-    <div
-      className="blog-html-content"
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
   );
 }

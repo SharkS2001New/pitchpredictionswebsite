@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import BlogContentSkeleton from "./blog-content-skeleton";
+import { stripLeadingExcerptFromHtml } from "../../lib/blog/blog-utils";
 
-export default function BlogLargeContent({ slug, contentUrl }) {
+export default function BlogLargeContent({ slug, contentUrl, excerpt = "" }) {
   const containerRef = useRef(null);
   const fetchedSlugRef = useRef("");
   const [status, setStatus] = useState("loading");
@@ -40,7 +41,10 @@ export default function BlogLargeContent({ slug, contentUrl }) {
             return;
           }
 
-          containerRef.current.innerHTML = html;
+          containerRef.current.innerHTML = stripLeadingExcerptFromHtml(
+            html,
+            excerpt
+          );
           setStatus("ready");
           return;
         } catch (error) {
@@ -60,10 +64,10 @@ export default function BlogLargeContent({ slug, contentUrl }) {
     return () => {
       controller.abort();
     };
-  }, [slug, contentUrl]);
+  }, [slug, contentUrl, excerpt]);
 
   return (
-    <div className="blog-article-body">
+    <div>
       {status !== "ready" ? <BlogContentSkeleton /> : null}
       {status === "error" ? (
         <p style={{ color: "#666", lineHeight: 1.8 }}>
