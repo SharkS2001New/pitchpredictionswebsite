@@ -84,6 +84,7 @@ export function trimBlogPostMeta(blog) {
   return {
     id: blog.id ?? null,
     title: blog.title ?? null,
+    meta_title: blog.meta_title ?? null,
     excerpt: blog.excerpt ?? null,
     slug: blog.slug ?? null,
     read_time: blog.read_time ?? null,
@@ -91,6 +92,7 @@ export function trimBlogPostMeta(blog) {
     created_at: blog.created_at ?? null,
     updated_at: blog.updated_at ?? null,
     meta_description: blog.meta_description ?? null,
+    meta_keywords: blog.meta_keywords ?? null,
     image: blog.image || blog.featured_image || blog.og_image || null,
     author: blog.author || blog.user?.name || null,
     category: blog.category

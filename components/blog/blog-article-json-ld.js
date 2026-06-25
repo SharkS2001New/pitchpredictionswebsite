@@ -1,6 +1,7 @@
 import {
   getBlogAuthor,
   getBlogMetaDescription,
+  getBlogMetaTitle,
 } from "../../lib/blog/blog-utils";
 
 export default function BlogArticleJsonLd({ meta, slug }) {
@@ -10,6 +11,7 @@ export default function BlogArticleJsonLd({ meta, slug }) {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: meta.title,
+    name: getBlogMetaTitle(meta),
     description: getBlogMetaDescription(meta),
     datePublished: meta.published_at || meta.created_at || undefined,
     dateModified: meta.updated_at || meta.published_at || meta.created_at || undefined,

@@ -12,6 +12,8 @@ import {
   getBlogAuthor,
   getBlogCategoryLabel,
   getBlogMetaDescription,
+  getBlogMetaKeywords,
+  getBlogMetaTitle,
   getFeaturedImage,
 } from "../../../lib/blog/blog-utils";
 
@@ -27,19 +29,22 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const title = `${meta.title} | Pitch Predictions`;
+  const pageTitle = getBlogMetaTitle(meta);
+  const title = `${pageTitle} | Pitch Predictions`;
   const description = getBlogMetaDescription(meta);
+  const keywords = getBlogMetaKeywords(meta);
   const featuredImage = getFeaturedImage(meta);
   const canonicalUrl = `https://www.pitchpredictions.com/blog/${slug}`;
 
   return {
     title,
     description,
+    ...(keywords.length > 0 ? { keywords } : {}),
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title,
+      title: pageTitle,
       description,
       type: "article",
       url: canonicalUrl,
@@ -52,7 +57,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: pageTitle,
       description,
       images: featuredImage ? [featuredImage] : undefined,
       site: "@pitchpredictions",
