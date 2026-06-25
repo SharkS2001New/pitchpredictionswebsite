@@ -21,6 +21,11 @@ export function normalizeAuthDate(dateValue) {
     return `${year}-${month}-${day}T${timePart.length === 5 ? `${timePart}:00` : timePart}`;
   }
 
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(stringValue.trim())) {
+    const normalized = stringValue.trim().replace(" ", "T");
+    return /T\d{2}:\d{2}$/.test(normalized) ? `${normalized}:00` : normalized;
+  }
+
   return dateValue;
 }
 

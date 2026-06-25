@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
+import DateTimeToUsersTimezone, {
+  resolveFixtureDateTime,
+} from "../functions/DatetimeToUsersTimezone";
 import PopupProbabilityTooltip from "./popup-probability";
 import CheckiffixtureIsSelected from "../functions/CheckIfFixtureisSelected";
 import FetchFixtureByIdMyFav from "../functions/FetchfixturesById-Myfavourites";
@@ -21,7 +23,7 @@ function FixturesTableDisplay({ props: fixtureProps, marketRoute }) {
     }, []);
 
     // Convert date time to users timezone
-    const matchDate = game.match?.datetime || game.date;
+    const matchDate = resolveFixtureDateTime(game);
     const myNewDateString = DateTimeToUsersTimezone(matchDate).split(' ')[0];
     const myFullNewDateString = DateTimeToUsersTimezone(matchDate);
 

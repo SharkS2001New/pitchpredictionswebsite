@@ -1,6 +1,8 @@
 import React from 'react';
 import { Adsense } from "@/components/shared/client-adsense";
-import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
+import DateTimeToUsersTimezone, {
+  resolveFixtureDateTime,
+} from '../functions/DatetimeToUsersTimezone';
 import { buildMatchUrlSlug } from '../functions/match_details_helpers';
 import dedupeFixturesById from '../functions/dedupe_fixtures_by_id';
 
@@ -212,7 +214,9 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   </div>
                   
                   <div className="d-flex align-items-center gap-2 flex-wrap">
-                    <small className="text-muted fw-bold">{DateTimeToUsersTimezone(game.date)}</small>
+                    <small className="text-muted fw-bold">
+                      {DateTimeToUsersTimezone(resolveFixtureDateTime(game))}
+                    </small>
                     {getStatusBadge(game)}
                   </div>
                 </div>

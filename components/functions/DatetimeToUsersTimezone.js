@@ -1,58 +1,96 @@
-function DateTimeToUsersTimezone(original_date_given) {
-    if (!original_date_given) return "Date not available";
-    
-    try {
-        let dateInput = original_date_given;
+/**
+ * Normalize API date strings into a Date instance.
+ * Handles DD/MM/YYYY, MySQL "YYYY-MM-DD HH:mm:ss", and ISO strings.
+ */
+export function normalizeDateInput(dateValue) {
+  if (dateValue == null || dateValue === "") return null;
 
-        if (typeof dateInput === "string" && /^\d{2}\/\d{2}\/\d{4}/.test(dateInput)) {
-            const [datePart, timePart = "00:00"] = dateInput.split(" ");
-            const [day, month, year] = datePart.split("/");
-            dateInput = `${year}-${month}-${day}T${timePart.length === 5 ? `${timePart}:00` : timePart}`;
-        }
+  if (dateValue instanceof Date) {
+    return Number.isNaN(dateValue.getTime()) ? null : dateValue;
+  }
 
-        const date = new Date(dateInput);
-        
-        // Check if date is valid
-        if (isNaN(date.getTime())) {
-            return "Invalid date";
-        }
-        
-        // Get user's timezone
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
-        // Format options
-        const options = {
-            day: '2-digit',
-            month: '2-digit', 
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-            timeZone: userTimeZone
-        };
-        
-        // Format using Intl.DateTimeFormat
-        const formatter = new Intl.DateTimeFormat('en-GB', options);
-        const parts = formatter.formatToParts(date);
-        
-        // Extract the parts
-        const day = parts.find(p => p.type === 'day')?.value;
-        const month = parts.find(p => p.type === 'month')?.value;
-        const year = parts.find(p => p.type === 'year')?.value;
-        let hour = parts.find(p => p.type === 'hour')?.value;
-        const minute = parts.find(p => p.type === 'minute')?.value;
-        
-        // Remove leading zero from hour
-        if (hour && hour.startsWith('0') && hour.length > 1) {
-            hour = hour.substring(1);
-        }
-        
-        return `${day}/${month}/${year} ${hour}:${minute}`;
-        
-    } catch (error) {
-        console.error('Error converting date:', error);
-        return "Date error";
+  if (typeof dateValue === "number" || /^\d{10,13}$/.test(String(dateValue).trim())) {
+    const numeric = Number(dateValue);
+    const date = new Date(numeric < 1e12 ? numeric * 1000 : numeric);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  let dateInput = String(dateValue).trim();
+
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(dateInput)) {
+    const [datePart, timePart = "00:00"] = dateInput.split(" ");
+    const [day, month, year] = datePart.split("/");
+    dateInput = `${year}-${month}-${day}T${
+      timePart.length === 5 ? `${timePart}:00` : timePart
+    }`;
+  } else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(dateInput)) {
+    dateInput = dateInput.replace(" ", "T");
+    if (/T\d{2}:\d{2}$/.test(dateInput)) {
+      dateInput += ":00";
     }
+  }
+
+  const date = new Date(dateInput);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/** Pick the best kickoff datetime field from fixture / jackpot game payloads. */
+export function resolveFixtureDateTime(fixture) {
+  if (!fixture) return null;
+
+  return (
+    fixture.match?.datetime ||
+    fixture.match?.unformatted_date ||
+    fixture.match?.unformated_date ||
+    fixture.datetime ||
+    fixture.date ||
+    fixture.unformatted_date ||
+    fixture.unformatedDate ||
+    fixture.unformated_date ||
+    null
+  );
+}
+
+function DateTimeToUsersTimezone(original_date_given) {
+  if (!original_date_given) return "Date not available";
+
+  try {
+    const date = normalizeDateInput(original_date_given);
+
+    if (!date) {
+      return "Invalid date";
+    }
+
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const options = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: userTimeZone,
+    };
+
+    const formatter = new Intl.DateTimeFormat("en-GB", options);
+    const parts = formatter.formatToParts(date);
+
+    const day = parts.find((p) => p.type === "day")?.value;
+    const month = parts.find((p) => p.type === "month")?.value;
+    const year = parts.find((p) => p.type === "year")?.value;
+    let hour = parts.find((p) => p.type === "hour")?.value;
+    const minute = parts.find((p) => p.type === "minute")?.value;
+
+    if (hour && hour.startsWith("0") && hour.length > 1) {
+      hour = hour.substring(1);
+    }
+
+    return `${day}/${month}/${year} ${hour}:${minute}`;
+  } catch (error) {
+    console.error("Error converting date:", error);
+    return "Date error";
+  }
 }
 
 export default DateTimeToUsersTimezone;

@@ -8,6 +8,7 @@ import ReturnSlugFromJackpotName from '../components/functions/getJackpotNameFro
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../components/functions/file_cache";
+import { normalizeDateInput } from "../components/functions/DatetimeToUsersTimezone";
 
 function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '', structuredData, cacheInfo }) {
   const router = useRouter();
@@ -51,8 +52,8 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     if (!jackpot.start_datetime_formatted) return false;
     
     const now = new Date();
-    const startDate = new Date(jackpot.start_datetime_formatted);
-    return now >= startDate;
+    const startDate = normalizeDateInput(jackpot.start_datetime_formatted);
+    return startDate ? now >= startDate : false;
   };
 
   // Determine if jackpot is completed based on completed_games and total_games
@@ -78,7 +79,9 @@ function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serve
     if (!dateTimeString) return '';
 
     try {
-      const date = new Date(dateTimeString);
+      const date = normalizeDateInput(dateTimeString);
+      if (!date) return '';
+
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const tomorrow = new Date(today);
@@ -908,8 +911,10 @@ async function cleanupOldCacheFiles(cacheDir) {
 const formatDateShort = (dateString) => {
   if (!dateString) return '';
   try {
+    const date = normalizeDateInput(dateString);
+    if (!date) return '';
+
     const options = { month: 'short', day: 'numeric' };
-    const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);
   } catch (e) {
     return '';
