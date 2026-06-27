@@ -98,6 +98,8 @@ function OurPartners() {
                     <li><a href="https://www.fulltimepredict.com" target="blank">fulltimepredict</a></li>
                     <li><a href="https://tipsgg.com/" target="_blank">Tipsgg.com</a></li>
                     <li><a href="https://soccervis.com/" target="_blank">Soccervis.com</a></li>
+                    <li><a href="https://www.sunpel.co.ke/" target="_blank">Sunpel</a></li>
+                    <li><a href="https://www.jackpotpredict.co.ke/" target="_blank">jackpotpredict.co.ke</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>
