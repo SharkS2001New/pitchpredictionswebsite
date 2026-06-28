@@ -1,21 +1,17 @@
-# base image
+# Next.js frontend — Alpine + Node (same pattern as freewinningtips / centrix-erp-frontend-web)
 FROM alpine
 
-# create & set working directory
 RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
-# copy source files
-COPY . /usr/src
+COPY package.json package-lock.json ./
+RUN apk add --no-cache nodejs npm && npm ci
 
-# install dependencies and build app
-RUN apk add --no-cache nodejs npm && \
-    npm install && \
-    npm run build && \
-    npm uninstall -g npm && \
-    apk del nodejs && \
-    rm -rf /root/.npm
+COPY . .
 
-# expose port and start app
+ENV NODE_ENV=production
+
+RUN npm run build
+
 EXPOSE 3000
 CMD ["npm", "start"]

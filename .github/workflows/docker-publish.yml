@@ -3,14 +3,16 @@ name: Docker Publish
 on:
   push:
     branches:
-      - "master"
+      - master
+      - main
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   pull_request:
     branches:
-      - "master"
+      - master
+      - main
   schedule:
-    - cron: '44 2 * * *'
+    - cron: "44 2 * * *"
 
 env:
   REGISTRY: ghcr.io
@@ -22,66 +24,84 @@ jobs:
 
     permissions:
       contents: read
-      packages: write
-      id-token: write  # Required for OpenID Connect authentication to GHCR
+      # packages: write  # enable when re-enabling GHCR push
+      # id-token: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v5
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@v3
 
-      - name: Log into GitHub Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  # Use PAT instead of GITHUB_TOKEN
+      # Public repo: build-only for now — no GHCR login required.
+      # Re-enable when pushing images to ghcr.io (needs PERSONAL_ACCESS_TOKEN secret).
+      # - name: Log into GitHub Container Registry
+      #   if: github.event_name != 'pull_request'
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v6
+        uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           tags: type=sha,format=short
 
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v7
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Check out the pitchpredk3ssetup repo
-        uses: actions/checkout@v6
-        with:
-          repository: ${{ github.repository_owner }}/pitchpredk3ssetup
-          path: pitchpredk3ssetup
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-
-      - name: Update values.yaml with new image tag
-        run: |
-          SHORT_SHA_PART="${{ steps.meta.outputs.tags }}"
-          SHORT_SHA_PART="$(echo "$SHORT_SHA_PART" | awk -F':' '{print $2}' | cut -c1-11)"
-          # Update the tag in the values.yaml file
-          sed -i "s|tag:.*|tag: $SHORT_SHA_PART|" pitchpredk3ssetup/pitchpredictionswebsite/values.yaml
-          echo "Updated tag in values.yaml to $SHORT_SHA_PART"
-
-      - name: Commit and push changes to pitchpredk3ssetup repo
-        run: |
-          cd pitchpredk3ssetup
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add pitchpredictionswebsite/values.yaml
-          git commit -m "Update Docker image tag to sha-$SHORT_SHA_PART"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      # Re-enable after GHCR login + push are restored.
+      # - name: Resolve image tag for Helm
+      #   id: image_tag
+      #   run: echo "value=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      #
+      # - name: Check out pitchpredk3ssetup
+      #   if: github.event_name != 'pull_request'
+      #   uses: actions/checkout@v5
+      #   with:
+      #     repository: ${{ github.repository_owner }}/pitchpredk3ssetup
+      #     path: pitchpredk3ssetup
+      #     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      #
+      # - name: Update Helm image tag
+      #   if: github.event_name != 'pull_request'
+      #   run: |
+      #     TAG="${{ steps.image_tag.outputs.value }}"
+      #     FILE="pitchpredk3ssetup/pitchpredictionswebsite/values.yaml"
+      #     sed -i "s|^\([[:space:]]*tag:\).*|\1 ${TAG}|" "$FILE"
+      #     echo "Updated ${FILE} -> ${TAG}"
+      #
+      # - name: Commit and push pitchpredk3ssetup
+      #   if: github.event_name != 'pull_request'
+      #   run: |
+      #     cd pitchpredk3ssetup
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add pitchpredictionswebsite/values.yaml
+      #     if git diff --staged --quiet; then
+      #       echo "No tag changes to commit."
+      #       exit 0
+      #     fi
+      #     git commit -m "chore(pitchpredictionswebsite): bump image tag to ${{ steps.image_tag.outputs.value }}"
+      #     for attempt in 1 2 3 4 5; do
+      #       git pull --rebase origin master
+      #       if git push origin HEAD:master; then
+      #         echo "Push succeeded on attempt ${attempt}."
+      #         exit 0
+      #       fi
+      #       echo "Push rejected (attempt ${attempt}); retrying after rebase…"
+      #       sleep $((attempt * 2))
+      #     done
+      #     echo "Failed to push pitchpredk3ssetup after 5 attempts."
+      #     exit 1
