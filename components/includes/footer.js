@@ -253,7 +253,7 @@ function Footer() {
 
         <hr className="my-4"/>
 
-        {/* Sponsor Links — all partners in SSR HTML */}
+        {/* Sponsor Links — all partners in SSR HTML, testing */}
         <SponsorLinks />
 
         <hr className="my-4"/>
