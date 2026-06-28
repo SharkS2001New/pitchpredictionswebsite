@@ -2,10 +2,10 @@
 import Script from "next/script";
 
 const sponsors = [
-  /* Renewed every three months, first added 16-05-2026, expires 16-08-2026 */
+  /* Renewed every three months, first added 16-05-2026, expires 16-08-2026 From Blessed Emmy */
   { label: 'Socolive TV',                      url: 'https://www.ericbauman.com/'          },
 
-  /* Renewed every three months, first added 24-05-2026, expires 24-08-2026 */
+  /* Renewed every three months, first added 24-05-2026, expires 24-08-2026  From Blessed Emmy*/
   { label: 'Jalalive Tv',                      url: 'https://bsidefilm.com/'               },
 
   /* Renewed every month on 06, first added 06-04-2026, expires 06-07-2026 */
@@ -53,15 +53,19 @@ const sponsors = [
   { label: 'https://trangcadobongda.lat/',    url: 'https://trangcadobongda.lat/'         },
   /* expires 06-07-2026 end */
 
-  /* New text link, expires 09-06-2026 */
+  /* New text link, expires 09-06-2026 From Scometix Africe/bettingtips.co.ke */
   { label: 'Loto188',                         url: 'https://aloto188.com/'                },
 
-  /* New text link, Paid for 3 months, first added 14-06-2026, expires 14-09-2026 */
+  /* New text link, Paid for 3 months, first added 14-06-2026, expires 14-09-2026 From Blessed Emmy */
   { label: 'Tigoals livescore',                        url: 'https://tigoals.io/'          },
 
-  /* New text link, first added 20-06-2026, expires 20-07-2026 */
+  /* New text link, first added 20-06-2026, expires 20-07-2026 From Blessed Emmy*/
   { label: 'keo nha cai',                     url: 'https://rva.us.com/'           },
   /* expires 20-07-2026 end */
+
+  /* New text link, first added 28-06-2026, expires 28-07-2026  New Vietnamese partner*/
+  { label: 'jalalive',                     url: 'https://www.xsbaltimore.com/'           },
+  /* expires 28-07-2026 end */
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
@@ -103,7 +107,7 @@ function SponsorLinks() {
             key={`${sponsor.url}-${index}`}
             href={sponsor.url}
             target="_blank"
-            rel="sponsored nofollow noopener noreferrer"
+            rel="sponsored noopener noreferrer"
             style={{
               color: LINK_COLOR,
               fontSize: "14px",
