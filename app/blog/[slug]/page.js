@@ -90,7 +90,6 @@ export default async function BlogPostPage({ params }) {
 
       <BlogPostBody
         slug={slug}
-        excerpt={meta.excerpt}
         isLargeArticle={isLargeArticle}
         contentUrl={contentInfo.publicUrl}
       />

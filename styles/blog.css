@@ -141,3 +141,39 @@
     color: #2a87c5;        /* red color */
 }
 
+.blog-article-body {
+  margin-top: 0.5rem;
+}
+
+.blog-html-content {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #261e40;
+  word-wrap: break-word;
+}
+
+.blog-html-content a {
+  color: #0d6efd;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-html-content a:hover {
+  color: #bb2200;
+}
+
+.blog-html-content :target {
+  scroll-margin-top: 5rem;
+}
+
+.blog-html-content ul,
+.blog-html-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.blog-html-content img {
+  max-width: 100%;
+  height: auto;
+}
+

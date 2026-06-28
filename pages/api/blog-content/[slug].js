@@ -3,6 +3,7 @@ import {
   readBlogPostContentHtml,
 } from "../../../components/functions/blog_list_cache";
 import { fetchBlogPost } from "../../../lib/blog/fetch-blog-post";
+import { getBlogHtmlContent } from "../../../lib/blog/blog-utils";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
 
     if (!html) {
       const blogData = await fetchBlogPost(slug);
-      html = blogData?.content || readBlogPostContentHtml(slug);
+      html = getBlogHtmlContent(blogData) || readBlogPostContentHtml(slug);
     }
 
     if (!html) {
