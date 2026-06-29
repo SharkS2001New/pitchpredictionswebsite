@@ -976,10 +976,10 @@ function MetaContent(){
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
 
     } else if (current_url.includes("tips/betnumbers-predictions")) { 
-        title = "Betnumbers Predictions and Bet Numbers Tips";  
-        meta_desc_content = "Get BetNumbers football predictions, trusted betting tips, and jackpot picks for today’s matches. Accurate insights to guide your winning strategy.";  
-        meta_keywords = "BetNumbers, BetNumbers tips, BetNumbers predictions today, BetNumbers free tips, BetNumbers football predictions, BetNumbers betting tips, jackpot picks";  
-        page_title = "BetNumbers Free Tips and Daily Football Predictions";   
+        title = "Betnumbers Predictions and Daily Football Tips";  
+        meta_desc_content = "Get free Betnumbers-style football predictions for 1X2, BTTS, and jackpots. Data-driven daily tips to guide your research — never guaranteed wins.";  
+        meta_keywords = "BetNumbers, BetNumbers tips, BetNumbers predictions today, BetNumbers free tips, BetNumbers football predictions, daily football tips, jackpot picks";  
+        page_title = "Betnumbers Predictions – Free Daily Football Tips";   
             
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/correct-predict")) { 
@@ -1005,10 +1005,10 @@ function MetaContent(){
 
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/free-vip-tips-today")) { 
-        title = "Free VIP Tips Today and 100% Accurate Football Predictions";  
-        meta_desc_content = "Get free VIP tips today with 100% accurate football predictions and expert insights. Trusted analysis to help you make smarter betting choices.";  
-        meta_keywords = "free vip tips today, 100 accurate free vip tips today, football predictions today, accurate betting tips, daily football insights";  
-        page_title = "Free VIP Tips Today with 100% Predictions";      
+        title = "Free VIP Tips Today – Expert Football Predictions & Analysis";  
+        meta_desc_content = "Get free VIP tips today with data-driven football predictions for 1X2, BTTS, and jackpots. Expert analysis to guide your research — tips never guarantee results.";  
+        meta_keywords = "free vip tips today, vip football predictions, football predictions today, daily betting tips, free football tips";  
+        page_title = "Free VIP Tips Today – Expert Football Predictions";      
     
         meta_content_array.push(title, meta_desc_content, meta_keywords, page_title);
     } else if (current_url.includes("tips/liobet")) { 

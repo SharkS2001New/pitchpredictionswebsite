@@ -2,50 +2,65 @@ export default function BetnumbersPredictionContent() {
   return (
     <section className="seo-content">
 
-      <h2>Betnumbers Prediction for Today</h2>
+      <h2>Betnumbers Predictions for Today</h2>
       <p>
-        Betnumbers predictions are free today at Pitch Predictions, your trusted betting companion. Access Betnumbers predictions for today&apos;s football matches, including Double Chance, 1X2, Over/Under 2.5, and live scores.
-        Pitch Predictions updates Betnumbers predictions ahead of time, giving you enough time to analyze. Building a weekend coupon? See our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a>.
+        Pitch Predictions offers a free alternative to Betnumbers-style football tips — daily picks for 1X2, Double Chance, Over/Under 2.5, BTTS, and correct score markets. 
+        Selections are built from team form, head-to-head records, and league context, updated before kickoff. 
+        Tips guide your research; they never guarantee wins. Building a weekend coupon? See our <a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot predictions</a>.
       </p>
 
-      <h3>Betnumbers Free Tips</h3>
+      <h3>Daily Betnumbers-Style Tips</h3>
       <p>
-        Betnumbers provides free betting tips for football games across multiple countries, with an estimated success rate of 65%. 
-        Follow Pitch Predictions for daily free Betnumbers tips. Our system updates predictions in real time, offering likely outcomes for every match or fixture. 
-        We provide reliable free betting tips for informed betting decisions.
+        Our analysts review fixtures across African, European, and American leagues each day. 
+        Every pick includes a confidence rating so you can focus on the strongest selections. 
+        For live both-teams-to-score angles, see today&apos;s <a href="/live-football-predictions/predictions-both-to-score">BTTS predictions</a>.
       </p>
 
-      <h3>Betnumbers GG Predictions Today</h3>
-      <p>
-        Get today&apos;s <a href="/live-football-predictions/predictions-both-to-score">Betnumbers GG predictions</a> and identify matches where both teams are likely to score. 
-        Pitch Predictions bases analysis on team performance, head-to-head records, and key match factors. 
-        Betnumbers GG Predictions Today helps bettors focus on high-scoring matches with accurate predictions.
-      </p>
+      <h3>Markets We Cover</h3>
+      <ul>
+        <li><strong>1X2:</strong> Home win, draw, or away win with confidence ratings</li>
+        <li><strong>Double Chance:</strong> Cover two outcomes — 1X, 12, or X2</li>
+        <li><strong>Over/Under 2.5 Goals:</strong> Goal-line picks from scoring averages</li>
+        <li><strong>BTTS (GG):</strong> Both teams to score, based on attack and defence records</li>
+        <li><strong>Correct Score:</strong> Higher-risk exact scoreline tips where data signals align</li>
+      </ul>
 
-      <h3>Betnumbers Jackpot Predictions</h3>
+      <h3>Jackpot Predictions</h3>
       <p>
-        Boost your success rate with Pitch Predictions&apos; Betnumbers jackpot predictions. Our coverage includes:
+        For multi-match coupons, we publish free jackpot tips across major African bookmakers:
       </p>
       <ul>
-        <li><a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot Prediction</a>, worth approximately 364,851,665 KES. Stake only 99 KES to participate.</li>
-        <li><a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot Prediction</a> with 13 pre-selected games.</li>
-        <li><a href="/jackpot-predictions/betika-midweek-jackpot-predictions">Betika Midweek Jackpot Predictions</a></li>
-        <li><a href="/jackpot-predictions/mozzart-super-grand-jackpot-predictions">Mozzart Super Grand Jackpot Prediction</a>, requiring 17–19 correct predictions.</li>
+        <li><a href="/jackpot-predictions/sportpesa-mega-jackpot-predictions">Sportpesa Mega Jackpot</a> — 17-game weekend coupon with 1X2 and Double Chance options</li>
+        <li><a href="/jackpot-predictions/sportpesa-midweek-jackpot-predictions">Sportpesa Midweek Jackpot</a> — 13 pre-selected midweek games</li>
+        <li><a href="/jackpot-predictions/betika-midweek-jackpot-predictions">Betika Midweek Jackpot</a></li>
+        <li><a href="/jackpot-predictions/mozzart-super-grand-jackpot-predictions">Mozzart Super Grand Jackpot</a> — 17–19 correct predictions required</li>
       </ul>
-      <p>Our expert analysis ensures you have a higher chance of hitting the jackpot and winning grand prizes.</p>
-
-      <h3>Betnumbers Mega Jackpot Prediction</h3>
       <p>
-        With Sportpesa Mega Jackpot Prediction, you can win jackpot bonuses by predicting multiple outcomes correctly. 
-        Players can make 13–17 predictions; more predictions increase potential winnings. 
-        Pitch Predictions provides well-analyzed Betnumbers Mega Jackpot predictions you can rely on.
+        Jackpot prizes change weekly. Treat coupon play as high-risk entertainment — even well-researched picks lose frequently.
       </p>
 
-      <h3>Betnumbers Correct Score</h3>
+      <h3>How We Build Today&apos;s Picks</h3>
+      <ul>
+        <li>Recent form over the last 5–10 fixtures for both teams</li>
+        <li>Head-to-head history and home vs away splits</li>
+        <li>Confirmed injuries, suspensions, and squad news</li>
+        <li>League standings and motivation context</li>
+      </ul>
+
+      <h3>Safe &amp; Responsible Betting</h3>
       <p>
-        Pitch Predictions offers Betnumbers correct score predictions for users seeking high-odds results. 
-        Our tips increase your chances of betting accurately on match scores. 
-        Trust Pitch Predictions for precise and reliable correct soccer score predictions.
+        Betting carries real financial risk. Before using any tips:
+      </p>
+      <ul>
+        <li>Only stake money you can afford to lose completely</li>
+        <li>Verify team news and line-ups before kickoff</li>
+        <li>Set a budget and never chase losses</li>
+        <li>Never bet when emotional or under financial pressure</li>
+        <li>Access local gambling support if betting becomes a problem</li>
+      </ul>
+
+      <p>
+        Use today&apos;s Betnumbers-style predictions to research smarter — not as a shortcut to guaranteed profit.
       </p>
 
     </section>

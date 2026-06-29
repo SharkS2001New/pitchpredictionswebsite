@@ -1,4 +1,4 @@
-// pages/competitor-predictions.js
+// pages/tips/free-vip-tips-today.js
 import React, { useState, useEffect } from "react";
 import { Adsense } from "@/components/shared/client-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
@@ -12,7 +12,7 @@ import path from 'path';
 import FreeVipTipsTodayContent from "../../components/seo-content/tips/free-vip-tips-today";
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
-function CompetitorPredictions({ 
+function FreeVipTipsToday({ 
     initialData, 
     endpointStatus, 
     error,
@@ -113,7 +113,7 @@ function CompetitorPredictions({
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                <DataNotFoundPage props={`No free VIP tips available for ${formatDisplayDate(todaysDate)}`}/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -234,7 +234,7 @@ export async function getServerSideProps() {
                 };
             } else {
                 endpointStatus = "error";
-                error = data.message || "Failed to load competitor predictions";
+                error = data.message || "Failed to load free VIP tips";
             }
         }
 
@@ -291,4 +291,4 @@ export async function getServerSideProps() {
     };
 }
 
-export default CompetitorPredictions;
+export default FreeVipTipsToday;

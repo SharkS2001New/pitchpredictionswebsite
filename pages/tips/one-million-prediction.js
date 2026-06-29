@@ -1,4 +1,4 @@
-// pages/competitor-predictions.js
+// pages/tips/one-million-prediction.js
 import React, { useState, useEffect } from "react";
 import { Adsense } from "@/components/shared/client-adsense";
 import DataNotFoundPage from "../../components/includes/datanotfound";
@@ -12,7 +12,7 @@ import path from 'path';
 import OneMillionPredictionContent from "../../components/seo-content/tips/one-million-prediction";
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
 
-function CompetitorPredictions({ 
+function OneMillionPrediction({ 
     initialData, 
     endpointStatus, 
     error,
@@ -113,7 +113,7 @@ function CompetitorPredictions({
     if (renderPredictions.length === 0 && !loadingMore && !initialData) {
         return (
             <div className="sites-card">
-                <DataNotFoundPage props={`No competitor predictions available for ${formatDisplayDate(todaysDate)}`}/>
+                <DataNotFoundPage props={`No one million prediction tips available for ${formatDisplayDate(todaysDate)}`}/>
                 <br/>
                 <Adsense
                     client="ca-pub-5665711413000284"
@@ -232,7 +232,7 @@ export async function getServerSideProps() {
                 };
             } else {
                 endpointStatus = "error";
-                error = data.message || "Failed to load competitor predictions";
+                error = data.message || "Failed to load one million prediction tips";
             }
         }
 
@@ -289,4 +289,4 @@ export async function getServerSideProps() {
     };
 }
 
-export default CompetitorPredictions;
+export default OneMillionPrediction;
