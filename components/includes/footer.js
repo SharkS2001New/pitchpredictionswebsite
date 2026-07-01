@@ -66,6 +66,10 @@ const sponsors = [
   /* New text link, first added 28-06-2026, expires 28-07-2026  New Vietnamese partner*/
   { label: 'jalalive',                     url: 'https://www.xsbaltimore.com/'           },
   /* expires 28-07-2026 end */
+
+  /* New text link, first added 01-07-2026, expires 01-08-2026  New Vietnamese partner*/
+  { label: 'bgibola',                     url: 'https://bgibola88.io/'           },
+  /* expires 01-08-2026 end */
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
