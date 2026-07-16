@@ -78,6 +78,10 @@ const sponsors = [
   /* New text link, first added 12-07-2026, expires 12-08-2026  New partner from tafatips.com*/
   { label: 'socolive',                     url: 'https://socolive4.com/' },
   /* expires 12-08-2026 end */
+
+  /* New text link, first added 16-07-2026, expires 16-08-2026  New partner from tafatips.com*/
+  { label: 'bongdalu',                     url: 'https://bongdalu17.net/' },
+  /* expires 16-08-2026 end */
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
