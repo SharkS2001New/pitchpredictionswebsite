@@ -82,6 +82,10 @@ const sponsors = [
   /* New text link, first added 16-07-2026, expires 16-08-2026  New partner from tafatips.com*/
   { label: 'bongdalu',                     url: 'https://bongdalu17.net/' },
   /* expires 16-08-2026 end */
+
+  /* New text link, first added 18-07-2026, expires 18-08-2026  New partner from tafatips.com*/
+  { label: 'ทางเข้าFun8',                     url: 'https://www.fun888asia.com/' },
+  /* expires 18-08-2026 end */
 ];
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
