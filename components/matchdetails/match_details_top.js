@@ -1,7 +1,11 @@
 import React from 'react';
 import MatchOutcomesHome from './match_outcomes_home_drawings';
 import MatchOutcomesAway from './match_outcomes_away_drawings';
-import DateTimeToUsersTimezone from '../functions/DatetimeToUsersTimezone';
+import {
+  formatFixtureDateTime,
+  formatFixtureTime,
+  resolveFixtureDateTime,
+} from '../functions/DatetimeToUsersTimezone';
 import DetermineLiveScores from '../functions/determine_live_scores';
 
 function MatchDetailsTop(props) {    
@@ -90,7 +94,7 @@ function MatchDetailsTop(props) {
 
     const matchStatus = match.status || "";
     const statusLong = match.status_long || "";
-    const matchDatetime = match.datetime || "";
+    const matchDatetime = resolveFixtureDateTime(fixture);
     const venue = match.venue || "";
 
     return (
@@ -123,7 +127,7 @@ function MatchDetailsTop(props) {
                 <div className="col-3"></div>
                 <div className="col-6 text-center">
                     <span className="text-center matchdetailsTextSize" style={{fontFamily: "Arial", fontWeight: "bold"}}>
-                        {DateTimeToUsersTimezone(matchDatetime)}
+                        {formatFixtureDateTime(matchDatetime)}
                     </span>
                 </div>  
                 <div className="col-3"></div>          
@@ -162,7 +166,7 @@ function MatchDetailsTop(props) {
                     <span className="fixturesTextSize" style={{color:"#B11111", fontWeight:"bold"}}>
                         {matchStatus === "PEN" || matchStatus === "P" ? "AFTER PENALTIES" : 
                          matchStatus === "AET" ? "AFTER EXTRA TIME" : 
-                         matchStatus === "NS" ? DateTimeToUsersTimezone(matchDatetime).split(' ')[1] :  
+                         matchStatus === "NS" ? formatFixtureTime(matchDatetime) :
                          statusLong}
                     </span>
                     <br/>

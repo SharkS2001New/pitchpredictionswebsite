@@ -1,6 +1,6 @@
 /**
  * Normalize API date strings into a Date instance.
- * Handles DD/MM/YYYY, MySQL "YYYY-MM-DD HH:mm:ss", and ISO strings.
+ * Handles DD/MM/YYYY, DD-MM-YYYY, MySQL "YYYY-MM-DD HH:mm:ss", and ISO strings.
  */
 export function normalizeDateInput(dateValue) {
   if (dateValue == null || dateValue === "") return null;
@@ -16,6 +16,22 @@ export function normalizeDateInput(dateValue) {
   }
 
   let dateInput = String(dateValue).trim();
+  const lowered = dateInput.toLowerCase();
+
+  if (
+    lowered === "null" ||
+    lowered === "undefined" ||
+    lowered === "invalid date" ||
+    lowered === "n/a" ||
+    lowered === "tbd" ||
+    dateInput === "-"
+  ) {
+    return null;
+  }
+
+  if (/^0000-00-00/.test(dateInput)) {
+    return null;
+  }
 
   if (/^\d{2}\/\d{2}\/\d{4}/.test(dateInput)) {
     const [datePart, timePart = "00:00"] = dateInput.split(" ");
@@ -23,6 +39,14 @@ export function normalizeDateInput(dateValue) {
     dateInput = `${year}-${month}-${day}T${
       timePart.length === 5 ? `${timePart}:00` : timePart
     }`;
+  } else if (/^\d{2}-\d{2}-\d{4}/.test(dateInput)) {
+    const [datePart, timePart = "00:00"] = dateInput.split(" ");
+    const [day, month, year] = datePart.split("-");
+    dateInput = `${year}-${month}-${day}T${
+      timePart.length === 5 ? `${timePart}:00` : timePart
+    }`;
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+    dateInput = `${dateInput}T00:00:00`;
   } else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(dateInput)) {
     dateInput = dateInput.replace(" ", "T");
     if (/T\d{2}:\d{2}$/.test(dateInput)) {
@@ -34,20 +58,58 @@ export function normalizeDateInput(dateValue) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-/** Pick the best kickoff datetime field from fixture / jackpot game payloads. */
+/** Pick the first parseable kickoff datetime from fixture / jackpot payloads. */
 export function resolveFixtureDateTime(fixture) {
   if (!fixture) return null;
 
+  const candidates = [
+    fixture.match?.datetime,
+    fixture.match?.unformatted_date,
+    fixture.match?.unformated_date,
+    fixture.datetime,
+    fixture.date,
+    fixture.unformatted_date,
+    fixture.unformatedDate,
+    fixture.unformated_date,
+    fixture.fixture_date,
+    fixture.match_date,
+    fixture.start_datetime_formatted,
+  ];
+
+  for (const candidate of candidates) {
+    if (candidate == null || candidate === "") continue;
+    if (normalizeDateInput(candidate)) return candidate;
+  }
+
+  return null;
+}
+
+export function formatFixtureDateTime(dateValue) {
+  if (!dateValue) return "Date not available";
+
+  const formatted = DateTimeToUsersTimezone(dateValue);
+  if (isInvalidFormattedDate(formatted)) return formatted;
+  return formatted;
+}
+
+export function formatFixtureDate(dateValue) {
+  const formatted = formatFixtureDateTime(dateValue);
+  if (isInvalidFormattedDate(formatted)) return formatted;
+  return formatted.split(" ")[0] || formatted;
+}
+
+export function formatFixtureTime(dateValue) {
+  const formatted = formatFixtureDateTime(dateValue);
+  if (isInvalidFormattedDate(formatted)) return "-";
+  const parts = formatted.split(" ");
+  return parts.length > 1 ? parts[1] : "-";
+}
+
+function isInvalidFormattedDate(value) {
   return (
-    fixture.match?.datetime ||
-    fixture.match?.unformatted_date ||
-    fixture.match?.unformated_date ||
-    fixture.datetime ||
-    fixture.date ||
-    fixture.unformatted_date ||
-    fixture.unformatedDate ||
-    fixture.unformated_date ||
-    null
+    value === "Invalid date" ||
+    value === "Date not available" ||
+    value === "Date error"
   );
 }
 

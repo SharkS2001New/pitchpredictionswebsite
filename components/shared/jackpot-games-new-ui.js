@@ -1,6 +1,7 @@
 import React from 'react';
 import { Adsense } from "@/components/shared/client-adsense";
-import DateTimeToUsersTimezone, {
+import {
+  formatFixtureDateTime,
   resolveFixtureDateTime,
 } from '../functions/DatetimeToUsersTimezone';
 import { buildMatchUrlSlug } from '../functions/match_details_helpers';
@@ -215,7 +216,7 @@ function JackpotGamesBootstrap({ gamesData = [], voteStats = {}, selectedVotes =
                   
                   <div className="d-flex align-items-center gap-2 flex-wrap">
                     <small className="text-muted fw-bold">
-                      {DateTimeToUsersTimezone(resolveFixtureDateTime(game))}
+                      {formatFixtureDateTime(resolveFixtureDateTime(game))}
                     </small>
                     {getStatusBadge(game)}
                   </div>

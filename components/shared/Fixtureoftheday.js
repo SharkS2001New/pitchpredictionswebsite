@@ -1,9 +1,10 @@
 "use client";
 
 import React, { memo, useEffect, useState } from "react";
-import DateTimeToUsersTimezone, {
+import {
+  formatFixtureDateTime,
   resolveFixtureDateTime,
-} from "../functions/DatetimeToUsersTimezone";
+} from '../functions/DatetimeToUsersTimezone';
 import ProbabilityResults from "../functions/determine_probability_results";
 import CheckiffixtureIsSelected from "../functions/CheckIfFixtureisSelected";
 import getFormattedCurrentDate from "../functions/GetTodaysDate";
@@ -194,9 +195,7 @@ function FixtureOfTheDay() {
       );
     }
 
-    const myNewDateString = DateTimeToUsersTimezone(
-      resolveFixtureDateTime(gamesfixtures)
-    );
+    const myNewDateString = formatFixtureDateTime(resolveFixtureDateTime(gamesfixtures));
 
     return (
       <div className="row" style={{ backgroundColor: "white", cursor: "auto" }}>

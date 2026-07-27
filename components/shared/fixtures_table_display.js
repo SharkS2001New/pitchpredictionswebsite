@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import DateTimeToUsersTimezone, {
+import {
+  formatFixtureDate,
+  formatFixtureDateTime,
+  formatFixtureTime,
   resolveFixtureDateTime,
 } from "../functions/DatetimeToUsersTimezone";
 import PopupProbabilityTooltip from "./popup-probability";
@@ -24,8 +27,8 @@ function FixturesTableDisplay({ props: fixtureProps, marketRoute }) {
 
     // Convert date time to users timezone
     const matchDate = resolveFixtureDateTime(game);
-    const myNewDateString = DateTimeToUsersTimezone(matchDate).split(' ')[0];
-    const myFullNewDateString = DateTimeToUsersTimezone(matchDate);
+    const myNewDateString = formatFixtureDate(matchDate);
+    const myFullNewDateString = formatFixtureDateTime(matchDate);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {

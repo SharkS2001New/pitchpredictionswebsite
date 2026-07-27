@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import DateTimeToUsersTimezone from "../functions/DatetimeToUsersTimezone";
+import {
+  formatFixtureDate,
+  resolveFixtureDateTime,
+} from "../functions/DatetimeToUsersTimezone";
 
 function getTip(match) {
   const { percent_pred_home, percent_pred_draw, percent_pred_away } = match;
@@ -79,7 +82,7 @@ function PopularTipsContent() {
             <div key={match.fixture_id || match.id || index} className="match-card">
               <div className="date-bar">
                 <span style={{ color: "#212830" }}>
-                  Date: {DateTimeToUsersTimezone(match.date)}
+                  Date: {formatFixtureDate(resolveFixtureDateTime(match))}
                 </span>
               </div>
               <div className="match-header">

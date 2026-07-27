@@ -1,5 +1,8 @@
 import React from "react";
-import DateTimeToUsersTimezone from "./DatetimeToUsersTimezone";
+import {
+  formatFixtureTime,
+  resolveFixtureDateTime,
+} from "./DatetimeToUsersTimezone";
 
 function DetermineLiveScores(game_details, isMobile) {
     var livescores = "";
@@ -8,14 +11,14 @@ function DetermineLiveScores(game_details, isMobile) {
     var live_scores_data_array = []; 
 
     // Get data from new API structure
-    const matchDateTime = game_details.match?.datetime || game_details.date;
+    const matchDateTime = resolveFixtureDateTime(game_details);
     const statusShort = game_details.match?.status || game_details.status_short;
     const statusLong = game_details.match?.status_long || game_details.status_long;
     const elapsed = game_details.match?.elapsed || game_details.status_elapased;
     const homeScore = game_details.score?.home ?? game_details.goals_home;
     const awayScore = game_details.score?.away ?? game_details.goals_away;
 
-    const myNewTimeZoneDate = DateTimeToUsersTimezone(matchDateTime).split(' ')[1];
+    const myNewTimeZoneDate = formatFixtureTime(matchDateTime);
   
     if (["NS", "CANC", "TBD"].includes(statusShort)) {
       if(statusShort === "NS"){
