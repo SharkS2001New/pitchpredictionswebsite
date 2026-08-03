@@ -72,7 +72,7 @@ const sponsors = [
   /* expires 01-08-2026 end */
 
   /* New text link, first added 05-07-2026, expires 05-08-2026  New Vietnamese partner from bettingtips.co.ke*/
-  { label: 'https://79sodo.foundation/',                     url: 'https://79sodo.foundation/' },
+  { label: '79sodo',                     url: 'https://79sodo.foundation/' },
   /* expires 05-08-2026 end */
 
   /* New text link, first added 12-07-2026, expires 12-08-2026  New partner from tafatips.com*/
