@@ -1,7 +1,5 @@
-import {
-  getBlogPostContentInfo,
-  readBlogPostContentHtml,
-} from "../../../components/functions/blog_list_cache";
+import { readBlogPostContentHtml } from "../../../components/functions/blog_list_cache";
+import { BLOG_HTML_CACHE_CONTROL } from "../../../lib/blog/blog-content-config";
 import { fetchBlogPost } from "../../../lib/blog/fetch-blog-post";
 import { getBlogHtmlContent } from "../../../lib/blog/blog-utils";
 
@@ -17,6 +15,7 @@ export default async function handler(req, res) {
 
   try {
     let html = readBlogPostContentHtml(slug);
+    const fromDisk = Boolean(html);
 
     if (!html) {
       const blogData = await fetchBlogPost(slug);
@@ -28,7 +27,10 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "no-store");
+    res.setHeader(
+      "Cache-Control",
+      fromDisk ? BLOG_HTML_CACHE_CONTROL : "private, max-age=60"
+    );
     return res.status(200).send(html);
   } catch (error) {
     console.error("Error in blog-content API:", error);

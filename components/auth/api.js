@@ -11,6 +11,7 @@ api.interceptors.request.use((config) => {
   if (cookies.token) {
     config.headers.Authorization = `Bearer ${cookies.token}`;
   }
+  config.headers['X-Site-Key'] = 'pitch';
   return config;
 });
 

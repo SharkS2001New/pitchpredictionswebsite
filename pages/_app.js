@@ -6,6 +6,7 @@ import '../styles/new-styles.css';
 import '../styles/matchdetails.css';
 import "../styles/PopularTips.css";
 import "../styles/auth-css.css";
+import "../styles/customer-pay.css";
 import "../styles/blog.css"; 
 import Head from 'next/head';
 import MetaContent from  '../components/functions/determine_meta_content_and_titles'

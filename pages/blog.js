@@ -448,23 +448,33 @@ export async function getServerSideProps({ query }) {
   const category = query.category || "ALL";
   const { cacheDir, cachePath, legacyCachePath } = getCachePath(page, category);
 
+  const listPropsFromCache = (cached) => ({
+    props: {
+      initialBlogs: cached.payload.data || [],
+      initialPageInfo: {
+        currentPage: cached.payload.current_page || 1,
+        lastPage: cached.payload.last_page || 1,
+        total: cached.payload.total || 0,
+      },
+      initialPage: page,
+      initialCategory: category,
+      error: null,
+    },
+  });
+
   try {
     const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
 
-    if (cached?.isFresh) {
-      return {
-        props: {
-          initialBlogs: cached.payload.data || [],
-          initialPageInfo: {
-            currentPage: cached.payload.current_page || 1,
-            lastPage: cached.payload.last_page || 1,
-            total: cached.payload.total || 0,
-          },
-          initialPage: page,
-          initialCategory: category,
-          error: null,
-        },
-      };
+    // Serve any disk cache immediately; refresh stale pages in the background.
+    if (cached?.payload) {
+      if (!cached.isFresh) {
+        void fetchBlogList(page, category)
+          .then((payload) => writeCache(cacheDir, cachePath, payload))
+          .catch((error) => {
+            console.error("Background blog list refresh failed:", error.message);
+          });
+      }
+      return listPropsFromCache(cached);
     }
 
     const payload = await fetchBlogList(page, category);
@@ -488,19 +498,7 @@ export async function getServerSideProps({ query }) {
 
     const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
     if (cached?.payload) {
-      return {
-        props: {
-          initialBlogs: cached.payload.data || [],
-          initialPageInfo: {
-            currentPage: cached.payload.current_page || 1,
-            lastPage: cached.payload.last_page || 1,
-            total: cached.payload.total || 0,
-          },
-          initialPage: page,
-          initialCategory: category,
-          error: null,
-        },
-      };
+      return listPropsFromCache(cached);
     }
 
     return {

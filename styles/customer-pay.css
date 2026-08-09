@@ -1,0 +1,303 @@
+/* Customer VIP plans + M-Pesa checkout — Pitch Predictions & Free Winning Tips */
+
+.pp-pay {
+  --pp-pay-bg: #f4f7f5;
+  --pp-pay-ink: #122018;
+  --pp-pay-muted: #5b6b62;
+  --pp-pay-card: #ffffff;
+  --pp-pay-accent: #1a7a4c;
+  --pp-pay-accent-soft: rgba(26, 122, 76, 0.1);
+  --pp-pay-border: rgba(18, 32, 24, 0.08);
+  --pp-pay-danger: #b42318;
+  --pp-pay-radius: 18px;
+  --pp-pay-shadow: 0 10px 30px rgba(18, 32, 24, 0.08);
+  color: var(--pp-pay-ink);
+}
+
+.pp-pay[data-site="freetips"] {
+  --pp-pay-accent: #0d8a4a;
+  --pp-pay-accent-soft: rgba(13, 138, 74, 0.12);
+}
+
+.pp-pay-shell {
+  max-width: 980px;
+  margin: 0 auto 3rem;
+  padding: 1rem 1rem 2.5rem;
+}
+
+.pp-pay-hero {
+  margin-bottom: 1.25rem;
+}
+
+.pp-pay-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pp-pay-accent);
+  margin-bottom: 0.35rem;
+}
+
+.pp-pay-title {
+  font-size: clamp(1.45rem, 3.5vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 0.35rem;
+}
+
+.pp-pay-subtitle {
+  margin: 0;
+  color: var(--pp-pay-muted);
+  font-size: 0.95rem;
+  max-width: 36rem;
+}
+
+.pp-pay-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .pp-pay-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pp-pay-card {
+  background: var(--pp-pay-card);
+  border: 1px solid var(--pp-pay-border);
+  border-radius: var(--pp-pay-radius);
+  box-shadow: var(--pp-pay-shadow);
+  padding: 1.25rem 1.2rem 1.35rem;
+}
+
+.pp-pay-card h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 0.85rem;
+}
+
+.pp-pay-plan-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: var(--pp-pay-accent-soft);
+  margin-bottom: 1rem;
+}
+
+.pp-pay-plan-chip strong {
+  font-size: 1.05rem;
+}
+
+.pp-pay-plan-chip span {
+  color: var(--pp-pay-muted);
+  font-size: 0.88rem;
+}
+
+.pp-pay-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.pp-pay-phone {
+  display: flex;
+  border: 1px solid var(--pp-pay-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.pp-pay-phone span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.85rem;
+  background: #f0f4f1;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border-right: 1px solid var(--pp-pay-border);
+}
+
+.pp-pay-phone input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  padding: 0.75rem 0.85rem;
+  font-size: 1rem;
+  min-width: 0;
+}
+
+.pp-pay-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  margin-top: 0.85rem;
+  border: 0;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: #fff;
+  background: var(--pp-pay-accent);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.pp-pay-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.pp-pay-btn:not(:disabled):active {
+  transform: scale(0.99);
+}
+
+.pp-pay-alert {
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9rem;
+  margin: 0.75rem 0 0;
+}
+
+.pp-pay-alert.ok {
+  background: rgba(26, 122, 76, 0.12);
+  color: #145c39;
+}
+
+.pp-pay-alert.err {
+  background: rgba(180, 35, 24, 0.1);
+  color: var(--pp-pay-danger);
+}
+
+.pp-pay-status {
+  margin-top: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+  background: #f7faf8;
+  border: 1px dashed rgba(26, 122, 76, 0.35);
+  font-size: 0.9rem;
+}
+
+.pp-pay-steps {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--pp-pay-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.pp-pay-steps li + li {
+  margin-top: 0.35rem;
+}
+
+.pp-pay-steps strong {
+  color: var(--pp-pay-ink);
+}
+
+.pp-pay-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  background: #128c7e;
+  color: #fff !important;
+  text-decoration: none !important;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.pp-pay-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  color: var(--pp-pay-accent);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* Plans store */
+.pp-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+@media (max-width: 575.98px) {
+  .pp-plans-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pp-plan-card {
+  background: var(--pp-pay-card);
+  border: 1px solid var(--pp-pay-border);
+  border-radius: 16px;
+  padding: 1.1rem 1rem 1.15rem;
+  box-shadow: var(--pp-pay-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 100%;
+}
+
+.pp-plan-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.pp-plan-price {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--pp-pay-accent);
+}
+
+.pp-plan-meta {
+  margin: 0;
+  color: var(--pp-pay-muted);
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.pp-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.pp-plan-actions .pp-pay-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.88rem;
+}
+
+.pp-plan-actions .pp-pay-btn.ghost {
+  background: transparent;
+  color: var(--pp-pay-accent);
+  border: 1px solid rgba(26, 122, 76, 0.35);
+}
+
+.pp-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 1.25rem 0 0.75rem;
+}

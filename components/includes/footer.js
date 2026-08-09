@@ -1,85 +1,37 @@
 'use client';
 import Script from "next/script";
-
-const sponsors = [
-  /* Renewed every three months, first added 16-05-2026, expires 16-08-2026 From Blessed Emmy */
-  { label: 'Socolive TV',                      url: 'https://www.ericbauman.com/'          },
-
-  /* Renewed every three months, first added 24-05-2026, expires 24-08-2026  From Blessed Emmy*/
-  { label: 'Jalalive Tv',                      url: 'https://bsidefilm.com/'               },
-
-
-  /* Renewed every month on 05, first added 05-06-2026, expires 05-07-2026 — Vietnamese partner */
-  { label: 'nhà cái vsbet',                   url: 'https://vsbet.cc/'                    },
-  { label: 'https://vsbet.br.com/',            url: 'https://vsbet.br.com/'                },
-  { label: 'vsbet',                            url: 'https://vsbets.co.com/'               },
-  { label: 'vs bet',                           url: 'https://vaboose.cn.com/'              },
-  { label: 'socolive',                         url: 'https://socolivettbd.net/'            },
-  { label: '90phut',                           url: 'https://90phutttbd.org/'              },
-  { label: 'xoilac',                           url: 'https://lytuong.net/'                 },
-  { label: 'https://colatv48.live/',           url: 'https://colatv48.live/'               },
-  { label: 'https://nhacaiuytin.guru/',        url: 'https://nhacaiuytin.guru/'            },
-  { label: 'xoilac',                           url: 'https://xoilactvv.com/'               },
-  { label: 'xem bong da xoilac',               url: 'https://xoilactvv.org/'               },
-  { label: 'xem bong da xoilac',               url: 'https://xoilactvv.online/'            },
-  { label: 'xoilac tv',                        url: 'https://xoilactvv.co/'                },
-  { label: 'xem bóng đá xoilac',              url: 'https://xoilactvv.football/'          },
-  { label: 'cà khịa tv',                      url: 'https://cakhiatvv.live/'              },
-  { label: 'trực tiếp bóng đá hôm nay',        url: 'https://cakhiatvv.online/'            },
-  { label: 'cakhiatv trực tiếp bóng đá',       url: 'https://cakhiatvv.ink/'               },
-  { label: 'https://90phuttv.in.net/',         url: 'https://90phuttv.in.net/'             },
-  { label: 'https://vsbet.co/',                url: 'https://vsbet.co/'                    },
-  { label: 'bóng đá trực tiếp',               url: 'https://90phuttv.futbol/'             },
-  { label: '90phut tv',                        url: 'https://90phuttv.bid/'                },
-  { label: 'xem bóng đá trực tiếp',           url: 'https://xembongda.ai/'               },
-  { label: 'xem trực tiếp bóng đá',           url: 'https://xembongda.co.com/'           },
-  { label: 'xem bóng đá trực tuyến',          url: 'https://xembongda.com.co/'           },
-  { label: 'xem bóng đá trực tiếp',           url: 'https://tructiepbongda.fans/'         },
-  { label: 'trực tiếp bóng đá',               url: 'https://tructiepbongda.fyi/'          },
-  { label: 'xem trực tiếp bóng đá',           url: 'https://tructiepbongda.mobile/'       },
-  { label: 'cakhiatv',                        url: 'https://xemcakhia.net/'               },
-  { label: 'xoilac bóng đá',                  url: 'https://xoilac7.cc/'                  },
-  { label: 'xoilac tv',                       url: 'https://xoilactvv-live.com/'          },
-  /* expires 05-07-2026 end */
-
-  /* New text link, expires 09-06-2026 From Scometix Africe/bettingtips.co.ke */
-  { label: 'Loto188',                         url: 'https://aloto188.com/'                },
-
-  /* New text link, Paid for 3 months, first added 14-06-2026, expires 14-09-2026 From Blessed Emmy */
-  { label: 'Tigoals livescore',                        url: 'https://tigoals.io/'          },
-
-  /* New text link, first added 20-06-2026, expires 20-07-2026 From Blessed Emmy*/
-  { label: 'keo nha cai',                     url: 'https://rva.us.com/'           },
-  /* expires 20-07-2026 end */
-
-  /* New text link, first added 28-06-2026, expires 28-07-2026  New Vietnamese partner*/
-  { label: 'jalalive',                     url: 'https://www.xsbaltimore.com/'           },
-  /* expires 28-07-2026 end */
-
-  /* New text link, first added 01-07-2026, expires 01-08-2026  New Vietnamese partner*/
-  { label: 'bgibola',                     url: 'https://bgibola88.io/'           },
-  /* expires 01-08-2026 end */
-
-  /* New text link, first added 05-07-2026, expires 05-08-2026  New Vietnamese partner from bettingtips.co.ke*/
-  { label: '79sodo',                     url: 'https://79sodo.foundation/' },
-  /* expires 05-08-2026 end */
-
-  /* New text link, first added 12-07-2026, expires 12-08-2026  New partner from tafatips.com*/
-  { label: 'socolive',                     url: 'https://socolive4.com/' },
-  /* expires 12-08-2026 end */
-
-  /* New text link, first added 16-07-2026, expires 16-08-2026  New partner from tafatips.com*/
-  { label: 'bongdalu',                     url: 'https://bongdalu17.net/' },
-  /* expires 16-08-2026 end */
-
-  /* New text link, first added 18-07-2026, expires 18-08-2026  New partner from tafatips.com*/
-  { label: 'ทางเข้าFun8',                     url: 'https://www.fun888asia.com/' },
-  /* expires 18-08-2026 end */
-];
+import { useEffect, useState } from "react";
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
 
 function SponsorLinks() {
+  const [sponsors, setSponsors] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/site-content/footer-sponsors", {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const links = Array.isArray(json?.links) ? json.links : [];
+        if (!cancelled) setSponsors(links);
+      } catch {
+        // Keep footer usable without sponsors if the file/API is unavailable.
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!sponsors.length) {
+    return null;
+  }
+
   return (
     <div
       className="footer-sponsor-links"
@@ -113,10 +65,10 @@ function SponsorLinks() {
       >
         {sponsors.map((sponsor, index) => (
           <a
-            key={`${sponsor.url}-${index}`}
+            key={`${sponsor.id || sponsor.url}-${index}`}
             href={sponsor.url}
             target="_blank"
-            // rel="sponsored noopener noreferrer"
+            rel="noopener noreferrer"
             style={{
               color: LINK_COLOR,
               fontSize: "14px",

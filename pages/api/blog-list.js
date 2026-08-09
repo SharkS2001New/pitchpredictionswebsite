@@ -3,8 +3,16 @@ import {
   getCachePath,
   readTrimmedBlogListCache,
   writeCache,
-  trimBlogListPayload,
 } from "../../components/functions/blog_list_cache";
+import { BLOG_LIST_CACHE_CONTROL } from "../../lib/blog/blog-content-config";
+
+function refreshListCacheInBackground(page, category, cacheDir, cachePath) {
+  void fetchBlogList(page, category)
+    .then((payload) => writeCache(cacheDir, cachePath, payload))
+    .catch((error) => {
+      console.error("Background blog-list refresh failed:", error.message);
+    });
+}
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -18,8 +26,12 @@ export default async function handler(req, res) {
   try {
     const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
 
-    if (cached?.isFresh) {
-      res.setHeader("Cache-Control", "private, max-age=60, must-revalidate");
+    if (cached?.payload) {
+      if (!cached.isFresh) {
+        refreshListCacheInBackground(page, category, cacheDir, cachePath);
+      }
+
+      res.setHeader("Cache-Control", BLOG_LIST_CACHE_CONTROL);
       return res.status(200).json({
         fromCache: true,
         generatedAt: cached.cache.generatedAt,
@@ -30,7 +42,7 @@ export default async function handler(req, res) {
     const payload = await fetchBlogList(page, category);
     const cacheData = writeCache(cacheDir, cachePath, payload);
 
-    res.setHeader("Cache-Control", "private, max-age=60, must-revalidate");
+    res.setHeader("Cache-Control", BLOG_LIST_CACHE_CONTROL);
     return res.status(200).json({
       fromCache: false,
       generatedAt: cacheData.generatedAt,

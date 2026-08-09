@@ -1,10 +1,12 @@
 const { default: api } = require("./api");
 
-async function fetchMultibetsGames(fixtureDate) {
+async function fetchMultibetsGames(fixtureDate, options = {}) {
   try {
     const response = await api.get("/fetch_daily_multibet_games", {
       params: {
         fixture_date: fixtureDate,
+        category: options.category || "vip",
+        site: options.site || "pitch",
       },
     });
 
