@@ -2,6 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import getPaymentsData from "../../../components/auth/fetch_payments_data";
 import AuthPreloader from "../includes/auth_preLoader";
 import axios from "axios";
+import {
+  userHasMonthly,
+  userHasPlan,
+  userHasWeeklyOrMonthly,
+} from "../../../components/auth/plan_entitlements";
 
 const PLAN_DETAILS = [
   {
@@ -38,6 +43,8 @@ const PremiumPlans = (props) => {
   const [loadingOnclick, setLoadingOnClick] = useState({});
   const [convertedAmounts, setConvertedAmounts] = useState({});
   const [currencySymbol, setCurrencySymbol] = useState("Ksh");
+  const cartEnabled = props.countryCode === "KE" && typeof props.onToggleCart === "function";
+  const selectedIds = props.selectedIds || [];
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -74,18 +81,8 @@ const PremiumPlans = (props) => {
     fetchExchangeRates();
   }, [props.countryCode]);
 
-  const isExpired = useMemo(() => {
-    if (!props.user?.subscription_end_date) return true;
-    const today = new Date();
-    const endDate = new Date(props.user.subscription_end_date);
-    today.setHours(0, 0, 0, 0);
-    endDate.setHours(0, 0, 0, 0);
-    return today > endDate;
-  }, [props.user]);
-
-  const activePlanId = props.user?.active_plan_id;
-  const hasMonthly = activePlanId === 59 && !isExpired;
-  const hasWeeklyOrMonthly = !isExpired && (activePlanId === 58 || activePlanId === 59);
+  const hasMonthly = userHasMonthly(props.user);
+  const hasWeeklyOrMonthly = userHasWeeklyOrMonthly(props.user);
 
   const visiblePlans = PLAN_DETAILS.filter((detail) => {
     if (hasMonthly) return detail.planTypeId === 59;
@@ -129,27 +126,56 @@ const PremiumPlans = (props) => {
   };
 
   return (
-    <section>
-      <h2 className="pp-section-title">Premium package plans</h2>
+    <section className="pp-plan-section">
+      <div className="pp-section-head">
+        <h2 className="pp-section-title">Premium multibets</h2>
+        <p className="pp-section-copy">Daily, weekly, and monthly VIP tip packages.</p>
+      </div>
       <div className="pp-plans-grid">
         {visiblePlans.map((detail) => {
-          const isActive = !isExpired && activePlanId === detail.planTypeId;
+          const isActive =
+            userHasPlan(props.user, detail.planTypeId) ||
+            (hasWeeklyOrMonthly && (detail.planTypeId === 58 || detail.planTypeId === 59));
           const price = convertedAmounts[detail.planType] || detail.amount;
+          const selected = selectedIds.includes(detail.planTypeId);
           return (
-            <article className="pp-plan-card" key={detail.planTypeId}>
+            <article
+              className={`pp-plan-card${selected ? " is-selected" : ""}${isActive ? " is-active" : ""}`}
+              key={detail.planTypeId}
+            >
+              <div className="pp-plan-card-top">
+                <span className="pp-plan-badge">Multibet</span>
+                {selected ? <span className="pp-plan-check" aria-hidden="true">✓</span> : null}
+              </div>
               <h4>{detail.duration}</h4>
               <p className="pp-plan-meta">{detail.blurb}</p>
               <p className="pp-plan-price">
                 {currencySymbol} {Number(price).toLocaleString("en-US")}
               </p>
               <div className="pp-plan-actions">
-                {isActive || (hasWeeklyOrMonthly && (detail.planTypeId === 58 || detail.planTypeId === 59)) ? (
+                {isActive ? (
                   <button
                     type="button"
                     className="pp-pay-btn ghost"
                     onClick={() => handleViewPremiumVip(detail.planType)}
                   >
                     View tips
+                  </button>
+                ) : cartEnabled ? (
+                  <button
+                    type="button"
+                    className={`pp-pay-btn${selected ? " selected" : ""}`}
+                    onClick={() =>
+                      props.onToggleCart({
+                        id: detail.planTypeId,
+                        label: detail.duration,
+                        amount: Number(detail.amount),
+                        kind: "multibet",
+                        planType: detail.planType,
+                      })
+                    }
+                  >
+                    {selected ? "Remove" : "Add to cart"}
                   </button>
                 ) : loadingOnclick[detail.planType] ? (
                   <AuthPreloader />

@@ -12,19 +12,41 @@ import {
 const SITE = "pitch";
 const BRAND = "Pitch Predictions";
 
+function parsePlanIdsFromQuery(query) {
+  const ids = [];
+  if (query?.plans) {
+    String(query.plans)
+      .split(",")
+      .forEach((part) => {
+        const n = Number(String(part).trim());
+        if (Number.isFinite(n) && n > 0) ids.push(n);
+      });
+  }
+  if (query?.plan) {
+    const n = Number(query.plan);
+    if (Number.isFinite(n) && n > 0) ids.push(n);
+  }
+  return [...new Set(ids)];
+}
+
 function PayKe() {
   const router = useRouter();
-  const { plan } = router.query;
   const pollAbort = useRef(false);
 
   const [user, setUser] = useState(null);
-  const [planRow, setPlanRow] = useState(null);
+  const [planRows, setPlanRows] = useState([]);
   const [payConfig, setPayConfig] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [statusNote, setStatusNote] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+
+  const planIds = useMemo(
+    () => (router.isReady ? parsePlanIdsFromQuery(router.query) : []),
+    [router.isReady, router.query]
+  );
 
   useEffect(() => {
     const cookies = nookies.get(null);
@@ -49,14 +71,37 @@ function PayKe() {
   }, [router]);
 
   useEffect(() => {
-    if (!plan) return;
-    getAutoUpdatesData(plan)
-      .then((response) => {
-        const row = Array.isArray(response?.data) ? response.data[0] : null;
-        setPlanRow(row || null);
+    if (!router.isReady) return;
+    if (!planIds.length) {
+      setLoadingPlans(false);
+      setPlanRows([]);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingPlans(true);
+    Promise.all(
+      planIds.map((id) =>
+        getAutoUpdatesData(id)
+          .then((response) => {
+            const row = Array.isArray(response?.data) ? response.data[0] : null;
+            return row || null;
+          })
+          .catch(() => null)
+      )
+    )
+      .then((rows) => {
+        if (cancelled) return;
+        setPlanRows(rows.filter(Boolean));
       })
-      .catch((err) => console.error("Error fetching plan:", err));
-  }, [plan]);
+      .finally(() => {
+        if (!cancelled) setLoadingPlans(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router.isReady, planIds.join(",")]);
 
   useEffect(() => {
     const onBeforeUnload = (event) => {
@@ -68,15 +113,30 @@ function PayKe() {
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [isProcessing]);
 
-  const amount = useMemo(() => Number(planRow?.amount || 0), [planRow]);
-  const planLabel = planRow?.description || planRow?.plan || "Premium tips";
+  const amount = useMemo(
+    () => planRows.reduce((sum, row) => sum + Number(row?.amount || 0), 0),
+    [planRows]
+  );
+
+  const planLabel = useMemo(() => {
+    if (!planRows.length) return "Premium tips";
+    if (planRows.length === 1) {
+      return planRows[0].description || planRows[0].plan || "Premium tips";
+    }
+    return `${planRows.length} plans`;
+  }, [planRows]);
+
   const till = payConfig?.till_number || "8881950";
   const wa = payConfig?.support_whatsapp || "254111509962";
 
   const whatsappHref = useMemo(() => {
-    const text = `Hello support, my name is ${user?.full_name || "N/A"} on ${BRAND}, email: ${user?.email || "N/A"}. I paid KES ${amount || "?"} for ${planLabel}. Kindly confirm.`;
+    const names = planRows
+      .map((row) => row.description || row.plan)
+      .filter(Boolean)
+      .join(", ");
+    const text = `Hello support, my name is ${user?.full_name || "N/A"} on ${BRAND}, email: ${user?.email || "N/A"}. I paid KES ${amount || "?"} for ${names || planLabel}. Kindly confirm.`;
     return `https://api.whatsapp.com/send/?phone=${wa}&text=${encodeURIComponent(text)}`;
-  }, [user, amount, planLabel, wa]);
+  }, [user, amount, planLabel, planRows, wa]);
 
   const refreshUserCookie = (freshUser) => {
     if (!freshUser) return;
@@ -89,7 +149,7 @@ function PayKe() {
     setSuccess("");
     setStatusNote("");
 
-    if (!planRow?.id) {
+    if (!planRows.length) {
       setError("Plan is still loading. Please wait a moment.");
       return;
     }
@@ -102,8 +162,9 @@ function PayKe() {
     pollAbort.current = false;
 
     try {
+      const ids = planRows.map((row) => Number(row.id)).filter((id) => id > 0);
       const stk = await startMpesaStkPush({
-        planId: planRow.id,
+        planIds: ids,
         phoneNumber: `0${phoneNumber}`,
         site: SITE,
       });
@@ -168,30 +229,48 @@ function PayKe() {
 
   return (
     <div className="pp-pay" data-site={SITE}>
+      <div className="pp-pay-atmosphere" aria-hidden="true" />
       <div className="pp-pay-shell">
         <a className="pp-pay-back" href="/auth/plan">
-          ← Change plan
+          ← Change plans
         </a>
         <div className="pp-pay-hero">
           <div className="pp-pay-kicker">{BRAND}</div>
           <h1 className="pp-pay-title">Pay with M-Pesa</h1>
           <p className="pp-pay-subtitle">
-            STK push goes straight to your phone. After you enter your PIN, tips unlock automatically.
+            One STK push for your full cart. Enter your PIN and jackpot + multibet unlock together.
           </p>
         </div>
 
         <div className="pp-pay-grid">
           <section className="pp-pay-card">
             <h2>Express checkout</h2>
-            <div className="pp-pay-plan-chip">
-              <div>
-                <strong>{planLabel}</strong>
-                <div>
-                  <span>{planRow ? `${planRow.period || 1} day access` : "Loading plan…"}</span>
+
+            {loadingPlans ? (
+              <p className="pp-plan-meta">Loading plans…</p>
+            ) : planRows.length === 0 ? (
+              <p className="pp-pay-alert err">No plans selected. Go back and add jackpot or multibet plans.</p>
+            ) : (
+              <>
+                <div className="pp-pay-cart-list">
+                  {planRows.map((row) => (
+                    <div className="pp-pay-cart-item" key={row.id}>
+                      <div>
+                        <strong>{row.description || row.plan}</strong>
+                        <div>
+                          <span>{row.period || 1} day access</span>
+                        </div>
+                      </div>
+                      <strong>KES {Number(row.amount || 0).toLocaleString("en-US")}</strong>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <strong>KES {amount ? amount.toLocaleString("en-US") : "—"}</strong>
-            </div>
+                <div className="pp-pay-cart-total">
+                  <span>Total</span>
+                  <span>KES {amount.toLocaleString("en-US")}</span>
+                </div>
+              </>
+            )}
 
             <form onSubmit={handlePayment} noValidate>
               <label className="pp-pay-label" htmlFor="mpesaPhone">

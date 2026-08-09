@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import getPaymentsData from "../../../components/auth/fetch_payments_data";
 import AuthPreloader from "../includes/auth_preLoader";
+import { userHasPlan, userHasWeeklyOrMonthly } from "../../../components/auth/plan_entitlements";
 
 const JACKPOTS = [
   { duration: "Sportpesa Mega Jackpot", amount: 110, planType: "jackpot", id: 61 },
@@ -11,28 +12,8 @@ const JACKPOTS = [
 
 const JackpotPlans = (props) => {
   const [loadingOnclick, setLoadingOnClick] = useState({});
-
-  const isJackpotActive = (planId) => {
-    if (!props.user) return false;
-    const { active_plan_id, subscription_start_date, subscription_end_date } = props.user;
-    const today = new Date().toLocaleDateString("en-CA");
-    return (
-      active_plan_id === planId &&
-      subscription_start_date <= today &&
-      subscription_end_date >= today
-    );
-  };
-
-  const isPremiumPlanActive = () => {
-    if (!props.user) return false;
-    const { active_plan_id, subscription_start_date, subscription_end_date } = props.user;
-    const today = new Date().toISOString().split("T")[0];
-    return (
-      (active_plan_id === 58 || active_plan_id === 59) &&
-      subscription_start_date <= today &&
-      subscription_end_date >= today
-    );
-  };
+  const cartEnabled = props.countryCode === "KE" && typeof props.onToggleCart === "function";
+  const selectedIds = props.selectedIds || [];
 
   const handleButtonClick = async (planType, key) => {
     setLoadingOnClick((prev) => ({ ...prev, [key]: true }));
@@ -53,13 +34,24 @@ const JackpotPlans = (props) => {
   };
 
   return (
-    <section>
-      <h2 className="pp-section-title">Premium jackpot plans</h2>
+    <section className="pp-plan-section">
+      <div className="pp-section-head">
+        <h2 className="pp-section-title">Premium jackpots</h2>
+        <p className="pp-section-copy">Add a jackpot ticket with your multibet in one checkout.</p>
+      </div>
       <div className="pp-plans-grid">
         {JACKPOTS.map((detail) => {
-          const active = isPremiumPlanActive() || isJackpotActive(detail.id);
+          const active = userHasPlan(props.user, detail.id) || userHasWeeklyOrMonthly(props.user);
+          const selected = selectedIds.includes(detail.id);
           return (
-            <article className="pp-plan-card" key={detail.id}>
+            <article
+              className={`pp-plan-card${selected ? " is-selected" : ""}${active ? " is-active" : ""}`}
+              key={detail.id}
+            >
+              <div className="pp-plan-card-top">
+                <span className="pp-plan-badge jackpot">Jackpot</span>
+                {selected ? <span className="pp-plan-check" aria-hidden="true">✓</span> : null}
+              </div>
               <h4>{detail.duration}</h4>
               <p className="pp-plan-meta">Kenya jackpot ticket access</p>
               <p className="pp-plan-price">Ksh {detail.amount.toLocaleString("en-US")}</p>
@@ -73,6 +65,22 @@ const JackpotPlans = (props) => {
                     }}
                   >
                     View jackpot
+                  </button>
+                ) : cartEnabled ? (
+                  <button
+                    type="button"
+                    className={`pp-pay-btn${selected ? " selected" : ""}`}
+                    onClick={() =>
+                      props.onToggleCart({
+                        id: detail.id,
+                        label: detail.duration,
+                        amount: Number(detail.amount),
+                        kind: "jackpot",
+                        planType: detail.planType,
+                      })
+                    }
+                  >
+                    {selected ? "Remove" : "Add to cart"}
                   </button>
                 ) : loadingOnclick[detail.planType] ? (
                   <AuthPreloader />

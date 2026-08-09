@@ -209,7 +209,7 @@ function App({ Component, pageProps }) {
                     {/**The page title */}
                     {!isAuthPage && 
                     meta_content_data[3] != null ? 
-                    <div className="col-sm-12 text-center text-nowrap sites-card mb-1"  style={{backgroundColor:"#eef7ff",fontWeight:"bold" }}>
+                    <div className="col-sm-12 text-center sites-card mb-1 page-title-card"  style={{backgroundColor:"#eef7ff",fontWeight:"bold" }}>
                         <h1 className="h1headerTitle mb-0">{meta_content_data[3]}</h1>
                     </div> 
                     : ""

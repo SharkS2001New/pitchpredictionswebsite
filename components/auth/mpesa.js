@@ -1,11 +1,18 @@
 import api from './api';
 
-export async function startMpesaStkPush({ planId, phoneNumber, site }) {
-  const { data } = await api.post('/payment/mpesa/stk-push', {
-    plan_id: planId,
+export async function startMpesaStkPush({ planId, planIds, phoneNumber, site }) {
+  const payload = {
     phone_number: phoneNumber,
     site,
-  });
+  };
+
+  if (Array.isArray(planIds) && planIds.length > 0) {
+    payload.plan_ids = planIds.map((id) => Number(id)).filter((id) => id > 0);
+  } else if (planId) {
+    payload.plan_id = Number(planId);
+  }
+
+  const { data } = await api.post('/payment/mpesa/stk-push', payload);
   return data;
 }
 

@@ -53,6 +53,34 @@ export function slugifyId(label, url) {
   return base || `link-${crypto.randomBytes(3).toString("hex")}`;
 }
 
+export function normalizeRelTags(raw) {
+  const allowed = new Set(["sponsored", "nofollow", "noopener", "noreferrer"]);
+  let tags = [];
+  if (typeof raw === "string") {
+    tags = raw.split(/[\s,]+/);
+  } else if (Array.isArray(raw)) {
+    tags = raw;
+  }
+  const out = [];
+  for (const tag of tags) {
+    const t = String(tag || "")
+      .trim()
+      .toLowerCase();
+    if (t && allowed.has(t) && !out.includes(t)) out.push(t);
+  }
+  if (!out.includes("noopener")) out.push("noopener");
+  if (!out.includes("noreferrer")) out.push("noreferrer");
+  return out;
+}
+
+export function normalizeGraceDays(raw) {
+  if (raw === null || raw === undefined || raw === "") return 4;
+  const days = Number.parseInt(String(raw), 10);
+  if (!Number.isFinite(days) || days < 0) return 4;
+  if (days > 365) return 365;
+  return days;
+}
+
 export function normalizeSponsorLink(raw, index = 0) {
   const label = String(raw?.label || "").trim();
   const url = String(raw?.url || "").trim();
@@ -68,6 +96,8 @@ export function normalizeSponsorLink(raw, index = 0) {
     expires_at: parseDateOnly(raw?.expires_at),
     notes: String(raw?.notes || "").trim(),
     active: raw?.active === false ? false : true,
+    rel: normalizeRelTags(raw?.rel ?? raw?.rel_tags),
+    grace_days: normalizeGraceDays(raw?.grace_days),
   };
 }
 
@@ -86,7 +116,14 @@ export function isSponsorVisible(link, now = new Date()) {
   if (!link || link.active === false) return false;
   const today = todayUtcDateString(now);
   if (link.starts_at && today < link.starts_at) return false;
-  if (link.expires_at && today > link.expires_at) return false;
+  if (link.expires_at && today > link.expires_at) {
+    const graceDays = normalizeGraceDays(link.grace_days);
+    // Visible through expires_at + grace_days (inclusive).
+    const end = new Date(`${link.expires_at}T12:00:00Z`);
+    end.setUTCDate(end.getUTCDate() + graceDays);
+    const graceEnd = end.toISOString().slice(0, 10);
+    if (today > graceEnd) return false;
+  }
   return Boolean(link.label && link.url);
 }
 

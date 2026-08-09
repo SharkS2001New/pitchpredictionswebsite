@@ -68,7 +68,11 @@ function SponsorLinks() {
             key={`${sponsor.id || sponsor.url}-${index}`}
             href={sponsor.url}
             target="_blank"
-            rel="noopener noreferrer"
+            rel={
+              Array.isArray(sponsor.rel) && sponsor.rel.length
+                ? sponsor.rel.join(" ")
+                : "noopener noreferrer"
+            }
             style={{
               color: LINK_COLOR,
               fontSize: "14px",
@@ -211,8 +215,6 @@ function Footer() {
           or contact your national gambling helpline. You must be 18 years or older to use betting services.
           Pitch Predictions does not guarantee any prediction outcomes.
         </div>
-
-        <hr className="my-4"/>
 
         {/* Sponsor Links — all partners in SSR HTML, testing */}
         <SponsorLinks />
