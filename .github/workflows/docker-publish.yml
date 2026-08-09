@@ -74,8 +74,13 @@ jobs:
       - name: Update values.yaml and push to pitchpredk3ssetup
         if: github.event_name != 'pull_request'
         run: |
-          SHORT_SHA_PART="${{ steps.meta.outputs.tags }}"
-          SHORT_SHA_PART="$(echo "$SHORT_SHA_PART" | awk -F':' '{print $2}' | cut -c1-11)"
+          set -euo pipefail
+          RAW_TAGS="${{ steps.meta.outputs.tags }}"
+          SHORT_SHA_PART="$(printf '%s\n' "$RAW_TAGS" | awk -F: '/:sha-/ {print $NF; exit}')"
+          if [ -z "$SHORT_SHA_PART" ]; then
+            echo "Could not parse image sha tag from: $RAW_TAGS"
+            exit 1
+          fi
           cd pitchpredk3ssetup
 
           git config user.name "github-actions[bot]"
@@ -83,19 +88,20 @@ jobs:
 
           git fetch origin
           DEFAULT_BRANCH="$(git remote show origin | awk '/HEAD branch/ {print $NF}')"
+          VALUES_FILE="pitchpredictionswebsite/values.yaml"
 
-          # Remote master often moves between runs; retry from latest tip each time.
-          for attempt in 1 2 3 4 5; do
-            git checkout "$DEFAULT_BRANCH"
+          # Concurrent website/FWT/Centrix jobs often push here first — rebase and retry.
+          for attempt in 1 2 3 4 5 6 7 8; do
+            git checkout -B "$DEFAULT_BRANCH" "origin/$DEFAULT_BRANCH"
             git fetch origin
             git reset --hard "origin/$DEFAULT_BRANCH"
 
-            sed -i "s|tag:.*|tag: $SHORT_SHA_PART|" pitchpredictionswebsite/values.yaml
-            echo "Updated tag in values.yaml to $SHORT_SHA_PART (attempt $attempt)"
+            sed -i "s|^  tag:.*|  tag: $SHORT_SHA_PART|" "$VALUES_FILE"
+            echo "Updated $VALUES_FILE to $SHORT_SHA_PART (attempt $attempt)"
 
-            git add pitchpredictionswebsite/values.yaml
+            git add "$VALUES_FILE"
             if git diff --staged --quiet; then
-              echo "Tag already up to date"
+              echo "Tag already up to date on remote"
               exit 0
             fi
 
@@ -106,7 +112,8 @@ jobs:
               exit 0
             fi
 
-            echo "Push rejected (attempt $attempt). Retrying from latest remote..."
+            echo "Push rejected (attempt $attempt). Rebasing onto latest remote..."
+            git reset --hard "origin/$DEFAULT_BRANCH"
             sleep $((attempt * 2))
           done
 
