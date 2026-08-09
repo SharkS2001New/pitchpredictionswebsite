@@ -149,7 +149,9 @@ function App({ Component, pageProps }) {
       {/* Inject seo content for static pages excluding the dynamic pages such as match details and football predictions by date*/}
       <Head>
         <title>{meta_content_data[0]}</title>
-        <link rel="icon" href="/pitch_predictions_icons.ico" />
+        <link rel="icon" href="/pitch_predictions_icons.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/pitch-predictions-icon-32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/pitch-predictions-apple-touch.png" />
 
         {/* Fix: Use string values for crossOrigin */}
         <link rel="dns-prefetch" href="https://www.pitchpredictions.com" crossOrigin="anonymous" />

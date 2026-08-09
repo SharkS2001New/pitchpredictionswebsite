@@ -5,7 +5,9 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link rel="icon" href="/pitch_predictions_icons.ico" />
+        <link rel="icon" href="/pitch_predictions_icons.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/pitch-predictions-icon-32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/pitch-predictions-apple-touch.png" />
           {/* <!-- Google tag (gtag.js) --> */}
           <script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-N7X33S1CMF" async></script>
           <script id='google-analytics' strategy="afterInteractive" async dangerouslySetInnerHTML={{

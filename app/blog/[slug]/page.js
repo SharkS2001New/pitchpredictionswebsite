@@ -42,6 +42,14 @@ export async function generateMetadata({ params }) {
     alternates: {
       canonical: canonicalUrl,
     },
+    icons: {
+      icon: [
+        { url: "/pitch_predictions_icons.ico", sizes: "any" },
+        { url: "/pitch-predictions-icon-32.png", type: "image/png", sizes: "32x32" },
+      ],
+      shortcut: ["/pitch_predictions_icons.ico"],
+      apple: [{ url: "/pitch-predictions-apple-touch.png", sizes: "180x180" }],
+    },
     openGraph: {
       title: pageTitle,
       description,
