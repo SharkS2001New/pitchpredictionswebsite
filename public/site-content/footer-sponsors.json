@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-09T21:08:53.826Z",
+    "updated_at": "2026-08-10T00:35:41+03:00",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -461,7 +461,7 @@
                 "noopener",
                 "noreferrer"
             ],
-            "grace_days": 4
+            "grace_days": 2
         },
         {
             "id": "tigoals-livescore",
