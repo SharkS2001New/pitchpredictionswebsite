@@ -26,15 +26,9 @@ export default async function handler(req, res) {
       String(req.query.all || "") === "1" ||
       String(req.query.all || "").toLowerCase() === "true";
 
+    // Full document is public marketing metadata (not a secret). Admin needs it
+    // even when BLOG_CACHE_CLEAR_KEY is missing from the frontend host env.
     if (wantAll) {
-      if (!resolveBlogCacheClearKey()) {
-        return res.status(503).json({
-          error: `BLOG_CACHE_CLEAR_KEY must be set to exactly ${BLOG_CACHE_CLEAR_KEY_LENGTH} characters`,
-        });
-      }
-      if (!isBlogCacheClearAuthorized(req)) {
-        return res.status(401).json({ error: "Unauthorized" });
-      }
       setNoStoreHeaders(res);
       const document = readSponsorDocument({ bypassCache: true });
       return res.status(200).json({
@@ -56,14 +50,25 @@ export default async function handler(req, res) {
   if (req.method === "PUT" || req.method === "POST") {
     if (!resolveBlogCacheClearKey()) {
       return res.status(503).json({
-        error: `BLOG_CACHE_CLEAR_KEY must be set to exactly ${BLOG_CACHE_CLEAR_KEY_LENGTH} characters`,
+        error: `BLOG_CACHE_CLEAR_KEY must be set to exactly ${BLOG_CACHE_CLEAR_KEY_LENGTH} characters on this host before footer links can be saved.`,
       });
     }
     if (!isBlogCacheClearAuthorized(req)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body || "{}");
+      } catch {
+        return res.status(422).json({
+          success: false,
+          error: "Invalid JSON body.",
+        });
+      }
+    }
+    body = body || {};
     const incoming = body.data && typeof body.data === "object" ? body.data : body;
 
     if (!Array.isArray(incoming.links)) {
