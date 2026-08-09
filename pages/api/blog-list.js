@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
 
     if (cached?.isFresh) {
-      res.setHeader("Cache-Control", "private, max-age=3600, stale-while-revalidate=86400");
+      res.setHeader("Cache-Control", "private, max-age=60, must-revalidate");
       return res.status(200).json({
         fromCache: true,
         generatedAt: cached.cache.generatedAt,
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     const payload = await fetchBlogList(page, category);
     const cacheData = writeCache(cacheDir, cachePath, payload);
 
-    res.setHeader("Cache-Control", "private, max-age=3600, stale-while-revalidate=86400");
+    res.setHeader("Cache-Control", "private, max-age=60, must-revalidate");
     return res.status(200).json({
       fromCache: false,
       generatedAt: cacheData.generatedAt,
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     const cached = readTrimmedBlogListCache(cachePath, legacyCachePath);
 
     if (cached?.payload) {
-      res.setHeader("Cache-Control", "private, max-age=60");
+      res.setHeader("Cache-Control", "private, max-age=30, must-revalidate");
       return res.status(200).json({
         fromCache: true,
         isFallback: true,

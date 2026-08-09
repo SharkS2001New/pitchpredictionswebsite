@@ -421,10 +421,18 @@ export function writeCache(cacheDir, cachePath, payload) {
 }
 
 export async function fetchBlogList(page, category) {
-  const response = await fetch(`${API_BASE}?page=${page}&category=${category}`, {
+  const params = new URLSearchParams({
+    page: String(page),
+    category: String(category || "ALL"),
+    site: "pitch",
+  });
+
+  const response = await fetch(`${API_BASE}?${params}`, {
     headers: {
       "Content-type": "application/json; charset=UTF-8",
       Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+      Origin: "https://www.pitchpredictions.com",
+      "X-Site-Key": "pitch",
     },
   });
 
@@ -448,7 +456,10 @@ export function clearBlogListCaches() {
 
     for (const file of fs.readdirSync(dir)) {
       const isListCache = file.startsWith("blog-list-page-");
-      const isHomeSnippet = file === "blog-posts.json";
+      const isHomeSnippet =
+        file === "blog-posts.json" ||
+        file.startsWith("blog-posts-") ||
+        file.startsWith("homepage-blog-posts");
 
       if (!isListCache && !isHomeSnippet) continue;
 

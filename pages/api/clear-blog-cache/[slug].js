@@ -1,17 +1,10 @@
 import { revalidatePath } from "next/cache";
 import { clearBlogPostCache } from "../../../components/functions/blog_list_cache";
-
-const KEY_LENGTH = 24;
-
-function getBlogCacheClearKey() {
-  const secret = (process.env.BLOG_CACHE_CLEAR_KEY || "").trim();
-
-  if (secret.length !== KEY_LENGTH) {
-    return null;
-  }
-
-  return secret;
-}
+import {
+  BLOG_CACHE_CLEAR_KEY_LENGTH,
+  isBlogCacheClearAuthorized,
+  resolveBlogCacheClearKey,
+} from "../../../components/functions/blog_cache_clear_auth";
 
 function normalizeSlug(rawSlug) {
   if (!rawSlug) return "";
@@ -25,31 +18,18 @@ function normalizeSlug(rawSlug) {
   }
 }
 
-function isAuthorized(req) {
-  const secret = getBlogCacheClearKey();
-
-  if (!secret) {
-    return false;
-  }
-
-  const token =
-    req.headers.authorization?.replace("Bearer ", "") || req.query.key || "";
-
-  return String(token).trim() === secret;
-}
-
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  if (!getBlogCacheClearKey()) {
+  if (!resolveBlogCacheClearKey()) {
     return res.status(503).json({
-      error: `BLOG_CACHE_CLEAR_KEY must be set to exactly ${KEY_LENGTH} characters`,
+      error: `BLOG_CACHE_CLEAR_KEY must be set to exactly ${BLOG_CACHE_CLEAR_KEY_LENGTH} characters`,
     });
   }
 
-  if (!isAuthorized(req)) {
+  if (!isBlogCacheClearAuthorized(req)) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -60,9 +40,13 @@ export default async function handler(req, res) {
 
   const cleared = clearBlogPostCache(slug);
 
-  revalidatePath(`/blog/${slug}`);
-  revalidatePath(`/api/blog/${slug}`);
-  revalidatePath(`/api/blog-content/${slug}`);
+  try {
+    revalidatePath(`/blog/${slug}`);
+    revalidatePath(`/api/blog/${slug}`);
+    revalidatePath(`/api/blog-content/${slug}`);
+  } catch {
+    // Pages-router / older Next builds may not support revalidatePath
+  }
 
   return res.status(200).json({
     ...cleared,

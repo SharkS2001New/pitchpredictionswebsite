@@ -8,23 +8,12 @@ const sponsors = [
   /* Renewed every three months, first added 24-05-2026, expires 24-08-2026  From Blessed Emmy*/
   { label: 'Jalalive Tv',                      url: 'https://bsidefilm.com/'               },
 
-  /* Renewed every month on 06, first added 06-04-2026, expires 06-07-2026 */
-  { label: 'trực tiếp bóng đá hôm nay',        url: 'https://colatvttbd.net/'              },
-  { label: 'xoilac',                           url: 'https://xoilactvttbd.com/'            },
-  { label: 'trực tiếp bóng đá hôm nay',        url: 'https://xoilac-tv.icu'                },
-  { label: 'cakhia tv',                        url: 'https://cakhiatvttbd.com/'            },
-  { label: '1Agame',                           url: 'https://1agame.io/'                   },
-  /* expires 06-07-2026 end */
 
   /* Renewed every month on 05, first added 05-06-2026, expires 05-07-2026 — Vietnamese partner */
-  { label: 'https://vsbet.co/',                url: 'https://vsbet.co/'                    },
   { label: 'nhà cái vsbet',                   url: 'https://vsbet.cc/'                    },
   { label: 'https://vsbet.br.com/',            url: 'https://vsbet.br.com/'                },
   { label: 'vsbet',                            url: 'https://vsbets.co.com/'               },
   { label: 'vs bet',                           url: 'https://vaboose.cn.com/'              },
-  /* expires 05-07-2026 end */
-
-  /* Renewed every month on 06, first added 06-04-2026, expires 06-07-2026 */
   { label: 'socolive',                         url: 'https://socolivettbd.net/'            },
   { label: '90phut',                           url: 'https://90phutttbd.org/'              },
   { label: 'xoilac',                           url: 'https://lytuong.net/'                 },
@@ -39,6 +28,7 @@ const sponsors = [
   { label: 'trực tiếp bóng đá hôm nay',        url: 'https://cakhiatvv.online/'            },
   { label: 'cakhiatv trực tiếp bóng đá',       url: 'https://cakhiatvv.ink/'               },
   { label: 'https://90phuttv.in.net/',         url: 'https://90phuttv.in.net/'             },
+  { label: 'https://vsbet.co/',                url: 'https://vsbet.co/'                    },
   { label: 'bóng đá trực tiếp',               url: 'https://90phuttv.futbol/'             },
   { label: '90phut tv',                        url: 'https://90phuttv.bid/'                },
   { label: 'xem bóng đá trực tiếp',           url: 'https://xembongda.ai/'               },
@@ -50,8 +40,7 @@ const sponsors = [
   { label: 'cakhiatv',                        url: 'https://xemcakhia.net/'               },
   { label: 'xoilac bóng đá',                  url: 'https://xoilac7.cc/'                  },
   { label: 'xoilac tv',                       url: 'https://xoilactvv-live.com/'          },
-  { label: 'https://trangcadobongda.lat/',    url: 'https://trangcadobongda.lat/'         },
-  /* expires 06-07-2026 end */
+  /* expires 05-07-2026 end */
 
   /* New text link, expires 09-06-2026 From Scometix Africe/bettingtips.co.ke */
   { label: 'Loto188',                         url: 'https://aloto188.com/'                },
