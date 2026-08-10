@@ -9,8 +9,24 @@ function SponsorLinks() {
 
   useEffect(() => {
     let cancelled = false;
-    let idleId = null;
-    let timeoutId = null;
+    const CACHE_KEY = "pp_footer_sponsors_v1";
+
+    const applyLinks = (links) => {
+      if (!cancelled) setSponsors(Array.isArray(links) ? links : []);
+    };
+
+    // Instant paint from session cache when available, then refresh.
+    try {
+      const raw = window.sessionStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed?.links) && parsed.links.length) {
+          applyLinks(parsed.links);
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
 
     const load = async () => {
       try {
@@ -18,30 +34,31 @@ function SponsorLinks() {
           headers: { Accept: "application/json" },
         });
         if (!res.ok) {
-          if (!cancelled) setSponsors([]);
+          if (!cancelled) setSponsors((prev) => (prev == null ? [] : prev));
           return;
         }
         const json = await res.json();
         const links = Array.isArray(json?.links) ? json.links : [];
-        if (!cancelled) setSponsors(links);
+        applyLinks(links);
+        try {
+          window.sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ links, at: Date.now() })
+          );
+        } catch {
+          // ignore quota / private mode
+        }
       } catch {
-        if (!cancelled) setSponsors([]);
+        if (!cancelled) setSponsors((prev) => (prev == null ? [] : prev));
       }
     };
 
-    // Don't compete with first paint / critical page data.
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(() => load(), { timeout: 1500 });
-    } else {
-      timeoutId = window.setTimeout(load, 0);
-    }
+    // Start immediately so partners don't wait for idle (up to 1.5s before).
+    const timeoutId = window.setTimeout(load, 0);
 
     return () => {
       cancelled = true;
-      if (idleId != null && typeof window !== "undefined" && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
-      }
-      if (timeoutId != null) window.clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId);
     };
   }, []);
 

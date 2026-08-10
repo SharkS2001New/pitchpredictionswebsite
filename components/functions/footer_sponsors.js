@@ -145,15 +145,27 @@ export function filterVisibleSponsors(links, now = new Date()) {
   );
 }
 
+let memoryCache = { mtimeMs: null, document: null };
+
 export function readSponsorDocument({ bypassCache = false } = {}) {
-  void bypassCache;
   const target = filePath();
   try {
     if (!fs.existsSync(target)) {
+      memoryCache = { mtimeMs: null, document: null };
       return emptyDocument();
     }
+    const mtimeMs = fs.statSync(target).mtimeMs;
+    if (
+      !bypassCache &&
+      memoryCache.document &&
+      memoryCache.mtimeMs === mtimeMs
+    ) {
+      return memoryCache.document;
+    }
     const parsed = JSON.parse(fs.readFileSync(target, "utf8"));
-    return normalizeSponsorDocument(parsed);
+    const document = normalizeSponsorDocument(parsed);
+    memoryCache = { mtimeMs, document };
+    return document;
   } catch {
     return emptyDocument();
   }
@@ -170,6 +182,11 @@ export function writeSponsorDocument(raw) {
   }
 
   fs.writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`, "utf8");
+  try {
+    memoryCache = { mtimeMs: fs.statSync(target).mtimeMs, document };
+  } catch {
+    memoryCache = { mtimeMs: null, document };
+  }
   return document;
 }
 

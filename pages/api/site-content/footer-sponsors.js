@@ -10,11 +10,11 @@ import {
 } from "../../../components/functions/blog_cache_clear_auth";
 
 function setPublicCacheHeaders(res) {
-  // Short cache only — keeps sites fast under traffic while admin updates
-  // still appear within ~10–15 seconds (PUT stays no-store).
+  // Browser 60s / CDN 5m / serve stale up to 1h while revalidating.
+  // Admin PUT remains no-store so Save live still lands quickly.
   res.setHeader(
     "Cache-Control",
-    "public, max-age=10, s-maxage=10, stale-while-revalidate=30"
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=3600"
   );
 }
 
