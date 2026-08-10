@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-10T10:31:42.034Z",
+    "updated_at": "2026-08-10T11:00:05.760Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -47,8 +47,8 @@
             "id": "vsbet-br",
             "label": "https://vsbet.br.com/",
             "url": "https://vsbet.br.com/",
-            "starts_at": "2026-06-05",
-            "expires_at": "2026-07-05",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
             "notes": "Vietnamese partner batch",
             "active": true,
             "rel": [
