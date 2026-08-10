@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-10T11:49:34.755Z",
+    "updated_at": "2026-08-10T18:35:50.573Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -568,6 +568,48 @@
             "starts_at": "2026-07-18",
             "expires_at": "2026-08-18",
             "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-link",
+            "label": "xoilac link",
+            "url": "https://jeremysaid.com",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "truc-tiep-xoilac365",
+            "label": "trực tiếp Xoilac365",
+            "url": "https://bluecloudsolutions.com",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tuong-thuat-truc-tiep-bong-da",
+            "label": "tuong thuat truc tiep bong da",
+            "url": "https://licbeerproject.com",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
+            "notes": "Scometix Africa / bettingtips.co.ke",
             "active": true,
             "rel": [
                 "noopener",
