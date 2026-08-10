@@ -10,12 +10,16 @@ import {
 } from "../../../components/functions/blog_cache_clear_auth";
 
 function setPublicCacheHeaders(res) {
-  // Browser 60s / CDN 5m / serve stale up to 1h while revalidating.
-  // Admin PUT remains no-store so Save live still lands quickly.
+  // Must revalidate so admin Save live is visible on the next public fetch.
+  // PUT already writes footer-sponsors.json; do not keep long CDN/browser TTL.
   res.setHeader(
     "Cache-Control",
-    "public, max-age=60, s-maxage=300, stale-while-revalidate=3600"
+    "public, max-age=0, s-maxage=0, must-revalidate"
   );
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Cloudflare-CDN-Cache-Control", "no-store");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 }
 
 function setNoStoreHeaders(res) {

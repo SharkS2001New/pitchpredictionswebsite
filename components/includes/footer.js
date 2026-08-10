@@ -10,18 +10,27 @@ function SponsorLinks() {
   useEffect(() => {
     let cancelled = false;
     const CACHE_KEY = "pp_footer_sponsors_v1";
+    const CACHE_TTL_MS = 8000;
 
     const applyLinks = (links) => {
       if (!cancelled) setSponsors(Array.isArray(links) ? links : []);
     };
 
-    // Instant paint from session cache when available, then refresh.
+    // Brief session paint only — never keep stale partners after an admin save.
     try {
       const raw = window.sessionStorage.getItem(CACHE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed?.links) && parsed.links.length) {
+        const age = Date.now() - Number(parsed?.at || 0);
+        if (
+          Array.isArray(parsed?.links) &&
+          parsed.links.length &&
+          age >= 0 &&
+          age < CACHE_TTL_MS
+        ) {
           applyLinks(parsed.links);
+        } else {
+          window.sessionStorage.removeItem(CACHE_KEY);
         }
       }
     } catch {
@@ -30,9 +39,17 @@ function SponsorLinks() {
 
     const load = async () => {
       try {
-        const res = await fetch("/api/site-content/footer-sponsors", {
-          headers: { Accept: "application/json" },
-        });
+        const res = await fetch(
+          `/api/site-content/footer-sponsors?_=${Date.now()}`,
+          {
+            cache: "no-store",
+            headers: {
+              Accept: "application/json",
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          }
+        );
         if (!res.ok) {
           if (!cancelled) setSponsors((prev) => (prev == null ? [] : prev));
           return;
@@ -43,7 +60,11 @@ function SponsorLinks() {
         try {
           window.sessionStorage.setItem(
             CACHE_KEY,
-            JSON.stringify({ links, at: Date.now() })
+            JSON.stringify({
+              links,
+              updated_at: json?.updated_at || null,
+              at: Date.now(),
+            })
           );
         } catch {
           // ignore quota / private mode
@@ -53,7 +74,6 @@ function SponsorLinks() {
       }
     };
 
-    // Start immediately so partners don't wait for idle (up to 1.5s before).
     const timeoutId = window.setTimeout(load, 0);
 
     return () => {
