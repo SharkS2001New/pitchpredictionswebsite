@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-10T00:35:41+03:00",
+    "updated_at": "2026-08-10T10:31:42.034Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -33,8 +33,8 @@
             "id": "nha-cai-vsbet",
             "label": "nhà cái vsbet",
             "url": "https://vsbet.cc/",
-            "starts_at": "2026-06-05",
-            "expires_at": "2026-07-05",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
             "notes": "Vietnamese partner batch — renews monthly on the 5th",
             "active": true,
             "rel": [
