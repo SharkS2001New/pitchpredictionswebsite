@@ -1,374 +1,579 @@
 {
-  "updated_at": "2026-08-09T00:00:00.000Z",
-  "links": [
-    {
-      "id": "socolive-tv-ericbauman",
-      "label": "Socolive TV",
-      "url": "https://www.ericbauman.com/",
-      "starts_at": "2026-05-16",
-      "expires_at": "2026-08-16",
-      "notes": "Renewed every three months — Blessed Emmy",
-      "active": true
-    },
-    {
-      "id": "jalalive-tv-bsidefilm",
-      "label": "Jalalive Tv",
-      "url": "https://bsidefilm.com/",
-      "starts_at": "2026-05-24",
-      "expires_at": "2026-08-24",
-      "notes": "Renewed every three months — Blessed Emmy",
-      "active": true
-    },
-    {
-      "id": "nha-cai-vsbet",
-      "label": "nhà cái vsbet",
-      "url": "https://vsbet.cc/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch — renews monthly on the 5th",
-      "active": true
-    },
-    {
-      "id": "vsbet-br",
-      "label": "https://vsbet.br.com/",
-      "url": "https://vsbet.br.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "vsbet-co",
-      "label": "vsbet",
-      "url": "https://vsbets.co.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "vs-bet-vaboose",
-      "label": "vs bet",
-      "url": "https://vaboose.cn.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "socolive-ttbd",
-      "label": "socolive",
-      "url": "https://socolivettbd.net/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "90phut-ttbd",
-      "label": "90phut",
-      "url": "https://90phutttbd.org/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xoilac-lytuong",
-      "label": "xoilac",
-      "url": "https://lytuong.net/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "colatv48",
-      "label": "https://colatv48.live/",
-      "url": "https://colatv48.live/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "nhacaiuytin-guru",
-      "label": "https://nhacaiuytin.guru/",
-      "url": "https://nhacaiuytin.guru/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xoilactvv-com",
-      "label": "xoilac",
-      "url": "https://xoilactvv.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-bong-da-xoilac-org",
-      "label": "xem bong da xoilac",
-      "url": "https://xoilactvv.org/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-bong-da-xoilac-online",
-      "label": "xem bong da xoilac",
-      "url": "https://xoilactvv.online/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xoilac-tv-co",
-      "label": "xoilac tv",
-      "url": "https://xoilactvv.co/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-bong-da-xoilac-football",
-      "label": "xem bóng đá xoilac",
-      "url": "https://xoilactvv.football/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "ca-khia-tv",
-      "label": "cà khịa tv",
-      "url": "https://cakhiatvv.live/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "truc-tiep-bong-da-hom-nay",
-      "label": "trực tiếp bóng đá hôm nay",
-      "url": "https://cakhiatvv.online/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "cakhiatv-truc-tiep",
-      "label": "cakhiatv trực tiếp bóng đá",
-      "url": "https://cakhiatvv.ink/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "90phuttv-in-net",
-      "label": "https://90phuttv.in.net/",
-      "url": "https://90phuttv.in.net/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "vsbet-co-root",
-      "label": "https://vsbet.co/",
-      "url": "https://vsbet.co/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "bong-da-truc-tiep-futbol",
-      "label": "bóng đá trực tiếp",
-      "url": "https://90phuttv.futbol/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "90phut-tv-bid",
-      "label": "90phut tv",
-      "url": "https://90phuttv.bid/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-bong-da-ai",
-      "label": "xem bóng đá trực tiếp",
-      "url": "https://xembongda.ai/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-truc-tiep-co-com",
-      "label": "xem trực tiếp bóng đá",
-      "url": "https://xembongda.co.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xem-bong-da-com-co",
-      "label": "xem bóng đá trực tuyến",
-      "url": "https://xembongda.com.co/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "tructiepbongda-fans",
-      "label": "xem bóng đá trực tiếp",
-      "url": "https://tructiepbongda.fans/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "tructiepbongda-fyi",
-      "label": "trực tiếp bóng đá",
-      "url": "https://tructiepbongda.fyi/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "tructiepbongda-mobile",
-      "label": "xem trực tiếp bóng đá",
-      "url": "https://tructiepbongda.mobile/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "cakhiatv-xemcakhia",
-      "label": "cakhiatv",
-      "url": "https://xemcakhia.net/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xoilac-bong-da-7",
-      "label": "xoilac bóng đá",
-      "url": "https://xoilac7.cc/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "xoilac-tv-live",
-      "label": "xoilac tv",
-      "url": "https://xoilactvv-live.com/",
-      "starts_at": "2026-06-05",
-      "expires_at": "2026-07-05",
-      "notes": "Vietnamese partner batch",
-      "active": true
-    },
-    {
-      "id": "loto188",
-      "label": "Loto188",
-      "url": "https://aloto188.com/",
-      "starts_at": "2026-06-09",
-      "expires_at": "2026-06-09",
-      "notes": "Scometix Africa / bettingtips.co.ke",
-      "active": true
-    },
-    {
-      "id": "tigoals-livescore",
-      "label": "Tigoals livescore",
-      "url": "https://tigoals.io/",
-      "starts_at": "2026-06-14",
-      "expires_at": "2026-09-14",
-      "notes": "Paid 3 months — Blessed Emmy",
-      "active": true
-    },
-    {
-      "id": "keo-nha-cai",
-      "label": "keo nha cai",
-      "url": "https://rva.us.com/",
-      "starts_at": "2026-06-20",
-      "expires_at": "2026-07-20",
-      "notes": "Blessed Emmy",
-      "active": true
-    },
-    {
-      "id": "jalalive-xsbaltimore",
-      "label": "jalalive",
-      "url": "https://www.xsbaltimore.com/",
-      "starts_at": "2026-06-28",
-      "expires_at": "2026-07-28",
-      "notes": "Vietnamese partner",
-      "active": true
-    },
-    {
-      "id": "bgibola88",
-      "label": "bgibola",
-      "url": "https://bgibola88.io/",
-      "starts_at": "2026-07-01",
-      "expires_at": "2026-08-01",
-      "notes": "Vietnamese partner",
-      "active": true
-    },
-    {
-      "id": "79sodo",
-      "label": "79sodo",
-      "url": "https://79sodo.foundation/",
-      "starts_at": "2026-07-05",
-      "expires_at": "2026-08-05",
-      "notes": "bettingtips.co.ke",
-      "active": true
-    },
-    {
-      "id": "socolive4",
-      "label": "socolive",
-      "url": "https://socolive4.com/",
-      "starts_at": "2026-07-12",
-      "expires_at": "2026-08-12",
-      "notes": "tafatips.com",
-      "active": true
-    },
-    {
-      "id": "bongdalu17",
-      "label": "bongdalu",
-      "url": "https://bongdalu17.net/",
-      "starts_at": "2026-07-16",
-      "expires_at": "2026-08-16",
-      "notes": "tafatips.com",
-      "active": true
-    },
-    {
-      "id": "fun8-asia",
-      "label": "ทางเข้าFun8",
-      "url": "https://www.fun888asia.com/",
-      "starts_at": "2026-07-18",
-      "expires_at": "2026-08-18",
-      "notes": "tafatips.com",
-      "active": true
-    }
-  ]
+    "updated_at": "2026-08-10T00:35:41+03:00",
+    "links": [
+        {
+            "id": "socolive-tv-ericbauman",
+            "label": "Socolive TV",
+            "url": "https://www.ericbauman.com/",
+            "starts_at": "2026-05-16",
+            "expires_at": "2026-08-16",
+            "notes": "Renewed every three months — Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "jalalive-tv-bsidefilm",
+            "label": "Jalalive Tv",
+            "url": "https://bsidefilm.com/",
+            "starts_at": "2026-05-24",
+            "expires_at": "2026-08-24",
+            "notes": "Renewed every three months — Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "nha-cai-vsbet",
+            "label": "nhà cái vsbet",
+            "url": "https://vsbet.cc/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch — renews monthly on the 5th",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "vsbet-br",
+            "label": "https://vsbet.br.com/",
+            "url": "https://vsbet.br.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "vsbet-co",
+            "label": "vsbet",
+            "url": "https://vsbets.co.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "vs-bet-vaboose",
+            "label": "vs bet",
+            "url": "https://vaboose.cn.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "socolive-ttbd",
+            "label": "socolive",
+            "url": "https://socolivettbd.net/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "90phut-ttbd",
+            "label": "90phut",
+            "url": "https://90phutttbd.org/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-lytuong",
+            "label": "xoilac",
+            "url": "https://lytuong.net/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "colatv48",
+            "label": "https://colatv48.live/",
+            "url": "https://colatv48.live/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "nhacaiuytin-guru",
+            "label": "https://nhacaiuytin.guru/",
+            "url": "https://nhacaiuytin.guru/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilactvv-com",
+            "label": "xoilac",
+            "url": "https://xoilactvv.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-bong-da-xoilac-org",
+            "label": "xem bong da xoilac",
+            "url": "https://xoilactvv.org/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-bong-da-xoilac-online",
+            "label": "xem bong da xoilac",
+            "url": "https://xoilactvv.online/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-tv-co",
+            "label": "xoilac tv",
+            "url": "https://xoilactvv.co/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-bong-da-xoilac-football",
+            "label": "xem bóng đá xoilac",
+            "url": "https://xoilactvv.football/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "ca-khia-tv",
+            "label": "cà khịa tv",
+            "url": "https://cakhiatvv.live/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "truc-tiep-bong-da-hom-nay",
+            "label": "trực tiếp bóng đá hôm nay",
+            "url": "https://cakhiatvv.online/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "cakhiatv-truc-tiep",
+            "label": "cakhiatv trực tiếp bóng đá",
+            "url": "https://cakhiatvv.ink/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "90phuttv-in-net",
+            "label": "https://90phuttv.in.net/",
+            "url": "https://90phuttv.in.net/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "vsbet-co-root",
+            "label": "https://vsbet.co/",
+            "url": "https://vsbet.co/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "bong-da-truc-tiep-futbol",
+            "label": "bóng đá trực tiếp",
+            "url": "https://90phuttv.futbol/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "90phut-tv-bid",
+            "label": "90phut tv",
+            "url": "https://90phuttv.bid/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-bong-da-ai",
+            "label": "xem bóng đá trực tiếp",
+            "url": "https://xembongda.ai/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-truc-tiep-co-com",
+            "label": "xem trực tiếp bóng đá",
+            "url": "https://xembongda.co.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xem-bong-da-com-co",
+            "label": "xem bóng đá trực tuyến",
+            "url": "https://xembongda.com.co/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tructiepbongda-fans",
+            "label": "xem bóng đá trực tiếp",
+            "url": "https://tructiepbongda.fans/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tructiepbongda-fyi",
+            "label": "trực tiếp bóng đá",
+            "url": "https://tructiepbongda.fyi/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tructiepbongda-mobile",
+            "label": "xem trực tiếp bóng đá",
+            "url": "https://tructiepbongda.mobile/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "cakhiatv-xemcakhia",
+            "label": "cakhiatv",
+            "url": "https://xemcakhia.net/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-bong-da-7",
+            "label": "xoilac bóng đá",
+            "url": "https://xoilac7.cc/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-tv-live",
+            "label": "xoilac tv",
+            "url": "https://xoilactvv-live.com/",
+            "starts_at": "2026-06-05",
+            "expires_at": "2026-07-05",
+            "notes": "Vietnamese partner batch",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "loto188",
+            "label": "Loto188",
+            "url": "https://aloto188.com/",
+            "starts_at": "2026-06-09",
+            "expires_at": "2026-06-09",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 2
+        },
+        {
+            "id": "tigoals-livescore",
+            "label": "Tigoals livescore",
+            "url": "https://tigoals.io/",
+            "starts_at": "2026-06-14",
+            "expires_at": "2026-09-14",
+            "notes": "Paid 3 months — Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "keo-nha-cai",
+            "label": "keo nha cai",
+            "url": "https://rva.us.com/",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-10",
+            "notes": "Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "jalalive-xsbaltimore",
+            "label": "jalalive",
+            "url": "https://www.xsbaltimore.com/",
+            "starts_at": "2026-06-28",
+            "expires_at": "2026-07-28",
+            "notes": "Vietnamese partner",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "bgibola88",
+            "label": "bgibola",
+            "url": "https://bgibola88.io/",
+            "starts_at": "2026-07-01",
+            "expires_at": "2026-08-01",
+            "notes": "Vietnamese partner",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "79sodo",
+            "label": "79sodo",
+            "url": "https://79sodo.foundation/",
+            "starts_at": "2026-07-05",
+            "expires_at": "2026-08-05",
+            "notes": "bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "socolive4",
+            "label": "socolive",
+            "url": "https://socolive4.com/",
+            "starts_at": "2026-07-12",
+            "expires_at": "2026-08-12",
+            "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "bongdalu17",
+            "label": "bongdalu",
+            "url": "https://bongdalu17.net/",
+            "starts_at": "2026-07-16",
+            "expires_at": "2026-08-16",
+            "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "fun8-asia",
+            "label": "ทางเข้าFun8",
+            "url": "https://www.fun888asia.com/",
+            "starts_at": "2026-07-18",
+            "expires_at": "2026-08-18",
+            "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        }
+    ]
 }

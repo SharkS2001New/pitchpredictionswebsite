@@ -8,13 +8,6 @@ export const FOOTER_SPONSORS_RELATIVE_PATH = path.join(
   "footer-sponsors.json"
 );
 
-export const FOOTER_SPONSORS_CACHE_TTL_MS = 45 * 1000;
-
-let memoryCache = {
-  loadedAt: 0,
-  document: null,
-};
-
 function filePath() {
   return path.join(process.cwd(), FOOTER_SPONSORS_RELATIVE_PATH);
 }
@@ -39,8 +32,31 @@ function parseDateOnly(value) {
   return d.toISOString().slice(0, 10);
 }
 
+function todaySiteDateString(now = new Date()) {
+  // Match admin (Africa/Nairobi) for live/grace visibility.
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Nairobi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+
+function compareDateStrings(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+function addDaysToDateString(dateStr, days) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
+
 function todayUtcDateString(now = new Date()) {
-  return now.toISOString().slice(0, 10);
+  return todaySiteDateString(now);
 }
 
 export function slugifyId(label, url) {
@@ -114,15 +130,13 @@ export function normalizeSponsorDocument(raw) {
 
 export function isSponsorVisible(link, now = new Date()) {
   if (!link || link.active === false) return false;
-  const today = todayUtcDateString(now);
-  if (link.starts_at && today < link.starts_at) return false;
-  if (link.expires_at && today > link.expires_at) {
+  const today = todaySiteDateString(now);
+  if (link.starts_at && compareDateStrings(today, link.starts_at) < 0) return false;
+  if (link.expires_at && compareDateStrings(today, link.expires_at) > 0) {
     const graceDays = normalizeGraceDays(link.grace_days);
     // Visible through expires_at + grace_days (inclusive).
-    const end = new Date(`${link.expires_at}T12:00:00Z`);
-    end.setUTCDate(end.getUTCDate() + graceDays);
-    const graceEnd = end.toISOString().slice(0, 10);
-    if (today > graceEnd) return false;
+    const graceEnd = addDaysToDateString(link.expires_at, graceDays);
+    if (compareDateStrings(today, graceEnd) > 0) return false;
   }
   return Boolean(link.label && link.url);
 }
@@ -134,30 +148,16 @@ export function filterVisibleSponsors(links, now = new Date()) {
 }
 
 export function readSponsorDocument({ bypassCache = false } = {}) {
-  const now = Date.now();
-  if (
-    !bypassCache &&
-    memoryCache.document &&
-    now - memoryCache.loadedAt < FOOTER_SPONSORS_CACHE_TTL_MS
-  ) {
-    return memoryCache.document;
-  }
-
+  void bypassCache;
   const target = filePath();
   try {
     if (!fs.existsSync(target)) {
-      const empty = emptyDocument();
-      memoryCache = { loadedAt: now, document: empty };
-      return empty;
+      return emptyDocument();
     }
     const parsed = JSON.parse(fs.readFileSync(target, "utf8"));
-    const document = normalizeSponsorDocument(parsed);
-    memoryCache = { loadedAt: now, document };
-    return document;
+    return normalizeSponsorDocument(parsed);
   } catch {
-    const empty = emptyDocument();
-    memoryCache = { loadedAt: now, document: empty };
-    return empty;
+    return emptyDocument();
   }
 }
 
@@ -172,7 +172,6 @@ export function writeSponsorDocument(raw) {
   }
 
   fs.writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`, "utf8");
-  memoryCache = { loadedAt: Date.now(), document };
   return document;
 }
 

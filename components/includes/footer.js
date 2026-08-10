@@ -4,22 +4,27 @@ import { useEffect, useState } from "react";
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
 
-function SponsorLinks() {
-  const [sponsors, setSponsors] = useState([]);
+function SponsorLinks({ initialSponsors = [] }) {
+  const [sponsors, setSponsors] = useState(initialSponsors);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
         const res = await fetch("/api/site-content/footer-sponsors", {
-          headers: { Accept: "application/json" },
+          cache: "no-store",
+          headers: {
+            Accept: "application/json",
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
         });
         if (!res.ok) return;
         const json = await res.json();
         const links = Array.isArray(json?.links) ? json.links : [];
         if (!cancelled) setSponsors(links);
       } catch {
-        // Keep footer usable without sponsors if the file/API is unavailable.
+        // Keep SSR / cached sponsors if the API is unavailable.
       }
     };
     load();
@@ -87,7 +92,7 @@ function SponsorLinks() {
   );
 }
 
-function Footer() {
+function Footer({ sponsors = [] }) {
   return (
     <footer
       className="py-4 text-lg-start text-white footer"
@@ -216,8 +221,8 @@ function Footer() {
           Pitch Predictions does not guarantee any prediction outcomes.
         </div>
 
-        {/* Sponsor Links — all partners in SSR HTML, testing */}
-        <SponsorLinks />
+        {/* Sponsor Links — SSR from footer-sponsors.json, refreshed from API */}
+        <SponsorLinks initialSponsors={sponsors} />
 
         <hr className="my-4"/>
 

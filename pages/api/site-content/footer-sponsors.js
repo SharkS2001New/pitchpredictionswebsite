@@ -9,15 +9,10 @@ import {
   resolveBlogCacheClearKey,
 } from "../../../components/functions/blog_cache_clear_auth";
 
-function setPublicCacheHeaders(res) {
-  res.setHeader(
-    "Cache-Control",
-    "public, max-age=45, s-maxage=45, stale-while-revalidate=30"
-  );
-}
-
 function setNoStoreHeaders(res) {
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 }
 
 export default async function handler(req, res) {
@@ -26,11 +21,10 @@ export default async function handler(req, res) {
       String(req.query.all || "") === "1" ||
       String(req.query.all || "").toLowerCase() === "true";
 
-    // Full document is public marketing metadata (not a secret). Admin needs it
-    // even when BLOG_CACHE_CLEAR_KEY is missing from the frontend host env.
+    setNoStoreHeaders(res);
+
     if (wantAll) {
-      setNoStoreHeaders(res);
-      const document = readSponsorDocument({ bypassCache: true });
+      const document = readSponsorDocument();
       return res.status(200).json({
         success: true,
         data: document,
@@ -39,7 +33,6 @@ export default async function handler(req, res) {
 
     const document = readSponsorDocument();
     const links = filterVisibleSponsors(document.links);
-    setPublicCacheHeaders(res);
     return res.status(200).json({
       success: true,
       updated_at: document.updated_at,
