@@ -27,6 +27,8 @@ export function isBlogCacheClearAuthorized(req) {
 
   const token =
     req.headers.authorization?.replace(/^Bearer\s+/i, "") ||
+    req.headers["x-footer-clear-key"] ||
+    req.headers["x-blog-cache-clear-key"] ||
     req.query.key ||
     "";
 
