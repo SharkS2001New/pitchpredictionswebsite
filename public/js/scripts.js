@@ -7,6 +7,7 @@ window.onscroll = function () {
 };
 
 function scrollFunction() {
+  if (!mybutton) return;
   if (
     document.body.scrollTop > 20 ||
     document.documentElement.scrollTop > 20
@@ -17,14 +18,17 @@ function scrollFunction() {
   }
 }
 // When the user clicks on the button, scroll to the top of the document
-mybutton.addEventListener("click", backToTop);
+if (mybutton) {
+  mybutton.addEventListener("click", backToTop);
+}
 
 function backToTop() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
 
-document.getElementById("year").innerHTML = new Date().getFullYear();
+// Year is rendered by React in the footer — do not mutate the DOM here
+// (that caused React hydration error #418).
 
 // datePickerId.value = new Date().toISOString().split("T")[0];
 

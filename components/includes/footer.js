@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 const LINK_COLOR = "#0d6efd"; // standard clickable link blue
 
-function SponsorLinks({ initialSponsors = [] }) {
-  const [sponsors, setSponsors] = useState(initialSponsors);
+function SponsorLinks() {
+  const [sponsors, setSponsors] = useState(null); // null = loading
 
   useEffect(() => {
     let cancelled = false;
@@ -19,12 +19,15 @@ function SponsorLinks({ initialSponsors = [] }) {
             Pragma: "no-cache",
           },
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!cancelled) setSponsors([]);
+          return;
+        }
         const json = await res.json();
         const links = Array.isArray(json?.links) ? json.links : [];
         if (!cancelled) setSponsors(links);
       } catch {
-        // Keep SSR / cached sponsors if the API is unavailable.
+        if (!cancelled) setSponsors([]);
       }
     };
     load();
@@ -33,7 +36,8 @@ function SponsorLinks({ initialSponsors = [] }) {
     };
   }, []);
 
-  if (!sponsors.length) {
+  // Avoid SSR/client text mismatches: render nothing until client fetch completes.
+  if (!sponsors || !sponsors.length) {
     return null;
   }
 
@@ -92,7 +96,8 @@ function SponsorLinks({ initialSponsors = [] }) {
   );
 }
 
-function Footer({ sponsors = [] }) {
+function Footer() {
+  const year = new Date().getFullYear();
   return (
     <footer
       className="py-4 text-lg-start text-white footer"
@@ -221,8 +226,8 @@ function Footer({ sponsors = [] }) {
           Pitch Predictions does not guarantee any prediction outcomes.
         </div>
 
-        {/* Sponsor Links — SSR from footer-sponsors.json, refreshed from API */}
-        <SponsorLinks initialSponsors={sponsors} />
+        {/* Sponsor Links — client-fetched, no SSR (avoids hydration mismatches) */}
+        <SponsorLinks />
 
         <hr className="my-4"/>
 
@@ -230,7 +235,7 @@ function Footer({ sponsors = [] }) {
         <section className="py-2 fixturesTextSize" style={{ fontSize: "14px" }}>
           <div className="row">
             <div className="text-center">
-              Copyright ©<span id="year"></span> pitchpredictions.com All rights reserved.
+              Copyright ©{year} pitchpredictions.com All rights reserved.
             </div>
             <div className="text-center text-md-end">
               <button type="button" className="btn btn-danger btn-floating btn-lg" id="btn-back-to-top">

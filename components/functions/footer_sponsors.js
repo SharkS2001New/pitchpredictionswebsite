@@ -33,13 +33,11 @@ function parseDateOnly(value) {
 }
 
 function todaySiteDateString(now = new Date()) {
-  // Match admin (Africa/Nairobi) for live/grace visibility.
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Africa/Nairobi",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(now);
+  // Africa/Nairobi is UTC+3 year-round (no DST). Avoid Intl timeZone —
+  // Alpine Node images often lack ICU data and return non-ISO dates that
+  // break string comparisons and hide every sponsor link.
+  const nairobiMs = now.getTime() + 3 * 60 * 60 * 1000;
+  return new Date(nairobiMs).toISOString().slice(0, 10);
 }
 
 function compareDateStrings(a, b) {

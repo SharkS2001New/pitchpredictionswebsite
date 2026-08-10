@@ -20,7 +20,7 @@ import PersistentSidebar from '../components/layout/persistent-sidebar';
 import { Adsense } from "@/components/shared/client-adsense";
 // import AdsterraAd from '../components/shared/AdsterraAd';
 
-function App({ Component, pageProps, footerSponsors = [] }) {
+function App({ Component, pageProps }) {
   var meta_content_data = MetaContent(); //Meta content dynamic data
  
   const router = useRouter(); //fetch page link data  
@@ -242,28 +242,9 @@ function App({ Component, pageProps, footerSponsors = [] }) {
           </div>
         </div>
       </main>   
-      <Footer sponsors={footerSponsors} /> 
+      <Footer /> 
     </React.Fragment>
   )  
 }
-
-App.getInitialProps = async (appContext) => {
-  let pageProps = {};
-  if (appContext.Component.getInitialProps) {
-    pageProps = await appContext.Component.getInitialProps(appContext.ctx);
-  }
-
-  let footerSponsors = [];
-  if (typeof window === "undefined") {
-    try {
-      const { getVisibleSponsors } = await import("../components/functions/footer_sponsors");
-      footerSponsors = getVisibleSponsors();
-    } catch (err) {
-      console.error("Failed to load footer sponsors for SSR:", err);
-    }
-  }
-
-  return { pageProps, footerSponsors };
-};
 
 export default App;
