@@ -9,10 +9,28 @@ import {
   resolveBlogCacheClearKey,
 } from "../../../components/functions/blog_cache_clear_auth";
 
+function setPublicCacheHeaders(res) {
+  // Short cache only — keeps sites fast under traffic while admin updates
+  // still appear within ~10–15 seconds (PUT stays no-store).
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=10, s-maxage=10, stale-while-revalidate=30"
+  );
+}
+
 function setNoStoreHeaders(res) {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
+}
+
+function publicSponsorPayload(link) {
+  return {
+    id: link.id,
+    label: link.label,
+    url: link.url,
+    rel: Array.isArray(link.rel) ? link.rel : ["noopener", "noreferrer"],
+  };
 }
 
 export default async function handler(req, res) {
@@ -21,9 +39,8 @@ export default async function handler(req, res) {
       String(req.query.all || "") === "1" ||
       String(req.query.all || "").toLowerCase() === "true";
 
-    setNoStoreHeaders(res);
-
     if (wantAll) {
+      setNoStoreHeaders(res);
       const document = readSponsorDocument();
       return res.status(200).json({
         success: true,
@@ -32,7 +49,8 @@ export default async function handler(req, res) {
     }
 
     const document = readSponsorDocument();
-    const links = filterVisibleSponsors(document.links);
+    const links = filterVisibleSponsors(document.links).map(publicSponsorPayload);
+    setPublicCacheHeaders(res);
     return res.status(200).json({
       success: true,
       updated_at: document.updated_at,
