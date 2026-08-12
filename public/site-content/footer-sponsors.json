@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-10T18:35:50.573Z",
+    "updated_at": "2026-08-12T05:42:07.744Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -609,6 +609,20 @@
             "url": "https://licbeerproject.com",
             "starts_at": "2026-08-10",
             "expires_at": "2026-09-10",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "1agame",
+            "label": "1Agame",
+            "url": "https://1agame.io/",
+            "starts_at": "2026-08-10",
+            "expires_at": "2026-09-12",
             "notes": "Scometix Africa / bettingtips.co.ke",
             "active": true,
             "rel": [
