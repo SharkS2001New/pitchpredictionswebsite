@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-13T20:06:50.644Z",
+    "updated_at": "2026-08-18T12:14:27.216Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -175,6 +175,20 @@
             "url": "https://1agame.io/",
             "starts_at": "2026-08-10",
             "expires_at": "2026-09-12",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "loto188",
+            "label": "Loto188",
+            "url": "https://aloto188.com/",
+            "starts_at": "2026-08-18",
+            "expires_at": "2026-09-18",
             "notes": "Scometix Africa / bettingtips.co.ke",
             "active": true,
             "rel": [
