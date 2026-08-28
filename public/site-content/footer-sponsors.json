@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-28T09:51:06.563Z",
+    "updated_at": "2026-08-28T18:01:46.682Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -190,6 +190,34 @@
             "starts_at": "2026-08-28",
             "expires_at": "2026-09-28",
             "notes": "Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "fun88",
+            "label": "ทางเข้าFun88",
+            "url": "https://www.fun88vui.org/",
+            "starts_at": "2026-08-28",
+            "expires_at": "2026-09-28",
+            "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "fun88",
+            "label": "ทางเข้าFun88",
+            "url": "https://www.fun888asia.com/",
+            "starts_at": "2026-08-28",
+            "expires_at": "2026-09-28",
+            "notes": "tafatips.com",
             "active": true,
             "rel": [
                 "noopener",
