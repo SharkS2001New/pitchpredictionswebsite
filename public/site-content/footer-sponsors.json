@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-23T11:11:03.341Z",
+    "updated_at": "2026-08-28T09:51:06.563Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -176,6 +176,20 @@
             "starts_at": "2026-08-18",
             "expires_at": "2026-09-18",
             "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "truc-tiep-bong-da",
+            "label": "Trực tiếp Bóng đá",
+            "url": "https://us-stemcell.com",
+            "starts_at": "2026-08-28",
+            "expires_at": "2026-09-28",
+            "notes": "Blessed Emmy",
             "active": true,
             "rel": [
                 "noopener",
