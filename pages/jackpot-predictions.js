@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../components/functions/file_cache";
 import { normalizeDateInput } from "../components/functions/DatetimeToUsersTimezone";
+import { getJackpotServerHeaders } from "../lib/api/server-headers";
 
 function JackpotPages({ activeJackpots = [], allSlugs = [], isBot = false, serverSearchTerm = '', structuredData, cacheInfo }) {
   const router = useRouter();
@@ -811,10 +812,7 @@ export async function getServerSideProps({ req, query }) {
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       const response = await fetch('https://api.pitchpredictions.com/api/fetch_active_jackpots_enhanced', {
-        headers: { 
-          Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
-          "User-Agent": userAgent
-        },
+        headers: getJackpotServerHeaders(),
         signal: controller.signal
       });
       
