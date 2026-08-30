@@ -7,6 +7,7 @@ import BetikaMidweekJackpotContent from '../../components/seo-content/jackpots/b
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../../components/functions/file_cache";
+import { getJackpotServerHeaders } from "../../lib/api/server-headers";
 
 function BetikaMidweekJackpotPredictions({ 
     initialGamesData, 
@@ -406,10 +407,7 @@ export async function getServerSideProps() {
     const siteUrl = 'https://www.pitchpredictions.com';
     const currentDate = new Date().toISOString().split('T')[0];
     
-    const headers = {
-        "Content-type": "application/json; charset=UTF-8",
-        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
-    };
+    const headers = getJackpotServerHeaders();
     
     let initialGamesData = [];
     let endpointStatus = "success";
@@ -505,10 +503,7 @@ export async function getServerSideProps() {
             try {
                 const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
-                    },
+                    headers: { ...getJackpotServerHeaders(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         jackpot_id: jackpotId,
                         fixture_ids: fixtureIds
@@ -591,10 +586,7 @@ export async function getServerSideProps() {
                         
                         const statsResponse = await fetch('https://api.pitchpredictions.com/api/jackpot/vote/stats/multiple', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
-                            },
+                            headers: { ...getJackpotServerHeaders(), 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 jackpot_id: jackpotId,
                                 fixture_ids: fixtureIds
