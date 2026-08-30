@@ -33,6 +33,58 @@ function H2HFixturesData({
     const h2h_url = "https://api.pitchpredictions.com/api/fetch_h2h_fixtures";
     const h2h_url_by_league = "https://api.pitchpredictions.com/api/fetch_h2h_fixtures_by_league";
 
+    // Lazy initial load when SSR skipped H2H.
+    useEffect(() => {
+        if (!mounted || !home_team_id || !away_team_id || !fixture_date) return;
+        if ((initialH2HMatches || []).length > 0) return;
+
+        let cancelled = false;
+        (async () => {
+            setLoading(true);
+            try {
+                const [matchesRes, leaguesRes] = await Promise.all([
+                    fetch(h2h_url, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            home_team_id,
+                            away_team_id,
+                            fixture_date,
+                        }),
+                        headers,
+                        signal: AbortSignal.timeout(8000),
+                    }),
+                    fetch("https://api.pitchpredictions.com/api/fetch_h2h_league", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            home_team_id,
+                            away_team_id,
+                            fixture_date,
+                        }),
+                        headers,
+                        signal: AbortSignal.timeout(8000),
+                    }),
+                ]);
+                const matchesData = await matchesRes.json();
+                const leaguesData = await leaguesRes.json();
+                if (cancelled) return;
+                if (matchesData.status === true) {
+                    setH2HMatchDetails(matchesData.data || []);
+                }
+                if (leaguesData.status === true) {
+                    setH2HLeagues(leaguesData.data || []);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [mounted, home_team_id, away_team_id, fixture_date, initialH2HMatches]);
+
     useEffect(() => {
         if (router.isReady && initialH2HMatches.length > 0 && mounted) {
             const storedLeagueId = typeof window !== 'undefined' ? localStorage.getItem("active_league_id_h2h") : null;

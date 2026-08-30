@@ -1,7 +1,41 @@
 const API_HEADERS = {
   "Content-type": "application/json; charset=UTF-8",
-  Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
+  Origin: "https://www.pitchpredictions.com",
+  Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
 };
+
+const FETCH_TIMEOUT_MS = 8_000;
+
+/** Tab → which heavy sections to load on SSR (header/top is always loaded). */
+export const MATCH_TAB_SECTIONS = {
+  "overall-statistics": ["trends"],
+  odds: [],
+  matches: ["h2h", "last6"],
+  standings: ["standings"],
+  "upcoming-matches": ["upcoming"],
+};
+
+export const TEAM_TAB_SECTIONS = {
+  results: ["last6", "leagues"],
+  standings: ["last6", "standings"],
+  "upcoming-matches": ["last6", "upcoming"],
+  players: ["last6"],
+};
+
+export function emptyMatchBundleExtras() {
+  return {
+    h2hMatches: [],
+    h2hLeagues: [],
+    homeLast6: [],
+    awayLast6: [],
+    homeLast6Leagues: [],
+    awayLast6Leagues: [],
+    upcomingHome: [],
+    upcomingAway: [],
+    standings: [],
+    trends: [],
+  };
+}
 
 export function isApiSuccess(data) {
   return data?.status === true || data?.status === "true";
@@ -65,17 +99,48 @@ export function parseTeamIdFromSlug(slug) {
   return parseFixtureIdFromSlug(slug);
 }
 
-async function postJson(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: API_HEADERS,
-    body: JSON.stringify(body),
-  });
+function fetchSignal(timeoutMs = FETCH_TIMEOUT_MS) {
+  return AbortSignal.timeout(timeoutMs);
+}
 
-  if (!response.ok) return null;
+async function postJson(url, body, timeoutMs = FETCH_TIMEOUT_MS) {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: API_HEADERS,
+      body: JSON.stringify(body),
+      signal: fetchSignal(timeoutMs),
+    });
 
-  const data = await response.json();
-  return isApiSuccess(data) ? data.data || [] : null;
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    return isApiSuccess(data) ? data.data || [] : null;
+  } catch {
+    return null;
+  }
+}
+
+async function getJson(url, timeoutMs = FETCH_TIMEOUT_MS) {
+  try {
+    const response = await fetch(url, {
+      headers: API_HEADERS,
+      signal: fetchSignal(timeoutMs),
+    });
+    if (!response.ok) {
+      const err = new Error(`API responded with status: ${response.status}`);
+      err.status = response.status;
+      throw err;
+    }
+    return await response.json();
+  } catch (error) {
+    if (error?.name === "TimeoutError" || error?.name === "AbortError") {
+      const err = new Error("API request timed out");
+      err.code = "TIMEOUT";
+      throw err;
+    }
+    throw error;
+  }
 }
 
 export function resolveTeamFromFixture(teamData, teamId) {
@@ -93,17 +158,22 @@ export function resolveTeamFromFixture(teamData, teamId) {
   };
 }
 
-export async function fetchMatchDetailsBundle(fixtureIdInteger) {
-  const matchRes = await fetch(
-    `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`,
-    { headers: API_HEADERS }
+function wants(sections, key) {
+  return !sections || sections.includes(key) || sections.includes("all");
+}
+
+/**
+ * Load match top data + only the requested heavy sections.
+ * @param {number} fixtureIdInteger
+ * @param {{ sections?: string[] }} [options]
+ */
+export async function fetchMatchDetailsBundle(
+  fixtureIdInteger,
+  { sections = ["all"] } = {}
+) {
+  const matchData = await getJson(
+    `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureIdInteger}`
   );
-
-  if (!matchRes.ok) {
-    throw new Error(`Match API responded with status: ${matchRes.status}`);
-  }
-
-  const matchData = await matchRes.json();
 
   if (!matchData?.data?.[0]) {
     return null;
@@ -115,83 +185,101 @@ export async function fetchMatchDetailsBundle(fixtureIdInteger) {
   const fixtureDate = getFixtureDate(matchDetails);
   const leagueId = getLeagueId(matchDetails);
 
-  const [
-    h2hMatches,
-    h2hLeagues,
-    homeLast6,
-    awayLast6,
-    homeLast6Leagues,
-    awayLast6Leagues,
-    upcomingHome,
-    upcomingAway,
-    standings,
-    trendsRaw,
-  ] = await Promise.all([
-    postJson("https://api.pitchpredictions.com/api/fetch_h2h_fixtures", {
-      home_team_id: homeTeamId,
-      away_team_id: awayTeamId,
-      fixture_date: fixtureDate,
-    }),
-    postJson("https://api.pitchpredictions.com/api/fetch_h2h_league", {
-      home_team_id: homeTeamId,
-      away_team_id: awayTeamId,
-      fixture_date: fixtureDate,
-    }),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team",
-      {
+  const extras = emptyMatchBundleExtras();
+  const jobs = [];
+
+  if (wants(sections, "h2h")) {
+    jobs.push(
+      postJson("https://api.pitchpredictions.com/api/fetch_h2h_fixtures", {
         home_team_id: homeTeamId,
-        fixture_date: fixtureDate,
-      }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team",
-      {
         away_team_id: awayTeamId,
         fixture_date: fixtureDate,
-      }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
-      {
+      }).then((data) => {
+        extras.h2hMatches = data || [];
+      }),
+      postJson("https://api.pitchpredictions.com/api/fetch_h2h_league", {
         home_team_id: homeTeamId,
-        fixture_date: fixtureDate,
-      }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
-      {
-        home_team_id: awayTeamId,
-        fixture_date: fixtureDate,
-      }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_upcoming_matches_home_team",
-      {
-        home_team_id: homeTeamId,
-        fixture_date: fixtureDate,
-      }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_upcoming_matches_away_team",
-      {
         away_team_id: awayTeamId,
         fixture_date: fixtureDate,
-      }
-    ),
-    leagueId
-      ? postJson("https://api.pitchpredictions.com/api/fetch_team_standings", {
-          league_id: leagueId,
-        }).then((data) => data?.[0]?.standings_data || [])
-      : Promise.resolve([]),
-    fetch(
-      `https://api.pitchpredictions.com/api/fetch_trends_data_by_fixture_id?fixture_id=${fixtureIdInteger}`,
-      { headers: API_HEADERS }
-    )
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => (isApiSuccess(data) ? data.data || [] : []))
-      .catch(() => []),
-  ]);
+      }).then((data) => {
+        extras.h2hLeagues = data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "last6")) {
+    jobs.push(
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team",
+        { home_team_id: homeTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.homeLast6 = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team",
+        { away_team_id: awayTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.awayLast6 = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
+        { home_team_id: homeTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.homeLast6Leagues = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
+        { home_team_id: awayTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.awayLast6Leagues = data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "upcoming")) {
+    jobs.push(
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_upcoming_matches_home_team",
+        { home_team_id: homeTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.upcomingHome = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_upcoming_matches_away_team",
+        { away_team_id: awayTeamId, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.upcomingAway = data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "standings") && leagueId) {
+    jobs.push(
+      postJson("https://api.pitchpredictions.com/api/fetch_team_standings", {
+        league_id: leagueId,
+      }).then((data) => {
+        extras.standings = data?.[0]?.standings_data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "trends")) {
+    jobs.push(
+      getJson(
+        `https://api.pitchpredictions.com/api/fetch_trends_data_by_fixture_id?fixture_id=${fixtureIdInteger}`
+      )
+        .then((data) => {
+          extras.trends = isApiSuccess(data) ? data.data || [] : [];
+        })
+        .catch(() => {
+          extras.trends = [];
+        })
+    );
+  }
+
+  if (jobs.length) {
+    await Promise.all(jobs);
+  }
 
   return {
     matchData,
@@ -200,36 +288,32 @@ export async function fetchMatchDetailsBundle(fixtureIdInteger) {
     awayTeamId,
     fixtureDate,
     leagueId,
-    h2hMatches: h2hMatches || [],
-    h2hLeagues: h2hLeagues || [],
-    homeLast6: homeLast6 || [],
-    awayLast6: awayLast6 || [],
-    homeLast6Leagues: homeLast6Leagues || [],
-    awayLast6Leagues: awayLast6Leagues || [],
-    upcomingHome: upcomingHome || [],
-    upcomingAway: upcomingAway || [],
-    standings: standings || [],
-    trends: trendsRaw || [],
+    ...extras,
   };
 }
 
-async function fetchFixtureWithPredictions(fixtureId) {
-  try {
-    const response = await fetch(
-      `https://api.pitchpredictions.com/api/fetch_match_details_top_data?fixture_id=${fixtureId}`,
-      { headers: API_HEADERS, signal: AbortSignal.timeout(5000) }
-    );
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    return isApiSuccess(data) && data.data?.[0] ? data.data[0] : null;
-  } catch {
-    return null;
-  }
+/** Lightweight last-6 for header form badges (client or SSR). */
+export async function fetchMatchHeaderForm(homeTeamId, awayTeamId, fixtureDate) {
+  const [homeLast6, awayLast6] = await Promise.all([
+    postJson(
+      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_home_team",
+      { home_team_id: homeTeamId, fixture_date: fixtureDate }
+    ),
+    postJson(
+      "https://api.pitchpredictions.com/api/fetch_last_six_matches_by_away_team",
+      { away_team_id: awayTeamId, fixture_date: fixtureDate }
+    ),
+  ]);
+  return {
+    homeLast6: homeLast6 || [],
+    awayLast6: awayLast6 || [],
+  };
 }
 
-export async function fetchTeamUpcomingWithPredictions(
+/**
+ * Upcoming list only — no N× match-detail enrichment.
+ */
+export async function fetchTeamUpcomingMatches(
   teamId,
   fixtureDate,
   excludeFixtureId = null
@@ -246,7 +330,7 @@ export async function fetchTeamUpcomingWithPredictions(
   ]);
 
   const seen = new Set();
-  const basicMatches = [...(homeMatches || []), ...(awayMatches || [])]
+  return [...(homeMatches || []), ...(awayMatches || [])]
     .filter((match) => {
       if (!match?.fixture_id || seen.has(match.fixture_id)) return false;
       if (
@@ -259,35 +343,24 @@ export async function fetchTeamUpcomingWithPredictions(
       return true;
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  if (!basicMatches.length) return [];
-
-  const enriched = await Promise.all(
-    basicMatches.slice(0, 20).map((match) =>
-      fetchFixtureWithPredictions(match.fixture_id)
-    )
-  );
-
-  return enriched
-    .filter(Boolean)
-    .filter(
-      (match) =>
-        excludeFixtureId == null ||
-        String(match.fixture_id) !== String(excludeFixtureId)
-    );
 }
 
-export async function fetchTeamDetailsBundle(teamIdInteger) {
-  const topRes = await fetch(
-    `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`,
-    { headers: API_HEADERS, signal: AbortSignal.timeout(5000) }
+/** @deprecated use fetchTeamUpcomingMatches — kept for callers */
+export async function fetchTeamUpcomingWithPredictions(
+  teamId,
+  fixtureDate,
+  excludeFixtureId = null
+) {
+  return fetchTeamUpcomingMatches(teamId, fixtureDate, excludeFixtureId);
+}
+
+export async function fetchTeamDetailsBundle(
+  teamIdInteger,
+  { sections = ["all"] } = {}
+) {
+  const teamsTopData = await getJson(
+    `https://api.pitchpredictions.com/api/fetch_teams_details_top?team_id=${teamIdInteger}`
   );
-
-  if (!topRes.ok) {
-    throw new Error(`Team API responded with status: ${topRes.status}`);
-  }
-
-  const teamsTopData = await topRes.json();
 
   if (!teamsTopData?.data?.[0]) {
     return null;
@@ -297,65 +370,87 @@ export async function fetchTeamDetailsBundle(teamIdInteger) {
   const fixtureDate = getFixtureDate(teamData);
   const leagueId = getLeagueId(teamData);
 
-  const [
-    last6Matches,
-    homeMatches,
-    awayMatches,
-    last6Leagues,
-    homeLeagues,
-    awayLeagues,
-    standingsRaw,
-    upcomingFixtures,
-  ] = await Promise.all([
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_teams_matches_both_sides",
-      { team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_teams_matches_when_home",
-      { team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_teams_matches_when_away",
-      { team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
-      { home_team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
-      { home_team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    postJson(
-      "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
-      { home_team_id: teamIdInteger, fixture_date: fixtureDate }
-    ),
-    leagueId
-      ? postJson("https://api.pitchpredictions.com/api/fetch_team_standings", {
-          league_id: leagueId,
-        })
-      : Promise.resolve([]),
-    fetchTeamUpcomingWithPredictions(
-      teamIdInteger,
-      fixtureDate,
-      teamData.fixture_id
-    ),
-  ]);
+  const extras = {
+    last6Matches: [],
+    homeMatches: [],
+    awayMatches: [],
+    last6Leagues: [],
+    homeLeagues: [],
+    awayLeagues: [],
+    standings: [],
+    upcomingFixtures: [],
+  };
+
+  const jobs = [];
+
+  if (wants(sections, "last6")) {
+    jobs.push(
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_teams_matches_both_sides",
+        { team_id: teamIdInteger, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.last6Matches = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_teams_matches_when_home",
+        { team_id: teamIdInteger, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.homeMatches = data || [];
+      }),
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_teams_matches_when_away",
+        { team_id: teamIdInteger, fixture_date: fixtureDate }
+      ).then((data) => {
+        extras.awayMatches = data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "leagues") || wants(sections, "last6")) {
+    // Single leagues call (was triplicated).
+    jobs.push(
+      postJson(
+        "https://api.pitchpredictions.com/api/fetch_last_6_matches_leagues",
+        { home_team_id: teamIdInteger, fixture_date: fixtureDate }
+      ).then((data) => {
+        const leagues = data || [];
+        extras.last6Leagues = leagues;
+        extras.homeLeagues = leagues;
+        extras.awayLeagues = leagues;
+      })
+    );
+  }
+
+  if (wants(sections, "standings") && leagueId) {
+    jobs.push(
+      postJson("https://api.pitchpredictions.com/api/fetch_team_standings", {
+        league_id: leagueId,
+      }).then((data) => {
+        extras.standings = data?.[0]?.standings_data || [];
+      })
+    );
+  }
+
+  if (wants(sections, "upcoming")) {
+    jobs.push(
+      fetchTeamUpcomingMatches(teamIdInteger, fixtureDate, teamData.fixture_id).then(
+        (data) => {
+          extras.upcomingFixtures = data || [];
+        }
+      )
+    );
+  }
+
+  if (jobs.length) {
+    await Promise.all(jobs);
+  }
 
   return {
     teamsTopData,
     teamData,
     fixtureDate,
     leagueId,
-    last6Matches: last6Matches || [],
-    homeMatches: homeMatches || [],
-    awayMatches: awayMatches || [],
-    last6Leagues: last6Leagues || [],
-    homeLeagues: homeLeagues || [],
-    awayLeagues: awayLeagues || [],
-    standings: standingsRaw?.[0]?.standings_data || [],
-    upcomingFixtures: upcomingFixtures || [],
+    ...extras,
   };
 }
 
@@ -411,8 +506,12 @@ function writeServerBundleCache(key, data) {
   }
 }
 
-export async function fetchTeamDetailsBundleCached(teamIdInteger) {
-  const key = `team:${teamIdInteger}`;
+export async function fetchTeamDetailsBundleCached(
+  teamIdInteger,
+  options = {}
+) {
+  const sectionsKey = (options.sections || ["all"]).slice().sort().join(",");
+  const key = `team:${teamIdInteger}:${sectionsKey}`;
   const cached = readServerBundleCache(key);
   if (cached !== undefined) return cached;
 
@@ -420,7 +519,7 @@ export async function fetchTeamDetailsBundleCached(teamIdInteger) {
     return pendingServerBundles.get(key);
   }
 
-  const promise = fetchTeamDetailsBundle(teamIdInteger)
+  const promise = fetchTeamDetailsBundle(teamIdInteger, options)
     .then((data) => {
       writeServerBundleCache(key, data);
       return data;
@@ -433,8 +532,12 @@ export async function fetchTeamDetailsBundleCached(teamIdInteger) {
   return promise;
 }
 
-export async function fetchMatchDetailsBundleCached(fixtureIdInteger) {
-  const key = `match:${fixtureIdInteger}`;
+export async function fetchMatchDetailsBundleCached(
+  fixtureIdInteger,
+  options = {}
+) {
+  const sectionsKey = (options.sections || ["all"]).slice().sort().join(",");
+  const key = `match:${fixtureIdInteger}:${sectionsKey}`;
   const cached = readServerBundleCache(key);
   if (cached !== undefined) return cached;
 
@@ -442,7 +545,7 @@ export async function fetchMatchDetailsBundleCached(fixtureIdInteger) {
     return pendingServerBundles.get(key);
   }
 
-  const promise = fetchMatchDetailsBundle(fixtureIdInteger)
+  const promise = fetchMatchDetailsBundle(fixtureIdInteger, options)
     .then((data) => {
       writeServerBundleCache(key, data);
       return data;
@@ -455,7 +558,24 @@ export async function fetchMatchDetailsBundleCached(fixtureIdInteger) {
   return promise;
 }
 
-export async function loadTeamPageContext(context) {
+function matchTabFromContext(context) {
+  const path = context.resolvedUrl || context.req?.url || "";
+  if (path.includes("/odds")) return "odds";
+  if (path.includes("/matches")) return "matches";
+  if (path.includes("/standings")) return "standings";
+  if (path.includes("/upcoming-matches")) return "upcoming-matches";
+  return "overall-statistics";
+}
+
+function teamTabFromContext(context) {
+  const path = context.resolvedUrl || context.req?.url || "";
+  if (path.includes("/standings")) return "standings";
+  if (path.includes("/upcoming-matches")) return "upcoming-matches";
+  if (path.includes("/players")) return "players";
+  return "results";
+}
+
+export async function loadTeamPageContext(context, options = {}) {
   const slug = context.params?.["team-details"] || "";
   const tabRedirect = getLegacyTeamTabRedirect(slug, context.query?.tab);
   if (tabRedirect) return tabRedirect;
@@ -463,34 +583,56 @@ export async function loadTeamPageContext(context) {
   const teamIdInteger = parseTeamIdFromSlug(slug);
   if (!teamIdInteger) return { notFound: true };
 
+  const tab = options.tab || teamTabFromContext(context);
+  const sections = options.sections || TEAM_TAB_SECTIONS[tab] || ["last6"];
+
   try {
-    const bundle = await fetchTeamDetailsBundleCached(teamIdInteger);
+    const bundle = await fetchTeamDetailsBundleCached(teamIdInteger, {
+      sections,
+    });
     if (!bundle) return { notFound: true };
-    return { slug, teamIdInteger, bundle };
+    return { slug, teamIdInteger, bundle, tab };
   } catch (error) {
-    console.error("SSR fetch error:", error);
-    return { notFound: true };
+    // API/timeout failure — do not map to 404.
+    console.error("SSR team fetch error:", error);
+    return {
+      slug,
+      teamIdInteger,
+      softError: true,
+      message: error?.message || "Failed to load team details",
+    };
   }
 }
 
-export async function loadMatchPageContext(context) {
+export async function loadMatchPageContext(context, options = {}) {
   const slug = context.params?.["match-details"] || "";
   const tabRedirect = getLegacyMatchTabRedirect(slug, context.query?.tab);
   if (tabRedirect) return tabRedirect;
 
   const fixtureIdInteger = parseFixtureIdFromSlug(slug);
   if (!fixtureIdInteger) {
-    return { redirect: { destination: "/", permanent: false } };
+    return { notFound: true };
   }
 
+  const tab = options.tab || matchTabFromContext(context);
+  const sections = options.sections || MATCH_TAB_SECTIONS[tab] || [];
+
   try {
-    const bundle = await fetchMatchDetailsBundleCached(fixtureIdInteger);
+    const bundle = await fetchMatchDetailsBundleCached(fixtureIdInteger, {
+      sections,
+    });
     if (!bundle) {
-      return { redirect: { destination: "/", permanent: false } };
+      return { notFound: true };
     }
-    return { slug, fixtureIdInteger, bundle };
+    return { slug, fixtureIdInteger, bundle, tab };
   } catch (error) {
+    // API/timeout failure — do not map to 404 / home redirect.
     console.error("Error fetching match data:", error);
-    return { redirect: { destination: "/", permanent: false } };
+    return {
+      slug,
+      fixtureIdInteger,
+      softError: true,
+      message: error?.message || "Failed to load match details",
+    };
   }
 }

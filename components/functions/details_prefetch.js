@@ -171,7 +171,6 @@ export function usePrefetchTeamTabs({
     }
 
     prefetchTeamTabRoutes(router, teamSlug, showStandings);
-    prefetchTeamBundle(teamIdInteger);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- prefetch once per entity/route set
   }, [router?.isReady, teamIdInteger, teamSlug, showStandings]);
 }
@@ -193,8 +192,8 @@ export function usePrefetchMatchTabs({
       seededRef.current = true;
     }
 
+    // Route-only prefetch — do not pull full H2H/standings/upcoming bundle on every tab.
     prefetchMatchTabRoutes(router, matchSlug, showStandings);
-    prefetchMatchBundle(fixtureIdInteger);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- prefetch once per entity/route set
   }, [router?.isReady, fixtureIdInteger, matchSlug, showStandings]);
 }

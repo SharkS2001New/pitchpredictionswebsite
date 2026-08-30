@@ -10,19 +10,40 @@ function parsePercentNumber(value) {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+function splitSlashOrDashDate(datePart, separator) {
+  const [first, second, year] = datePart.split(separator);
+  const a = Number(first);
+  const b = Number(second);
+
+  if (b > 12 && a >= 1 && a <= 12) {
+    return { month: first, day: second, year };
+  }
+  if (a > 12 && b >= 1 && b <= 12) {
+    return { day: first, month: second, year };
+  }
+  // Ambiguous: prefer MM/DD (backend DATE_FORMAT %m/%d/%Y)
+  return { month: first, day: second, year };
+}
+
 export function normalizeAuthDate(dateValue) {
   if (!dateValue) return dateValue;
 
-  const stringValue = String(dateValue);
+  const stringValue = String(dateValue).trim();
 
   if (/^\d{2}\/\d{2}\/\d{4}/.test(stringValue)) {
-    const [datePart, timePart = "00:00"] = stringValue.split(" ");
-    const [day, month, year] = datePart.split("/");
+    const [datePart, timePart = "00:00"] = stringValue.split(/\s+/);
+    const { day, month, year } = splitSlashOrDashDate(datePart, "/");
     return `${year}-${month}-${day}T${timePart.length === 5 ? `${timePart}:00` : timePart}`;
   }
 
-  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(stringValue.trim())) {
-    const normalized = stringValue.trim().replace(" ", "T");
+  if (/^\d{2}-\d{2}-\d{4}/.test(stringValue)) {
+    const [datePart, timePart = "00:00"] = stringValue.split(/\s+/);
+    const { day, month, year } = splitSlashOrDashDate(datePart, "-");
+    return `${year}-${month}-${day}T${timePart.length === 5 ? `${timePart}:00` : timePart}`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(stringValue)) {
+    const normalized = stringValue.replace(" ", "T");
     return /T\d{2}:\d{2}$/.test(normalized) ? `${normalized}:00` : normalized;
   }
 

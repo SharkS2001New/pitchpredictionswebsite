@@ -3,6 +3,7 @@ import { Adsense } from "@/components/shared/client-adsense";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";
 import MatchSummaryDisplay from "../../../components/matchdetails/match_summary_display";
 import PreLoader from "../../../components/includes/loader";
+import DataNotFoundPage from "../../../components/includes/datanotfound";
 import {
   getAwayTeamId,
   getAwayTeamName,
@@ -15,9 +16,23 @@ import {
 import { serializeMatchBundleForClient } from "../../../components/functions/details_prefetch";
 
 export async function getServerSideProps(context) {
-  const loaded = await loadMatchPageContext(context);
+  const loaded = await loadMatchPageContext(context, {
+    tab: "overall-statistics",
+  });
   if (loaded.redirect) return loaded;
   if (loaded.notFound) return { notFound: true };
+  if (loaded.softError) {
+    return {
+      props: {
+        matchSlug: loaded.slug,
+        fixtureIdInteger: loaded.fixtureIdInteger,
+        loadError: loaded.message || "Failed to load match",
+        initialMatchDetails: { data: [] },
+        initialTrends: [],
+        matchBundleSnapshot: null,
+      },
+    };
+  }
 
   const { slug, fixtureIdInteger, bundle } = loaded;
 
@@ -25,10 +40,8 @@ export async function getServerSideProps(context) {
     props: {
       matchSlug: slug,
       fixtureIdInteger,
+      loadError: null,
       initialMatchDetails: bundle.matchData,
-      initialHomeLast6: bundle.homeLast6,
-      initialAwayLast6: bundle.awayLast6,
-      initialStandings: bundle.standings,
       initialTrends: bundle.trends,
       matchBundleSnapshot: serializeMatchBundleForClient(bundle),
     },
@@ -38,16 +51,22 @@ export async function getServerSideProps(context) {
 function MatchSummaryPage({
   matchSlug,
   fixtureIdInteger,
+  loadError,
   initialMatchDetails,
-  initialHomeLast6,
-  initialAwayLast6,
-  initialStandings,
   initialTrends,
   matchBundleSnapshot,
 }) {
   const router = useRouter();
-  const gameDetails = initialMatchDetails.data || [];
+  const gameDetails = initialMatchDetails?.data || [];
   const matchDetailsData = initialMatchDetails?.data?.[0] || null;
+
+  if (loadError) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Match details are temporarily unavailable. Please try again shortly." />
+      </div>
+    );
+  }
 
   if (!matchDetailsData) {
     return <PreLoader />;
@@ -59,8 +78,7 @@ function MatchSummaryPage({
   const awayTeamId = getAwayTeamId(matchDetailsData);
   const leagueType = getLeagueType(matchDetailsData);
   const leagueName = getLeagueName(matchDetailsData);
-  const showStandings =
-    leagueType === "League" && initialStandings.length > 0;
+  const showStandings = leagueType === "League";
 
   return (
     <>
@@ -68,8 +86,8 @@ function MatchSummaryPage({
         gameDetails={gameDetails}
         homeTeamId={homeTeamId}
         awayTeamId={awayTeamId}
-        homeTeamData={initialHomeLast6}
-        awayTeamData={initialAwayLast6}
+        homeTeamData={[]}
+        awayTeamData={[]}
         matchSlug={matchSlug}
         fixtureIdInteger={fixtureIdInteger}
         urlFilter={router.pathname.substring(1)}
@@ -82,9 +100,11 @@ function MatchSummaryPage({
           match={matchDetailsData}
           trends={initialTrends}
           trendsStatus={initialTrends.length > 0 ? "success" : "error"}
-          standings={initialStandings}
+          standings={[]}
           homeTeamId={homeTeamId}
           awayTeamId={awayTeamId}
+          homeTeamName={homeTeamName}
+          awayTeamName={awayTeamName}
           leagueName={leagueName}
           leagueType={leagueType}
         />

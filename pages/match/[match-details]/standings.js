@@ -14,9 +14,21 @@ import {
 import { serializeMatchBundleForClient } from "../../../components/functions/details_prefetch";
 
 export async function getServerSideProps(context) {
-  const loaded = await loadMatchPageContext(context);
+  const loaded = await loadMatchPageContext(context, { tab: "standings" });
   if (loaded.redirect) return loaded;
   if (loaded.notFound) return { notFound: true };
+  if (loaded.softError) {
+    return {
+      props: {
+        matchSlug: loaded.slug,
+        fixtureIdInteger: loaded.fixtureIdInteger,
+        loadError: loaded.message || "Failed to load match",
+        initialMatchDetails: { data: [] },
+        initialStandings: [],
+        matchBundleSnapshot: null,
+      },
+    };
+  }
 
   const { slug, fixtureIdInteger, bundle } = loaded;
 
@@ -24,9 +36,8 @@ export async function getServerSideProps(context) {
     props: {
       matchSlug: slug,
       fixtureIdInteger,
+      loadError: null,
       initialMatchDetails: bundle.matchData,
-      initialHomeLast6: bundle.homeLast6,
-      initialAwayLast6: bundle.awayLast6,
       initialStandings: bundle.standings,
       matchBundleSnapshot: serializeMatchBundleForClient(bundle),
     },
@@ -36,15 +47,22 @@ export async function getServerSideProps(context) {
 function MatchStandingsPage({
   matchSlug,
   fixtureIdInteger,
+  loadError,
   initialMatchDetails,
-  initialHomeLast6,
-  initialAwayLast6,
   initialStandings,
   matchBundleSnapshot,
 }) {
   const router = useRouter();
-  const gameDetails = initialMatchDetails.data || [];
+  const gameDetails = initialMatchDetails?.data || [];
   const matchDetailsData = initialMatchDetails?.data?.[0] || null;
+
+  if (loadError) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Match details are temporarily unavailable. Please try again shortly." />
+      </div>
+    );
+  }
 
   if (!matchDetailsData) {
     return <PreLoader />;
@@ -54,8 +72,7 @@ function MatchStandingsPage({
   const awayTeamId = getAwayTeamId(matchDetailsData);
   const leagueType = getLeagueType(matchDetailsData);
   const leagueName = getLeagueName(matchDetailsData);
-  const showStandings =
-    leagueType === "League" && initialStandings.length > 0;
+  const showStandings = leagueType === "League";
 
   return (
     <>
@@ -63,8 +80,8 @@ function MatchStandingsPage({
         gameDetails={gameDetails}
         homeTeamId={homeTeamId}
         awayTeamId={awayTeamId}
-        homeTeamData={initialHomeLast6}
-        awayTeamData={initialAwayLast6}
+        homeTeamData={[]}
+        awayTeamData={[]}
         matchSlug={matchSlug}
         fixtureIdInteger={fixtureIdInteger}
         urlFilter={router.pathname.substring(1)}

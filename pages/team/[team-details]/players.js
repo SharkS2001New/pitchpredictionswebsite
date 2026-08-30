@@ -9,9 +9,21 @@ import {
 import { serializeTeamBundleForClient } from "../../../components/functions/details_prefetch";
 
 export async function getServerSideProps(context) {
-  const loaded = await loadTeamPageContext(context);
+  const loaded = await loadTeamPageContext(context, { tab: "players" });
   if (loaded.notFound) return { notFound: true };
   if (loaded.redirect) return loaded;
+  if (loaded.softError) {
+    return {
+      props: {
+        teamSlug: loaded.slug,
+        teamIdInteger: loaded.teamIdInteger,
+        loadError: loaded.message || "Failed to load team",
+        initialTeamsTopData: { data: [] },
+        initialLast6Matches: [],
+        teamBundleSnapshot: null,
+      },
+    };
+  }
 
   const { slug, teamIdInteger, bundle } = loaded;
 
@@ -19,6 +31,7 @@ export async function getServerSideProps(context) {
     props: {
       teamSlug: slug,
       teamIdInteger,
+      loadError: null,
       initialTeamsTopData: bundle.teamsTopData,
       initialLast6Matches: bundle.last6Matches,
       teamBundleSnapshot: serializeTeamBundleForClient(bundle),
@@ -29,12 +42,21 @@ export async function getServerSideProps(context) {
 function TeamPlayersPage({
   teamSlug,
   teamIdInteger,
+  loadError,
   initialTeamsTopData,
   initialLast6Matches,
   teamBundleSnapshot,
 }) {
   const router = useRouter();
   const teamsTopData = initialTeamsTopData?.data?.[0] || null;
+
+  if (loadError) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Team details are temporarily unavailable. Please try again shortly." />
+      </div>
+    );
+  }
 
   if (!teamsTopData) {
     return (

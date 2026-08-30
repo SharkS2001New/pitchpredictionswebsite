@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";
 import FetchUpcomingMatches from "../../../components/matchdetails/fetch_upcoming_matches";
 import PreLoader from "../../../components/includes/loader";
+import DataNotFoundPage from "../../../components/includes/datanotfound";
 import {
   getAwayTeamId,
   getAwayTeamName,
@@ -14,9 +15,24 @@ import {
 import { serializeMatchBundleForClient } from "../../../components/functions/details_prefetch";
 
 export async function getServerSideProps(context) {
-  const loaded = await loadMatchPageContext(context);
+  const loaded = await loadMatchPageContext(context, {
+    tab: "upcoming-matches",
+  });
   if (loaded.redirect) return loaded;
   if (loaded.notFound) return { notFound: true };
+  if (loaded.softError) {
+    return {
+      props: {
+        matchSlug: loaded.slug,
+        fixtureIdInteger: loaded.fixtureIdInteger,
+        loadError: loaded.message || "Failed to load match",
+        initialMatchDetails: { data: [] },
+        initialUpcomingHome: [],
+        initialUpcomingAway: [],
+        matchBundleSnapshot: null,
+      },
+    };
+  }
 
   const { slug, fixtureIdInteger, bundle } = loaded;
 
@@ -24,12 +40,10 @@ export async function getServerSideProps(context) {
     props: {
       matchSlug: slug,
       fixtureIdInteger,
+      loadError: null,
       initialMatchDetails: bundle.matchData,
-      initialHomeLast6: bundle.homeLast6,
-      initialAwayLast6: bundle.awayLast6,
       initialUpcomingHome: bundle.upcomingHome,
       initialUpcomingAway: bundle.upcomingAway,
-      initialStandings: bundle.standings,
       matchBundleSnapshot: serializeMatchBundleForClient(bundle),
     },
   };
@@ -38,17 +52,23 @@ export async function getServerSideProps(context) {
 function MatchUpcomingPage({
   matchSlug,
   fixtureIdInteger,
+  loadError,
   initialMatchDetails,
-  initialHomeLast6,
-  initialAwayLast6,
   initialUpcomingHome,
   initialUpcomingAway,
-  initialStandings,
   matchBundleSnapshot,
 }) {
   const router = useRouter();
-  const gameDetails = initialMatchDetails.data || [];
+  const gameDetails = initialMatchDetails?.data || [];
   const matchDetailsData = initialMatchDetails?.data?.[0] || null;
+
+  if (loadError) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Match details are temporarily unavailable. Please try again shortly." />
+      </div>
+    );
+  }
 
   if (!matchDetailsData) {
     return <PreLoader />;
@@ -59,9 +79,7 @@ function MatchUpcomingPage({
   const homeTeamId = getHomeTeamId(matchDetailsData);
   const awayTeamId = getAwayTeamId(matchDetailsData);
   const fixtureDate = getFixtureDate(matchDetailsData);
-  const leagueType = getLeagueType(matchDetailsData);
-  const showStandings =
-    leagueType === "League" && initialStandings.length > 0;
+  const showStandings = getLeagueType(matchDetailsData) === "League";
 
   return (
     <>
@@ -69,8 +87,8 @@ function MatchUpcomingPage({
         gameDetails={gameDetails}
         homeTeamId={homeTeamId}
         awayTeamId={awayTeamId}
-        homeTeamData={initialHomeLast6}
-        awayTeamData={initialAwayLast6}
+        homeTeamData={[]}
+        awayTeamData={[]}
         matchSlug={matchSlug}
         fixtureIdInteger={fixtureIdInteger}
         urlFilter={router.pathname.substring(1)}

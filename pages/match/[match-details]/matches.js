@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
-import { Adsense } from "@/components/shared/client-adsense";
 import H2HFixturesData from "../../../components/matchdetails/h2h_fixtures";
 import Last6Matches from "../../../components/matchdetails/last_6_matches";
 import MatchPageHeader from "../../../components/matchdetails/match-page-header";
 import PreLoader from "../../../components/includes/loader";
+import DataNotFoundPage from "../../../components/includes/datanotfound";
 import {
   getAwayTeamId,
   getAwayTeamName,
@@ -16,9 +16,26 @@ import {
 import { serializeMatchBundleForClient } from "../../../components/functions/details_prefetch";
 
 export async function getServerSideProps(context) {
-  const loaded = await loadMatchPageContext(context);
+  const loaded = await loadMatchPageContext(context, { tab: "matches" });
   if (loaded.redirect) return loaded;
   if (loaded.notFound) return { notFound: true };
+  if (loaded.softError) {
+    return {
+      props: {
+        matchSlug: loaded.slug,
+        fixtureIdInteger: loaded.fixtureIdInteger,
+        loadError: loaded.message || "Failed to load match",
+        initialMatchDetails: { data: [] },
+        initialH2HMatches: [],
+        initialH2HLeagues: [],
+        initialHomeLast6: [],
+        initialAwayLast6: [],
+        initialHomeLast6Leagues: [],
+        initialAwayLast6Leagues: [],
+        matchBundleSnapshot: null,
+      },
+    };
+  }
 
   const { slug, fixtureIdInteger, bundle } = loaded;
 
@@ -26,6 +43,7 @@ export async function getServerSideProps(context) {
     props: {
       matchSlug: slug,
       fixtureIdInteger,
+      loadError: null,
       initialMatchDetails: bundle.matchData,
       initialH2HMatches: bundle.h2hMatches,
       initialH2HLeagues: bundle.h2hLeagues,
@@ -33,7 +51,6 @@ export async function getServerSideProps(context) {
       initialAwayLast6: bundle.awayLast6,
       initialHomeLast6Leagues: bundle.homeLast6Leagues,
       initialAwayLast6Leagues: bundle.awayLast6Leagues,
-      initialStandings: bundle.standings,
       matchBundleSnapshot: serializeMatchBundleForClient(bundle),
     },
   };
@@ -42,6 +59,7 @@ export async function getServerSideProps(context) {
 function MatchHistoryPage({
   matchSlug,
   fixtureIdInteger,
+  loadError,
   initialMatchDetails,
   initialH2HMatches,
   initialH2HLeagues,
@@ -49,12 +67,19 @@ function MatchHistoryPage({
   initialAwayLast6,
   initialHomeLast6Leagues,
   initialAwayLast6Leagues,
-  initialStandings,
   matchBundleSnapshot,
 }) {
   const router = useRouter();
-  const gameDetails = initialMatchDetails.data || [];
+  const gameDetails = initialMatchDetails?.data || [];
   const matchDetailsData = initialMatchDetails?.data?.[0] || null;
+
+  if (loadError) {
+    return (
+      <div className="sites-card">
+        <DataNotFoundPage props="Match details are temporarily unavailable. Please try again shortly." />
+      </div>
+    );
+  }
 
   if (!matchDetailsData) {
     return <PreLoader />;
@@ -65,9 +90,7 @@ function MatchHistoryPage({
   const homeTeamId = getHomeTeamId(matchDetailsData);
   const awayTeamId = getAwayTeamId(matchDetailsData);
   const fixtureDate = getFixtureDate(matchDetailsData);
-  const leagueType = getLeagueType(matchDetailsData);
-  const showStandings =
-    leagueType === "League" && initialStandings.length > 0;
+  const showStandings = getLeagueType(matchDetailsData) === "League";
 
   return (
     <>
@@ -92,21 +115,19 @@ function MatchHistoryPage({
         initialH2HLeagues={initialH2HLeagues}
       />
 
-      {(initialHomeLast6.length > 0 || initialAwayLast6.length > 0) && (
-        <div className="sites-card">
-          <Last6Matches
-            home_team={homeTeamName}
-            away_team={awayTeamName}
-            home_team_id={homeTeamId}
-            away_team_id={awayTeamId}
-            fixture_date={fixtureDate}
-            home_team_data={initialHomeLast6}
-            away_team_data={initialAwayLast6}
-            initialHomeLeagues={initialHomeLast6Leagues}
-            initialAwayLeagues={initialAwayLast6Leagues}
-          />
-        </div>
-      )}
+      <div className="sites-card">
+        <Last6Matches
+          home_team={homeTeamName}
+          away_team={awayTeamName}
+          home_team_id={homeTeamId}
+          away_team_id={awayTeamId}
+          fixture_date={fixtureDate}
+          home_team_data={initialHomeLast6}
+          away_team_data={initialAwayLast6}
+          initialHomeLeagues={initialHomeLast6Leagues}
+          initialAwayLeagues={initialAwayLast6Leagues}
+        />
+      </div>
     </>
   );
 }

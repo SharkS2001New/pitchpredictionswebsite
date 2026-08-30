@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  formatFixtureDate,
+  formatFixtureDateTime,
   resolveFixtureDateTime,
 } from "../functions/DatetimeToUsersTimezone";
 
@@ -82,7 +82,7 @@ function PopularTipsContent() {
             <div key={match.fixture_id || match.id || index} className="match-card">
               <div className="date-bar">
                 <span style={{ color: "#212830" }}>
-                  Date: {formatFixtureDate(resolveFixtureDateTime(match))}
+                  Date: {formatFixtureDateTime(resolveFixtureDateTime(match))}
                 </span>
               </div>
               <div className="match-header">

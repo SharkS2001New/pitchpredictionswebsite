@@ -34,14 +34,51 @@ export function normalizeDateInput(dateValue) {
   }
 
   if (/^\d{2}\/\d{2}\/\d{4}/.test(dateInput)) {
-    const [datePart, timePart = "00:00"] = dateInput.split(" ");
-    const [day, month, year] = datePart.split("/");
+    // APIs mix MM/DD/YYYY (most fixture endpoints) and DD/MM/YYYY (some auth/search).
+    const [datePart, timePart = "00:00"] = dateInput.split(/\s+/);
+    const [first, second, year] = datePart.split("/");
+    const a = Number(first);
+    const b = Number(second);
+    let month;
+    let day;
+
+    if (b > 12 && a >= 1 && a <= 12) {
+      // e.g. 08/30/2026 → August 30 (US)
+      month = first;
+      day = second;
+    } else if (a > 12 && b >= 1 && b <= 12) {
+      // e.g. 30/08/2026 → August 30 (EU)
+      day = first;
+      month = second;
+    } else {
+      // Ambiguous (both <= 12). Prefer MM/DD — backend DATE_FORMAT uses %m/%d/%Y.
+      month = first;
+      day = second;
+    }
+
     dateInput = `${year}-${month}-${day}T${
       timePart.length === 5 ? `${timePart}:00` : timePart
     }`;
   } else if (/^\d{2}-\d{2}-\d{4}/.test(dateInput)) {
-    const [datePart, timePart = "00:00"] = dateInput.split(" ");
-    const [day, month, year] = datePart.split("-");
+    const [datePart, timePart = "00:00"] = dateInput.split(/\s+/);
+    const [first, second, year] = datePart.split("-");
+    const a = Number(first);
+    const b = Number(second);
+    let month;
+    let day;
+
+    if (b > 12 && a >= 1 && a <= 12) {
+      month = first;
+      day = second;
+    } else if (a > 12 && b >= 1 && b <= 12) {
+      day = first;
+      month = second;
+    } else {
+      // Dashed dates from our APIs are usually DD-MM-YYYY.
+      day = first;
+      month = second;
+    }
+
     dateInput = `${year}-${month}-${day}T${
       timePart.length === 5 ? `${timePart}:00` : timePart
     }`;

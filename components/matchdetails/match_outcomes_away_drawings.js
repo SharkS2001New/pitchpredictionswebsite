@@ -3,7 +3,7 @@ function MatchOutcomesAway(props){
     
     var computedWins = [];
     
-    if(away_team_matches.length>5){
+    if(away_team_matches && away_team_matches.length>5){
          for(let y =0;y<5;y++){
 
             var tooltipTitle = away_team_matches[y].home_team_name +'  ('+ away_team_matches[y].goals_home +'-'+away_team_matches[y].goals_away +')  '+ away_team_matches[y].away_team_name+ "\n"
