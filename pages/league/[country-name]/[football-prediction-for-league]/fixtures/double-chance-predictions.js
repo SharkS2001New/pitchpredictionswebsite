@@ -41,7 +41,7 @@ function FootballPredictionsByLeague({
 
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
     };
 
     // Fetch today's data by league (for live updates)
@@ -347,7 +347,7 @@ export async function getServerSideProps(context) {
     
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
     };
     
     // Initialize data variables

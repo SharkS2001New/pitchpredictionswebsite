@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Date parameter is required' });
   }
 
-  const headers = { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" };
+  const headers = { Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` };
   const cacheDir = path.join(process.cwd(), 'public', 'cache');
   const cacheFilename = `fixture-of-the-day-${date}.json`;
   const cachePath = path.join(cacheDir, cacheFilename);

@@ -45,7 +45,7 @@ const SearchModal = ({ isOpen, onClose }) => {
             const url = `https://api.pitchpredictions.com/api/todays_search_suggestions_teams?fixture_date=${todaysDate}`;
             
             const response = await fetch(url, {
-                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
             });
             
             if (response.ok) {

@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     
     const response = await fetch(apiUrl, {
       headers: {
-        Authorization: "R9TxV3PbOEu7qZnJKgydC5LmX2",
+        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
       },
     });
 

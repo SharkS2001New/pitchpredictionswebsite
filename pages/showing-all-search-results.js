@@ -294,9 +294,7 @@ export async function getServerSideProps({ query }) {
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         
         const response = await fetch(`https://api.pitchpredictions.com/api/search?q=${encodeURIComponent(searchQuery)}`, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
+            headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` },
             signal: controller.signal
         });
         

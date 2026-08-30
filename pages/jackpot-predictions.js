@@ -812,7 +812,7 @@ export async function getServerSideProps({ req, query }) {
       
       const response = await fetch('https://api.pitchpredictions.com/api/fetch_active_jackpots_enhanced', {
         headers: { 
-          "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2",
+          Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
           "User-Agent": userAgent
         },
         signal: controller.signal

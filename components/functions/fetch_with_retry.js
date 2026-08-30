@@ -21,7 +21,15 @@ async function fetchJsonWithRetry(url, options = {}) {
     try {
       const response = await fetch(url, {
         method,
-        headers,
+        headers: {
+          ...(typeof url === "string" && url.includes("api.pitchpredictions.com")
+            ? {
+                Origin: "https://www.pitchpredictions.com",
+                Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`,
+              }
+            : {}),
+          ...headers,
+        },
         signal: controller.signal,
       });
 

@@ -38,7 +38,7 @@ export default function Home({
       const chunkUrl = `${baseUrl}&start_index=${startIndex}&end_index=${endIndex}`;
       
       const response = await fetch(chunkUrl, {
-        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+        headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
       });
       
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -182,7 +182,7 @@ export async function getServerSideProps({ req }) {
     if (initialData.length === 0) {
       const firstBatchUrl = `${baseUrl}&start_index=0&end_index=20`;
       const response = await fetch(firstBatchUrl, {
-        headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+        headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
       });
       
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);

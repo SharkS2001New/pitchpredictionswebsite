@@ -419,7 +419,7 @@ export async function getServerSideProps() {
     
     const headers = {
         "Content-type": "application/json; charset=UTF-8",
-        "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
+        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
     };
 
     let initialGamesData = [];
@@ -518,7 +518,7 @@ export async function getServerSideProps() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                        Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
                     },
                     body: JSON.stringify({
                         jackpot_id: jackpotId,
@@ -586,7 +586,7 @@ export async function getServerSideProps() {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': 'R9TxV3PbOEu7qZnJKgydC5LmX2'
+                                Origin: "https://www.pitchpredictions.com", Authorization: `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}`
                             },
                             body: JSON.stringify({
                                 jackpot_id: jackpotId,

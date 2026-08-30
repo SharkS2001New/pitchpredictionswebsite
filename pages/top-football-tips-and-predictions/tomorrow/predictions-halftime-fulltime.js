@@ -37,7 +37,7 @@ function TopFootballFixturesTomorrow({
             const chunkUrl = `${baseUrl}?fixture_date=${tomorrowsDate}&start_index=${startIndex}&end_index=${endIndex}`;
             
             const response = await fetch(chunkUrl, {
-                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
             });
             
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -190,9 +190,7 @@ export async function getServerSideProps() {
         
         // Fetch first batch only
         const response = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
+            headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` },
             signal: controller.signal
         });
         

@@ -34,7 +34,7 @@ function LiveFixtures({
         try {
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
             const chunkData = await fetchJsonWithRetry(chunkUrl, {
-                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
             });
             
             if (chunkData.status === true && chunkData.data && chunkData.data.length > 0) {
@@ -77,7 +77,7 @@ function LiveFixtures({
 
             try {
                 const livePayload = await fetchJsonWithRetry(refreshUrl, {
-                    headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                    headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
                 });
 
                 if (livePayload.status === true && Array.isArray(livePayload.data)) {
@@ -217,9 +217,7 @@ export async function getServerSideProps() {
     try {
         // Fetch first batch only - no full batch fetch on server
         const data = await fetchJsonWithRetry(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            },
+            headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` },
             retries: 2,
             timeoutMs: 7000
         });

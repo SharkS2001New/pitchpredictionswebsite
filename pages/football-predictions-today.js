@@ -41,7 +41,7 @@ function TodaysFixtures({
             const chunkUrl = `${baseUrl}?fixture_date=${todaysDate}&start_index=${startIndex}&end_index=${endIndex}`;
             
             const response = await fetch(chunkUrl, {
-                headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
             });
             
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -83,7 +83,7 @@ function TodaysFixtures({
 
             try {
                 const response = await fetch(liveUrl, {
-                    headers: { "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2" }
+                    headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
                 });
 
                 if (!response.ok) return;
@@ -242,9 +242,7 @@ export async function getServerSideProps() {
         // Fetch today's base fixtures
         let freshTodaysMatches = [];
         const todaysResponse = await fetch(firstBatchUrl, {
-            headers: { 
-                "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-            }
+            headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
         });
         
         if (!todaysResponse.ok) {
@@ -283,9 +281,7 @@ export async function getServerSideProps() {
         let liveMatches = [];
         try {
             const liveResponse = await fetch(liveFirstBatchUrl, {
-                headers: {
-                    "Authorization": "R9TxV3PbOEu7qZnJKgydC5LmX2"
-                }
+                headers: { "Origin": "https://www.pitchpredictions.com", "Authorization": `Bearer ${process.env.ACCESS_TOKEN || "UJlhuDILIR1Lc2IEwZDIKOln9d"}` }
             });
 
             if (liveResponse.ok) {
