@@ -124,13 +124,24 @@ function FetchUpcomingMatches({
         return formatted.replace(/^(\d{2})\/(\d{2})\/(\d{4})$/, '$1.$2.$3');
     };
 
+    const upcomingMatchHomeName = (match) =>
+        match.home_team?.name ?? match.home_team_name ?? "";
+    const upcomingMatchAwayName = (match) =>
+        match.away_team?.name ?? match.away_team_name ?? "";
+    const upcomingMatchLeagueName = (match) =>
+        match.league?.name ?? match.league_name ?? "";
+    const upcomingMatchDate = (match) =>
+        match.match?.datetime ?? match.date ?? "";
+
     // Build home matches list
     const upcoming_home_matchesarray = [];
     if (upcoming_home_matches.length > 0 && mounted) {
         upcoming_home_matches.slice(0, homeTeamNum).forEach((match, index) => {
+            const homeName = upcomingMatchHomeName(match);
+            const awayName = upcomingMatchAwayName(match);
             const url_name = encodeURIComponent(
-                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
+                homeName.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                awayName.replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
@@ -138,10 +149,10 @@ function FetchUpcomingMatches({
             const awayTeamStyle = {};
             
             if (mounted) {
-                if (match.home_team_name === home_team) {
+                if (homeName === home_team) {
                     homeTeamStyle.fontWeight = "bold";
                 }
-                if (match.away_team_name === home_team) {
+                if (awayName === home_team) {
                     awayTeamStyle.fontWeight = "bold";
                 }
             }
@@ -150,16 +161,16 @@ function FetchUpcomingMatches({
                 <a key={match.fixture_id || index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                     <div className="responsive-row fixturesTextSize matchDetailsLink">
                         <div className="responsive-cell team-link-probability">
-                            {formatDate(match.date)}
+                            {formatDate(upcomingMatchDate(match))}
                         </div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...homeTeamStyle }}>
-                            {match.home_team_name}
+                            {homeName}
                         </div>
                         <div className="responsive-cell" style={{ textAlign: "center" }}>-</div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...awayTeamStyle }}>
-                            {match.away_team_name}
+                            {awayName}
                         </div>
-                        <div className="responsive-cell team-link-probability">{match.league_name}</div>
+                        <div className="responsive-cell team-link-probability">{upcomingMatchLeagueName(match)}</div>
                     </div>
                 </a>
             );
@@ -170,9 +181,11 @@ function FetchUpcomingMatches({
     const upcoming_away_matchesarray = [];
     if (upcoming_away_matches.length > 0 && mounted) {
         upcoming_away_matches.slice(0, awayTeamNum).forEach((match, index) => {
+            const homeName = upcomingMatchHomeName(match);
+            const awayName = upcomingMatchAwayName(match);
             const url_name = encodeURIComponent(
-                (match.home_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-vs-' +
-                (match.away_team_name || '').replace(/\s+/g, '-').toLowerCase() + '-' +
+                homeName.replace(/\s+/g, '-').toLowerCase() + '-vs-' +
+                awayName.replace(/\s+/g, '-').toLowerCase() + '-' +
                 match.fixture_id
             );
 
@@ -180,10 +193,10 @@ function FetchUpcomingMatches({
             const awayTeamStyle = {};
             
             if (mounted) {
-                if (match.home_team_name === away_team) {
+                if (homeName === away_team) {
                     homeTeamStyle.fontWeight = "bold";
                 }
-                if (match.away_team_name === away_team) {
+                if (awayName === away_team) {
                     awayTeamStyle.fontWeight = "bold";
                 }
             }
@@ -192,16 +205,16 @@ function FetchUpcomingMatches({
                 <a key={match.fixture_id || index} href={'/match/football-predictions-' + url_name + "/matches"} title="Click to View Match details">
                     <div className="responsive-row fixturesTextSize matchDetailsLink">
                         <div className="responsive-cell team-link-probability">
-                            {formatDate(match.date)}
+                            {formatDate(upcomingMatchDate(match))}
                         </div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...homeTeamStyle }}>
-                            {match.home_team_name}
+                            {homeName}
                         </div>
                         <div className="responsive-cell" style={{ textAlign: "center" }}>-</div>
                         <div className="responsive-cell team-link-probability" style={{ textAlign: "left", whiteSpace: "pre-wrap", ...awayTeamStyle }}>
-                            {match.away_team_name}
+                            {awayName}
                         </div>
-                        <div className="responsive-cell team-link-probability">{match.league_name}</div>
+                        <div className="responsive-cell team-link-probability">{upcomingMatchLeagueName(match)}</div>
                     </div>
                 </a>
             );

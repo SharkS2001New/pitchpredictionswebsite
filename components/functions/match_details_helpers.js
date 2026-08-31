@@ -312,7 +312,65 @@ export async function fetchMatchHeaderForm(homeTeamId, awayTeamId, fixtureDate) 
 
 /**
  * Upcoming list only — no N× match-detail enrichment.
+ * API returns FixtureResource rows; normalize legacy flat rows from stale cache.
  */
+export function normalizeUpcomingFixtureRow(row) {
+  if (!row || typeof row !== "object") return row;
+  if (row.home_team?.name || row.away_team?.name) return row;
+
+  const datetime = row.date || row.match?.datetime || null;
+  return {
+    fixture_id: row.fixture_id,
+    league_id: row.league_id,
+    home_team: {
+      id: row.home_team_id ?? null,
+      name: row.home_team_name ?? "",
+      logo: row.home_team_logo ?? null,
+    },
+    away_team: {
+      id: row.away_team_id ?? null,
+      name: row.away_team_name ?? "",
+      logo: row.away_team_logo ?? null,
+    },
+    match: {
+      datetime,
+      unformatted_date: row.unformatedDate ?? row.unformated_date ?? null,
+      status: row.status_short ?? "NS",
+    },
+    score: {
+      home: row.goals_home ?? null,
+      away: row.goals_away ?? null,
+      half_time: {
+        home: row.ht_goals_home ?? null,
+        away: row.ht_goals_away ?? null,
+      },
+    },
+    league: {
+      id: row.league_id ?? null,
+      name: row.league_name ?? "",
+      short_name: row.league_short_name ?? "",
+    },
+    predictions: {
+      avg_goals: row.avg_goals ?? null,
+      "1x2": {
+        home: row.percent_pred_home ?? null,
+        draw: row.percent_pred_draw ?? null,
+        away: row.percent_pred_away ?? null,
+      },
+      half_time: {
+        home: row.hf_percent_pred_home ?? null,
+        draw: row.hf_percent_pred_draw ?? null,
+        away: row.hf_percent_pred_away ?? null,
+      },
+    },
+    odds: {
+      home: row.bets_home ?? null,
+      draw: row.bets_draw ?? null,
+      away: row.bets_away ?? null,
+    },
+  };
+}
+
 export async function fetchTeamUpcomingMatches(
   teamId,
   fixtureDate,
@@ -331,6 +389,7 @@ export async function fetchTeamUpcomingMatches(
 
   const seen = new Set();
   return [...(homeMatches || []), ...(awayMatches || [])]
+    .map(normalizeUpcomingFixtureRow)
     .filter((match) => {
       if (!match?.fixture_id || seen.has(match.fixture_id)) return false;
       if (
@@ -342,7 +401,11 @@ export async function fetchTeamUpcomingMatches(
       seen.add(match.fixture_id);
       return true;
     })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+    .sort(
+      (a, b) =>
+        new Date(a.match?.datetime || a.date) -
+        new Date(b.match?.datetime || b.date)
+    );
 }
 
 /** @deprecated use fetchTeamUpcomingMatches — kept for callers */
