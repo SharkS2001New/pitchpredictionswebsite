@@ -10,6 +10,7 @@ import FilterByDateOverallDoubleChanceUnderOverHTFTPred1x2 from "../components/f
 import fs from 'fs';
 import path from 'path';
 import { writeCacheFileAtPath } from "../components/functions/file_cache";
+import { resolveFilterDateFromRoute } from "../components/functions/GetTodaysDate";
 
 function FootballPredictionsByDate({ 
     initialData, 
@@ -201,8 +202,9 @@ export async function getServerSideProps({ params, query }) {
     const siteUrl = 'https://www.pitchpredictions.com';
     const currentDate = new Date().toISOString().split('T')[0];
     
-    // Get filter_date from params (dynamic route) or query
-    const filterDate = params?.filter_date || query.filter_date || '';
+    // Route is pages/[football-prediction-for-date].js
+    // URL: /football-predictions-for-2026-09-01?filter_date=2026-09-01
+    const filterDate = resolveFilterDateFromRoute({ params, query });
     
     if (!filterDate) {
         return {

@@ -54,10 +54,44 @@ function getFormattedDateWithOffset(daysFromToday) {
   return addDaysToIsoDate(getFormattedCurrentDate(), daysFromToday);
 }
 
+/** Format a Date as YYYY-MM-DD using local calendar fields (no UTC shift). */
+function formatLocalIsoDate(date = new Date()) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/** Extract YYYY-MM-DD from /football-predictions-for-YYYY-MM-DD slug or query. */
+function resolveFilterDateFromRoute({ params = {}, query = {} } = {}) {
+  const fromQuery = Array.isArray(query.filter_date)
+    ? query.filter_date[0]
+    : query.filter_date;
+
+  if (typeof fromQuery === "string" && /^\d{4}-\d{2}-\d{2}$/.test(fromQuery)) {
+    return fromQuery;
+  }
+
+  const slug =
+    params["football-prediction-for-date"] ||
+    params.filter_date ||
+    "";
+
+  if (typeof slug === "string") {
+    const match = slug.match(/(\d{4}-\d{2}-\d{2})/);
+    if (match) return match[1];
+  }
+
+  return "";
+}
+
 export default getFormattedCurrentDate;
 export {
   SITE_TIMEZONE,
   addDaysToIsoDate,
   getFormattedDateWithOffset,
   getFormattedDateInTimezone,
+  formatLocalIsoDate,
+  resolveFilterDateFromRoute,
 };

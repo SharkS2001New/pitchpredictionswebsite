@@ -3,6 +3,7 @@
 import Calendar from "react-calendar";
 import { memo, useMemo, useState } from "react";
 import useCompatRouter from "../functions/use-compat-router";
+import { formatLocalIsoDate } from "../functions/GetTodaysDate";
 import "react-calendar/dist/Calendar.css";
 
 function MyCalendar() {
@@ -19,27 +20,28 @@ function MyCalendar() {
     return { minDate: min, maxDate: max };
   }, []);
 
-  const dateSelected = router.query["filter_date"];
-  const isDateFilterPage =
-    router.pathname.substring(1) === "[football-prediction-for-date]" &&
-    dateSelected != undefined;
+  const dateSelected = Array.isArray(router.query?.filter_date)
+    ? router.query.filter_date[0]
+    : router.query?.filter_date;
 
-  const calendarValue = isDateFilterPage ? new Date(dateSelected) : date;
+  const isDateFilterPage =
+    typeof dateSelected === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateSelected);
+
+  const calendarValue = isDateFilterPage
+    ? (() => {
+        const [year, month, day] = dateSelected.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      })()
+    : date;
 
   function onChange(nextDate) {
     setDate(nextDate);
 
-    const selected = new Date(nextDate);
-    const tzOffset = selected.getTimezoneOffset() * 60000;
-    const localDate = new Date(selected.getTime() - tzOffset);
-    const isoDate = localDate.toISOString().substring(0, 10);
+    const isoDate = formatLocalIsoDate(nextDate);
+    if (!isoDate) return;
 
-    if (!router.isReady) return;
-
-    router.push({
-      pathname: "/football-predictions-for-" + isoDate,
-      query: { filter_date: isoDate },
-    });
+    // Full navigation so SSR always loads fixtures for the chosen date.
+    window.location.href = `/football-predictions-for-${isoDate}?filter_date=${isoDate}`;
   }
 
   return (
