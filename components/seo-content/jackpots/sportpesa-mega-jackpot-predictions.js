@@ -55,15 +55,6 @@ export default function SportpesaMegaJackpotContent() {
         <li><a href="/jackpot-predictions">All jackpot predictions</a> — Mozzart, Betpawa, Sportybet, and more</li>
       </ul>
 
-      <p>
-        The online betting and casino ecosystem is supported by a wide range of technology providers
-        and gaming operators. Some companies focus on developing platforms and casino networks that
-        power many betting experiences. One example is &nbsp;
-        <a href="https://www.onlinecasinogroups.com/dmg-solutions-casinos/" rel="dofollow" target="_blank" style={{color:"blue"}}>
-          DMG Solutions B.V
-        </a>, which operates within the broader online casino industry.
-      </p>
-
       <h3>Safe &amp; Responsible Betting</h3>
       <p>
         The Mega Jackpot grand prize requires all 17 games correct — extremely long odds. Follow these rules:
