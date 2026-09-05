@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-08-28T18:01:46.682Z",
+    "updated_at": "2026-09-05T13:58:30.520Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -218,6 +218,20 @@
             "starts_at": "2026-08-28",
             "expires_at": "2026-09-28",
             "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "kuwin-789",
+            "label": "Kuwin 789",
+            "url": "https://kuwiny.com/",
+            "starts_at": "2026-09-05",
+            "expires_at": "2026-10-05",
+            "notes": "Scometix Africa / bettingtips.co.ke",
             "active": true,
             "rel": [
                 "noopener",
