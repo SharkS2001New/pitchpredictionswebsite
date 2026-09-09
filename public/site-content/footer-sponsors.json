@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-09-05T13:58:30.520Z",
+    "updated_at": "2026-09-09T12:40:32.725Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -231,6 +231,20 @@
             "url": "https://kuwiny.com/",
             "starts_at": "2026-09-05",
             "expires_at": "2026-10-05",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tk88",
+            "label": "TK88",
+            "url": "https://tk88.llc/",
+            "starts_at": "2026-09-09",
+            "expires_at": "2026-10-09",
             "notes": "Scometix Africa / bettingtips.co.ke",
             "active": true,
             "rel": [
