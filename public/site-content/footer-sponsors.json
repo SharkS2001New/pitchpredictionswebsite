@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-09-09T16:06:34.659Z",
+    "updated_at": "2026-09-10T07:51:10.756Z",
     "links": [
         {
             "id": "socolive-tv-ericbauman",
@@ -255,7 +255,7 @@
         },
         {
             "id": "tructiepbongda-xoilac",
-            "label": "tructiepbongda Xoilac",
+            "label": "xoilac link",
             "url": "https://jeremysaid.com/",
             "starts_at": "2026-09-09",
             "expires_at": "2026-10-09",
@@ -269,7 +269,7 @@
         },
         {
             "id": "xoilac-365-tv",
-            "label": "Xoilac 365 TV",
+            "label": "trực tiếp Xoilac365",
             "url": "https://bluecloudsolutions.com/",
             "starts_at": "2026-09-09",
             "expires_at": "2026-10-09",
@@ -283,7 +283,7 @@
         },
         {
             "id": "ttbd",
-            "label": "ttbd",
+            "label": "tuong thuat truc tiep bong da",
             "url": "https://licbeerproject.com/",
             "starts_at": "2026-09-09",
             "expires_at": "2026-10-09",
