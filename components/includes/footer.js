@@ -188,6 +188,8 @@ function Footer() {
               <li className="nav-item mb-2"><a href="/football-predictions-weekend" className="nav-a p-0 text-light">Football Predictions for the Weekend</a></li>
               <li className="nav-item mb-2"><a href="/jackpot-predictions" className="nav-a p-0 text-light">Jackpot Predictions</a></li>
               <li className="nav-item mb-2"><a href="/sitemaps" className="nav-a p-0 text-light">Sitemaps</a></li>
+              <li className="nav-item mb-2"><a href="https://www.alljackpotpredictions.com/jackpots/sportpesa-mega-jackpot-predictions" target="_blank" className="nav-a p-0 text-light">Sportpesa Mega Jackpot Predictions</a></li>
+              <li className="nav-item mb-2"><a href="https://www.baopredictions.com/sure-bets-today" target="_blank" className="nav-a p-0 text-light">Sure Bets Today</a></li>
             </ul>
           </div>
 

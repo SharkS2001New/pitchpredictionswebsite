@@ -100,6 +100,8 @@ function OurPartners() {
                     <li><a href="https://soccervis.com/" target="_blank">Soccervis.com</a></li>
                     <li><a href="https://www.sunpel.co.ke/" target="_blank">Sunpel</a></li>
                     <li><a href="https://www.jackpotpredict.co.ke/" target="_blank">jackpotpredict.co.ke</a></li>
+                    <li><a href="https://www.alljackpotpredictions.com/jackpots/sportpesa-mega-jackpot-predictions" target="_blank">Sportpesa Mega Jackpot Predictions</a></li>
+                    <li><a href="https://www.baopredictions.com/sure-bets-today" target="_blank">Sure Bets Today</a></li>
                 </ol>
                 <br/>
                 <h2>How to Submit Your Site</h2>
