@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-09-17T08:36:56.126Z",
+    "updated_at": "2026-09-17T08:40:21.353Z",
     "links": [
         {
             "id": "jalalive-tv-bsidefilm",
@@ -56,48 +56,6 @@
                 "noreferrer"
             ],
             "grace_days": 7
-        },
-        {
-            "id": "socolive4",
-            "label": "socolive",
-            "url": "https://socolive4.com/",
-            "starts_at": "2026-07-12",
-            "expires_at": "2026-08-12",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "bongdalu17",
-            "label": "bongdalu",
-            "url": "https://bongdalu17.net/",
-            "starts_at": "2026-07-16",
-            "expires_at": "2026-08-16",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "fun8-asia",
-            "label": "ทางเข้าFun8",
-            "url": "https://www.fun888asia.com/",
-            "starts_at": "2026-07-18",
-            "expires_at": "2026-08-18",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
         },
         {
             "id": "1agame",
