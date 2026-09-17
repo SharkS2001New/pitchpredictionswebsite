@@ -1,20 +1,6 @@
 {
-    "updated_at": "2026-08-28T18:01:46.682Z",
+    "updated_at": "2026-09-17T08:40:21.353Z",
     "links": [
-        {
-            "id": "socolive-tv-ericbauman",
-            "label": "Socolive TV",
-            "url": "https://www.ericbauman.com/",
-            "starts_at": "2026-05-16",
-            "expires_at": "2026-08-16",
-            "notes": "Renewed every three months — Blessed Emmy",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
         {
             "id": "jalalive-tv-bsidefilm",
             "label": "Jalalive Tv",
@@ -70,90 +56,6 @@
                 "noreferrer"
             ],
             "grace_days": 7
-        },
-        {
-            "id": "socolive4",
-            "label": "socolive",
-            "url": "https://socolive4.com/",
-            "starts_at": "2026-07-12",
-            "expires_at": "2026-08-12",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "bongdalu17",
-            "label": "bongdalu",
-            "url": "https://bongdalu17.net/",
-            "starts_at": "2026-07-16",
-            "expires_at": "2026-08-16",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "fun8-asia",
-            "label": "ทางเข้าFun8",
-            "url": "https://www.fun888asia.com/",
-            "starts_at": "2026-07-18",
-            "expires_at": "2026-08-18",
-            "notes": "tafatips.com",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "xoilac-link",
-            "label": "xoilac link",
-            "url": "https://jeremysaid.com",
-            "starts_at": "2026-08-10",
-            "expires_at": "2026-09-10",
-            "notes": "Blessed Emmy",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "truc-tiep-xoilac365",
-            "label": "trực tiếp Xoilac365",
-            "url": "https://bluecloudsolutions.com",
-            "starts_at": "2026-08-10",
-            "expires_at": "2026-09-10",
-            "notes": "Blessed Emmy",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
-        },
-        {
-            "id": "tuong-thuat-truc-tiep-bong-da",
-            "label": "tuong thuat truc tiep bong da",
-            "url": "https://licbeerproject.com",
-            "starts_at": "2026-08-10",
-            "expires_at": "2026-09-10",
-            "notes": "Blessed Emmy",
-            "active": true,
-            "rel": [
-                "noopener",
-                "noreferrer"
-            ],
-            "grace_days": 4
         },
         {
             "id": "1agame",
@@ -218,6 +120,76 @@
             "starts_at": "2026-08-28",
             "expires_at": "2026-09-28",
             "notes": "tafatips.com",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "kuwin-789",
+            "label": "Kuwin 789",
+            "url": "https://kuwiny.com/",
+            "starts_at": "2026-09-05",
+            "expires_at": "2026-10-05",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tk88",
+            "label": "TK88",
+            "url": "https://tk88.llc/",
+            "starts_at": "2026-09-09",
+            "expires_at": "2026-10-09",
+            "notes": "Scometix Africa / bettingtips.co.ke",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "tructiepbongda-xoilac",
+            "label": "xoilac link",
+            "url": "https://jeremysaid.com/",
+            "starts_at": "2026-09-09",
+            "expires_at": "2026-10-09",
+            "notes": "Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "xoilac-365-tv",
+            "label": "trực tiếp Xoilac365",
+            "url": "https://bluecloudsolutions.com/",
+            "starts_at": "2026-09-09",
+            "expires_at": "2026-10-09",
+            "notes": "Blessed Emmy",
+            "active": true,
+            "rel": [
+                "noopener",
+                "noreferrer"
+            ],
+            "grace_days": 4
+        },
+        {
+            "id": "ttbd",
+            "label": "tuong thuat truc tiep bong da",
+            "url": "https://licbeerproject.com/",
+            "starts_at": "2026-09-09",
+            "expires_at": "2026-10-09",
+            "notes": "Blessed Emmy",
             "active": true,
             "rel": [
                 "noopener",
